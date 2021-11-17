@@ -1,0 +1,105 @@
+% ##############################################
+% Utilities (tools to help with scripting, automating etc.)
+% ##############################################
+
+\usepackage{etoolbox} %
+
+\usepackage{xparse} % smart definition of commands
+\usepackage{pdftexcmds}  % string comparison with expanded input args
+\usepackage{xpatch}  %add to e toolbox pre, app, etc. to command or environments, https://ctan.math.illinois.edu/macros/latex/contrib/xpatch/xpatch.pdf
+
+\usepackage{calc}  % allows us to use expressions like {\linewidth-2ex} in commands
+\usepackage{xfp}  % floating point math
+\usepackage{xspace}  % smartly looks at space after commands
+
+\usepackage{catchfile} % catches a .tex file as a command
+
+%%% pdf stuff
+\usepackage{pdflscape}
+\usepackage{pdfpages}  % provides \includepdf command
+\usepackage{grffile}  % removes the pdf file name for includegraphics with a pdf file type
+\usepackage{afterpage} % can add code after page done, helps with pdflscape with inserting a page randomly,
+
+%% Boxes and stuff
+\usepackage[usestackEOL]{stackengine}  % used for title page and stacking things
+\usepackage{setspace}  % enable onehalfspacing instyling
+
+\usepackage{pbox}  % create box of max width http://ctan.mirror.colo-serv.net/macros/latex/contrib/pbox/pbox.pdf
+\usepackage[export]{adjustbox} % provide additional commands for graphicsx allows us to adjust graphics,  http://mirrors.ibiblio.org/CTAN/macros/latex/contrib/adjustbox/adjustbox.pdf
+\usepackage{relsize}  % relative sizing
+
+\newtoggle{csdefined}
+
+
+\newcommand{\ifdefOR}[4]{%
+\togglefalse{csdefined}%
+\ifdef{#1}{\toggletrue{csdefined}}{}%
+\ifdef{#2}{\toggletrue{csdefined}}{}%
+    \iftoggle{csdefined}{#3}{#4}%
+}
+
+
+\newcommand{\invtoggle}[1]{% invert a toggle
+\iftoggle{#1}{\togglefalse{#1}}{\toggletrue{#1}}%
+}
+
+\newcommand{\gettogglestate}[1]{% get a toggles state
+\iftoggle{#1}{true}{false}%
+}
+
+
+
+\let\strcmp\pdf@strcmp
+
+\NewDocumentCommand{\ifstringeqx}{m m m O{}}{%
+    \ifnum\strcmp{#1}{#2}=0 #3\else#4\fi%
+}
+
+\NewDocumentCommand{\DoIfnotEmpty}{m m O{}}{%
+    \ifstringeqx{#1}{}{#2}{#3}%
+}
+%\NewDocumentCommand{\DoIfnotEmpty}{m m O{}}{\ifthenelse{\equal{#1}{}}{#3}{#2}}
+
+% requires ifthen package, does #2 if #1 is NOT empty, othwerise (optionally) do #3 can take command inputs
+\newcommand{\DoWithoutPrinting}[1]{\setbox0\vbox{#1}} % https://tex.stackexchange.com/questions/417327/is-it-possible-to-compile-but-not-showing-a-part
+
+\newcommand{\DontDo}[1]{} %command that does nothing
+
+
+\newcommand*\makealph[1]{\symbol{\numexpr96+#1}}% also can use \numexpr`a-1+#1
+\newcommand*\makeAlph[1]{\symbol{\numexpr64+#1}}
+
+
+%% x parse pre-processor, expands an argument, use by putting >{\ExpArgOnceProc} in front of arg spec
+% https://tex.stackexchange.com/questions/616804/using-definitions-for-key-val-arguments/616814#616814
+\newcommand\ExpArgOnceProc[1]
+  {\edef\ProcessedArgument{\unexpanded\expandafter{#1}}}
+
+
+\NewDocumentCommand{\providelength}{ m m }{%
+\ifdeflength{#1}{% It is already defined!
+}{% Not defined, so define it!
+\newlength{#1}%
+\setlength{#1}{#2}
+}%
+}%
+
+
+
+
+%% Replace text in a latex definition
+% * will redefine the macro, leaving it will only print the new val
+\begin{luacode*}
+function DefReplText(s, def, bef, aft)
+    local DefReplTextVal = token.get_macro(def)
+    DefReplTextVal = DefReplTextVal:gsub(bef, aft)
+    if s == _xFalse then
+        tex.sprint(DefReplTextVal)
+    else
+        token.set_macro(def, DefReplTextVal ,'global')
+    end
+end
+\end{luacode*}
+\NewDocumentCommand{\DefReplText}{ s m m m }{\luadirect{%
+    DefReplText(\luastring{#1},\luastringN{#2},\luastringN{#3},\luastringN{#4})
+}}

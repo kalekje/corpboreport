@@ -1,0 +1,58 @@
+\NewDocumentCommand{\AutoPuncItems}{ O{;} O{; and} O{.} m }{
+    \luaexec{AutoPuncItems(
+        \luastringN{#4xxxENDxxx},
+        \luastringN{#1},
+        \luastringN{#2},
+        \luastringN{#3}
+    )}
+}
+
+\begin{luacode*}
+function AutoPuncItems(s, btwn, seclast, last) -- add btwn and sec and last options
+    local it = '\\item'
+    local s_item = '%s*'..it
+    btwn = btwn or ';'
+    btwn = btwn..' '..it
+    seclast = seclast or '; and'
+    seclast = seclast..' '..it
+    last = last or '.'
+    local _, n_matches = string.gsub(s, s_item, "") -- find num items
+    s, _ = string.gsub(s, s_item,    seclast,   n_matches) -- replace all items with second last type
+    s, _ = string.gsub(s, seclast,   btwn,      n_matches-1) --replace all but last(ie second last) with the between
+    s, _ = string.gsub(s, '%s*xxxENDxxx', last) -- add the final char
+    s = string.sub(s, #btwn-#it+1, #s)
+    tex.print(s)
+end
+
+--function remove_tex_comments(s)
+        --return string.gsub(s, '%.*\n', '')
+        --return string.gsub(s, '%%(.*\r)', '')
+        --s, _ = remove_tex_comments(s)
+    --end
+\end{luacode*}
+
+
+
+
+% enumerate text           *A +a   {pre} {num} {post} <inbetween>  <between last two>
+\NewDocumentCommand{\enumtext}{s t+ O{} m  O{} D<>{, } D<>{#6}}{%
+\foreach \n in {1,...,#4}{%
+    #3%
+    \IfBooleanTF{#1}{\makeAlph{\n}}{\IfBooleanTF{#2}{\makealph{\n}}{\n}}%
+    %
+    #5%
+    \ifnum\n<\fpeval{#4-1}%
+    #6%
+    \else%
+    \ifnum\n<\fpeval{#4}%
+    #7%
+    \fi%
+    \fi%
+}}
+
+% iter text, sandwhich in between  [before] {list of text}  [after]
+% mandatory argument can be {Kale,Britt,Serena}, or {1,3,...,9}
+\NewDocumentCommand{\itertext}{O{} m O{, }}{%
+\foreach \n in {#2}{%
+    #1\n#3%
+}}

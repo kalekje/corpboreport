@@ -1,0 +1,67 @@
+% ##############################################
+% Lists
+% ##############################################
+
+% to change more: https://texblog.org/2008/10/16/lists-enumerate-itemize-description-and-how-to-change-them/
+
+%%% DEPENDENCIES
+
+\usepackage{enumitem} % https://muug.ca/mirror/ctan/macros/latex/contrib/enumitem/enumitem.pdf
+\usepackage{multicol}  % used for two column list
+%\usepackage{tabto}% possibly usful for two column lists %http://tug.ctan.org/tex-archive/macros/latex/contrib/tabto/tabto-doc.pdf
+%%%
+
+\newlength{\moreseplength}
+\setlength{\moreseplength}{2.5pt}  % this is only used for listed; indent is 2* this
+
+\newlength{\ListIndentLength}
+\setlength{\ListIndentLength}{4ex}  % this is only used for listed; indent is 2* this
+
+\newlength{\SemiParSkipLength}
+\setlength{\SemiParSkipLength}{4.1pt plus 0.41pt}  % 0.3 * 13.7
+
+\newlength{\SemiMinusParLength}
+\setlength{\SemiMinusParLength}{-9.6pt plus 0.96pt}  % (0.3 - 1 )* 13.7
+
+\newcommand{\SemiMinusParSkip}{\vspace{\SemiMinusParLength}}  % remove parskip, add env. skip
+\newcommand{\ContParaAfterList}{\vspace{\SemiMinusParLength}\noindent}
+
+% global settings for all lists
+
+\setlist{nosep,%
+	leftmargin=\ListIndentLength,%
+	topsep=-\parskip, % removes default parskip in topsep
+	before=\vspace{\SemiParSkipLength},  % add a small buffer, assuming that list is in same par as above
+	after*={\@topsepadd\parskip}  % restores topsep to parskip (topsep=0pt)
+}  % seperation is same as baseline,needs enumitem
+
+
+\setlist[2,3,4,5]{nosep,
+	leftmargin=\ListIndentLength,
+	topsep=-\parskip,
+	before=,
+	after*=,  % todo consider putting some butter after
+}
+%
+
+\setlist[enumerate,2]{label=\alph*.}
+\SetEnumitemKey{moresep}{itemsep=\moreseplength}
+
+%%%
+\SetEnumitemKey{twocol}{
+itemsep = 1\itemsep,
+parsep = 1\parsep,
+before = \raggedcolumns\begin{multicols}{2},
+after = \end{multicols}}
+
+\SetEnumitemKey{threecol}{
+itemsep = 1\itemsep,
+parsep = 1\parsep,
+before = \raggedcolumns\begin{multicols}{3},
+after = \end{multicols}}
+%%%
+
+% changes bullets, I like them smaller than default
+\renewcommand\labelitemi{\raisebox{0.3ex}{\scalebox{0.9}{\scriptsize$\bullet$}}}
+\renewcommand\labelitemii{\raisebox{0.3ex}{\scalebox{0.7}{\scriptsize$\bullet$}}}
+\renewcommand\labelitemiii{\raisebox{0.3ex}{\scalebox{0.4}{\scriptsize$\bullet$}}}

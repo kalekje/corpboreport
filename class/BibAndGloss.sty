@@ -1,0 +1,66 @@
+% requires enumitem for acronym styling
+\usepackage[sorting=none]{biblatex}
+\newcommand{\citeT}[1]{\citetitle{#1}~\cite{#1}}
+\renewrobustcmd*{\bibinitdelim}{\,}
+\renewcommand*{\multicitedelim}{\addcomma\,}  % tighten [1,2,3] multi citations
+
+
+\usepackage[xindy,style=super,nopostdot, nogroupskip, nonumberlist, numberedsection, section=section,savewrites=true,acronym,nomain]{glossaries-extra}
+\setabbreviationstyle[acronym]{long-short}
+\GlsXtrEnableEntryCounting % % https://tex.stackexchange.com/questions/477581/glossaries-introduce-short-name-only-if-used-more-than-once-within-section-chap
+ {acronym}% list of categories to use entry counting
+ {1}% trigger value
+%\glsenableentrycount % enable \cgls, \cglspl, \cGls, \cGlspl  supposed to not show accronym if only one
+\glsdisablehyper  % to disable hyperlinks
+\glstoctrue  % ToC
+
+\makeglossaries
+
+
+\newglossarystyle{listwithwidth}{%
+	\renewcommand*{\glossaryheader}{}%
+	\renewcommand*{\glsgroupheading}[1]{}%
+	\renewcommand*{\glossarysubentryfield}[6]{glssubentryitem{##2}{\strut\glstarget{##2}##4\glspostdescription\space ##6}}%
+	\renewcommand*{\glsgroupskip}{\vspace{7pt}}% space between alphabetized groups
+	\renewenvironment{theglossary}%
+		{\enlargethispage{2em}\begin{description}[leftmargin=2.5cm,style=multiline,itemsep=3pt,format=\raggedright\sloppy]}%
+		{\end{description}}%
+	\renewcommand*{\glossaryentryfield}[5]{%
+		\item[{\normalfont\bfseries\glsentryitem{##1}\glstarget{##1}{##2}}]{##3\glspostdescription\space ##5}
+		}%
+}
+
+\newglossarystyle{AcronymsTwoCol}{%
+	\renewcommand*{\glossaryheader}{}%
+	\renewcommand*{\glsgroupheading}[1]{}%
+	\renewcommand*{\glossarysubentryfield}[6]{glssubentryitem{##2}{\strut\glstarget{##2}##4\glspostdescription\space ##6}}%
+	\renewcommand*{\glsgroupskip}{\vspace{7pt}}% space between alphabetized groups
+	\renewenvironment{theglossary}%
+		{\vspace*{1ex}\setlength{\columnsep}{30pt}\begin{multicols}{2}%
+		\begin{description}[font=\bfseries,leftmargin=1.7cm,style=multiline,itemsep=3pt]\raggedright}%
+		{\end{description}\end{multicols}}%
+	\renewcommand*{\glossaryentryfield}[5]{%
+		\item[{\normalfont\bfseries\glsentryitem{##1}\glstarget{##1}{##2}}]{##3\glspostdescription\space ##5}
+		}%
+}
+
+
+
+% todo do this for \Gls and \GLS, maybe * + to gls
+\usepackage{pdfcomment}
+\let\oldgls\gls
+\RenewDocumentCommand{\gls}{ O{} m O{} }{%
+    \ifglsused{#2}{%
+    	\pdftooltip{\oldgls[#1]{#2}[#3]}{\glsentrylong{#2}}%
+	}{%
+		\oldgls{#2}%
+	}%
+}%
+\let\oldglspl\glspl
+\RenewDocumentCommand{\glspl}{ O{} m O{} }{%
+    \ifglsused{#2}{%
+	    \pdftooltip{\oldglspl[#1]{#2}[#3]}{\glsentrylong{#2}}%
+	}{%
+		\oldglspl{#2}%
+	}%
+}%

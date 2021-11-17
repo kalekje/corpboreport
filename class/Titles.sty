@@ -1,0 +1,109 @@
+\let\company\publishers
+
+%%% todo do this for other paras
+\ExplSyntaxOn
+\RenewDocumentCommand{\title}{m}
+ {
+  \tl_gset:cn { @title } { #1 } % needed by \maketitle
+  \tl_gset:Nn { \realtitle } { #1 }
+  \seq_set_split:Nnn \l_tmpa_seq { \\ } { #1 }
+  \tl_gset:Nx \inlinetitle { \seq_use:Nn \l_tmpa_seq { ~ } }
+ \ExplSyntaxOff
+ \hypersetup{pdftitle=\inlinetitle}
+ }
+
+\ExplSyntaxOn
+\RenewDocumentCommand{\author}{m}
+ {
+  \tl_gset:cn { @author } { #1 } % needed by \maketitle
+  \tl_gset:Nn { \realauthor } { #1 }
+  \seq_set_split:Nnn \l_tmpa_seq { \\ } { #1 }
+  \tl_gset:Nx \inlineauthor { \seq_use:Nn \l_tmpa_seq { ~ } }
+ \ExplSyntaxOff
+ \hypersetup{pdfauthor=\inlineauthor}
+ }
+
+
+
+
+
+
+\NewDocumentCommand{\logo}{O{width=4cm} m >{\ExpArgOnceProc}O{\TitleLogoPlaceDefault} }{%
+    \gdef\@logo{\includegraphics[#1,smash=#3]{#2}}%
+}
+
+
+\gdef\@tpOwn{
+\begin{titlepage} % Suppresses displaying the page number on the title page and the subsequent page counts as page 1
+
+	\newgeometry{bottom=2in, top=1.5in, left=1.75in, right=1.5in}%
+	\raggedright % Right align the title page
+	\rule{\heavyrulewidth}{7.4in} % Vertical line
+	\hspace{0.5in} % Whitespace between the vertical line and title page text
+	\begin{minipage}[b][7.4in][s]{4.4in}
+	    \raggedright
+
+		\null\vfill\null\vfill
+
+		{\Huge\bfseries \@title }% Title  \bfseries
+
+		\ifdef{\@subtitle}{
+		\null\vfill\par
+		{\large\itshape \@subtitle} % Subtitle or further description
+		}{}
+		\ifdef{\@publishers}{
+		\null\vfill\par
+		{\Large \@publishers} % or company
+		}{}
+		\ifdef{\@author}{
+		\null\vfill\par
+		{\Large \@author}
+		}{}
+		\ifdef{\@date}{
+		\null\vfill\par
+		{\Large \@date}
+		}{}
+		\ifdef{\@logo}{
+		\null\vfill
+		\null\vfill\par
+		\null\hfill\@logo\par
+		}{}
+
+		\null\vfill\null\vfill
+
+
+\end{minipage}
+
+\end{titlepage}
+}
+
+
+\gdef\titlesubbox#1{\hspace*{0.7cm}
+\pbox{\dimexpr(\linewidth-0.7cm)\relax}{#1}\par\vspace{-1ex}
+}
+
+\gdef\@tpSame{\thispagestyle{plain}
+		\gdef\And{\hspace*{3ex}}
+		{\RaggedRight                             % \pbox[t]{\linewidth}  %% todo top align logo with title
+		\pbox[t]{0.45\linewidth}{\LARGE\bfseries \@title} \hfill	 \ifdef{\@logo}{\@logo}{}\par
+
+		\vspace{0.5em}
+
+		\ifdef{\@subtitle}{\titlesubbox{\itshape \@subtitle}}{}
+		\ifdef{\@publishers}{\titlesubbox{\large \@publishers}}{}
+		\ifdef{\@author}{\titlesubbox{\large\bfseries \@author}}{}
+		\ifdef{\@date}{\titlesubbox{\large \@date}}{}
+
+		\vspace*{1em}
+		\rule{\linewidth}{\heavyrulewidth}\\[-2ex]
+		\ \hfill\rule{\dimexpr(\linewidth-0.7cm)\relax}{\lightrulewidth}
+		\vspace*{1em}
+}}
+
+
+
+\def\maketitle{%
+	\iftoggle{samepgTitle}{\togglefalse{SecOnNewPage}\@tpSame}{\@tpOwn}%
+}
+
+

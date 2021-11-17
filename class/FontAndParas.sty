@@ -1,0 +1,117 @@
+% ##############################################
+% Text Settings
+% ##############################################
+
+
+\usepackage[english]{babel} % helps with hyphenation
+\usepackage{csquotes} % helps with hyphenation
+
+
+%%% GENERAL FORMATTING
+\usepackage{ragged2e}
+\usepackage{blindtext}
+
+\iftoggle{useSerif}{
+    \usepackage[T1]{fontenc}
+    %frenchstyle,narrowiints,partialup < math settings for kp fonts
+    \usepackage[light,notextcomp]{kpfonts} % the light is also decent, could consider
+    \renewcommand{\ttdefault}{cmtl} % monospace that looks nice with light kpfont
+    \usepackage[activate=true,% this package makes the font look nicer
+        final,%
+        tracking=true,%
+    %	kerning=true, % only works with pdftex
+    ]{microtype}
+    \SetTracking{encoding=*, shape=sc}{18}  % adjust small caps letter spacing
+}{
+    \ifluatex
+    %% FONT
+    %%% IF YOU GET AN ERROR WITH microtype, there is an issue with font:
+    % Install cm-super and hfbright packages via MiKTeX console,  you need the scalable version of cmbright, for ex.
+    %    \usepackage{fontspec}          % lualatex font engine
+    %    \setmainfont[Numbers = Uppercase,
+    %                 Ligatures = TeX,
+    %                 BoldFont  = CMU Bright SemiBold,
+    %                 ItalicFont = CMU Bright Oblique,
+    %                ]{CMU Bright Roman}
+        % NOTE OPEN font version of CMU Bright doesnt look as nice, we use type 1 here
+        \usepackage[T1]{fontenc}  % used for accented letter, OT1 works better with cmbright, makes font work
+        \usepackage{cmbright}  % use hfbright and cm-super
+        \usefont{OT1}{cmbr}{m}{n}
+        \renewcommand\bfdefault{sb}
+        \newcommand\sbdefault{bx}
+            \usepackage[%
+            protrusion=true,
+            expansion,
+            final,
+            tracking=true,
+            %kerning=true,  $ NOT ALLOWED IN LUA
+            %spacing=true,  $ NOW ALLOWED IN LUA
+            letterspace=120,
+            factor=1000,% protrusion (/1000), subtle
+            stretch=10,%(/1000 %)
+            shrink=10]{microtype}
+            \frenchspacing
+    \else
+        %\usepackage{microtype}  % helps with hyphen and scaling,
+        % NOT SURE IF THIS DOES ANYTHING.. BUT ITS SUPPOSED TO
+        \usepackage[T1]{fontenc}  % used for accented letter, OT1 works better with cmbright
+        \let\CMserif\rmdefault % save the default family name
+        \usepackage{cmbright}  % use hfbright and cm-super
+        \renewcommand\bfdefault{sb}
+        \newcommand\sbdefault{bx}
+        \usepackage[%
+        protrusion=true,
+        expansion,
+        final,
+        tracking=true,
+        kerning=true,
+        spacing=true,
+        letterspace=120,
+        factor=1000,% protrusion (/1000), subtle
+        stretch=10,%(/1000 %)
+        shrink=10]{microtype}
+    \fi
+%    https://comp.text.tex.narkive.com/KZW4PwZ4/cmbright-alternative
+    \gdef\sbseries{\fontseries{sb}\selectfont}
+}
+
+
+%%% PAGE STYLING
+\usepackage{lastpage}
+
+%%% MARGIN NOTES
+%\usepackage{marginnote}  % better margin notes with koma script, apparently % CTAN: http://www.ctan.org/pkg/marginnote
+
+
+\let\oldcenter\center
+\let\oldendcenter\endcenter
+\renewenvironment{center}{\setlength\topsep{0pt}\oldcenter}{\oldendcenter}  % removes extra sep
+
+\let\oldflushleft\flushleft
+\let\oldendflushleft\endflushleft
+\renewenvironment{flushleft}{\setlength\topsep{0pt}\oldflushleft}{\oldendflushleft}
+
+
+
+% ##############################################
+% Paragraph stretching and spacings
+% ##############################################
+
+% This is an suggestion from Axel Reichert (LaTeX package author)
+% See CTAN: http://www.ctan.org/author/reichert
+% See CTAN: http://www.ctan.org/pkg/l2tabu-english (Cgapter: 1.8 Should I use \sloppy?)
+
+% 10000 is the highest
+\tolerance=2800
+\hbadness=1414
+\emergencystretch=1.5em
+\hfuzz=0.3pt
+\widowpenalty=4000
+\clubpenalty=4002
+\brokenpenalty=101
+\displaywidowpenalty=50
+\vfuzz \hfuzz
+
+
+
+

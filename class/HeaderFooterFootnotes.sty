@@ -1,0 +1,56 @@
+% ##############################################
+% Header and Footer
+% ##############################################
+
+%% NOTE: should adjust top margin height in GeometryCustom depending on number of lines
+
+\addtokomafont{pageheadfoot}{\upshape}
+
+\lohead{set me with lohead command}
+\rohead{set me with rohead command}
+
+%\makeatletter
+%\if@twoside%
+%	\lehead{\textbf{\SPDcode}}
+%	\rehead{\CurrRelease}
+%	\rohead{\textit{A Title for this Report on one Line}}
+%	\lohead{\MakeUppercase{\ReportType}}
+%\else
+%	\lohead{\setstretch{0.8}\textbf{\SPDcode} \\ \CurrRelease}
+%	\rohead{\setstretch{0.8}\MakeUppercase{\ReportType}: \textit{\HeaderTitle}}
+%\fi%  finally do nothing
+%\makeatother
+
+
+%
+%  Footnotes
+%
+\usepackage{footnotebackref}  % must be loaded before footnote backref
+\usepackage{footmisc}  %
+\setlength\footnotemargin{0pt}  % space between footnote and number.. might want to experiemnt with this
+% and will likely want to re-create my tabular footnote environment...
+
+\KOMAoptions{footnotes=multiple}% maybe you want to use this option?  # doesn't seem to do anything
+\setfootnoterule{0.5\textwidth}
+\newcommand*\footnotemarkspace{0.0ex} % set distance of the footnote text from the margin
+\deffootnote{\footnotemarkspace}% use distance from above
+{0em}% paragraph indent in footnotes (footnotes should never have paragraphs!)
+% allows for back-references footnotes
+% can put a llap before \textsuper to have a hanging footnote!
+{\makebox[\footnotemarkspace][l]{\llap{{\hyperref[\BackrefFootnoteTag]{\thefootnotemark}}}}.\enspace} % footfont with period for footnote marks in footnote
+% hanging footnote
+
+
+%footnotebackref breaks footnotetext and footnotemark pairs, this patches it up!!!
+
+\LetLtxMacro{\BHFN@Old@footnotemark}{\@footnotemark}
+\renewcommand*{\@footnotemark}{%
+	\refstepcounter{BackrefHyperFootnoteCounter}%
+	\xdef\BackrefFootnoteTag{bhfn:\theBackrefHyperFootnoteCounter}%
+	\label{\BackrefFootnoteTag}%
+	\BHFN@Old@footnotemark
+}
+
+
+%{\makebox[\footnotemarkspace][l]{\llap{{\hyperref[\BackrefFootnoteTag]{\thefootnotemark}}}}.\enspace} % footfont with period for footnote marks in footnote
+% https://tex.stackexchange.com/questions/339506/right-align-one-and-two-digit-footnote-marks-with-koma

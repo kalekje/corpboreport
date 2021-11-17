@@ -1,0 +1,123 @@
+% ##############################################
+% Code Boxes
+% ##############################################
+
+% https://tex.stackexchange.com/questions/77996/how-to-show-a-hint-when-lstlisting-is-breaking-page?rq=1
+% continued on next page... want to move this
+% read this and try it out more...
+\usepackage[framemethod=tikz]{mdframed}  % for multi-page codeboxes
+\mdfdefinestyle{listing}
+{
+	hidealllines = true,
+	leftmargin = 0pt,
+	rightmargin = 0pt,
+	innerleftmargin = 0pt,
+	innerrightmargin = 0pt,
+	innertopmargin = 0pt,
+	innerbottommargin = 0pt,
+	splittopskip=30pt,
+	splitbottomskip=30pt,
+	skipabove    = \parskip,
+	skipbelow    = \parskip,
+	% innertopmargin = \parskip,
+	% afterbreak = {\vspace*{2cm} },
+	% beforebreak = {\vspace*{2cm}},
+	singleextra  = {} ,
+	firstextra   = {
+		\node[below left,overlay,align=right,font=\continuingfont]
+		at (P |- O) {\continuingtext};
+	} ,
+	secondextra  = {
+		\node[above right,overlay,align=left,font=\continuingfont, anchor=north west]
+		at (O |- P) {\continuedtext};
+	} ,
+	middleextra  = {
+		\node[below right,overlay,align=left,font=\continuingfont]
+		at (O) {\continuingtext};
+		\node[above right,overlay,align=left,font=\continuingfont, anchor=north west]
+		at (O |- P) {\continuedtext};
+	}
+}
+% customize the appearance of the continuing notes:
+\newcommand*\continuingfont{\itshape} % put size here
+\newcommand*\continuingtext{Listing continues on next page\ldots}
+\newcommand*\continuedtext{\ldots Listing continued from previous page}
+
+
+
+
+\usepackage{listings}  % 
+
+
+% http://texdoc.net/texmf-dist/doc/latex/listings/listings.pdf
+% requires xcolor
+
+\lstset{
+	language=Python,
+	basicstyle=\ttfamily\small,
+	aboveskip={1.0\baselineskip},
+	belowskip={1.0\baselineskip},
+	captionpos=t,
+	belowcaptionskip=5pt, % trial and error gve this a good result
+	frame=tb,
+	rulecolor=\color{black},
+	numbers=left,
+	numberstyle=\ttfamily\small\color{grayCol},
+	keywordstyle=\color{contCol},
+	commentstyle=\color{grayCol},
+	stringstyle=\color{greCode},
+	prebreak=\raisebox{0ex}[0ex][0ex]{\ensuremath{\hookleftarrow}},
+	extendedchars=true,
+	breaklines=true,
+	tabsize=4,
+	escapeinside={\#`}{`},  % escape to LaTeX (ex. \label{})
+	morecomment=[is]{"""!}{!"""},  % invisible block comments (CAUTION)
+	morecomment=[is]{\#!}{!},      % invisible line comment
+	% NOTE: invisible block comments may screw up line numbering for excerpt
+	moredelim=[s][\color{white}]{\#~}{~},  % make range limtis white
+	rangeprefix={\#~},      % to mark range for excerpt
+	rangesuffix={~},      %  
+	includerangemarker=false,
+	moredelim=[s][\color{white}]{"""~}{~"""},  % white block comment
+}
+
+
+
+
+
+
+
+
+\lstdefinestyle{code}{
+	language         = [LaTeX]TeX,
+	basicstyle       = \small\ttfamily ,
+	numbers          = left,
+	numberstyle      = \tiny,
+	numberblanklines = true,
+	breaklines       = true,
+	keepspaces       = true,
+	columns          = fullflexible,
+	% whatever else you want ...
+}
+
+
+\lstnewenvironment{listing}
+{%
+	\lstset{style=code}%
+	\mdframed[style=note]%
+}
+{%
+	\endmdframed
+}
+
+
+
+% emph is for emphasis, color single words (use emph and emphstyle)
+
+%  Use #`\label{whatever}` for line labels, or to escape use LaTeX script
+% reference line with \cref{lin:x}
+%  Use #~beg:sec~ and #~end:sec~ to extract blocks
+%  Use  '''~ BLOCK COMMENTS ~'''  to hide block comments (and remove line numbers)
+%
+
+

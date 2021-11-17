@@ -1,0 +1,57 @@
+%%%% todo maybe move this to a lua-based function
+
+\newcounter{unilabIN}% my referene counter withIN each new instance
+\newcounter{unilabOUT}% creates a new set of counters if incremented
+
+\setcounter{unilabIN}{0}
+\setcounter{unilabOUT}{1}  % start at 1 -> a
+
+
+\newcommand\uref[1]{% my command "unique" referencer
+  \@ifundefined{uni\alph{unilabOUT}lab@#1}{%if reference doesnt exist, ie. hasn't been used
+    \global\advance\value{unilabIN}1% global advance to work with ttabbox (can replace 1 with \@ne, use this instead of \stepcounter{unilabIN})
+    \expandafter\xdef\csname uni\alph{unilabOUT}lab@#1\endcsname{\alph{unilabIN}}% create a label for reference
+    % defines a command : uni&lab$  where & is group letter, and $ is the label name
+  }{}%
+  \csname uni\alph{unilabOUT}lab@#1\endcsname% call the label
+}
+
+
+\newcommand{\reseturef}{\setcounter{unilabIN}{0}\stepcounter{unilabOUT}}% must use this outside of ttabbox
+
+
+
+%Example usage:
+%
+%\reseturef  % resets counters for new labels
+%
+%
+%\begin{tabular}{lr}
+%  \hline
+%    Things & Applicable Things \\\hline
+%    Aardvark & \uref{lookslikerat}, \uref{fourlegs} \\
+%    Bat & \uref{lookslikerat} \\
+%    Cheetah & \uref{fourlegs} \\\hline
+%\end{tabular}
+
+
+%% single layer
+
+%\newcounter{unilabIN}% my referene counter withIN each new instance
+%\newcounter{unilabOUT}% creates a new set of counters if incremented
+%
+%\setcounter{unilabIN}{0}
+%\setcounter{unilabOUT}{1}  % start at 1 -> a
+%
+%\makeatletter
+%\newcommand\uref[1]{% my command "unique" referencer
+%  \@ifundefined{unilab@#1}{%if reference doesnt exist, ie. hasn't been used
+%    \stepcounter{unilabIN}\theunilabIN\expandafter\xdef\csname unilab@#1\endcsname{\theunilabIN}% create a label for reference
+%    % defines a command : uni&lab$  where & is group letter, and $ is the label name
+%  }{%
+%  \csname unilab@#1\endcsname% call the label
+%  }%
+%}
+%\makeatother
+%
+%\newcommand{\reseturef}{\setcounter{unilabIN}{0}\stepcounter{unilabOUT}}

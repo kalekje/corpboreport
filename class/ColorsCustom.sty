@@ -1,0 +1,53 @@
+% ##############################################
+% Custom Colors
+% ##############################################
+
+\usepackage{xcolor}
+
+% todo confirm with xckd colors
+% https://xkcd.com/color/rgb/
+
+% make a consistent color set with mpl "rich colors"
+% define shades of gray to mtach
+
+
+%\definecolor{lightgray}{RGB}{216, 220, 214}
+\definecolor{lightgray}{RGB}{191, 191, 191}
+\colorlet{lightgrey}{lightgray}
+\definecolor{gray}{RGB}{128, 128, 128}
+\definecolor{darkgray}{RGB}{64, 64, 64}
+
+\definecolor{brightindigo}{RGB}{5, 1, 200}
+\definecolor{indigo}{RGB}{4, 1, 180}
+\definecolor{darkindigo}{RGB}{3, 0, 110}
+\definecolor{verydarkindigo}{RGB}{2, 0, 40}
+
+\definecolor{darkred}{RGB}{180, 0, 0}
+\definecolor{green}{RGB}{0, 130, 10}  % green color, used for code syntax and plots
+
+
+% for coding
+\colorlet{accCol}{indigo}  % accent color
+\colorlet{contCol}{darkred}    % contrast color
+\colorlet{grayCol}{gray}   % gray color
+\colorlet{greCode}{green}   % gray color
+
+% for sections
+\colorlet{secCol}{indigo}
+\colorlet{subsecCol}{darkindigo}
+\colorlet{subsubsecCol}{verydarkindigo}
+
+
+
+\definecolor{pltblue}{HTML}{1000F0}
+\definecolor{pltred}{HTML}{B30000}
+\definecolor{pltgreen}{HTML}{00820A}
+\definecolor{pltorange}{HTML}{F05F00}
+\definecolor{pltyellow}{HTML}{FFC30B}
+\definecolor{pltpurple}{HTML}{820078}
+
+\colorlet{pltcyan}{cyan}   % gray color
+% todo add option for markers
+\NewDocumentCommand{\pltLineIcon}{m}{%
+    \mbox{({\color{plt#1}#1 \raisebox{0.6ex}{\rule{1em}{0.8pt}}})}%
+}

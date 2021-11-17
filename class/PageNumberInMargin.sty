@@ -1,0 +1,30 @@
+%%% DEPENDENCIES
+% KOMA-Script class
+%%%
+
+%%%%%%% IN ACTUAL FOOTER (WITH VERTICAL LINE RUNNING TO BOTTOM)
+%%%%%
+\newlength{\raiseFooterLen}
+\setlength{\raiseFooterLen}{-0.5\baselineskip}
+\newlength{\lineFooterLen}
+\setlength{\lineFooterLen}{2em}
+%https://tex.stackexchange.com/questions/114570/koma-script-scrpage2-footer-height
+
+
+
+\newcommand{\PageRule}{\vline height 1em depth \lineFooterLen width \arrayrulewidth}
+
+\newcommand{\LeftPageMarkLine}{%
+	\vskip-\raiseFooterLen
+	\llap{\pagemark\enspace\PageRule\enspace\enspace\enspace}%
+}%
+
+\newcommand{\RightPageMarkLine}{%
+	\vskip-\raiseFooterLen
+	\hfill\rlap{\enspace\enspace\enspace\PageRule\enspace\pagemark}%
+}
+
+\rofoot[\RightPageMarkLine]{\RightPageMarkLine}
+
+\lefoot[\LeftPageMarkLine]{\LeftPageMarkLine}
+

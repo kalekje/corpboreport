@@ -1,0 +1,84 @@
+% ##############################################
+% Tables
+% ##############################################
+
+%%% DEPENDENCIES
+% KOMA-Script class
+\usepackage{xparse}
+%\usepackage{siunitx} % see MathSymbolsEtc for usage, dont use as settings are changed
+\usepackage{xcolor}
+% ColorsCustom.sty
+% Macros
+%%%
+
+% How to make nice tables: https://inf.ethz.ch/personal/markusp/teaching/guides/guide-tables.pdf
+
+%%% TABLES
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{makecell}
+\usepackage{colortbl} %
+\usepackage{rotating}
+
+\usepackage{tabularx}  % WARNING  supposed to be loaded after hyprref !!! investigate
+\usepackage{ltxtable}  % long table with tabularx
+\usepackage{longtable}
+
+\usepackage{booktabs}  % better for tables without vertical rules.
+% http://ctan.mirror.globo.tech/macros/latex/contrib/booktabs/booktabs.pdf
+
+% Table spacing
+%\renewcommand{\arraystretch}{1.0}  % normal table stretch.. can modify
+%\setlength\tabcolsep{2ex}  % additional padding on sides of tables
+
+\newcommand{\todash}{{\hspace{1.5ex}to\hspace{1.5ex}}} % used for tables with X ' to ' Y
+\setlength\heavyrulewidth{0.8pt}
+\setlength\lightrulewidth{0.4pt}  % latex default rule is 0.4 pt
+
+%% gmidrule now in lutabulartools
+
+
+
+
+
+\newcolumntype{P}[1]{>{\centering\arraybackslash}p{#1}}  % horizontally centered P column
+\newcolumntype{M}[1]{>{\centering\arraybackslash}m{#1}}  % vertically/horizontally centered column (might not need(
+\newcolumntype{Y}{>{\centering\arraybackslash}X} % centered tabular X 
+
+\newcolumntype{Z}{>{\raggedright\arraybackslash}X}  % ragged right , todo is this needed?
+
+
+\sisetup{range-phrase=--,
+	table-number-alignment=center,
+	table-text-alignment=center,
+	table-align-text-post=false,
+	table-align-text-pre=false,
+}
+% https://tex.stackexchange.com/questions/469345/newcolumntype-with-optional-argument  todo consider this, but not working
+
+\newcolumntype{N}[1]{S[table-format=#1,table-alignment=center]}  % centered SI column,  N == number
+\newcolumntype{L}[1]{S[table-format=#1,table-alignment=left]}    % left SI column
+\newcolumntype{R}[1]{S[table-format=#1,table-alignment=right]}   % right SI column
+% S unit tables http://tug.ctan.org/macros/latex/exptl/siunitx/siunitx.pdf
+%%%
+
+\newcolumntype{~}{@{\hspace{\tabcolsep}}}
+
+% table note stuff
+\newlength{\TabNoteSpace}
+\newlength{\LongTabNoteSpace}
+\setlength\TabNoteSpace{-1.3ex}
+\setlength\LongTabNoteSpace{-5.5ex}
+
+
+\newcommand{\LongTableNotes}[2][\linewidth]{% todo might wanna fix this so it's more automatic
+    \vspace{\LongTabNoteSpace}% manually tested
+    \parbox{#1}{\footnotesize #2}}
+
+
+%%%%% todo should I move this into unirefs?  maybe make a lua version
+\newcommand{\tfnote}[1]{\leavevmode\llap{#1.\enspace}} % use tnote{a} in the table, and \tfnote{a}Note here in the foot notes
+\newcommand{\tnote}[1]{\textsuperscript{#1}} % use tnote{a} in the table, and \tfnote{a}Note here in the foot notes
+
+\newcommand{\atfnote}[1]{\tfnote{\uref{#1}}} % automatic table footnote
+\newcommand{\atnote}[1]{\tnote{\uref{#1}}} % automatic table footnote

@@ -1,0 +1,68 @@
+% ##############################################
+% If Draft
+% ##############################################
+
+%%% Draft toggles
+%\DarkModePDF
+%\DraftMark
+%\LowQuality
+%\ShowBadBoxes
+%\ShowRuler
+%\NoFigures
+%\NoPDFs
+
+
+\newcommand{\DraftMark}{\usepackage{background}
+	\backgroundsetup{%
+		scale=14,       %% change accordingly
+		angle=45,       %% change accordingly
+		opacity=.5,    %% change accordingly
+		color =lightgray,  %% change accordingly
+		contents={\texttt{DRAFT}}
+}}
+
+\newcommand{\PreLimMark}{\usepackage{background}
+	\backgroundsetup{%
+		scale=8,       %% change accordingly
+		angle=45,       %% change accordingly
+		opacity=.5,    %% change accordingly
+		color =lightgray,  %% change accordingly
+		contents={\texttt{PRELIMINARY}}
+}}
+
+
+\newcommand{\DarkModePDF}{%
+	\pagecolor[rgb]{0.192,0.2,0.208}
+	\color[rgb]{0.98,0.98,0.93}
+	\colorlet{secCol}{white}
+	\colorlet{subsecCol}{white}
+	\colorlet{subsubsecCol}{white}
+
+}
+
+
+\newcommand{\LowQuality}{
+	\pdfcompresslevel=0
+	\pdfobjcompresslevel=0
+}
+
+\newcommand{\ShowBadBoxes}{\KOMAoptions{draft=true}}
+
+\newcommand{\NoFigures}{\setkeys{Gin}{draft}}
+
+\newcommand{\NoPDFs}{\renewcommand{\includepdf}[2][]{}% replace includepdf with do nothing
+}
+
+\newcommand*\showlayer[2][black]{%
+	\IfLayerAtPageStyle{scrheadings}{#2}{%
+		\DeclareNewLayer[clone=#2,contents=\textcolor{#1}{\layercontentsmeasure}]{#2.size}%
+		\AddLayersToPageStyleAfterLayer{scrheadings}{#2.size}{#2}%
+	}{}%
+}
+\newcommand{\ShowRuler}{
+	\showlayer[red!30]{scrheadings.head.below.line}
+	\showlayer[red!30]{scrheadings.foot.above.line}%
+}
+
+
+

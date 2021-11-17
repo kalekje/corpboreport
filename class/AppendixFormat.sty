@@ -1,0 +1,51 @@
+% ##############################################
+% Appendix Formatting
+% ##############################################
+
+%%% DEPENDENCIES
+% KOMA-script class
+% ToC.sty (for ToC skip)
+
+\providecommand*\appendixname{Appendix}
+\let\originalappendix\appendix
+
+\renewcommand\appendix{%
+	\originalappendix
+	% NOTE you cannot use the alphabetized subsections anymore
+	%
+	\def\thesubsection{\Alph{section}.\arabic{subsection}}  % restore subsection behaviour (I change it with macro seclettering)
+	\def\theHsubsection{\Alph{section}.\arabic{subsection}}
+	\def\thesubsubsection{\Alph{section}.\arabic{subsection}.\arabic{subsubsection}}
+	\def\theHsubsubsection{\Alph{section}.\arabic{subsection}.\arabic{subsubsection}}
+	%
+	\crefalias{section}{appsec}
+	%
+	\renewcommand\sectionformat{\appendixname~\thesection\autodot}
+	\renewcommand\sectionlinesformat[4]{%
+		\ifstr{##1}{section}
+		{\clearpage\vspace*{\sectprespacelength}##3\\*##4}% appendix sections on new page
+		{\makebox[0pt][r]{\smaller##3}{##4}}% subsections etc.
+	}%
+	\renewcommand\addsectiontocentry[2]{%
+		\addtocentrydefault{appendixsection}{##1}{##2}%
+	}%
+}
+
+
+\DeclareTOCStyleEntry[
+level=\sectiontocdepth,
+indent=0pt,
+numwidth=2ex,  % does not matter
+dynnumwidth,
+numsep=1.4ex, % uses numsep, but regular entries use numwidth.. might need to adjust
+entrynumberformat=\entrywithprefix{\appendixname},
+entryformat=\large\bfseries,
+beforeskip=\tocsecskip,
+]{section}{appendixsection}
+
+\newcommand\entrywithprefix[2]{#1~#2}
+
+
+
+% for lettering, could be used for assignment template, type this \def\thesubsection{\arabic{section} (\alph{subsection})}
+

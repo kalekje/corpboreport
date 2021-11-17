@@ -1,0 +1,194 @@
+% ##############################################
+% Floats and Captions   (plus pbox and and adjustbox)
+% ##############################################
+
+\newlength{\floatindentlength}
+\setlength{\floatindentlength}{10ex}
+\newcommand{\FloatIndent}{\hspace*{\floatindentlength}}
+
+%%% DEPENDENCIES
+% KOMA-Script class
+\usepackage{xparse}
+\usepackage{afterpage}
+%%%
+
+\usepackage{graphicx}
+\graphicspath{{images/}}  % might want to use this and subfiles
+\usepackage{graphbox}  %% allows smash command for easier graphics placement
+
+\usepackage[%
+skip=3pt,%
+labelfont={bf},%
+justification=raggedright,
+%	singlelinecheck=on,%
+singlelinecheck=false,  % switch these to change centering
+format=hang,%
+figureposition=bottom,  % warning says does nothing with KOMA class
+tableposition=top%         but
+]{caption} %
+
+
+\usepackage{floatrow}% http://tug.ctan.org/tex-archive/macros/latex/contrib/floatrow/floatrow.pdf  (dont use float pack)
+% patch below to not affect color after footnote
+
+\renewcommand\FB@putfoots{%
+  \ifvoid\flrow@foot\else\FR@ifFOOT
+    {\vskip\floatfootskip\color@begingroup\normalcolor
+    \unvbox\flrow@foot\@@par\color@endgroup}\relax
+  \fi}
+
+
+\usepackage{subcaption} % http://mirrors.ibiblio.org/CTAN/macros/latex/contrib/caption/subcaption.pdf
+
+% todo work on a left indent style of figure, wide and narrow.
+%\DeclareCaptionLabelFormat{capfmt}{\llap{\makebox[10ex][l]{#1\enspace#2}}}  % same width as indent, but pushed to the left
+%\captionsetup{labelformat=capfmt,labelsep=none}
+% todo
+\DeclareCaptionLabelFormat{capfmt}{\llap{#1 #2:\ }}
+\DeclareCaptionLabelFormat{default}{#1 #2}
+\captionsetup{labelformat=capfmt}
+\newcommand{\WideFloatCaption}{\captionsetup{labelformat=default}}
+
+
+
+
+%raggedright
+%RaggedRight
+
+% todo decide if you wanna go small for table... this is a big consideration % todo if small, must change your margin indent
+\floatsetup[table]{captionskip=3pt, capposition=top} %	 http://tug.ctan.org/tex-archive/macros/latex/contrib/floatrow/floatrow.pdf
+%\floatsetup[table]{captionskip=3pt, capposition=top, font=small} %	 http://tug.ctan.org/tex-archive/macros/latex/contrib/floatrow/floatrow.pdf
+\floatsetup[figure]{captionskip=5pt}  % use small font for tables (note that tabular note affected)
+% todo
+% two types of floats, narrow ad wide
+% if narrow, align caption label with left margin,
+% if float is too wide, it can pass under the label
+% maybe some hfil witchcraft?
+% I dont like centering, it breaks the flow
+% kind of need two
+\DeclareMarginSet{indented}{\setfloatmargins{\FloatIndent}{\hfil}} % pg 60 http://ctan.mirror.rafal.ca/macros/latex/contrib/floatrow/floatrow.pdf
+
+\floatsetup{justification=raggedright,objectset=raggedright,margins=indented}
+%\floatsetup{margins=raggedright}
+% todo
+\captionsetup[sub]{skip=8pt, aboveskip=5pt, font=small, labelfont={small,bf}, position=top}  % formats \subcaptionbox
+\setlength{\intextsep}{17pt}  % distance between floats on the top or the bottom and the text, baseline skip plus some
+\setlength{\floatsep}{24pt plus 2.0pt minus 2.0pt} % distance between two floats; add rubber here
+\setlength{\textfloatsep}{24pt plus 2.0pt minus 2.0pt} % distance between floats inserted inside the page text (using h) and the text proper, add rubber here
+
+
+
+% create an empty box that's the same size as of an image
+% useful for subfloats when you have an odd sized image and want to align
+\newlength{\imagewidth}% variable
+\newlength{\imageheight}%
+\NewDocumentCommand{\BoxSameSizeImg}{O{t} O{t} m m}{%
+	\settowidth{\imagewidth}{\includegraphics{#3}}% gets the width
+	\settoheight{\imageheight}{\includegraphics{#3}}%
+	\begin{minipage}[#1][\imageheight{}][#2]{\imagewidth{}}% create a mini page
+		#4%
+	\end{minipage}%
+}
+
+% maximum width, for graphics, or example, graphic that wont exceed margin: [width=\maxwidth{\linewidth}]
+
+\def\maxwidth#1{\ifdim\Gin@nat@width>#1 #1\else\Gin@nat@width\fi}
+
+
+
+
+\NewDocumentCommand{\RotPDF}{t+ s}{\IfBooleanT{#1}{\pagebreak}%
+        \IfBooleanTF{#2}{\global\pdfpageattr\expandafter{\the\pdfpageattr/Rotate 0}}%
+                        {\global\pdfpageattr\expandafter{\the\pdfpageattr/Rotate 90}}%
+} %%% + will add a page break before, * will restore it back to normal
+
+
+
+\newcommand{\RotFloatPage}[1]{% if a float takes up the whole page, just insert the float after the page, rotate, then restore
+	\afterpage{\RotPDF#1
+	\RotPDF+*}
+}
+\newcommand{\FloatNextPage}[1]{% if a float takes up the whole page
+	\afterpage{#1}
+}
+
+
+
+
+
+% Numbering for figures/tables as per section
+%\numberwithin{figure}{section}  % fig 4.1, 4.2, etc.
+%\numberwithin{table}{section}
+
+
+
+
+%     1      2         3           4         5            6            7         8
+%  *wide,  +just cap  [pos]  <pre-amble>  {content}  {caption} [short caption] {label}
+\NewDocumentCommand{\InsertFigure}{s t+ O{htbp} D<>{} m +m O{#6} m}{%
+	\IfBooleanT{#1}{\floatsetup{margins=raggedright}}% if star after command
+	\begin{figure}[#3]%
+		\IfBooleanT{#2}{\captionsetup{justification=justified}}%
+		#4% preamble
+		\IfBooleanTF{#1}% if star after command
+			{\captionsetup{labelformat=default}\caption[#7]{#6}#8}% pushes the label left aligned
+			{\ffigbox[\FBwidth]{\caption[#7]{#6}#8}}%%% use hanging label, make a box around graphic
+		{#5}%  includegraphics here
+	\end{figure}%
+	\floatsetup{margins=indented}%
+}%
+
+
+
+%     1      2         3           4         5            6            7      8
+%  *wide   +justified  [pos]  <pre-amble>  {content}  {caption} [short caption] {label}   [footnotes]
+%
+%    todo: should clean up the code and captionset
+%
+\NewDocumentCommand{\InsertTable}{ s t+ O{htbp} D<>{} m +m O{#6} m o }{%
+	\begin{table}[#3]% htbp! settings
+		#4% pre-amble
+		\IfBooleanT{#2}{\captionsetup{justification=justified}}%
+		\IfBooleanTF{#1}{% if star use the wide format
+		 	\captionsetup{labelformat=default,margin={0pt,-1\floatindentlength}}\floatsetup{margins=raggedright}%
+			\RawCaption{\caption[#7]{#6}#8}% caption outside ttbabbox, and freed from float width
+			\captionsetup{labelformat=default,margin=0pt}% restore margin
+			\ttabbox{}{#5\IfValueT{#9}{\vspace{\TabNoteSpace}\floatfoot*{#9}}}% if no star then use hanging
+		}{% if not, use the hanging style
+			\ttabbox{\caption[#7]{#6}#8}{#5\IfValueT{#9}{\vspace{\TabNoteSpace}\floatfoot*{#9}}}% if no star then use hanging
+		}%
+	\end{table}%
+}
+
+
+
+
+%
+%\NewDocumentCommand{\InsertTable}{ s O{htbp} D<>{} m m O{#5} m O{} }{%
+%	\begin{table}[#2]% htbp! settings
+%		#3% pre-amble
+%		\IfBooleanTF{#1}{% if star use the wide format
+%		 	\floatsetup{margins=raggedright}\captionsetup{labelformat=default,margin={0pt,-10ex}}%
+%			\RawCaption{\caption[#6]{#5}}#7% caption outside ttbabbox, and freed from float width
+%			\ttabbox{}{#4\DoIfnotEmpty{#8}{\vspace{\TabNoteSpace}{\floatfoot*{#8}\hspace{10ex}}}}% if no star then use hanging
+%		}{% if not, use the hanging style
+%			\ttabbox{\caption[#6]{#5}#7}{#4\DoIfnotEmpty{#8}{\vspace{\TabNoteSpace}\floatfoot*{#8}}}% if no star then use hanging
+%		}%
+%	\end{table}%
+%}
+
+
+
+%%     1      2         3           4         5            6            7
+%%  *wide,  [pos]  <pre-amble>  {content}  {caption} [short caption] {label}
+%\NewDocumentCommand{\InsertFigure}{s O{htbp} D<>{} m m O{#5} m}{%
+%	\begin{figure}[#2]%
+%		#3% preamble
+%		\IfBooleanTF{#1}% if star after command
+%			{\captionsetup{labelformat=default}\floatsetup{margins=raggedright}}% pushes the label left aligned
+%			{\ffigbox[\FBwidth]}%%% use hanging label, make a box around graphic
+%		{\caption[#6]{#5}#7}%
+%		{#4}%  includegraphics here
+%	\end{figure}%
+%}%
+

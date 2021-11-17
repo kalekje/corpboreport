@@ -1,0 +1,30 @@
+% ##############################################
+% Math related packages and settings
+% ##############################################
+
+% rename to MathSciSymbols
+
+\usepackage{amssymb,amsmath,amsfonts,gensymb}  % math fonts and symbols
+\usepackage{xfrac}
+
+\usepackage[free-standing-units,
+	unit-optional-argument,
+	detect-all=true, % allows italic/bold units
+	space-before-unit=true,
+	inter-unit-product=\,,
+	use-xspace=true]{siunitx}  % \SI \num used for physical units and S column in tables
+
+\sisetup{range-phrase=--,
+	table-number-alignment=center,
+	table-text-alignment=center,
+	table-align-text-post=false,
+	table-align-text-pre=false,
+}
+% http://ctan.mirror.rafal.ca/macros/latex/contrib/siunitx/siunitx.pdf
+
+
+%\def\sbfCMB#1{\ThisStyle{\setbox0=\hbox{$\SavedStyle#1$}%
+%		#1\kern.2pt\kern-\wd0%
+%		\raisebox{.1pt}{$\SavedStyle#1$}}}
+\newcommand{\sbfCMB}[1]{\textbf{\textit{#1}}}
+
