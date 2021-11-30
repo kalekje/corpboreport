@@ -2002,7 +2002,7 @@ fleqn,
     \pagebreak
     \thispagestyle{empty}
     \null\vfill
-    {\noindent\large\hfill This Page Intentionally Left Blank\hfill\vspace{5cm}}
+    {\noindent\large\hfill This\ Page\ Intentionally\ Left\ Blank\hfill\vspace{5cm}}
     \null\vfill
     \pagebreak
     }
@@ -2011,7 +2011,7 @@ fleqn,
     %%% End of document
     \NewDocumentCommand{\PrintEndOfDocument}{ s }{%
     \IfBooleanTF{#1}{\vspace*{2.5cm}}{\pagebreak\null\vfill}
-    {\noindent\large\hfill End of Document\hfill\vspace{5cm}}
+    {\noindent\large\hfill End\ of\ Document\hfill\vspace{5cm}}
     \IfBooleanF{#1}{\null\vfill}
     }
     
