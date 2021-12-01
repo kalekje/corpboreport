@@ -133,30 +133,37 @@ fleqn,
 %! language = yaml
 \begin{declareYAMLvars}
 title:
+  xfm: lb2nl
   prc: setdocvar
 
 subtitle:
+  xfm: lb2nl
   prc: setdocvar
 
 author:
+  xfm: lb2nl
   prc: setdocvar
 
 date:
+  xfm: lb2nl
   prc: setdocvar
 
 subject:
+  xfm: lb2nl
   prc: setdocvar
 
 fileno:
+  xfm: lb2nl
   prc: setdocvar
 
-date:
-  prc: setdocvar
+
 
 attachments:
+  xfm: lb2nl
   prc: setdocvar
 
 memoHeader:
+  xfm: lb2nl
   prc: setdocvar
 
 memoFr:
