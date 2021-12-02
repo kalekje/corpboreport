@@ -1837,7 +1837,7 @@ fleqn,
 
 %%%%%%%%%%%%macros/AutoPuncLists.sty%%%%%%%%
     \NewDocumentCommand{\AutoPuncItems}{ O{;} O{; and} O{.} m }{
-        \luaexec{AutoPuncItems(
+        \luadirect{AutoPuncItems(
             \luastringN{#4xxxENDxxx},
             \luastringN{#1},
             \luastringN{#2},

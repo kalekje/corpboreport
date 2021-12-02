@@ -25,13 +25,14 @@ with open(newfile, 'w') as mergedFile:
             else:
                 mergedFile.write(line)
 
-os.chmod(newfile, S_IREAD|S_IRGRP|S_IROTH)
 
-copyfile = newfile.replace('.cls', '-copy.cls')  # todo put MH location here
-if os.path.exists(copyfile):
-    os.chmod(copyfile, S_IWUSR | S_IREAD)  # This makes the file read/write for the owner
-    shutil.copyfile(newfile, copyfile)
-    os.chmod(copyfile, S_IREAD | S_IRGRP | S_IROTH)
-
-
-
+if False: # exampleon how to copy something
+    os.chmod(newfile, S_IREAD|S_IRGRP|S_IROTH)
+    copyfile = newfile.replace('.cls', '-copy.cls')  # todo put MH location here
+    if os.path.exists(copyfile):
+        os.chmod(copyfile, S_IWUSR | S_IREAD)  # This makes the file read/write for the owner
+        shutil.copyfile(newfile, copyfile)
+        os.chmod(copyfile, S_IREAD | S_IRGRP | S_IROTH)
+    
+    
+    
