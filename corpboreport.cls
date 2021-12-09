@@ -1836,18 +1836,21 @@ fleqn,
 \ifluatex
 
 %%%%%%%%%%%%macros/AutoPuncLists.sty%%%%%%%%
-    \NewDocumentCommand{\AutoPuncItems}{ O{;} O{; and} O{.} m }{
-        \luadirect{AutoPuncItems(
-            \luastringN{#4xxxENDxxx},
-            \luastringN{#1},
-            \luastringN{#2},
-            \luastringN{#3}
-        )}
-    }
     
+    %\RequirePackage{luacode}
+    %\RequirePackage{enumitem}
+    %\RequirePackage{FP??}
+    %\RequirePackage{etoolbox}
+    
+    %! language = Lua
     \begin{luacode*}
     function AutoPuncItems(s, btwn, seclast, last) -- add btwn and sec and last options
-        local it = '\\item'
+        --texio.write_nl('VVVVV \n'..s) -- troubleshooting
+        s, ficount = string.gsub(s, "\\fi ", "") -- for some reason this is injected by enumitem
+        if ficount > 0 then
+            tex.print('\\toggletrue{autopunc} ')
+        end
+        local it = '\\item '
         local s_item = '%s*'..it
         btwn = btwn or ';'
         btwn = btwn..' '..it
@@ -1855,19 +1858,42 @@ fleqn,
         seclast = seclast..' '..it
         last = last or '.'
         local _, n_matches = string.gsub(s, s_item, "") -- find num items
-        s, _ = string.gsub(s, s_item,    seclast,   n_matches) -- replace all items with second last type
-        s, _ = string.gsub(s, seclast,   btwn,      n_matches-1) --replace all but last(ie second last) with the between
+        s, _ = string.gsub(s, s_item,    seclast,   n_matches) -- replace all 'item' with second last type
+        s, _ = string.gsub(s, seclast,   btwn,      n_matches-1) -- replace all 'item' EXCEPT the last with the between
+                                                                 -- (all but second lines affected)
         s, _ = string.gsub(s, '%s*xxxENDxxx', last) -- add the final char
-        s = string.sub(s, #btwn-#it+1, #s)
+        s = string.sub(s, #btwn-#it+1, #s)   -- remove added stuff on very first item
         tex.print(s)
     end
-    
-    --function remove_tex_comments(s)
-            --return string.gsub(s, '%.*\n', '')
-            --return string.gsub(s, '%%(.*\r)', '')
-            --s, _ = remove_tex_comments(s)
-        --end
     \end{luacode*}
+    
+    
+    \def\APbetweenDef{;}
+    \def\APsecondDef{;\ and}
+    \def\APlastDef{.}
+    
+    \NewDocumentCommand{\AutoPuncItems}{ O{\APbetweenDef} O{\APsecondDef} O{\APlastDef} m }{
+        \luadirect{AutoPuncItems(
+            \luastringN{#4xxxENDxxx},
+            \luastringN{#1},
+            \luastringN{#2},
+            \luastringN{#3}
+        )}
+    }
+    \NewDocumentEnvironment{AutoPuncList}{  O{\APbetweenDef} O{\APsecondDef} O{\APlastDef} +b }{
+       \AutoPuncItems[#1][#2][#3]{#4}
+    }{}
+    
+    \usepackage{etoolbox}
+    \newtoggle{autopunc}
+    \SetEnumitemKey{autopunc}{
+        before*=\toggletrue{autopunc},
+        first*=\AutoPuncList,
+        after=\endAutoPuncList,
+    }
+    \AtEndEnvironment{itemize}{\iftoggle{autopunc}{\fi}{}\togglefalse{autopunc}}
+    \AtEndEnvironment{enumerate}{\iftoggle{autopunc}{\fi}{}\togglefalse{autopunc}}
+    
     
     
     
@@ -1894,6 +1920,37 @@ fleqn,
     \foreach \n in {#2}{%
         #1\n#3%
     }}
+    
+    
+    
+    
+    
+    %%% do I need to improve regex in autpunc??
+    
+    
+    
+    %
+    %function AutoPuncItems(s, btwn, seclast, last) -- add btwn and sec and last options
+    %    --texio.write_nl('VVVVV \n'..s) -- troubleshooting
+    %    s, ficount = string.gsub(s, "\\fi ", "") -- for some reason this is injected by enumitem
+    %    if ficount > 0 then
+    %        tex.print('\\toggletrue{autopunc} ')
+    %    end
+    %    local it = '\\item '
+    %    local s_item = '%s*'..it
+    %    btwn = btwn or ';'
+    %    btwn = btwn..' '..it
+    %    seclast = seclast or '; and'
+    %    seclast = seclast..' '..it
+    %    last = last or '.'
+    %    local _, n_matches = string.gsub(s, s_item, "") -- find num items
+    %    s, _ = string.gsub(s, s_item,    seclast,   n_matches) -- replace all 'item' with second last type
+    %    s, _ = string.gsub(s, seclast,   btwn,      n_matches-1) -- replace all 'item' EXCEPT the last with the between
+    %                                                             -- (all but second lines affected)
+    %    s, _ = string.gsub(s, '%s*xxxENDxxx', last) -- add the final char
+    %    s = string.sub(s, #btwn-#it+1, #s)   -- remove added stuff on very first item
+    %    tex.print(s)
+    %end
 
     \usepackage[pl,extras]{penlight}
     \usepackage{YAMLvars}

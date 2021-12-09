@@ -1,5 +1,60 @@
+% Kale Ewasiuk (kalekje@gmail.com)
+% +REVDATE+
+% Copyright (C) 2021 Kale Ewasiuk
+%
+% Permission is hereby granted, free of charge, to any person obtaining a copy
+% of this software and associated documentation files (the "Software"), to deal
+% in the Software without restriction, including without limitation the rights
+% to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+% copies of the Software, and to permit persons to whom the Software is
+% furnished to do so, subject to the following conditions:
+%
+% The above copyright notice and this permission notice shall be included in
+% all copies or substantial portions of the Software.
+%
+% THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF
+% ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED
+% TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
+% PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT
+% SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR
+% ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
+% ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+% OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE
+% OR OTHER DEALINGS IN THE SOFTWARE.
 
 \documentclass{corpboreport}
+
+
+\setlength{\parindent}{0ex}
+\newcommand{\llcmd}[1]{\leavevmode\llap{\texttt{\detokenize{#1}\ }}}
+\newcommand{\cmd}[1]{\texttt{\detokenize{#1}}}
+\newcommand{\qcmd}[1]{``\cmd{#1}''}
+\RequirePackage{url}
+\RequirePackage{showexpl}
+\lstset{explpreset={justification=\raggedright,pos=r,wide=true}}
+\setlength\ResultBoxRule{0mm}
+\lstset{
+	language=[LaTeX]TeX,
+	basicstyle=\ttfamily\small,
+	commentstyle=\ttfamily\small\color{gray},
+	frame=none,
+	numbers=left,
+	numberstyle=\ttfamily\small\color{gray},
+	prebreak=\raisebox{0ex}[0ex][0ex]{\color{gray}\ensuremath{\hookleftarrow}},
+	extendedchars=true,
+	breaklines=true,
+	tabsize=4,
+}
+\addtokomafont{title}{\raggedright}
+\addtokomafont{author}{\raggedright}
+\addtokomafont{date}{\raggedright}
+\author{Kale Ewasiuk (\url{kalekje@gmail.com})}
+\RequirePackage[yyyymmdd]{datetime}\renewcommand{\dateseparator}{--}
+\date{\today}
+
+
+
+
 \title{a template for a rather \\[0.2ex]
 corp{\smaller\smaller\normalfont orate} \\
 bore{\smaller\smaller\normalfont ing} \\
@@ -21,6 +76,11 @@ bore{\smaller\smaller\normalfont ing} \\
 \usepackage{showexpl}
 \setlength\ResultBoxRule{0mm}
 \edef\LTXset{justification=\raggedright,pos=r,width=0.3\linewidth}
+
+
+\newcommand{\llcmdlink}[2]{\href{#2}{\hspace{-15ex}}\hspace{15ex}\llcmd{#1}}%
+
+
 
 \begin{document}
 
@@ -202,6 +262,14 @@ Lists	\begin{itemize/enumerate}[moresep] will give more room between items
 	[twocol] will put them over two columns
 \end{lstlisting}
 
+	Added an autoamtically punctuate list. This is particularly useful if you have a large list and aren't entirely sure of the order
+
+\begin{itemize}[autopunc]
+	\item one
+	\item two
+	\item three
+	\item four
+\end{itemize}
 
 \section{Hacks}
 
@@ -233,6 +301,9 @@ Horizontal spacing	%https://tex.stackexchange.com/questions/74353/what-commands-
 
 \IntentionallyBlankPage
 
+\section{packages}
+
+\llcmdlink{makecell}{http://mirrors.ctan.org/macros/latex/contrib/makecell/makecell.pdf}Used by
 
 \section{Typography}
 
