@@ -466,6 +466,14 @@ fleqn,
     
     %%% EXTRA SPACE BEFORE SECTION AND START ON NEW PAGE
     
+    \RequirePackage{needspace}
+    \newlength{\secneedspace}
+    \setlength{\secneedspace}{15\baselineskip}
+    \newlength{\subsecneedspace}
+    \setlength{\subsecneedspace}{8\baselineskip}
+    \newlength{\subsubsecneedspace}
+    \setlength{\subsubsecneedspace}{5\baselineskip}
+    
     \RequirePackage{etoolbox}
     
     \providetoggle{SecOnNewPage} %% only need one toggle
@@ -624,19 +632,31 @@ fleqn,
     \addtokomafont{subsubsection}{\color{subsubsecCol}}
     
     
-    
+    \newcounter{sectionletter}%
+    \newcommand{\resetsectionletter}{\setcounter{sectionletter}{0}}
     \let\oldsection\section
-    \RenewDocumentCommand{\section}{ s t! o m }{% add ! option for paragraph to allow section on the same page instead of new (can reverse this behavior as shown above)
-    %    \IfBooleanTF{#2}{\let\SecOnNewPage\SecOnNewPageDefaultAnti }{\let\SecOnNewPage\SecOnNewPageDefault }
-        \IfBooleanT{#2}{\invtoggle{SecOnNewPage}}
+    
+    \RenewDocumentCommand{\section}{ s t+ t! o m }{%
+        %   * (no number, no ToC),  + (add sec letter) ! (on new page)
+        \IfBooleanT{#3}{\invtoggle{SecOnNewPage}}%
+        \IfBooleanTF{#2}{%
+            	\ifnum\value{sectionletter}>0% if we're into section lettering already
+            	    \addtocounter{section}{-1}% decrement section so num stays the same
+            	\fi%
+            	\stepcounter{sectionletter}% increment section letter
+        }{\resetsectionletter}%
+        \Needspace{\secneedspace}%
         \expanded{%
-            \noexpand\oldsection
+            \noexpand\oldsection%
             \IfBooleanT{#1}{*}%
-            \IfValueT{#3}{\unexpanded{[#3]}}%
-            \unexpanded{{#4}}%
+            \IfValueT{#4}{\unexpanded{[#4]}}%
+            \unexpanded{{#5}}%
         }%
-        \IfBooleanT{#2}{\invtoggle{SecOnNewPage}}
+        \IfBooleanT{#3}{\invtoggle{SecOnNewPage}}%
     }
+    \def\thesection{\arabic{section}\alph{sectionletter}}
+    \def\theHsection{\arabic{section}\alph{sectionletter}} % this is for hyperref (it does nothing if not loaded)
+    
     
     \newdimen\sectprespacelength
     \sectprespacelength=-20pt  % make less negative to increase spacing on new section title (always starts new page)
@@ -647,6 +667,65 @@ fleqn,
     {}{\PatchFailed}
     
     %{\ifstr{#1}{section}{\ifdefstring{\SecOnNewPage}{yes}{\clearpage\vspace*{\sectprespacelength}}{}}{}}  % THIS IS AUTOMATICALLY CHANGED IN APPENDIX
+    
+    
+    
+    
+    
+    \newcounter{subsectionletter}%
+    \newcommand{\resetsubsectionletter}{\setcounter{subsectionletter}{0}}
+    \let\oldsubsection\subsection
+    
+    \RenewDocumentCommand{\subsection}{ s t+ t! o m }{%
+        %   * (no number, no ToC),  + (add sec letter)
+        \IfBooleanTF{#2}{%
+            	\ifnum\value{subsectionletter}>0% if we're into subsection lettering already
+            	    \addtocounter{subsection}{-1}% decrement subsection so num stays the same
+            	\fi%
+            	\stepcounter{subsectionletter}% increment subsection letter
+        }{\resetsubsectionletter}%
+        \Needspace{\subsecneedspace}%
+        \expanded{%
+            \noexpand\oldsubsection%
+            \IfBooleanT{#1}{*}%
+            \IfValueT{#4}{\unexpanded{[#4]}}%
+            \unexpanded{{#5}}%
+        }%
+    }
+    \def\thesubsection{\arabic{section}\alph{sectionletter}.\arabic{subsection}\alph{subsectionletter}}
+    \def\theHsubsection{\arabic{section}\alph{sectionletter}.\arabic{subsection}\alph{subsectionletter}}
+    
+    
+    
+    
+    
+    
+    \newcounter{subsubsectionletter}%
+    \newcommand{\resetsubsubsectionletter}{\setcounter{subsubsectionletter}{0}}
+    \let\oldsubsubsection\subsubsection
+    
+    \RenewDocumentCommand{\subsubsection}{ s t+ t! o m }{%
+        %   * (no number, no ToC),  + (add sec letter)
+        \IfBooleanTF{#2}{%
+            	\ifnum\value{subsubsectionletter}>0% if we're into subsubsection lettering already
+            	    \addtocounter{subsubsection}{-1}% decrement subsubsection so num stays the same
+            	\fi%
+            	\stepcounter{subsubsectionletter}% increment subsubsection letter
+        }{\resetsubsubsectionletter}%
+        \Needspace{\subsubsecneedspace}%
+        \expanded{%
+            \noexpand\oldsubsubsection%
+            \IfBooleanT{#1}{*}%
+            \IfValueT{#4}{\unexpanded{[#4]}}%
+            \unexpanded{{#5}}%
+        }%
+    }
+    \def\thesubsubsection{\arabic{section}\alph{sectionletter}.\arabic{subsection}\alph{subsectionletter}.\arabic{subsubsection}\alph{subsubsectionletter}}
+    % this is for hyperref (it does nothing if not loaded)
+    \def\theHsubsubsection{\arabic{section}\alph{sectionletter}.\arabic{subsection}\alph{subsectionletter}.\arabic{subsubsection}\alph{subsubsectionletter}}
+    
+    
+    
     
     
     \let\oldparagraph\paragraph
@@ -946,12 +1025,21 @@ fleqn,
     
     
     
-    \newcolumntype{P}[1]{>{\centering\arraybackslash}p{#1}}  % horizontally centered P column
-    \newcolumntype{M}[1]{>{\centering\arraybackslash}m{#1}}  % vertically/horizontally centered column (might not need(
-    \newcolumntype{Y}{>{\centering\arraybackslash}X} % centered tabular X 
+    %\newcolumntype{M}[1]{>{\centering\arraybackslash}m{#1}}  % vertically/horizontally centered column (might not need(
+    %\newcolumntype{P}[1]{>{\centering\arraybackslash}p{#1}}  % horizontally centered P column
     
-    \newcolumntype{Z}{>{\raggedright\arraybackslash}X}  % ragged right , todo is this needed?
     
+    \newcolumntype{M}[1]{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+    
+    % fixed column width, ragged right, allows new line
+    \newcolumntype{P}[1]{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}p{#1}}  % ragged right par new lune allowed
+    
+    \newcolumntype{Y}{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}X} % centered tabular X
+    \newcolumntype{Z}{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}X}  % ragged right instead of filled, \newline lets you break lines
+    
+    
+    
+    %\raggedright\let\newline\\\arraybackslash\hspace{0pt}
     
     \sisetup{range-phrase=--,
     	table-number-alignment=center,
@@ -1696,124 +1784,126 @@ fleqn,
 
 
 %%%%%%%%%%%%macros/secletter.sty%%%%%%%%
-    % FROM THIS WEBSITE, I ADAPATED IT TO WORK WITH SUBSECS AND SUBSUBSECS AS WELL. https://tex.stackexchange.com/questions/229068/appending-alphanumeric-character-to-chapter-numbers
+    %%%%%% NO LONGER USED, now incorporated in sections toc
     
-    %%% SECTION LETTER SUFFIX
-    
-    \newcounter{repsection}
-    \let\latex@section\section
-    \renewcommand{\section}{\@ifstar{\latex@section*}{\guuk@section}}
-    \newcommand{\guuk@section}{\@ifnextchar+{\repeat@section}{\restoresection\latex@section}}
-    
-    \newcommand{\repeat@section}[1]{    % #1 is +, see aboute @ifnextchar+\repeat...  
-    	\ifnum\value{repsection}>0
-    	\addtocounter{section}{-1}%
-    	\fi
-    	\stepcounter{repsection}%
-    	\latex@section
-    }
-    
-    \newcommand{\restoresection}{%
-    	\setcounter{repsection}{0}%
-    }
-    
-    \def\thesection{\arabic{section}\alph{repsection}}
-    
-    \def\theHsection{\arabic{section}\alph{repsection}} % this is for hyperref (it does nothing if not loaded)
-    
-    
-    
-    
-    
-    
-    
-    %%% SUB-SECTION LETTER SUFFIX
-    
-    \newcounter{repsubsection}
-    \let\latex@subsection\subsection
-    \renewcommand{\subsection}{\@ifstar{\latex@subsection*}{\guuk@subsection}}
-    \newcommand{\guuk@subsection}{\@ifnextchar+{\repeat@subsection}{\restoresubsection\latex@subsection}}
-    \newcommand{\repeat@subsection}[1]{% #1 is +
-    	\ifnum\value{repsubsection}>0
-    	\addtocounter{subsection}{-1}%
-    	\fi
-    	\stepcounter{repsubsection}%
-    	\latex@subsection
-    }
-    \newcommand{\restoresubsection}{%
-    	\setcounter{repsubsection}{0}%
-    }  
-    \def\thesubsection{\arabic{section}\alph{repsection}.\arabic{subsection}\alph{repsubsection}}
-    % this is for hyperref (it does nothing if not loaded)
-    \def\theHsubsection{\arabic{section}\alph{repsection}.\arabic{subsection}\alph{repsubsection}}
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    %%% SUB-SUB SECTION LETTER SUFFIX
-    
-    \newcounter{repsubsubsection}
-    \let\latex@subsubsection\subsubsection
-    \renewcommand{\subsubsection}{\@ifstar{\latex@subsubsection*}{\guuk@subsubsection}}
-    \newcommand{\guuk@subsubsection}{\@ifnextchar+{\repeat@subsubsection}{\restoresubsubsection\latex@subsubsection}}
-    \newcommand{\repeat@subsubsection}[1]{% #1 is +
-    	\ifnum\value{repsubsubsection}>0
-    	\addtocounter{subsubsection}{-1}%
-    	\fi
-    	\stepcounter{repsubsubsection}%
-    	\latex@subsubsection
-    }
-    \newcommand{\restoresubsubsection}{%
-    	\setcounter{repsubsubsection}{0}%
-    }
-    \def\thesubsubsection{\arabic{section}\alph{repsection}.\arabic{subsection}\alph{repsubsection}.\arabic{subsubsection}\alph{repsubsubsection}}
-    % this is for hyperref (it does nothing if not loaded)
-    \def\theHsubsubsection{\arabic{section}\alph{repsection}.\arabic{subsection}\alph{repsubsection}.\arabic{subsubsection}\alph{repsubsubsection}}
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    %%% EXAMPLE
-    
-    %\section{Steady-State Analysis}
-    %\subsection{Details}
-    %The objective is to..
-    %\subsubsection{Contingencies}
-    %These contingencies were studied..
-    %\subsubsection{Monitored}
-    %These quantities were monitored.
+    %% FROM THIS WEBSITE, I ADAPATED IT TO WORK WITH SUBSECS AND SUBSUBSECS AS WELL. https://tex.stackexchange.com/questions/229068/appending-alphanumeric-character-to-chapter-numbers
     %
-    %The options are shown in sections \ref{sec:Ass:sync} and \cref{sec:Bss:svc}
+    %%%% SECTION LETTER SUFFIX
     %
-    %\subsection+{Results for Synchronous Condensor} \label{sec:Ass:sync}
-    %Results for option A
-    %\subsection+{Results for SVC} \label{sec:Bss:svc}
-    %Results for Option B
+    %\newcounter{repsection}
+    %\let\latex@section\section
+    %\renewcommand{\section}{\@ifstar{\latex@section*}{\guuk@section}}
+    %\newcommand{\guuk@section}{\@ifnextchar+{\repeat@section}{\restoresection\latex@section}}
+    %
+    %\newcommand{\repeat@section}[1]{    % #1 is +, see aboute @ifnextchar+\repeat...
+    %	\ifnum\value{repsection}>0
+    %	\addtocounter{section}{-1}%
+    %	\fi
+    %	\stepcounter{repsection}%
+    %	\latex@section
+    %}
+    %
+    %\newcommand{\restoresection}{%
+    %	\setcounter{repsection}{0}%
+    %}
+    %
+    %\def\thesection{\arabic{section}\alph{repsection}}
+    %
+    %\def\theHsection{\arabic{section}\alph{repsection}} % this is for hyperref (it does nothing if not loaded)
     %
     %
-    %\restoresubsection
     %
-    %\section+{Dynamics Analysis for Synch. Condensor Option}
-    %\subsection{Results}
-    %\section+{Dynamics Analysis for SVC Option}
-    %\subsection{Results}
     %
-    
-    
+    %
+    %
+    %
+    %%%% SUB-SECTION LETTER SUFFIX
+    %
+    %\newcounter{repsubsection}
+    %\let\latex@subsection\subsection
+    %\renewcommand{\subsection}{\@ifstar{\latex@subsection*}{\guuk@subsection}}
+    %\newcommand{\guuk@subsection}{\@ifnextchar+{\repeat@subsection}{\restoresubsection\latex@subsection}}
+    %\newcommand{\repeat@subsection}[1]{% #1 is +
+    %	\ifnum\value{repsubsection}>0
+    %	\addtocounter{subsection}{-1}%
+    %	\fi
+    %	\stepcounter{repsubsection}%
+    %	\latex@subsection
+    %}
+    %\newcommand{\restoresubsection}{%
+    %	\setcounter{repsubsection}{0}%
+    %}
+    %\def\thesubsection{\arabic{section}\alph{repsection}.\arabic{subsection}\alph{repsubsection}}
+    %% this is for hyperref (it does nothing if not loaded)
+    %\def\theHsubsection{\arabic{section}\alph{repsection}.\arabic{subsection}\alph{repsubsection}}
+    %
+    %
+    %
+    %
+    %
+    %
+    %
+    %
+    %
+    %%%% SUB-SUB SECTION LETTER SUFFIX
+    %
+    %\newcounter{repsubsubsection}
+    %\let\latex@subsubsection\subsubsection
+    %\renewcommand{\subsubsection}{\@ifstar{\latex@subsubsection*}{\guuk@subsubsection}}
+    %\newcommand{\guuk@subsubsection}{\@ifnextchar+{\repeat@subsubsection}{\restoresubsubsection\latex@subsubsection}}
+    %\newcommand{\repeat@subsubsection}[1]{% #1 is +
+    %	\ifnum\value{repsubsubsection}>0
+    %	\addtocounter{subsubsection}{-1}%
+    %	\fi
+    %	\stepcounter{repsubsubsection}%
+    %	\latex@subsubsection
+    %}
+    %\newcommand{\restoresubsubsection}{%
+    %	\setcounter{repsubsubsection}{0}%
+    %}
+    %\def\thesubsubsection{\arabic{section}\alph{repsection}.\arabic{subsection}\alph{repsubsection}.\arabic{subsubsection}\alph{repsubsubsection}}
+    %% this is for hyperref (it does nothing if not loaded)
+    %\def\theHsubsubsection{\arabic{section}\alph{repsection}.\arabic{subsection}\alph{repsubsection}.\arabic{subsubsection}\alph{repsubsubsection}}
+    %
+    %
+    %
+    %
+    %
+    %
+    %
+    %
+    %
+    %
+    %
+    %
+    %
+    %%%% EXAMPLE
+    %
+    %%\section{Steady-State Analysis}
+    %%\subsection{Details}
+    %%The objective is to..
+    %%\subsubsection{Contingencies}
+    %%These contingencies were studied..
+    %%\subsubsection{Monitored}
+    %%These quantities were monitored.
+    %%
+    %%The options are shown in sections \ref{sec:Ass:sync} and \cref{sec:Bss:svc}
+    %%
+    %%\subsection+{Results for Synchronous Condensor} \label{sec:Ass:sync}
+    %%Results for option A
+    %%\subsection+{Results for SVC} \label{sec:Bss:svc}
+    %%Results for Option B
+    %%
+    %%
+    %%\restoresubsection
+    %%
+    %%\section+{Dynamics Analysis for Synch. Condensor Option}
+    %%\subsection{Results}
+    %%\section+{Dynamics Analysis for SVC Option}
+    %%\subsection{Results}
+    %%
+    %
+    %
 
 
 %%%%%%%%%%%%macros/marginnote.sty%%%%%%%%
@@ -1889,7 +1979,7 @@ fleqn,
     \SetEnumitemKey{autopunc}{
         before*=\toggletrue{autopunc},
         first*=\AutoPuncList,
-        after=\endAutoPuncList,
+        after*=\endAutoPuncList,
     }
     \AtEndEnvironment{itemize}{\iftoggle{autopunc}{\fi}{}\togglefalse{autopunc}}
     \AtEndEnvironment{enumerate}{\iftoggle{autopunc}{\fi}{}\togglefalse{autopunc}}
@@ -1916,9 +2006,9 @@ fleqn,
     
     % iter text, sandwhich in between  [before] {list of text}  [after]
     % mandatory argument can be {Kale,Britt,Serena}, or {1,3,...,9}
-    \NewDocumentCommand{\itertext}{O{} m O{, }}{%
+    \NewDocumentCommand{\itertext}{O{} m O{} O{,\ }}{%
     \foreach \n in {#2}{%
-        #1\n#3%
+        \mbox{#1\n#3}#4%
     }}
     
     

@@ -81,9 +81,10 @@ bore{\smaller\smaller\normalfont ing} \\
 \newcommand{\llcmdlink}[2]{\href{#2}{\hspace{-15ex}}\hspace{15ex}\llcmd{#1}}%
 
 
-
+%\setlength{\subsecneedspace}{15em}
 \begin{document}
 
+	TODO use \~ token for enlarging page with section command, probably a nice little easy thing to do
 
 	% https://tex.stackexchange.com/questions/4805/whats-the-correct-use-of-author-when-multiple-authors
 	% https://tex.stackexchange.com/questions/466095/redefine-title-for-possibility-of-a-forced-line-breaking-in-a-predefined-place
@@ -102,7 +103,18 @@ bore{\smaller\smaller\normalfont ing} \\
 
 \IntentionallyBlankPage
 
+\section{hello}
 
+	dsa\\dsa\\dsa\\dsa\\dsa\\dsa\\dsa\\dsa\\dsa\\dsa\\dsa\\dsa\\dsa\\dsa\\
+	dsa\\dsa\\dsa\\dsa\\dsa\\dsa\\dsa\\dsa\\dsa\\dsa\\dsa\\dsa\\dsa\\dsa\\
+	dsa\\dsa\\dsa\\
+	dsa\\dsa\\dsa\\
+%	dsa\\dsa\\
+%	dsa\\dsa\\
+	dsa\\
+
+	\subsection{Hello}
+		dsa\\dsa\\dsa\\dsa\\dsa\\dsa\\dsa\\dsa\\dsa\\dsa\\dsa\\dsa\\dsa\\dsa\\
 
 \section{Introduction}
 todo use /And command for authors? how to handle multiple? maybe use \{\} [] [] for multi authors?
@@ -159,12 +171,22 @@ Custom
 On any of the section/sub commands, using a + will add a letter after it.
 \end{lstlisting}
 
+The sections are redefined so that \texttt{+} will append a letter. \cmd{\reset[sub]sectionletter}
 
-todo use AtBeginDocument and AtEndDocument -- do at end for  end of memo/report
+	\subsection{test}
+	\subsection+{test}
+		\subsubsection{test}
+		\subsubsection+{test}
+	\subsection+{test}
+	\resetsubsectionletter
+	\subsection+{test}
+%
+todo use AtBeginDocument and AtEndDocument -- do at end for  end of memo/report\\
+	1\\2\\3\\4
 
 \section{Document Commands}
 THe title of this document is redined, and uses the kOMA commands
-
+\subsection{Yo}
 title
 subtitle
 author
@@ -186,6 +208,7 @@ This package offers float commands for inserting tables and figures
 {\label{t.trans}}% label goes here
 [optional]%Optional table footnotes here
 \end{lstlisting}
+
 
 
 \lstset{language=tex}
@@ -210,18 +233,30 @@ This package offers float commands for inserting tables and figures
 
 
 
-\section{Tabular commands}
+\section{Tabular matter}
 
 \subsection{References}
 
 todo add links here
-\url{booktabs}
+
+	\url{https://en.wikibooks.org/wiki/LaTeX/Tables}
+	\url{booktabs}
 \url{https://ctan.org/pkg/lutabulartools}
+
+	\begin{tabular}{l l}\toprule
+		Column & Use \\
+		N\{X.Y\} & siunitx number column (where X.Y is number format)\\
+		X,Z,Y & tabularx column, ragged right, or cenered\\
+		P\{, M & top/middle center p column\\
+		p\{, m, b & top/middle/borrom left align column\\
+%		\~ & inject default tablcolsep\\
+		\bottomrule
+		\end{tabular}
 
 \begin{lstlisting}
 		P{} hori centered p clolumn
 	lrc	p{}
-		b{}		R{X.Y}, N{X,Y}, and L{X.Y} where X.Y is siunitx number format
+		b{}		R{X.Y}, N{X,Y}, and L{X.Y}
 		m{}
 
 
@@ -231,6 +266,10 @@ todo add links here
 \gmidrule		custom light gray mid rule
 
 \end{lstlisting}
+
+	\begin{tabular}{l c}
+		hello\newline world & c \\
+	\end{tabular}
 
 Note: if using a float,
 After end{tabular}\%\\

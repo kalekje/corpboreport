@@ -41,12 +41,21 @@
 
 
 
-\newcolumntype{P}[1]{>{\centering\arraybackslash}p{#1}}  % horizontally centered P column
-\newcolumntype{M}[1]{>{\centering\arraybackslash}m{#1}}  % vertically/horizontally centered column (might not need(
-\newcolumntype{Y}{>{\centering\arraybackslash}X} % centered tabular X 
+%\newcolumntype{M}[1]{>{\centering\arraybackslash}m{#1}}  % vertically/horizontally centered column (might not need(
+%\newcolumntype{P}[1]{>{\centering\arraybackslash}p{#1}}  % horizontally centered P column
 
-\newcolumntype{Z}{>{\raggedright\arraybackslash}X}  % ragged right , todo is this needed?
 
+\newcolumntype{M}[1]{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+
+% fixed column width, ragged right, allows new line
+\newcolumntype{P}[1]{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}p{#1}}  % ragged right par new lune allowed
+
+\newcolumntype{Y}{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}X} % centered tabular X
+\newcolumntype{Z}{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}X}  % ragged right instead of filled, \newline lets you break lines
+
+
+
+%\raggedright\let\newline\\\arraybackslash\hspace{0pt}
 
 \sisetup{range-phrase=--,
 	table-number-alignment=center,
