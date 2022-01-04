@@ -11,10 +11,10 @@
 }
 
 
-%\def\FormatDir{class/}
-%\documentclass{\FormatDir corpborepresMulti}
+\def\FormatDir{class/}
+\documentclass{\FormatDir corpborepresMulti}
 
-\documentclass{corpborepres}
+%\documentclass{corpborepres}
 
 
 %%% Switches (todo make these class settings)
@@ -118,13 +118,13 @@
          \end{itemize}}
  	\begColFF
 		hello\hfill world!
-	\nextColFF
+	\nextCol
 	\begin{itemize}
             \item 1
             \item 2
             \item 3
          \end{itemize}
-	\endColFF
+	\endCol
 \end{frame}
 
 %\begin{frame}  % todo not working
@@ -143,16 +143,16 @@
 							\item this sucks
 						\end{AutoPuncItems}
 			\end{itemize}
-			\nextColFF
+			\nextCol
 				splitting a col
-			\endColFF
-	\nextColFF
+			\endCol
+	\nextCol
 			\begColFF
 				into 4
-			\nextColFF
+			\nextCol
 				fucking pieces!
-			\endColFF
-	\endColFF
+			\endCol
+	\endCol
 
 	\framebreak
 
@@ -183,12 +183,12 @@
 			\item<alert@\fpeval{\imgnumX-1}-\fpeval{\imgnumX}|\fpeval{\imgnumX-1}->  Here's the starting point:\tmrkr*[m]{p1}
 		\end{itemize}
 		*(the author is not liable for seizures due to excitement)
-	\nextColNW
+	\nextCol
 %		\drawHelpingGrid%
 		\tmrkr*(0.75,1.2){p2}\includegraphics<\imgnumX->{C:/Users/Kale/Projects/pltx/testing/dum-crop.pdf}
 %		\tmrkr(0,0){p}\includegraphics{C:/Users/Kale/Projects/pltx/testing/dum-crop.pdf}
 		\freecaption<|\imgnumX->{Hello world.}
-	\endColNW
+	\endCol
 	\tikz[OLB,nopad,visible on=<\fpeval{\imgnumX+2}->] \draw[ultra thick,pink,->] (tm-p1) to[bend left] (tm-p2);
 %	\tikz[OL] \draw[blue] (tmrkr-p2) circle (2pt);
 \end{frame}
@@ -309,12 +309,12 @@
 		new paragraph. Yadaday. Yaday a new parag.
 		\vspace*{1ex}
 
-		\nextColFF
+		\nextCol
 			\onslide<3->{
 				\includegraphics[width=\linewidth]{images/uds.pdf}
 				\freecaption{This is an image. \footnote[frame]{\url{www.google.ca}}}
 			}
-		\endColFF
+		\endCol
 
 	\end{frame}
 
@@ -371,13 +371,13 @@ def incmatrix(genl1,genl2):
 				\begin{block}{Block}
 					I am a block in a column.
 				\end{block}
-			\nextColFF
+			\nextCol
 				\begin{itemize}
 					\item In this column,
 					\item we just add the
 					\item bullet points.
 				\end{itemize}
-			\endColFF
+			\endCol
 	\end{frame}
 
 	\begin{frame}{Acknowledgements}

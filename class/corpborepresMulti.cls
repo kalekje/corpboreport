@@ -258,20 +258,17 @@
 
 %%%% some frame types, 50/50, narrow-wide, wide-narrow
 
-%% fifty-fifty
-\newcommand{\begColFF}{\vspace{2ex}\begin{columns}[t,onlytextwidth]\begin{column}[T]{0.46\textwidth}}
-\newcommand{\nextColFF}{\end{column}\hfill\begin{column}[T]{0.46\textwidth}}
-\def\endColFF{\end{column}\end{columns}}
+\def\begCol{\vspace{2ex}\begin{columns}[t,onlytextwidth]\begin{column}[T]{\cpb@firstcolwidth\textwidth}}
 
-%% narrow-wide
-\newcommand{\begColNW}{\begin{columns}[t,onlytextwidth]\begin{column}[T]{0.31\textwidth}}
-\newcommand{\nextColNW}{\end{column}\hfill\begin{column}[T]{0.61\textwidth}}
-\def\endColNW{\end{column}\end{columns}}
+\newcommand{\begColFF}{\gdef\cpb@firstcolwidth{0.46}\begCol} %% fifty-fifty % todo consider adding args ??
+\newcommand{\begColNW}{\gdef\cpb@firstcolwidth{0.31}\begCol} %% narrow-wide
+\newcommand{\begColWN}{\gdef\cpb@firstcolwidth{0.61}\begCol} %% wide-narrow
 
-%% wide-narrow
-\newcommand{\begColWN}{\begin{columns}[t,onlytextwidth]\begin{column}[T]{0.61\textwidth}}
-\newcommand{\nextColWN}{\end{column}\hfill\begin{column}[T]{0.31\textwidth}}
-\def\endColWN{\end{column}\end{columns}}
+\def\cpb@calcnextcolwidth{\fpeval{1-0.08-\cpb@firstcolwidth}}
+
+\newcommand{\nextCol}{\end{column}\hfill\begin{column}[T]{\cpb@calcnextcolwidth\textwidth}}
+\def\endCol{\end{column}\end{columns}}
+
 
 \usepackage{multicol}
 \newcommand{\twoCol}[1]{%
@@ -281,3 +278,16 @@
 }
 \setlength{\columnsep}{0.08\textwidth}  % for two column, good for long lists, but use begCol otherwise
 
+
+%%% todo delete me
+%\newcommand{\begColFF}{\vspace{2ex}\begin{columns}[t,onlytextwidth]\begin{column}[T]{0.46\textwidth}}
+%\newcommand{\nextColFF}{\end{column}\hfill\begin{column}[T]{0.46\textwidth}}
+%\def\endColFF{\end{column}\end{columns}}
+%% narrow-wide
+%\newcommand{\begColNW}{\begin{columns}[t,onlytextwidth]\begin{column}[T]{0.31\textwidth}}
+%\newcommand{\nextColNW}{\end{column}\hfill\begin{column}[T]{0.61\textwidth}}
+%\def\endColNW{\end{column}\end{columns}}
+%% wide-narrow
+%\newcommand{\begColWN}{\begin{columns}[t,onlytextwidth]\begin{column}[T]{0.61\textwidth}}
+%\newcommand{\nextColWN}{\end{column}\hfill\begin{column}[T]{0.31\textwidth}}
+%\def\endColWN{\end{column}\end{columns}}
