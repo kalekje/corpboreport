@@ -80,7 +80,7 @@ fleqn,
 %
 % ####################################################################################
 
-%%%%%%%%%%%%GeometryCustom.sty%%%%%%%%
+%%%%%%%%%%%%  GeometryCustom.sty  %%%%%%%%%%%%
     % ##############################################
     % Geometry
     % ##############################################
@@ -120,7 +120,7 @@ fleqn,
     %%% I take the footer in the margin so that I can lengthen a page to squeeze in material where needed
     %%%
 
-%%%%%%%%%%%%Utilities.sty%%%%%%%%
+%%%%%%%%%%%%  Utilities.sty  %%%%%%%%%%%%
     % ##############################################
     % Utilities (tools to help with scripting, automating etc.)
     % ##############################################
@@ -143,13 +143,7 @@ fleqn,
     \usepackage{grffile}  % removes the pdf file name for includegraphics with a pdf file type
     \usepackage{afterpage} % can add code after page done, helps with pdflscape with inserting a page randomly,
     
-    %% Boxes and stuff
-    \usepackage[usestackEOL]{stackengine}  % used for title page and stacking things
-    \usepackage{setspace}  % enable onehalfspacing instyling
-    
-    \usepackage{pbox}  % create box of max width http://ctan.mirror.colo-serv.net/macros/latex/contrib/pbox/pbox.pdf
     \usepackage[export]{adjustbox} % provide additional commands for graphicsx allows us to adjust graphics,  http://mirrors.ibiblio.org/CTAN/macros/latex/contrib/adjustbox/adjustbox.pdf
-    \usepackage{relsize}  % relative sizing
     
     \newtoggle{csdefined}
     
@@ -174,7 +168,7 @@ fleqn,
     
     \let\strcmp\pdf@strcmp
     
-    \NewDocumentCommand{\ifstringeqx}{m m m O{}}{%
+    \NewDocumentCommand{\ifstringeqx}{m m m O{}}{% if string equal fully expanded
         \ifnum\strcmp{#1}{#2}=0 #3\else#4\fi%
     }
     
@@ -198,18 +192,22 @@ fleqn,
     \newcommand\ExpArgOnceProc[1]
       {\edef\ProcessedArgument{\unexpanded\expandafter{#1}}}
     
-    
-    \NewDocumentCommand{\providelength}{ m m }{%
-    \ifdeflength{#1}{% It is already defined!
-    }{% Not defined, so define it!
-    \newlength{#1}%
-    \setlength{#1}{#2}
-    }%
-    }%
-    
+    \ProvideDocumentCommand{\providelength}{ m m }{%
+        \ifdeflength{#1}{% It is already defined!
+        }{% Not defined, so define it!
+        \newlength{#1}%
+        \setlength{#1}{#2}
+        }%
+        }%
     
     
     
+    %% todo need pdf string title, must check YAML vars for this.. strip out basic commands
+    %% https://tex.stackexchange.com/questions/351877/hyperref-pdftitle-manages-line-breaks-in-a-strange-way
+    %%
+    
+    
+    \usepackage{luacode} %
     %% Replace text in a latex definition
     % * will redefine the macro, leaving it will only print the new val
     \begin{luacode*}
@@ -226,91 +224,43 @@ fleqn,
     \NewDocumentCommand{\DefReplText}{ s m m m }{\luadirect{%
         DefReplText(\luastring{#1},\luastringN{#2},\luastringN{#3},\luastringN{#4})
     }}
+    
+    \NewDocumentCommand{\MakeOneLineDef}{m o}{%
+    todo take a definition, string \\ with single space, and add xspace.
+    Useful for pdftitles, other things
+    \begin{luacode*}
+    -- do something here to make a definition
+    \end{luacode*}
+    }
 
-%%%%%%%%%%%%FontAndParas.sty%%%%%%%%
+
+
+%%%%%%%%%%%%  TextAndParas.sty  %%%%%%%%%%%%
+    
     % ##############################################
-    % Text Settings
+    % Text / Para Settings and utils
     % ##############################################
     
+    \ifluatex
+        \usepackage{polyglossia} % helps with hyphenation
+        \setdefaultlanguage[variant=canadian]{english}
+    \else
+        \usepackage[english]{babel} % helps with hyphenation
+    \fi
     
-    \usepackage[english]{babel} % helps with hyphenation
+    
     \usepackage{csquotes} % helps with hyphenation
-    
     
     %%% GENERAL FORMATTING
     \usepackage{ragged2e}
     \usepackage{blindtext}
-    
-    \iftoggle{useSerif}{
-        \usepackage[T1]{fontenc}
-        %frenchstyle,narrowiints,partialup < math settings for kp fonts
-        \usepackage[light,notextcomp]{kpfonts} % the light is also decent, could consider
-        \renewcommand{\ttdefault}{cmtl} % monospace that looks nice with light kpfont
-        \usepackage[activate=true,% this package makes the font look nicer
-            final,%
-            tracking=true,%
-        %	kerning=true, % only works with pdftex
-        ]{microtype}
-        \SetTracking{encoding=*, shape=sc}{18}  % adjust small caps letter spacing
-    }{
-        \ifluatex
-        %% FONT
-        %%% IF YOU GET AN ERROR WITH microtype, there is an issue with font:
-        % Install cm-super and hfbright packages via MiKTeX console,  you need the scalable version of cmbright, for ex.
-        %    \usepackage{fontspec}          % lualatex font engine
-        %    \setmainfont[Numbers = Uppercase,
-        %                 Ligatures = TeX,
-        %                 BoldFont  = CMU Bright SemiBold,
-        %                 ItalicFont = CMU Bright Oblique,
-        %                ]{CMU Bright Roman}
-            % NOTE OPEN font version of CMU Bright doesnt look as nice, we use type 1 here
-            \usepackage[T1]{fontenc}  % used for accented letter, OT1 works better with cmbright, makes font work
-            \usepackage{cmbright}  % use hfbright and cm-super
-            \usefont{OT1}{cmbr}{m}{n}
-            \renewcommand\bfdefault{sb}
-            \newcommand\sbdefault{bx}
-                \usepackage[%
-                protrusion=true,
-                expansion,
-                final,
-                tracking=true,
-                %kerning=true,  $ NOT ALLOWED IN LUA
-                %spacing=true,  $ NOW ALLOWED IN LUA
-                letterspace=120,
-                factor=1000,% protrusion (/1000), subtle
-                stretch=10,%(/1000 %)
-                shrink=10]{microtype}
-                \frenchspacing
-        \else
-            %\usepackage{microtype}  % helps with hyphen and scaling,
-            % NOT SURE IF THIS DOES ANYTHING.. BUT ITS SUPPOSED TO
-            \usepackage[T1]{fontenc}  % used for accented letter, OT1 works better with cmbright
-            \let\CMserif\rmdefault % save the default family name
-            \usepackage{cmbright}  % use hfbright and cm-super
-            \renewcommand\bfdefault{sb}
-            \newcommand\sbdefault{bx}
-            \usepackage[%
-            protrusion=true,
-            expansion,
-            final,
-            tracking=true,
-            kerning=true,
-            spacing=true,
-            letterspace=120,
-            factor=1000,% protrusion (/1000), subtle
-            stretch=10,%(/1000 %)
-            shrink=10]{microtype}
-        \fi
-    %    https://comp.text.tex.narkive.com/KZW4PwZ4/cmbright-alternative
-        \gdef\sbseries{\fontseries{sb}\selectfont}
-    }
-    
-    
-    %%% PAGE STYLING
     \usepackage{lastpage}
     
-    %%% MARGIN NOTES
-    %\usepackage{marginnote}  % better margin notes with koma script, apparently % CTAN: http://www.ctan.org/pkg/marginnote
+    %% Boxes and stuff
+    \usepackage[usestackEOL]{stackengine}  % used for title page and stacking things
+    \usepackage{setspace}  % enable onehalfspacing instyling
+    \usepackage{relsize}  % relative sizing
+    \usepackage{pbox}  % create box of max width http://ctan.mirror.colo-serv.net/macros/latex/contrib/pbox/pbox.pdf
     
     
     \let\oldcenter\center
@@ -321,6 +271,12 @@ fleqn,
     \let\oldendflushleft\endflushleft
     \renewenvironment{flushleft}{\setlength\topsep{0pt}\oldflushleft}{\oldendflushleft}
     
+    %% some latex stuff
+    \newcommand{\Llap}[1]{\leavevmode\llap{#1}}  % llap if first thing
+    \newcommand{\Rlap}[1]{\leavevmode\rlap{#1}}  % ..
+    \newcommand{\Clap}[1]{\leavevmode\clap{#1}}
+    \newcommand{\Hfill}{\null\hfill}  % hfill if first thing
+    \newcommand{\Vfill}{\null\vfill}  % hfill if first thing
     
     
     % ##############################################
@@ -341,13 +297,101 @@ fleqn,
     \brokenpenalty=101
     \displaywidowpenalty=50
     \vfuzz \hfuzz
-    
-    
-    
-    
 
 
-%%%%%%%%%%%%HeaderFooterFootnotes.sty%%%%%%%%
+\iftoggle{useSerif}{
+
+%%%%%%%%%%%%  FontKP.sty  %%%%%%%%%%%%
+    \usepackage[T1]{fontenc}
+    %frenchstyle,narrowiints,partialup < math settings for kp fonts
+    \usepackage[light,notextcomp]{kpfonts} % the light is also decent, could consider
+    \renewcommand{\ttdefault}{cmtl} % monospace that looks nice with light kpfont
+    \usepackage[activate=true,% this package makes the font look nicer
+        final,%
+        tracking=true,%
+    %	kerning=true, % only works with pdftex
+    ]{microtype}
+    \SetTracking{encoding=*, shape=sc}{18}  % adjust small caps letter spacing
+}{
+    \ifluatex
+
+
+%%%%%%%%%%%%  FontCMBlua.sty  %%%%%%%%%%%%
+    \usepackage[T1]{fontenc}  % used for accented letter, OT1 works better with cmbright, makes font work
+    \usepackage{cmbright}  % use hfbright and cm-super
+    \usefont{OT1}{cmbr}{m}{n}
+    \renewcommand\bfdefault{sb}
+    \newcommand\sbdefault{bx}
+        \usepackage[%
+        protrusion=true,
+        expansion,
+        final,
+        tracking=true,
+        letterspace=120,
+        factor=1000,% protrusion (/1000), subtle
+        stretch=10,%(/1000 %)
+        shrink=10]{microtype}
+    
+    \frenchspacing
+    
+    %kerning=true,  $ NOT ALLOWED IN LUA
+    %spacing=true,  $ NOW ALLOWED IN LUA
+    
+    
+    %% FONT
+    %%% IF YOU GET AN ERROR WITH microtype, there is an issue with font:
+    % Install cm-super and hfbright packages via MiKTeX console,  you need the scalable version of cmbright, for ex.
+    %    \usepackage{fontspec}          % lualatex font engine
+    %    \setmainfont[Numbers = Uppercase,
+    %                 Ligatures = TeX,
+    %                 BoldFont  = CMU Bright SemiBold,
+    %                 ItalicFont = CMU Bright Oblique,
+    %                ]{CMU Bright Roman}
+    % NOTE OPEN font version of CMU Bright doesnt look as nice, we use type 1 here
+
+    \else
+
+
+%%%%%%%%%%%%  FontCMBpdf.sty  %%%%%%%%%%%%
+    %\usepackage{microtype}  % helps with hyphen and scaling,
+    % NOT SURE IF THIS DOES ANYTHING.. BUT ITS SUPPOSED TO
+    \usepackage[T1]{fontenc}  % used for accented letter, OT1 works better with cmbright
+    \let\CMserif\rmdefault % save the default family name
+    \usepackage{cmbright}  % use hfbright and cm-super
+    \renewcommand\bfdefault{sb}
+    \newcommand\sbdefault{bx}
+    \usepackage[%
+    protrusion=true,
+    expansion,
+    final,
+    tracking=true,
+    kerning=true,
+    spacing=true,
+    letterspace=120,
+    factor=1000,% protrusion (/1000), subtle
+    stretch=10,%(/1000 %)
+    shrink=10]{microtype}
+
+    \fi
+%    https://comp.text.tex.narkive.com/KZW4PwZ4/cmbright-alternative
+    \gdef\sbseries{\fontseries{sb}\selectfont}
+
+    \DeclareRobustCommand{\sm@ller}{%
+    \dimen@\f@size\p@
+    \ifdim \dimen@ > 12\p@
+    \dimen@=0.83333\dimen@
+    \else
+    \advance \dimen@ -2\p@
+    \fi
+    \math@fontsfalse
+    \fontsize{\the\dimen@}\z@
+    \selectfont
+    }
+    \newcommand{\textc}[1]{{\sm@ller\uppercase{#1}}}
+}
+
+
+%%%%%%%%%%%%  HeaderFooterFootnotes.sty  %%%%%%%%%%%%
     % ##############################################
     % Header and Footer
     % ##############################################
@@ -406,7 +450,7 @@ fleqn,
     % https://tex.stackexchange.com/questions/339506/right-align-one-and-two-digit-footnote-marks-with-koma
 
 
-%%%%%%%%%%%%PageNumberInMargin.sty%%%%%%%%
+%%%%%%%%%%%%  PageNumberInMargin.sty  %%%%%%%%%%%%
     %%% DEPENDENCIES
     % KOMA-Script class
     %%%
@@ -439,7 +483,7 @@ fleqn,
     
 
 
-%%%%%%%%%%%%SectionsToCCustom.sty%%%%%%%%
+%%%%%%%%%%%%  SectionsToCCustom.sty  %%%%%%%%%%%%
     % ##############################################
     % Section Headings
     % ##############################################
@@ -528,7 +572,7 @@ fleqn,
     %tocdynnumwidth=switch,
     tocindent=-4.3ex,
     tocnumwidth=4ex,
-     tocbeforeskip=\tocsecskip,
+    tocbeforeskip=\tocsecskip,
     tocentryformat=\large\bfseries,
     tocentrynumberformat=\sectionentrynumberformat,
     ]{section}%
@@ -632,6 +676,10 @@ fleqn,
     \addtokomafont{subsubsection}{\color{subsubsecCol}}
     
     
+    \newdimen\sectprespacelength
+    \sectprespacelength=-1.5cm  % make less negative to increase spacing on new section title (always starts new page)
+    % WAS 20pt
+    
     \newcounter{sectionletter}%
     \newcommand{\resetsectionletter}{\setcounter{sectionletter}{0}}
     \let\oldsection\section
@@ -639,13 +687,14 @@ fleqn,
     \RenewDocumentCommand{\section}{ s t+ t! o m }{%
         %   * (no number, no ToC),  + (add sec letter) ! (on new page)
         \IfBooleanT{#3}{\invtoggle{SecOnNewPage}}%
+        \iftoggle{SecOnNewPage}{\clearpage\vspace*{\sectprespacelength}}{}%
+        \Needspace{\secneedspace}%
         \IfBooleanTF{#2}{%
             	\ifnum\value{sectionletter}>0% if we're into section lettering already
             	    \addtocounter{section}{-1}% decrement section so num stays the same
             	\fi%
             	\stepcounter{sectionletter}% increment section letter
         }{\resetsectionletter}%
-        \Needspace{\secneedspace}%
         \expanded{%
             \noexpand\oldsection%
             \IfBooleanT{#1}{*}%
@@ -657,14 +706,14 @@ fleqn,
     \def\thesection{\arabic{section}\alph{sectionletter}}
     \def\theHsection{\arabic{section}\alph{sectionletter}} % this is for hyperref (it does nothing if not loaded)
     
-    
-    \newdimen\sectprespacelength
-    \sectprespacelength=-20pt  % make less negative to increase spacing on new section title (always starts new page)
-    \xpretocmd\sectionlinesformat
-    {\ifstr{#1}{section}{%
-        \iftoggle{SecOnNewPage}{\clearpage\vspace*{\sectprespacelength}}{}%
-    }{}}  % THIS IS AUTOMATICALLY CHANGED IN APPENDIX
-    {}{\PatchFailed}
+    %
+    %\newdimen\sectprespacelength
+    %\sectprespacelength=-20pt  % make less negative to increase spacing on new section title (always starts new page)
+    %\xpretocmd\sectionlinesformat
+    %{\ifstr{#1}{section}{%
+    %    \iftoggle{SecOnNewPage}{\clearpage\vspace*{\sectprespacelength}}{}%
+    %}{}}  % THIS IS AUTOMATICALLY CHANGED IN APPENDIX
+    %{}{\PatchFailed}
     
     %{\ifstr{#1}{section}{\ifdefstring{\SecOnNewPage}{yes}{\clearpage\vspace*{\sectprespacelength}}{}}{}}  % THIS IS AUTOMATICALLY CHANGED IN APPENDIX
     
@@ -768,7 +817,7 @@ fleqn,
     
 
 
-%%%%%%%%%%%%AppendixFormat.sty%%%%%%%%
+%%%%%%%%%%%%  AppendixFormat.sty  %%%%%%%%%%%%
     % ##############################################
     % Appendix Formatting
     % ##############################################
@@ -822,7 +871,7 @@ fleqn,
     
 
 
-%%%%%%%%%%%%ColorsCustom.sty%%%%%%%%
+%%%%%%%%%%%%  ColorsCustom.sty  %%%%%%%%%%%%
     % ##############################################
     % Custom Colors
     % ##############################################
@@ -837,6 +886,9 @@ fleqn,
     
     
     %\definecolor{lightgray}{RGB}{216, 220, 214}
+    
+    \definecolor{offwhite}{RGB}{255,253,237}
+    
     \definecolor{lightgray}{RGB}{191, 191, 191}
     \colorlet{lightgrey}{lightgray}
     \definecolor{gray}{RGB}{128, 128, 128}
@@ -849,6 +901,10 @@ fleqn,
     
     \definecolor{darkred}{RGB}{180, 0, 0}
     \definecolor{green}{RGB}{0, 130, 10}  % green color, used for code syntax and plots
+    
+    \definecolor{mybrown}{HTML}{292826}
+    \definecolor{mybeige}{HTML}{C3BDA5}
+    
     
     
     % for coding
@@ -878,15 +934,21 @@ fleqn,
     }
 
 
-%%%%%%%%%%%%MathSymbolsEtc.sty%%%%%%%%
+%%%%%%%%%%%%  MathSymbolsEtc.sty  %%%%%%%%%%%%
     % ##############################################
     % Math related packages and settings
     % ##############################################
     
     % rename to MathSciSymbols
     
-    \usepackage{amssymb,amsmath,amsfonts,gensymb}  % math fonts and symbols
+    
+    \usepackage[fleqn]{mathtools} % should load amsmath
+    %\usepackage{amsmath}
+    
     \usepackage{xfrac}
+    \usepackage{amssymb,amsfonts,gensymb}  % math fonts and symbols
+    
+    \usepackage{fourier} % lotsa symbols
     
     \usepackage[free-standing-units,
     	unit-optional-argument,
@@ -911,7 +973,7 @@ fleqn,
     
 
 
-%%%%%%%%%%%%Lists.sty%%%%%%%%
+%%%%%%%%%%%%  Lists.sty  %%%%%%%%%%%%
     % ##############################################
     % Lists
     % ##############################################
@@ -981,7 +1043,7 @@ fleqn,
     \renewcommand\labelitemiii{\raisebox{0.3ex}{\scalebox{0.4}{\scriptsize$\bullet$}}}
 
 
-%%%%%%%%%%%%Tables.sty%%%%%%%%
+%%%%%%%%%%%%  Tables.sty  %%%%%%%%%%%%
     % ##############################################
     % Tables
     % ##############################################
@@ -1077,7 +1139,7 @@ fleqn,
     \newcommand{\atnote}[1]{\tnote{\uref{#1}}} % automatic table footnote
 
 
-%%%%%%%%%%%%FloatsCaptions.sty%%%%%%%%
+%%%%%%%%%%%%  FloatsCaptions.sty  %%%%%%%%%%%%
     % ##############################################
     % Floats and Captions   (plus pbox and and adjustbox)
     % ##############################################
@@ -1274,7 +1336,7 @@ fleqn,
     
 
 
-%%%%%%%%%%%%CodeBoxes.sty%%%%%%%%
+%%%%%%%%%%%%  CodeBoxes.sty  %%%%%%%%%%%%
     % ##############################################
     % Code Boxes
     % ##############################################
@@ -1322,12 +1384,19 @@ fleqn,
     
     
     
-    
     \usepackage{listings}  % 
+    
+    % toodo should really clean this up
+    \providecolor{codekey}{RGB}{180, 0, 0}
+    \providecolor{codestring}{RGB}{0, 130, 10}  % green color, used for code syntax and plots
+    \providecolor{codecomment}{RGB}{128, 128, 128}
+    \providecolor{codeemph}{RGB}{4, 1, 180}
+    
     
     
     % http://texdoc.net/texmf-dist/doc/latex/listings/listings.pdf
     % requires xcolor
+    \providecommand{\cbp@listframe}{tb}
     
     \lstset{
     	language=Python,
@@ -1336,17 +1405,22 @@ fleqn,
     	belowskip={1.0\baselineskip},
     	captionpos=t,
     	belowcaptionskip=5pt, % trial and error gve this a good result
-    	frame=tb,
+    	frame=\cbp@listframe,
     	rulecolor=\color{black},
     	numbers=left,
-    	numberstyle=\ttfamily\small\color{grayCol},
-    	keywordstyle=\color{contCol},
-    	commentstyle=\color{grayCol},
-    	stringstyle=\color{greCode},
+    	numberstyle=\ttfamily\footnotesize\color{codecomment},
+    	keywordstyle=\color{codekey},
+    	commentstyle=\color{codecomment},
+    	stringstyle=\color{codestring},
     	prebreak=\raisebox{0ex}[0ex][0ex]{\ensuremath{\hookleftarrow}},
     	extendedchars=true,
     	breaklines=true,
     	tabsize=4,
+    	emph={True,False,None},
+    	emphstyle={\color{blue}},
+    	keywords={for,def},
+    	otherkeywords={+,-,*,/,=,!,>,<},
+    	morekeywords={},
     	escapeinside={\#`}{`},  % escape to LaTeX (ex. \label{})
     	morecomment=[is]{"""!}{!"""},  % invisible block comments (CAUTION)
     	morecomment=[is]{\#!}{!},      % invisible line comment
@@ -1360,8 +1434,17 @@ fleqn,
     
     
     
-    
-    
+    %False	def	if	raise
+    %None	del	import	return
+    %True	elif	in	try
+    %and	else	is	while
+    %as	except	lambda	with
+    %assert	finally	nonlocal	yield
+    %break	for	not
+    %class	from	or
+    %continue	global	pass
+    % int, float, string, boolean
+    %https://realpython.com/lessons/reserved-keywords/
     
     
     
@@ -1400,7 +1483,7 @@ fleqn,
     
 
 
-%%%%%%%%%%%%ToDoNote.sty%%%%%%%%
+%%%%%%%%%%%%  ToDoNote.sty  %%%%%%%%%%%%
     % ##############################################
     % Todo Notes (with Example)
     % ##############################################
@@ -1425,7 +1508,7 @@ fleqn,
     %\todototoc{ToC todo, just a random list}
     %\todoG{Check for stuff}
 
-%%%%%%%%%%%%DraftStuff.sty%%%%%%%%
+%%%%%%%%%%%%  DraftStuff.sty  %%%%%%%%%%%%
     % ##############################################
     % If Draft
     % ##############################################
@@ -1496,7 +1579,7 @@ fleqn,
     
 
 
-%%%%%%%%%%%%BibAndGloss.sty%%%%%%%%
+%%%%%%%%%%%%  BibAndGloss.sty  %%%%%%%%%%%%
     % requires enumitem for acronym styling
     \usepackage[sorting=none]{biblatex}
     \newcommand{\citeT}[1]{\citetitle{#1}~\cite{#1}}
@@ -1565,7 +1648,7 @@ fleqn,
     }%
 
 
-%%%%%%%%%%%%Hyperlinks.sty%%%%%%%%
+%%%%%%%%%%%%  Hyperlinks.sty  %%%%%%%%%%%%
     % ##############################################
     % References / Hyperlinks
     % ##############################################
@@ -1590,13 +1673,27 @@ fleqn,
     \Crefname{appsec}{Appendix}{Appendices}
     \Crefname{table}{Table}{Tables}
     \Crefname{figure}{Figure}{Figures}
+    \Crefname{frame}{Slide}{Slides}
     
     \creflabelformat{equation}{#2#1#3}
     \crefrangelabelformat{equation}{#3#1#4 to #5#2#6}
+    
+    
+    % https://tex.stackexchange.com/questions/10555/hyperref-warning-token-not-allowed-in-a-pdf-string/330980#330980
+    \pdfstringdefDisableCommands{% to clean pdf attributes string
+    \def\\{}%
+    \def\smaller{}%
+    \def\texttt#1{<#1>}%
+    \def\textbf#1{<#1>}%
+    \def\textit#1{<#1>}%
+    }
 
 
-%%%%%%%%%%%%Titles.sty%%%%%%%%
+%%%%%%%%%%%%  Titles.sty  %%%%%%%%%%%%
     \let\company\publishers
+    
+    
+    %% https://tex.stackexchange.com/questions/466095/redefine-title-for-possibility-of-a-forced-line-breaking-in-a-predefined-place
     
     %%% todo do this for other paras
     \ExplSyntaxOn
@@ -1709,8 +1806,27 @@ fleqn,
 
 %% packages in folder
 
-%%%%%%%%%%%%macros/unirefs.sty%%%%%%%%
+%%%%%%%%%%%%  MarginNotes.sty  %%%%%%%%%%%%
+    
+    % Custom command fpr the margin notes: \myMarginnote{Your Text}
+    % Comment on the \lineskiplimit=-\maxdimen:
+    % See http://tex.stackexchange.com/questions/49072/
+    % Without it the line spacing of the normal text was changed (ugly).
+    \newcommand{\myMarginnote}[1]{%
+    	\marginnote{% needs marginnote package
+    		\ifthispageodd{\RaggedRight}{\RaggedLeft}% needs ragged2e package
+    		\color{red}%
+    		\lineskiplimit=-\maxdimen% 
+    		\normalfont\sffamily\scriptsize%
+    		#1}%
+    }
+
+
+
+%%%%%%%%%%%%  macros/UniRefs.sty  %%%%%%%%%%%%
     %%%% todo maybe move this to a lua-based function
+    
+    %%%% todo make a lua tables latex interface? That might be fun
     
     \newcounter{unilabIN}% my referene counter withIN each new instance
     \newcounter{unilabOUT}% creates a new set of counters if incremented
@@ -1768,287 +1884,20 @@ fleqn,
     %
     %\newcommand{\reseturef}{\setcounter{unilabIN}{0}\stepcounter{unilabOUT}}
 
-%%%%%%%%%%%%macros/smcaps.sty%%%%%%%%
-    \DeclareRobustCommand{\sm@ller}{%
-    \dimen@\f@size\p@
-    \ifdim \dimen@ > 12\p@
-    \dimen@=0.83333\dimen@
-    \else
-    \advance \dimen@ -2\p@
-    \fi
-    \math@fontsfalse
-    \fontsize{\the\dimen@}\z@
-    \selectfont
-    }
-    \newcommand{\textc}[1]{{\sm@ller\uppercase{#1}}}
-
-
-%%%%%%%%%%%%macros/secletter.sty%%%%%%%%
-    %%%%%% NO LONGER USED, now incorporated in sections toc
-    
-    %% FROM THIS WEBSITE, I ADAPATED IT TO WORK WITH SUBSECS AND SUBSUBSECS AS WELL. https://tex.stackexchange.com/questions/229068/appending-alphanumeric-character-to-chapter-numbers
-    %
-    %%%% SECTION LETTER SUFFIX
-    %
-    %\newcounter{repsection}
-    %\let\latex@section\section
-    %\renewcommand{\section}{\@ifstar{\latex@section*}{\guuk@section}}
-    %\newcommand{\guuk@section}{\@ifnextchar+{\repeat@section}{\restoresection\latex@section}}
-    %
-    %\newcommand{\repeat@section}[1]{    % #1 is +, see aboute @ifnextchar+\repeat...
-    %	\ifnum\value{repsection}>0
-    %	\addtocounter{section}{-1}%
-    %	\fi
-    %	\stepcounter{repsection}%
-    %	\latex@section
-    %}
-    %
-    %\newcommand{\restoresection}{%
-    %	\setcounter{repsection}{0}%
-    %}
-    %
-    %\def\thesection{\arabic{section}\alph{repsection}}
-    %
-    %\def\theHsection{\arabic{section}\alph{repsection}} % this is for hyperref (it does nothing if not loaded)
-    %
-    %
-    %
-    %
-    %
-    %
-    %
-    %%%% SUB-SECTION LETTER SUFFIX
-    %
-    %\newcounter{repsubsection}
-    %\let\latex@subsection\subsection
-    %\renewcommand{\subsection}{\@ifstar{\latex@subsection*}{\guuk@subsection}}
-    %\newcommand{\guuk@subsection}{\@ifnextchar+{\repeat@subsection}{\restoresubsection\latex@subsection}}
-    %\newcommand{\repeat@subsection}[1]{% #1 is +
-    %	\ifnum\value{repsubsection}>0
-    %	\addtocounter{subsection}{-1}%
-    %	\fi
-    %	\stepcounter{repsubsection}%
-    %	\latex@subsection
-    %}
-    %\newcommand{\restoresubsection}{%
-    %	\setcounter{repsubsection}{0}%
-    %}
-    %\def\thesubsection{\arabic{section}\alph{repsection}.\arabic{subsection}\alph{repsubsection}}
-    %% this is for hyperref (it does nothing if not loaded)
-    %\def\theHsubsection{\arabic{section}\alph{repsection}.\arabic{subsection}\alph{repsubsection}}
-    %
-    %
-    %
-    %
-    %
-    %
-    %
-    %
-    %
-    %%%% SUB-SUB SECTION LETTER SUFFIX
-    %
-    %\newcounter{repsubsubsection}
-    %\let\latex@subsubsection\subsubsection
-    %\renewcommand{\subsubsection}{\@ifstar{\latex@subsubsection*}{\guuk@subsubsection}}
-    %\newcommand{\guuk@subsubsection}{\@ifnextchar+{\repeat@subsubsection}{\restoresubsubsection\latex@subsubsection}}
-    %\newcommand{\repeat@subsubsection}[1]{% #1 is +
-    %	\ifnum\value{repsubsubsection}>0
-    %	\addtocounter{subsubsection}{-1}%
-    %	\fi
-    %	\stepcounter{repsubsubsection}%
-    %	\latex@subsubsection
-    %}
-    %\newcommand{\restoresubsubsection}{%
-    %	\setcounter{repsubsubsection}{0}%
-    %}
-    %\def\thesubsubsection{\arabic{section}\alph{repsection}.\arabic{subsection}\alph{repsubsection}.\arabic{subsubsection}\alph{repsubsubsection}}
-    %% this is for hyperref (it does nothing if not loaded)
-    %\def\theHsubsubsection{\arabic{section}\alph{repsection}.\arabic{subsection}\alph{repsubsection}.\arabic{subsubsection}\alph{repsubsubsection}}
-    %
-    %
-    %
-    %
-    %
-    %
-    %
-    %
-    %
-    %
-    %
-    %
-    %
-    %%%% EXAMPLE
-    %
-    %%\section{Steady-State Analysis}
-    %%\subsection{Details}
-    %%The objective is to..
-    %%\subsubsection{Contingencies}
-    %%These contingencies were studied..
-    %%\subsubsection{Monitored}
-    %%These quantities were monitored.
-    %%
-    %%The options are shown in sections \ref{sec:Ass:sync} and \cref{sec:Bss:svc}
-    %%
-    %%\subsection+{Results for Synchronous Condensor} \label{sec:Ass:sync}
-    %%Results for option A
-    %%\subsection+{Results for SVC} \label{sec:Bss:svc}
-    %%Results for Option B
-    %%
-    %%
-    %%\restoresubsection
-    %%
-    %%\section+{Dynamics Analysis for Synch. Condensor Option}
-    %%\subsection{Results}
-    %%\section+{Dynamics Analysis for SVC Option}
-    %%\subsection{Results}
-    %%
-    %
-    %
-
-
-%%%%%%%%%%%%macros/marginnote.sty%%%%%%%%
-    
-    % Custom command fpr the margin notes: \myMarginnote{Your Text}
-    % Comment on the \lineskiplimit=-\maxdimen:
-    % See http://tex.stackexchange.com/questions/49072/
-    % Without it the line spacing of the normal text was changed (ugly).
-    \newcommand{\myMarginnote}[1]{%
-    	\marginnote{% needs marginnote package
-    		\ifthispageodd{\RaggedRight}{\RaggedLeft}% needs ragged2e package
-    		\color{red}%
-    		\lineskiplimit=-\maxdimen% 
-    		\normalfont\sffamily\scriptsize%
-    		#1}%
-    }
 
 
 % some lua  stuff
 \ifluatex
 
-%%%%%%%%%%%%macros/AutoPuncLists.sty%%%%%%%%
+%%%%%%%%%%%%  KalePkgs.sty  %%%%%%%%%%%%
+        \usepackage[pl,extras]{penlight}
+        \usepackage{YAMLvars}
+        \usepackage{lutabulartools}
+        \usepackage{autopuncitems}
     
-    %\RequirePackage{luacode}
-    %\RequirePackage{enumitem}
-    %\RequirePackage{FP??}
-    %\RequirePackage{etoolbox}
-    
-    %! language = Lua
-    \begin{luacode*}
-    function AutoPuncItems(s, btwn, seclast, last) -- add btwn and sec and last options
-        --texio.write_nl('VVVVV \n'..s) -- troubleshooting
-        s, ficount = string.gsub(s, "\\fi ", "") -- for some reason this is injected by enumitem
-        if ficount > 0 then
-            tex.print('\\toggletrue{autopunc} ')
-        end
-        local it = '\\item '
-        local s_item = '%s*'..it
-        btwn = btwn or ';'
-        btwn = btwn..' '..it
-        seclast = seclast or '; and'
-        seclast = seclast..' '..it
-        last = last or '.'
-        local _, n_matches = string.gsub(s, s_item, "") -- find num items
-        s, _ = string.gsub(s, s_item,    seclast,   n_matches) -- replace all 'item' with second last type
-        s, _ = string.gsub(s, seclast,   btwn,      n_matches-1) -- replace all 'item' EXCEPT the last with the between
-                                                                 -- (all but second lines affected)
-        s, _ = string.gsub(s, '%s*xxxENDxxx', last) -- add the final char
-        s = string.sub(s, #btwn-#it+1, #s)   -- remove added stuff on very first item
-        tex.print(s)
-    end
-    \end{luacode*}
-    
-    
-    \def\APbetweenDef{;}
-    \def\APsecondDef{;\ and}
-    \def\APlastDef{.}
-    
-    \NewDocumentCommand{\AutoPuncItems}{ O{\APbetweenDef} O{\APsecondDef} O{\APlastDef} m }{
-        \luadirect{AutoPuncItems(
-            \luastringN{#4xxxENDxxx},
-            \luastringN{#1},
-            \luastringN{#2},
-            \luastringN{#3}
-        )}
-    }
-    \NewDocumentEnvironment{AutoPuncList}{  O{\APbetweenDef} O{\APsecondDef} O{\APlastDef} +b }{
-       \AutoPuncItems[#1][#2][#3]{#4}
-    }{}
-    
-    \usepackage{etoolbox}
-    \newtoggle{autopunc}
-    \SetEnumitemKey{autopunc}{
-        before*=\toggletrue{autopunc},
-        first*=\AutoPuncList,
-        after*=\endAutoPuncList,
-    }
-    \AtEndEnvironment{itemize}{\iftoggle{autopunc}{\fi}{}\togglefalse{autopunc}}
-    \AtEndEnvironment{enumerate}{\iftoggle{autopunc}{\fi}{}\togglefalse{autopunc}}
-    
-    
-    
-    
-    
-    % enumerate text           *A +a   {pre} {num} {post} <inbetween>  <between last two>
-    \NewDocumentCommand{\enumtext}{s t+ O{} m  O{} D<>{, } D<>{#6}}{%
-    \foreach \n in {1,...,#4}{%
-        #3%
-        \IfBooleanTF{#1}{\makeAlph{\n}}{\IfBooleanTF{#2}{\makealph{\n}}{\n}}%
-        %
-        #5%
-        \ifnum\n<\fpeval{#4-1}%
-        #6%
-        \else%
-        \ifnum\n<\fpeval{#4}%
-        #7%
-        \fi%
-        \fi%
-    }}
-    
-    % iter text, sandwhich in between  [before] {list of text}  [after]
-    % mandatory argument can be {Kale,Britt,Serena}, or {1,3,...,9}
-    \NewDocumentCommand{\itertext}{O{} m O{} O{,\ }}{%
-    \foreach \n in {#2}{%
-        \mbox{#1\n#3}#4%
-    }}
-    
-    
-    
-    
-    
-    %%% do I need to improve regex in autpunc??
-    
-    
-    
-    %
-    %function AutoPuncItems(s, btwn, seclast, last) -- add btwn and sec and last options
-    %    --texio.write_nl('VVVVV \n'..s) -- troubleshooting
-    %    s, ficount = string.gsub(s, "\\fi ", "") -- for some reason this is injected by enumitem
-    %    if ficount > 0 then
-    %        tex.print('\\toggletrue{autopunc} ')
-    %    end
-    %    local it = '\\item '
-    %    local s_item = '%s*'..it
-    %    btwn = btwn or ';'
-    %    btwn = btwn..' '..it
-    %    seclast = seclast or '; and'
-    %    seclast = seclast..' '..it
-    %    last = last or '.'
-    %    local _, n_matches = string.gsub(s, s_item, "") -- find num items
-    %    s, _ = string.gsub(s, s_item,    seclast,   n_matches) -- replace all 'item' with second last type
-    %    s, _ = string.gsub(s, seclast,   btwn,      n_matches-1) -- replace all 'item' EXCEPT the last with the between
-    %                                                             -- (all but second lines affected)
-    %    s, _ = string.gsub(s, '%s*xxxENDxxx', last) -- add the final char
-    %    s = string.sub(s, #btwn-#it+1, #s)   -- remove added stuff on very first item
-    %    tex.print(s)
-    %end
-
-    \usepackage[pl,extras]{penlight}
-    \usepackage{YAMLvars}
-    \usepackage{lutabulartools}
-
-    \begin{luacode*}
-        YAMLvars.tabmidrule = 'gmidrule'
-    \end{luacode*}
+        \begin{luacode*}
+            YAMLvars.tabmidrule = 'gmidrule'
+        \end{luacode*}
 \else
 \fi
 
@@ -2056,7 +1905,7 @@ fleqn,
 
 
 
-%%%%%%%%%%%%MemoSty.sty%%%%%%%%
+%%%%%%%%%%%%  MemoSty.sty  %%%%%%%%%%%%
     %%%% memo variabls
     
     
@@ -2143,7 +1992,7 @@ fleqn,
 
 
 
-%%%%%%%%%%%%EndOf.sty%%%%%%%%
+%%%%%%%%%%%%  EndOf.sty  %%%%%%%%%%%%
     
     \newcommand{\IntentionallyBlankPage}{
     \pagebreak

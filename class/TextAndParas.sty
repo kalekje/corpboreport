@@ -1,0 +1,61 @@
+
+% ##############################################
+% Text / Para Settings and utils
+% ##############################################
+
+\ifluatex
+    \usepackage{polyglossia} % helps with hyphenation
+    \setdefaultlanguage[variant=canadian]{english}
+\else
+    \usepackage[english]{babel} % helps with hyphenation
+\fi
+
+
+\usepackage{csquotes} % helps with hyphenation
+
+%%% GENERAL FORMATTING
+\usepackage{ragged2e}
+\usepackage{blindtext}
+\usepackage{lastpage}
+
+%% Boxes and stuff
+\usepackage[usestackEOL]{stackengine}  % used for title page and stacking things
+\usepackage{setspace}  % enable onehalfspacing instyling
+\usepackage{relsize}  % relative sizing
+\usepackage{pbox}  % create box of max width http://ctan.mirror.colo-serv.net/macros/latex/contrib/pbox/pbox.pdf
+
+
+\let\oldcenter\center
+\let\oldendcenter\endcenter
+\renewenvironment{center}{\setlength\topsep{0pt}\oldcenter}{\oldendcenter}  % removes extra sep
+
+\let\oldflushleft\flushleft
+\let\oldendflushleft\endflushleft
+\renewenvironment{flushleft}{\setlength\topsep{0pt}\oldflushleft}{\oldendflushleft}
+
+%% some latex stuff
+\newcommand{\Llap}[1]{\leavevmode\llap{#1}}  % llap if first thing
+\newcommand{\Rlap}[1]{\leavevmode\rlap{#1}}  % ..
+\newcommand{\Clap}[1]{\leavevmode\clap{#1}}
+\newcommand{\Hfill}{\null\hfill}  % hfill if first thing
+\newcommand{\Vfill}{\null\vfill}  % hfill if first thing
+
+
+% ##############################################
+% Paragraph stretching and spacings
+% ##############################################
+
+% This is an suggestion from Axel Reichert (LaTeX package author)
+% See CTAN: http://www.ctan.org/author/reichert
+% See CTAN: http://www.ctan.org/pkg/l2tabu-english (Cgapter: 1.8 Should I use \sloppy?)
+
+% 10000 is the highest
+\tolerance=2800
+\hbadness=1414
+\emergencystretch=1.5em
+\hfuzz=0.3pt
+\widowpenalty=4000
+\clubpenalty=4002
+\brokenpenalty=101
+\displaywidowpenalty=50
+\vfuzz \hfuzz

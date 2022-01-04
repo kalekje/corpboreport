@@ -86,7 +86,7 @@ afterskip=0.01pt,
 %tocdynnumwidth=switch,
 tocindent=-4.3ex,
 tocnumwidth=4ex,
- tocbeforeskip=\tocsecskip,
+tocbeforeskip=\tocsecskip,
 tocentryformat=\large\bfseries,
 tocentrynumberformat=\sectionentrynumberformat,
 ]{section}%
@@ -191,7 +191,8 @@ entrynumberformat=\smaller,
 
 
 \newdimen\sectprespacelength
-\sectprespacelength=-20pt  % make less negative to increase spacing on new section title (always starts new page)
+\sectprespacelength=-1.5cm  % make less negative to increase spacing on new section title (always starts new page)
+% WAS 20pt
 
 \newcounter{sectionletter}%
 \newcommand{\resetsectionletter}{\setcounter{sectionletter}{0}}
@@ -200,14 +201,14 @@ entrynumberformat=\smaller,
 \RenewDocumentCommand{\section}{ s t+ t! o m }{%
     %   * (no number, no ToC),  + (add sec letter) ! (on new page)
     \IfBooleanT{#3}{\invtoggle{SecOnNewPage}}%
+    \iftoggle{SecOnNewPage}{\clearpage\vspace*{\sectprespacelength}}{}%
+    \Needspace{\secneedspace}%
     \IfBooleanTF{#2}{%
         	\ifnum\value{sectionletter}>0% if we're into section lettering already
         	    \addtocounter{section}{-1}% decrement section so num stays the same
         	\fi%
         	\stepcounter{sectionletter}% increment section letter
     }{\resetsectionletter}%
-    \Needspace{\secneedspace}%
-    \iftoggle{SecOnNewPage}{\clearpage\vspace*{\sectprespacelength}}{}%
     \expanded{%
         \noexpand\oldsection%
         \IfBooleanT{#1}{*}%

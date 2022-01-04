@@ -22,6 +22,17 @@ pdfpagemode=UseOutlines,%
 \Crefname{appsec}{Appendix}{Appendices}
 \Crefname{table}{Table}{Tables}
 \Crefname{figure}{Figure}{Figures}
+\Crefname{frame}{Slide}{Slides}
 
 \creflabelformat{equation}{#2#1#3}
 \crefrangelabelformat{equation}{#3#1#4 to #5#2#6}
+
+
+% https://tex.stackexchange.com/questions/10555/hyperref-warning-token-not-allowed-in-a-pdf-string/330980#330980
+\pdfstringdefDisableCommands{% to clean pdf attributes string
+\def\\{}%
+\def\smaller{}%
+\def\texttt#1{<#1>}%
+\def\textbf#1{<#1>}%
+\def\textit#1{<#1>}%
+}

@@ -81,7 +81,39 @@ fleqn,
 % ####################################################################################
 \usepackage{\FormatDir GeometryCustom} %%% GEOMETRY
 \usepackage{\FormatDir Utilities} %%% GENERAL UTILITIES, FOR SHAPING, IMPORTING, ETC
-\usepackage{\FormatDir FontAndParas} %%% MAIN FONT SETTINGS
+
+\usepackage{\FormatDir TextAndParas} %%% MAIN FONT SETTINGS
+
+
+\iftoggle{useSerif}{
+    \usepackage{\FormatDir FontKP}
+}{
+    \ifluatex
+
+        \usepackage{\FormatDir FontCMBlua}
+
+    \else
+
+       \usepackage{\FormatDir FontCMBpdf}
+
+    \fi
+%    https://comp.text.tex.narkive.com/KZW4PwZ4/cmbright-alternative
+    \gdef\sbseries{\fontseries{sb}\selectfont}
+
+    \DeclareRobustCommand{\sm@ller}{%
+    \dimen@\f@size\p@
+    \ifdim \dimen@ > 12\p@
+    \dimen@=0.83333\dimen@
+    \else
+    \advance \dimen@ -2\p@
+    \fi
+    \math@fontsfalse
+    \fontsize{\the\dimen@}\z@
+    \selectfont
+    }
+    \newcommand{\textc}[1]{{\sm@ller\uppercase{#1}}}
+}
+
 \usepackage{\FormatDir HeaderFooterFootnotes} %%% HEADER AND FOOTER AND FOOTNOTES
 \usepackage{\FormatDir PageNumberInMargin} %%% PLACING PAGE NUMBER IN THE LOWER RIGHT MARGIN
 \usepackage{\FormatDir SectionsToCCustom} %%% SECTION HEADINGS, TOC, AND FORMATTING
@@ -99,22 +131,15 @@ fleqn,
 \usepackage{\FormatDir Titles}  %%% title page
 
 %% packages in folder
-\usepackage{\FormatDir macros/unirefs}  % macro to create unique labels, useful for tabular notes
-\usepackage{\FormatDir macros/smcaps}  % custom small caps for fonts that dont have it (ie CM BRIGHT) simply makes font size smaller
-\usepackage{\FormatDir macros/secletter}  % allows for 2a, 2b sectioning
-\usepackage{\FormatDir macros/marginnote} % better looking margin notes
+\usepackage{\FormatDir MarginNotes} % better looking margin notes
+
+\usepackage{\FormatDir macros/UniRefs}  % macro to create unique labels, useful for tabular notes
+
+
 
 % some lua  stuff
 \ifluatex
-    \usepackage{\FormatDir macros/AutoPuncLists}
-
-    \usepackage[pl,extras]{penlight}
-    \usepackage{YAMLvars}
-    \usepackage{lutabulartools}
-
-    \begin{luacode*}
-        YAMLvars.tabmidrule = 'gmidrule'
-    \end{luacode*}
+    \usepackage{\FormatDir KalePkgs}  %%% Kale's pkgs
 \else
 \fi
 

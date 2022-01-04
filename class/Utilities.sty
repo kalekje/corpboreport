@@ -20,13 +20,7 @@
 \usepackage{grffile}  % removes the pdf file name for includegraphics with a pdf file type
 \usepackage{afterpage} % can add code after page done, helps with pdflscape with inserting a page randomly,
 
-%% Boxes and stuff
-\usepackage[usestackEOL]{stackengine}  % used for title page and stacking things
-\usepackage{setspace}  % enable onehalfspacing instyling
-
-\usepackage{pbox}  % create box of max width http://ctan.mirror.colo-serv.net/macros/latex/contrib/pbox/pbox.pdf
 \usepackage[export]{adjustbox} % provide additional commands for graphicsx allows us to adjust graphics,  http://mirrors.ibiblio.org/CTAN/macros/latex/contrib/adjustbox/adjustbox.pdf
-\usepackage{relsize}  % relative sizing
 
 \newtoggle{csdefined}
 
@@ -51,7 +45,7 @@
 
 \let\strcmp\pdf@strcmp
 
-\NewDocumentCommand{\ifstringeqx}{m m m O{}}{%
+\NewDocumentCommand{\ifstringeqx}{m m m O{}}{% if string equal fully expanded
     \ifnum\strcmp{#1}{#2}=0 #3\else#4\fi%
 }
 
@@ -75,18 +69,22 @@
 \newcommand\ExpArgOnceProc[1]
   {\edef\ProcessedArgument{\unexpanded\expandafter{#1}}}
 
-
-\NewDocumentCommand{\providelength}{ m m }{%
-\ifdeflength{#1}{% It is already defined!
-}{% Not defined, so define it!
-\newlength{#1}%
-\setlength{#1}{#2}
-}%
-}%
-
+\ProvideDocumentCommand{\providelength}{ m m }{%
+    \ifdeflength{#1}{% It is already defined!
+    }{% Not defined, so define it!
+    \newlength{#1}%
+    \setlength{#1}{#2}
+    }%
+    }%
 
 
 
+%% todo need pdf string title, must check YAML vars for this.. strip out basic commands
+%% https://tex.stackexchange.com/questions/351877/hyperref-pdftitle-manages-line-breaks-in-a-strange-way
+%%
+
+
+\usepackage{luacode} %
 %% Replace text in a latex definition
 % * will redefine the macro, leaving it will only print the new val
 \begin{luacode*}
@@ -103,3 +101,11 @@ end
 \NewDocumentCommand{\DefReplText}{ s m m m }{\luadirect{%
     DefReplText(\luastring{#1},\luastringN{#2},\luastringN{#3},\luastringN{#4})
 }}
+
+\NewDocumentCommand{\MakeOneLineDef}{m o}{%
+todo take a definition, string \\ with single space, and add xspace.
+Useful for pdftitles, other things
+\begin{luacode*}
+-- do something here to make a definition
+\end{luacode*}
+}

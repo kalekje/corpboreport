@@ -1,0 +1,10 @@
+\usepackage[T1]{fontenc}
+%frenchstyle,narrowiints,partialup < math settings for kp fonts
+\usepackage[light,notextcomp]{kpfonts} % the light is also decent, could consider
+\renewcommand{\ttdefault}{cmtl} % monospace that looks nice with light kpfont
+\usepackage[activate=true,% this package makes the font look nicer
+    final,%
+    tracking=true,%
+%	kerning=true, % only works with pdftex
+]{microtype}
+\SetTracking{encoding=*, shape=sc}{18}  % adjust small caps letter spacing

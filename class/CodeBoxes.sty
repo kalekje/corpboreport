@@ -45,12 +45,19 @@
 
 
 
-
 \usepackage{listings}  % 
+
+% toodo should really clean this up
+\providecolor{codekey}{RGB}{180, 0, 0}
+\providecolor{codestring}{RGB}{0, 130, 10}  % green color, used for code syntax and plots
+\providecolor{codecomment}{RGB}{128, 128, 128}
+\providecolor{codeemph}{RGB}{4, 1, 180}
+
 
 
 % http://texdoc.net/texmf-dist/doc/latex/listings/listings.pdf
 % requires xcolor
+\providecommand{\cbp@listframe}{tb}
 
 \lstset{
 	language=Python,
@@ -59,17 +66,22 @@
 	belowskip={1.0\baselineskip},
 	captionpos=t,
 	belowcaptionskip=5pt, % trial and error gve this a good result
-	frame=tb,
+	frame=\cbp@listframe,
 	rulecolor=\color{black},
 	numbers=left,
-	numberstyle=\ttfamily\small\color{grayCol},
-	keywordstyle=\color{contCol},
-	commentstyle=\color{grayCol},
-	stringstyle=\color{greCode},
+	numberstyle=\ttfamily\footnotesize\color{codecomment},
+	keywordstyle=\color{codekey},
+	commentstyle=\color{codecomment},
+	stringstyle=\color{codestring},
 	prebreak=\raisebox{0ex}[0ex][0ex]{\ensuremath{\hookleftarrow}},
 	extendedchars=true,
 	breaklines=true,
 	tabsize=4,
+	emph={True,False,None},
+	emphstyle={\color{blue}},
+	keywords={for,def},
+	otherkeywords={+,-,*,/,=,!,>,<},
+	morekeywords={},
 	escapeinside={\#`}{`},  % escape to LaTeX (ex. \label{})
 	morecomment=[is]{"""!}{!"""},  % invisible block comments (CAUTION)
 	morecomment=[is]{\#!}{!},      % invisible line comment
@@ -83,8 +95,17 @@
 
 
 
-
-
+%False	def	if	raise
+%None	del	import	return
+%True	elif	in	try
+%and	else	is	while
+%as	except	lambda	with
+%assert	finally	nonlocal	yield
+%break	for	not
+%class	from	or
+%continue	global	pass
+% int, float, string, boolean
+%https://realpython.com/lessons/reserved-keywords/
 
 
 

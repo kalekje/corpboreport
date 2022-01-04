@@ -2,28 +2,35 @@
 import os, shutil, re
 from stat import S_IREAD, S_IRGRP, S_IROTH, S_IWUSR
 
-newfile = './../corpboreport.cls'
+def make_file(multifile, newfile):
 
-try:
-    os.chmod(newfile, S_IWUSR | S_IREAD)  # This makes the file read/write for the owner
-except:
-    pass
+    try:
+        os.chmod(newfile, S_IWUSR | S_IREAD)  # This makes the file read/write for the owner
+    except:
+        pass
 
-with open(newfile, 'w') as mergedFile:
-    with open(r'corpboreportMulti.cls', 'r') as classFile:
-        for line in classFile:
-            styFileMatch = re.match(r'.*\{\\FormatDir (.*)\}.*', line)
-            if styFileMatch:
-                mergedFile.write('\n')
-                styFilename = styFileMatch.group(1)+'.sty'
-                mergedFile.write('%'*12 + styFilename + '%'*8 + '\n')
-                with open(styFilename, 'r') as styFile:
-                    for line2 in styFile:
-                        mergedFile.write('    '+line2)
+    with open(newfile, 'w') as mergedFile:
+        with open(multifile, 'r') as classFile:
+            for line in classFile:
+                styFileMatch = re.match(r'.*\{\\FormatDir (.*)\}.*', line)
+                if styFileMatch:
                     mergedFile.write('\n')
+                    styFilename = styFileMatch.group(1)+'.sty'
+                    mergedFile.write('%'*12 + '  ' + styFilename + '  ' + '%'*12 + '\n')
+                    with open(styFilename, 'r') as styFile:
+                        for line2 in styFile:
+                            mergedFile.write('    '+line2)
+                        mergedFile.write('\n')
 
-            else:
-                mergedFile.write(line)
+                else:
+                    mergedFile.write(line)
+
+
+make_file(r'corpboreportMulti.cls',  './../corpboreport.cls')
+make_file(r'corpborepresMulti.cls',  './../corpborepres.cls')
+
+
+
 
 
 if False: # exampleon how to copy something
@@ -33,6 +40,6 @@ if False: # exampleon how to copy something
         os.chmod(copyfile, S_IWUSR | S_IREAD)  # This makes the file read/write for the owner
         shutil.copyfile(newfile, copyfile)
         os.chmod(copyfile, S_IREAD | S_IRGRP | S_IROTH)
-    
-    
+
+
     
