@@ -4,33 +4,26 @@
 \providecommand{\FormatDir}{class/}
 
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{corpboreport}[2021-09-21]
+\ProvidesClass{cbthesis}[2022-02-19]
 
 %%% Document Class
 \LoadClass[11pt,
-%letterpaper,  %
-paper=letter,  % paper size
-pagesize,      % force given paper size in pdf
+letterpaper,
 twoside=false,
-%twoside,% for two sided doc
-%open=right,
 hidelinks,
-parskip=full-,
-bibliography=numbered,
-numbers=noenddot,
+parskip=half-,
+bibliography=totoc,
+open=right,%
+chapterprefix=true,
 fleqn,
 %listof=totoc,% for list of figures, tables
-%draft=true,
-]{scrartcl}
+numbers=noenddot]{scrreprt}
 
 \RequirePackage{etoolbox}
 \newtoggle{samepgTitle}
 \newtoggle{useMemo}
-\newtoggle{useSerif}
-\newtoggle{showListOfFigsTabs}
-\newtoggle{samepgListOfFigsTabs}
+\newtoggle{useSerif}\toggletrue{useSerif}
 
-\newtoggle{SectionOnNewPage}  % todo work this in to the template
 
 \newlength{\pullToCcloser}
 \setlength{\pullToCcloser}{-12pt}
@@ -40,10 +33,6 @@ fleqn,
 
 \gdef\TitleLogoPlaceDefault{tl}
 
-\DeclareOption{memo}{\toggletrue{useMemo}}
-\DeclareOption{compact}{\toggletrue{samepgTitle}\gdef\TitleLogoPlaceDefault{bl}}
-\DeclareOption{serif}{\toggletrue{useSerif}}
-\ProcessOptions\relax
 
 %https://github.com/mrpiggi/svg/issues/18
 \providecommand*{\Ifstr}{\ifstr}  % little hack that supposed to fix ifstr warning, see https://komascript.de/faq_deprecatedif
@@ -56,52 +45,34 @@ fleqn,
 
 \usepackage{\FormatDir TextAndParas} %%% MAIN FONT SETTINGS
 
+\usepackage{\FormatDir FontKPotf}
 
-\iftoggle{useSerif}{
-
-    \usepackage{\FormatDir FontKPotf}
-
-}{
-    \ifluatex
-
-%        \usepackage{\FormatDir FontCMBlua}
-        \usepackage{\FormatDir FontCMBotf}
-
-    \else
-
-       \usepackage{\FormatDir FontCMBpdf}
-
-    \fi
-%    https://comp.text.tex.narkive.com/KZW4PwZ4/cmbright-alternative
-    \gdef\sbseries{\fontseries{sb}\selectfont}
-
-    \DeclareRobustCommand{\sm@ller}{%
-    \dimen@\f@size\p@
-    \ifdim \dimen@ > 12\p@
-    \dimen@=0.83333\dimen@
-    \else
-    \advance \dimen@ -2\p@
-    \fi
-    \math@fontsfalse
-    \fontsize{\the\dimen@}\z@
-    \selectfont
-    }
-    \newcommand{\textc}[1]{{\sm@ller\uppercase{#1}}}
-}
 
 \usepackage{\FormatDir HeaderFooterFootnotes} %%% HEADER AND FOOTER AND FOOTNOTES
 \usepackage{\FormatDir PageNumberInMargin} %%% PLACING PAGE NUMBER IN THE LOWER RIGHT MARGIN
-\usepackage{\FormatDir SectionsToCCustom} %%% SECTION HEADINGS, TOC, AND FORMATTING
-\usepackage{\FormatDir AppendixFormat} %%% APPENDIX FORMATTINGS (depends on some ToC)
+
+%\usepackage{\FormatDir SectionsToCCustom} %%% SECTION HEADINGS, TOC, AND FORMATTING
+\usepackage{\FormatDir SecThesis}
+
+%\usepackage{\FormatDir AppendixFormat} %%% APPENDIX FORMATTINGS (depends on some ToC)
+\usepackage{\FormatDir AppendixFormatThesis} %%% APPENDIX FORMATTINGS (depends on some ToC)
+
 \usepackage{\FormatDir ColorsCustom} %%% CUSTOM COLORS
 \usepackage{\FormatDir MathSymbolsEtc} %%% MATH RELATED PACKAGES
 \usepackage{\FormatDir Lists}
+
 \usepackage{\FormatDir Tables} %
+%\setlength\heavyrulewidth{0.7pt}
+
 \usepackage{\FormatDir FloatsCaptions} %
+
+
 \usepackage{\FormatDir CodeBoxes}
 \usepackage{\FormatDir ToDoNote}
 \usepackage{\FormatDir DraftStuff}   %%% COMMANDS TO HELP WITH DRAFT
+
 \usepackage{\FormatDir BibAndGloss}
+
 \usepackage{\FormatDir Hyperlinks}  %%% CONTAINS hyperref and cleverref SETUP
 \usepackage{\FormatDir Titles}  %%% title page
 
@@ -109,6 +80,7 @@ fleqn,
 \usepackage{\FormatDir MarginNotes} % better looking margin notes
 
 \usepackage{\FormatDir macros/UniRefs}  % macro to create unique labels, useful for tabular notes
+
 
 \usepackage[pl,extras]{penlight}
 \usepackage{lutabulartools}
@@ -122,13 +94,10 @@ fleqn,
 
 
 
-
-
 \usepackage{\FormatDir EndOf}
 
+\rohead{}
 
-
-\ifluatex
 %! language = yaml
 \begin{declareYAMLvars}
 title:
@@ -140,10 +109,6 @@ subtitle:
   prc: setdocvar
 
 author:
-  xfm: lb2nl
-  prc: setdocvar
-
-publishers:
   xfm: lb2nl
   prc: setdocvar
 
@@ -159,45 +124,14 @@ fileno:
   xfm: lb2nl
   prc: setdocvar
 
-pdf:
-  prc: setPDFdata
-
-
-attachments:
+publishers:
   xfm: lb2nl
   prc: setdocvar
-
-memoHeader:
-  xfm: lb2nl
-  prc: setdocvar
-
-memoFr:
-  xfm: lb2nl
-  prc: setATvar
-
-memoFrAddr:
-  xfm: lb2nl
-  prc: setATvar
-
-memoTo:
-  xfm: lb2nl
-  prc: setATvar
-
-memoToAddr:
-  xfm: lb2nl
-  prc: setATvar
-
 
 logo:
   prc: setdocvarOpts
-
-institute:  # for beamer
-  prc: setdocvarOpts
-
+  
+pdf:
+  prc: setPDFdata
+  
 \end{declareYAMLvars}
-\else
-\fi
-
-
-
-\usepackage{\FormatDir MemoSty}

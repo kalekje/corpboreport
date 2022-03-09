@@ -7,26 +7,28 @@
 
 \usepackage[fleqn]{mathtools} % should load amsmath
 %\usepackage{amsmath}
+%\usepackage{amssymb} % issue with kpfonts, I think it already loads it..
 
 \usepackage{xfrac}
-\usepackage{amssymb,amsfonts,gensymb}  % math fonts and symbols
+\usepackage{amsfonts,gensymb}  % math fonts and symbols
 
-\usepackage{fourier} % lotsa symbols
-
-\usepackage[free-standing-units,
-	unit-optional-argument,
+\providecommand{\togunums}{}  % toggle to uppercase number shortcut
+\usepackage[free-standing-units, % allow declared units usage outside of \qty and \unit
+	unit-optional-argument,  % allows declared units to have number after \kV[10]
 	detect-all=true, % allows italic/bold units
 	space-before-unit=true,
-	inter-unit-product=\,,
-	use-xspace=true]{siunitx}  % \SI \num used for physical units and S column in tables
-
-\sisetup{range-phrase=--,
+	text-font-command=\togunums,
+	use-xspace=true,
 	table-number-alignment=center,
 	table-text-alignment=center,
 	table-align-text-post=false,
 	table-align-text-pre=false,
-}
-% http://ctan.mirror.rafal.ca/macros/latex/contrib/siunitx/siunitx.pdf
+]{siunitx} % http://ctan.mirror.rafal.ca/macros/latex/contrib/siunitx/siunitx.pdf
+
+
+%	inter-unit-product=\,, % default
+%\sisetup{range-phrase=--,
+
 
 
 %\def\sbfCMB#1{\ThisStyle{\setbox0=\hbox{$\SavedStyle#1$}%

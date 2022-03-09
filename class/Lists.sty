@@ -1,15 +1,6 @@
-% ##############################################
-% Lists
-% ##############################################
-
-% to change more: https://texblog.org/2008/10/16/lists-enumerate-itemize-description-and-how-to-change-them/
-
-%%% DEPENDENCIES
 
 \usepackage{enumitem} % https://muug.ca/mirror/ctan/macros/latex/contrib/enumitem/enumitem.pdf
 \usepackage{multicol}  % used for two column list
-%\usepackage{tabto}% possibly usful for two column lists %http://tug.ctan.org/tex-archive/macros/latex/contrib/tabto/tabto-doc.pdf
-%%%
 
 \newlength{\moreseplength}
 \setlength{\moreseplength}{2.5pt}  % this is only used for listed; indent is 2* this
@@ -65,3 +56,8 @@ after = \end{multicols}}
 \renewcommand\labelitemi{\raisebox{0.3ex}{\scalebox{0.9}{\scriptsize$\bullet$}}}
 \renewcommand\labelitemii{\raisebox{0.3ex}{\scalebox{0.7}{\scriptsize$\bullet$}}}
 \renewcommand\labelitemiii{\raisebox{0.3ex}{\scalebox{0.4}{\scriptsize$\bullet$}}}
+
+\providetoggle{useSerif}
+\iftoggle{useSerif}{
+  \setlist[description]{font={\normalfont\bfseries}}
+}{}

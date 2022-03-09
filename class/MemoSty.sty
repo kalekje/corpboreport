@@ -15,29 +15,33 @@
 \IfValueT{#4}{\gdef\@memoFrD{#4}}
 \IfValueT{#5}{\gdef\@memoFrE{#5}}
 }
+
+\providecommand{\@memoTo}{}
+\providecommand{\@memoFr}{}
+\providecommand{\@memoFrAddr}{}
+\providecommand{\@memoToAddr}{}
+
+\def\@memoHeader{}
 \newcommand{\memoHeader}[1]{\gdef\@memoHeader{#1}}
 \newcommand{\fileno}[1]{\gdef\@fileno{#1}}
 \newcommand{\attachments}[1]{\gdef\@attachments{#1}}
 
 \newcommand{\@HangingLabel}[1]{\leavevmode\llap{\scriptsize\uppercase{#1}:\enspace}}
 
-
+%    	\ifdefOR{\@memoToB}{\@memoFrB}{\ifdef{\@memoToB}{\@memoToB}{}	&&   \ifdef{\@memoFrB}{\@memoFrB}{}	 \\}{}
+%    	\ifdefOR{\@memoToC}{\@memoFrC}{\ifdef{\@memoToC}{\@memoToC}{}	&&   \ifdef{\@memoFrC}{\@memoFrC}{}	 \\}{}
+%    	\ifdefOR{\@memoToD}{\@memoFrD}{\ifdef{\@memoToD}{\@memoToD}{}	&&   \ifdef{\@memoFrD}{\@memoFrD}{}	 \\}{}
+%    	\ifdefOR{\@memoToE}{\@memoFrE}{\ifdef{\@memoToE}{\@memoToE}{}	&&   \ifdef{\@memoFrE}{\@memoFrE}{}	 \\}{}
+    %
 
 \gdef\makeMemotitle{%
     \thispagestyle{plain}
     \vspace*{-4.5em}
-
     \ifdef{\@memoHeader}{\vspace*{-2em}  \ \hfill {\large\bfseries \@memoHeader } \hfill \  \\[1.2em]}{}
-
     \begin{tabularx}{\textwidth}{lXl}
-    	\@HangingLabel{to}\textit{\@memoToA}  &&
-    	\@HangingLabel{fr}\textit{\@memoFrA}\\ \noalign{\vskip 0.5mm} % add a bit more space %%% todo need an ifdefOR{\cs1}{\cs2}{}{}
-    %
-    	\ifdefOR{\@memoToB}{\@memoFrB}{\ifdef{\@memoToB}{\@memoToB}{}	&&   \ifdef{\@memoFrB}{\@memoFrB}{}	 \\}{}
-    	\ifdefOR{\@memoToC}{\@memoFrC}{\ifdef{\@memoToC}{\@memoToC}{}	&&   \ifdef{\@memoFrC}{\@memoFrC}{}	 \\}{}
-    	\ifdefOR{\@memoToD}{\@memoFrD}{\ifdef{\@memoToD}{\@memoToD}{}	&&   \ifdef{\@memoFrD}{\@memoFrD}{}	 \\}{}
-    	\ifdefOR{\@memoToE}{\@memoFrE}{\ifdef{\@memoToE}{\@memoToE}{}	&&   \ifdef{\@memoFrE}{\@memoFrE}{}	 \\}{}
-    %
+    	\@HangingLabel{to}\textit{\@memoTo}  &&
+    	      \@HangingLabel{fr}\textit{\@memoFr}\\ \noalign{\vskip 0.5mm} % add a bit more space %%% todo need an ifdefOR{\cs1}{\cs2}{}{}
+      \makecell[tl]{\@memoToAddr{}}  && \makecell[tl]{\@memoFrAddr{}} \\
     	\\\noalign{\vskip -1.3ex}
     	\midrule
     \end{tabularx}
@@ -76,6 +80,7 @@
 
     \setcounter{secnumdepth}{-\maxdimen}  % remove sec num
     \KOMAoptions{bibliography=totoc}  % uncomment if you want numbered reference section
-    \floatsetup[table]{objectset=raggedright}
+    \floatsetup{objectset=raggedright}
+    \captionsetup{labelformat=widecap}
 }{}
 

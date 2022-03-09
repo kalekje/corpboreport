@@ -1,6 +1,5 @@
 \usepackage{tikz}
 \usetikzlibrary{positioning}
-\usetikzlibrary{snakes}
 \usetikzlibrary{calc}
 \usetikzlibrary{arrows}
 \usetikzlibrary{decorations.markings}
@@ -26,32 +25,40 @@
 %        every picture/.style={remember picture,baseline},
 %        every node/.style={anchor=base,align=center,outer sep=1.5pt},
 %        every path/.style={thick},
-        OLB/.style={overlay,remember picture,baseline},
+        OL/.style={overlay,remember picture,baseline},
         nopad/.style={inner sep=0pt},
         }
+
+%% todo consider using the tikzmark package:
+% https://ctan.mirror.rafal.ca/graphics/pgf/contrib/tikzmark/tikzmark.pdf
+\usetikzlibrary{tikzmark}
+\usetikzmarklibrary{listings}
+%% useful for tikz node, otherwise my implementation is a bit better for me
+\let\tmrkN\tikzmarknode
+
 
 % marker =tikz coord
 \def\cbp@tikzmarker@t{1.3ex}
 \def\cbp@tikzmarker@m{0.7ex}
 \def\cbp@tikzmarker@b{0ex}
 
-\NewDocumentCommand{\tmrkr}{ s O{b} d() m }{% place a tikz marker on the baseline, middle, or top of ine. Or coord (x,y) relative to baseline
+\NewDocumentCommand{\tmrk}{ s O{b} d() m }{% place a tikz marker on the baseline, middle, or top of ine. Or coord (x,y) relative to baseline
 %    for additional padding, use \tmrkr* %
     \IfBooleanTF{#1}{\gdef\cbp@insep{0.3ex}}{\gdef\cbp@insep{0pt}}%
     \IfValueTF{#3}{%
-        \tikz[OLB] \node[inner sep=\cbp@insep,minimum size=0pt] (tm-#4) at (#3) {};%
+        \tikz[OL] \node[inner sep=\cbp@insep,minimum size=0pt] (tm-#4) at (#3) {};%
     }{%
-        \tikz[OLB] \node[inner sep=\cbp@insep,minimum size=0pt] (tm-#4) at (0em, \csname cbp@tikzmarker@#2\endcsname) {};%
+        \tikz[OL] \node[inner sep=\cbp@insep,minimum size=0pt] (tm-#4) at (0em, \csname cbp@tikzmarker@#2\endcsname) {};%
     }%
 }%
 
 \newcommand{\drawOverlayBoxTLBR}[2]{% requires 2 tikzmarkers be used. Pass the label that matches the tikzmarker
-\tikz[OLB,inner sep=0.7ex]
+\tikz[OL,inner sep=0.7ex]
 		\node[draw=red,thick,rounded corners,fit=(tm-#1.north west) (tm-#2.south east)] {};%
 }%
 
 \NewDocumentCommand{\drawHelpingGrid}{s}{%
-        \begin{tikzpicture}[OLB]
+        \begin{tikzpicture}[OL]
             \draw[step=1cm,gray,opacity=0.5] (-10.4,-10.4) grid (10.4,10.4);
             \draw[step=1cm,gray!50,opacity=0.5,shift={(0.5,0.5)}] (-10.4,-10.4) grid (10.4,10.4);
             \IfBooleanTF{#1}{\draw[step=0.2cm,blue!30,opacity=0.5] (-10.4,-10.4) grid (10.4,10.4);}{}

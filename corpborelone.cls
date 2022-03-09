@@ -1,175 +1,8 @@
 \let\footref\relax % if footref error appears
-\NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{corpborepres}[2021-09-21]
-\providecommand{\BeamerOptions}{} % extra beamer options someone may use from main.tex
-\LoadClass[11pt,
-	t, % top align content instead of middle
-	aspectratio=1610,
-	fleqn,
-	\BeamerOptions
-]{beamer}
+\providecommand{\standaloneOptions}{}
+\LoadClass[11pt,multi=pg,crop,\standaloneOptions]{standalone}
+% \use the \begin{pg} enviroment for separate pages
 
-\setbeamersize{
-	text margin left=12mm,
-	text margin right=12mm,
-	sidebar width left=0pt,
-	sidebar width right=0pt,
-	description width=0.5em,
-}
-
-
-%%%%%%%%%%%%  LuaStuff.sty  %%%%%%%%%%%%
-    
-    \usepackage{ifluatex}
-    \ifluatex
-        \usepackage{luapackageloader} % todo is this even needd
-        \usepackage{luacode}
-        \usepackage{luakeys}
-    %    \luadirect{}  % set default here
-    \else
-        \ClassError{corpboreport}{You did not use LuaLaTeX to compile! Try again}{}
-        \ClassError{corpborepres}{You did not use LuaLaTeX to compile! Try again}{}
-        \stop
-        \usepackage[utf8]{inputenc}  % apparently this can be slow and is loaded by default % https://texfaq.org/FAQ-why-inp-font
-    \fi
-
-
-
-%%%%%%%%%%%%  TextandParas.sty  %%%%%%%%%%%%
-    
-    % ##############################################
-    % Text / Para Settings and utils
-    % ##############################################
-    
-    \ifluatex
-        \usepackage{polyglossia} % helps with hyphenation
-        \setdefaultlanguage[variant=canadian]{english}
-    \else
-        \usepackage[english]{babel} % helps with hyphenation
-    \fi
-    
-    
-    \usepackage{csquotes} % helps with hyphenation
-    
-    %%% GENERAL FORMATTING
-    \usepackage{ragged2e}
-    \usepackage{blindtext}
-    \usepackage{lastpage}
-    
-    %% Boxes and stuff
-    \usepackage[usestackEOL]{stackengine}  % used for title page and stacking things
-    \usepackage{setspace}  % enable onehalfspacing instyling
-    \usepackage{relsize}  % relative sizing
-    \usepackage{pbox}  % create box of max width http://ctan.mirror.colo-serv.net/macros/latex/contrib/pbox/pbox.pdf
-    
-    
-    \let\oldcenter\center
-    \let\oldendcenter\endcenter
-    \renewenvironment{center}{\setlength\topsep{0pt}\oldcenter}{\oldendcenter}  % removes extra sep
-    
-    \let\oldflushleft\flushleft
-    \let\oldendflushleft\endflushleft
-    \renewenvironment{flushleft}{\setlength\topsep{0pt}\oldflushleft}{\oldendflushleft}
-    
-    %% some latex stuff
-    \newcommand{\Llap}[1]{\leavevmode\llap{#1}}  % llap if first thing
-    \newcommand{\Rlap}[1]{\leavevmode\rlap{#1}}  % ..
-    \newcommand{\Clap}[1]{\leavevmode\clap{#1}}
-    \newcommand{\Hfill}{\null\hfill}  % hfill if first thing
-    \newcommand{\Vfill}{\null\vfill}  % hfill if first thing
-    
-    
-    % ##############################################
-    % Paragraph stretching and spacings
-    % ##############################################
-    
-    % This is an suggestion from Axel Reichert (LaTeX package author)
-    % See CTAN: http://www.ctan.org/author/reichert
-    % See CTAN: http://www.ctan.org/pkg/l2tabu-english (Cgapter: 1.8 Should I use \sloppy?)
-    
-    % 10000 is the highest
-    \tolerance=2800
-    \hbadness=1414
-    \emergencystretch=1.5em
-    \hfuzz=0.3pt
-    \widowpenalty=4000
-    \clubpenalty=4002
-    \brokenpenalty=101
-    \displaywidowpenalty=50
-    \vfuzz \hfuzz
-
-%%%%%%%%%%%%  FontCMBlua.sty  %%%%%%%%%%%%
-    \usepackage[T1]{fontenc}  % used for accented letter, OT1 works better with cmbright, makes font work
-    \usepackage{cmbright}  % use hfbright and cm-super
-    \usefont{OT1}{cmbr}{m}{n}
-    \renewcommand\bfdefault{sb}
-    \newcommand\sbdefault{bx}
-        \usepackage[%
-        protrusion=true,
-        expansion,
-        final,
-        tracking=true,
-        letterspace=120,
-        factor=1000,% protrusion (/1000), subtle
-        stretch=10,%(/1000 %)
-        shrink=10]{microtype}
-    
-    \frenchspacing
-    
-    \usepackage{fourier} % lotsa symbols
-    
-    
-    %kerning=true,  $ NOT ALLOWED IN LUA
-    %spacing=true,  $ NOW ALLOWED IN LUA
-    
-    
-    %% FONT
-    %%% IF YOU GET AN ERROR WITH microtype, there is an issue with font:
-    % Install cm-super and hfbright packages via MiKTeX console,  you need the scalable version of cmbright, for ex.
-    %    \usepackage{fontspec}          % lualatex font engine
-    %    \setmainfont[Numbers = Uppercase,
-    %                 Ligatures = TeX,
-    %                 BoldFont  = CMU Bright SemiBold,
-    %                 ItalicFont = CMU Bright Oblique,
-    %                ]{CMU Bright Roman}
-    % NOTE OPEN font version of CMU Bright doesnt look as nice, we use type 1 here
-
-%%%%%%%%%%%%  MathSymbolsEtc.sty  %%%%%%%%%%%%
-    % ##############################################
-    % Math related packages and settings
-    % ##############################################
-    
-    % rename to MathSciSymbols
-    
-    
-    \usepackage[fleqn]{mathtools} % should load amsmath
-    %\usepackage{amsmath}
-    
-    \usepackage{xfrac}
-    \usepackage{amssymb,amsfonts,gensymb}  % math fonts and symbols
-    
-    
-    \usepackage[free-standing-units,
-    	unit-optional-argument,
-    	detect-all=true, % allows italic/bold units
-    	space-before-unit=true,
-    	inter-unit-product=\,,
-    	use-xspace=true]{siunitx}  % \SI \num used for physical units and S column in tables
-    
-    \sisetup{range-phrase=--,
-    	table-number-alignment=center,
-    	table-text-alignment=center,
-    	table-align-text-post=false,
-    	table-align-text-pre=false,
-    }
-    % http://ctan.mirror.rafal.ca/macros/latex/contrib/siunitx/siunitx.pdf
-    
-    
-    %\def\sbfCMB#1{\ThisStyle{\setbox0=\hbox{$\SavedStyle#1$}%
-    %		#1\kern.2pt\kern-\wd0%
-    %		\raisebox{.1pt}{$\SavedStyle#1$}}}
-    \newcommand{\sbfCMB}[1]{\textbf{\textit{#1}}}
-    
 
 
 %%%%%%%%%%%%  Utilities.sty  %%%%%%%%%%%%
@@ -311,6 +144,186 @@
     
     %% todo better syntax
     %\itertext<b>{1,2}<a>[; ] --> b1a, b2a,
+
+
+\newtoggle{useSerif}
+\DeclareOption{serif}{\toggletrue{useSerif}}
+\ProcessOptions\relax
+
+
+%%%%%%%%%%%%  LuaStuff.sty  %%%%%%%%%%%%
+    
+    \usepackage{ifluatex}
+    \ifluatex
+        \usepackage{luapackageloader} % todo is this even needd
+        \usepackage{luacode}
+        \usepackage{luakeys}
+    %    \luadirect{}  % set default here
+    \else
+        \ClassError{corpboreport}{You did not use LuaLaTeX to compile! Try again}{}
+        \ClassError{corpborepres}{You did not use LuaLaTeX to compile! Try again}{}
+        \stop
+        \usepackage[utf8]{inputenc}  % apparently this can be slow and is loaded by default % https://texfaq.org/FAQ-why-inp-font
+    \fi
+
+
+%%%%%%%%%%%%  TextandParas.sty  %%%%%%%%%%%%
+    
+    % ##############################################
+    % Text / Para Settings and utils
+    % ##############################################
+    
+    \ifluatex
+        \usepackage{polyglossia} % helps with hyphenation
+        \setdefaultlanguage[variant=canadian]{english}
+    \else
+        \usepackage[english]{babel} % helps with hyphenation
+    \fi
+    
+    
+    \usepackage{csquotes} % helps with hyphenation
+    
+    %%% GENERAL FORMATTING
+    \usepackage{ragged2e}
+    \usepackage{blindtext}
+    \usepackage{lastpage}
+    
+    %% Boxes and stuff
+    \usepackage[usestackEOL]{stackengine}  % used for title page and stacking things
+    \usepackage{setspace}  % enable onehalfspacing instyling
+    \usepackage{relsize}  % relative sizing
+    \usepackage{pbox}  % create box of max width http://ctan.mirror.colo-serv.net/macros/latex/contrib/pbox/pbox.pdf
+    
+    
+    \let\oldcenter\center
+    \let\oldendcenter\endcenter
+    \renewenvironment{center}{\setlength\topsep{0pt}\oldcenter}{\oldendcenter}  % removes extra sep
+    
+    \let\oldflushleft\flushleft
+    \let\oldendflushleft\endflushleft
+    \renewenvironment{flushleft}{\setlength\topsep{0pt}\oldflushleft}{\oldendflushleft}
+    
+    %% some latex stuff
+    \newcommand{\Llap}[1]{\leavevmode\llap{#1}}  % llap if first thing
+    \newcommand{\Rlap}[1]{\leavevmode\rlap{#1}}  % ..
+    \newcommand{\Clap}[1]{\leavevmode\clap{#1}}
+    \newcommand{\Hfill}{\null\hfill}  % hfill if first thing
+    \newcommand{\Vfill}{\null\vfill}  % hfill if first thing
+    
+    
+    % ##############################################
+    % Paragraph stretching and spacings
+    % ##############################################
+    
+    % This is an suggestion from Axel Reichert (LaTeX package author)
+    % See CTAN: http://www.ctan.org/author/reichert
+    % See CTAN: http://www.ctan.org/pkg/l2tabu-english (Cgapter: 1.8 Should I use \sloppy?)
+    
+    % 10000 is the highest
+    \tolerance=2800
+    \hbadness=1414
+    \emergencystretch=1.5em
+    \hfuzz=0.3pt
+    \widowpenalty=4000
+    \clubpenalty=4002
+    \brokenpenalty=101
+    \displaywidowpenalty=50
+    \vfuzz \hfuzz
+
+
+\iftoggle{useSerif}{
+
+
+%%%%%%%%%%%%  FontKP.sty  %%%%%%%%%%%%
+    \usepackage[T1]{fontenc}
+    %frenchstyle,narrowiints,partialup < math settings for kp fonts
+    \usepackage[light,notextcomp,oldstylenums]{kpfonts} % the light is also decent, could consider
+    \renewcommand{\ttdefault}{cmtl} % monospace that looks nice with light kpfont
+    \usepackage[activate=true,% this package makes the font look nicer
+        final,%
+        tracking=true,%
+    %	kerning=true, % only works with pdftex
+    ]{microtype}
+    \SetTracking{encoding=*, shape=sc}{18}  % adjust small caps letter spacing
+
+}{
+
+
+%%%%%%%%%%%%  FontCMBlua.sty  %%%%%%%%%%%%
+    \usepackage[T1]{fontenc}  % used for accented letter, OT1 works better with cmbright, makes font work
+    \usepackage{cmbright}  % use hfbright and cm-super
+    \usefont{OT1}{cmbr}{m}{n}
+    \renewcommand\bfdefault{sb}
+    \newcommand\sbdefault{bx}
+        \usepackage[%
+        protrusion=true,
+        expansion,
+        final,
+        tracking=true,
+        letterspace=120,
+        factor=1000,% protrusion (/1000), subtle
+        stretch=10,%(/1000 %)
+        shrink=10]{microtype}
+    
+    \frenchspacing
+    
+    \usepackage{fourier} % lotsa symbols
+    
+    
+    %kerning=true,  $ NOT ALLOWED IN LUA
+    %spacing=true,  $ NOW ALLOWED IN LUA
+    
+    
+    %% FONT
+    %%% IF YOU GET AN ERROR WITH microtype, there is an issue with font:
+    % Install cm-super and hfbright packages via MiKTeX console,  you need the scalable version of cmbright, for ex.
+    %    \usepackage{fontspec}          % lualatex font engine
+    %    \setmainfont[Numbers = Uppercase,
+    %                 Ligatures = TeX,
+    %                 BoldFont  = CMU Bright SemiBold,
+    %                 ItalicFont = CMU Bright Oblique,
+    %                ]{CMU Bright Roman}
+    % NOTE OPEN font version of CMU Bright doesnt look as nice, we use type 1 here
+
+}
+
+
+%%%%%%%%%%%%  MathSymbolsEtc.sty  %%%%%%%%%%%%
+    % ##############################################
+    % Math related packages and settings
+    % ##############################################
+    
+    % rename to MathSciSymbols
+    
+    
+    \usepackage[fleqn]{mathtools} % should load amsmath
+    %\usepackage{amsmath}
+    
+    \usepackage{xfrac}
+    \usepackage{amssymb,amsfonts,gensymb}  % math fonts and symbols
+    
+    
+    \usepackage[free-standing-units,
+    	unit-optional-argument,
+    	detect-all=true, % allows italic/bold units
+    	space-before-unit=true,
+    	inter-unit-product=\,,
+    	use-xspace=true]{siunitx}  % \SI \num used for physical units and S column in tables
+    
+    \sisetup{range-phrase=--,
+    	table-number-alignment=center,
+    	table-text-alignment=center,
+    	table-align-text-post=false,
+    	table-align-text-pre=false,
+    }
+    % http://ctan.mirror.rafal.ca/macros/latex/contrib/siunitx/siunitx.pdf
+    
+    
+    %\def\sbfCMB#1{\ThisStyle{\setbox0=\hbox{$\SavedStyle#1$}%
+    %		#1\kern.2pt\kern-\wd0%
+    %		\raisebox{.1pt}{$\SavedStyle#1$}}}
+    \newcommand{\sbfCMB}[1]{\textbf{\textit{#1}}}
+    
 
 
 %%%%%%%%%%%%  Tables.sty  %%%%%%%%%%%%
@@ -463,24 +476,67 @@
     }
 
 
-%\colorlet{background}{gray}
-\colorlet{background}{offwhite}
-\colorlet{transition}{background}
-\colorlet{body}{black}
-\colorlet{main}{indigo}
-\colorlet{caution}{darkred}
-\colorlet{good}{green}
+%%%%%%%%%%%%  Lists.sty  %%%%%%%%%%%%
+    
+    \usepackage{enumitem} % https://muug.ca/mirror/ctan/macros/latex/contrib/enumitem/enumitem.pdf
+    \usepackage{multicol}  % used for two column list
+    
+    \newlength{\moreseplength}
+    \setlength{\moreseplength}{2.5pt}  % this is only used for listed; indent is 2* this
+    
+    \newlength{\ListIndentLength}
+    \setlength{\ListIndentLength}{4ex}  % this is only used for listed; indent is 2* this
+    
+    \newlength{\SemiParSkipLength}
+    \setlength{\SemiParSkipLength}{4.1pt plus 0.41pt}  % 0.3 * 13.7
+    
+    \newlength{\SemiMinusParLength}
+    \setlength{\SemiMinusParLength}{-9.6pt plus 0.96pt}  % (0.3 - 1 )* 13.7
+    
+    \newcommand{\SemiMinusParSkip}{\vspace{\SemiMinusParLength}}  % remove parskip, add env. skip
+    \newcommand{\ContParaAfterList}{\vspace{\SemiMinusParLength}\noindent}
+    
+    % global settings for all lists
+    
+    \setlist{nosep,%
+    	leftmargin=\ListIndentLength,%
+    	topsep=-\parskip, % removes default parskip in topsep
+    	before=\vspace{\SemiParSkipLength},  % add a small buffer, assuming that list is in same par as above
+    	after*={\@topsepadd\parskip}  % restores topsep to parskip (topsep=0pt)
+    }  % seperation is same as baseline,needs enumitem
+    
+    
+    \setlist[2,3,4,5]{nosep,
+    	leftmargin=\ListIndentLength,
+    	topsep=-\parskip,
+    	before=,
+    	after*=,  % todo consider putting some butter after
+    }
+    %
+    
+    \setlist[enumerate,2]{label=\alph*.}
+    \SetEnumitemKey{moresep}{itemsep=\moreseplength}
+    
+    %%%
+    \SetEnumitemKey{twocol}{
+    itemsep = 1\itemsep,
+    parsep = 1\parsep,
+    before = \raggedcolumns\begin{multicols}{2},
+    after = \end{multicols}}
+    
+    \SetEnumitemKey{threecol}{
+    itemsep = 1\itemsep,
+    parsep = 1\parsep,
+    before = \raggedcolumns\begin{multicols}{3},
+    after = \end{multicols}}
+    %%%
+    
+    % changes bullets, I like them smaller than default
+    \renewcommand\labelitemi{\raisebox{0.3ex}{\scalebox{0.9}{\scriptsize$\bullet$}}}
+    \renewcommand\labelitemii{\raisebox{0.3ex}{\scalebox{0.7}{\scriptsize$\bullet$}}}
+    \renewcommand\labelitemiii{\raisebox{0.3ex}{\scalebox{0.4}{\scriptsize$\bullet$}}}
 
-\def\DarkTheme{
-\colorlet{background}{mybrown}
-\colorlet{transition}{background}
-\colorlet{body}{offwhite}
-\colorlet{main}{blue!50}
-\colorlet{caution}{red!50}
-\colorlet{good}{green!50}
-}
 
-\providecommand{\cbp@listframe}{} % no frames for beamer
 
 %%%%%%%%%%%%  CodeBoxes.sty  %%%%%%%%%%%%
     % ##############################################
@@ -631,31 +687,6 @@
     
 
 
-%%%%%%%%%%%%  ToDoNote.sty  %%%%%%%%%%%%
-    % ##############################################
-    % Todo Notes (with Example)
-    % ##############################################
-    
-    \usepackage[color=orange!50!,
-    bordercolor=orange!50!,
-    textsize=scriptsize,
-    textwidth=0.9in,
-    %disable,    % uncomment to disable package entirely
-    ]{todonotes}
-    % invisible todo
-    \newcommand{\todoINV}[1]{%  can just use \todototoc
-    	\todo[linecolor=white, backgroundcolor=white,bordercolor=white, textcolor=white]{#1}%
-    }
-    \newcommand{\todoG}[1]{%  can just use \todototoc
-    	\todo[color=green!90!]{#1}%
-    }
-    
-    %\newcommand{\todoL}[1]{\todo[inline,textsize=\small]{#1}} %inline todo note
-    \newcommand{\todoL}[1]{\todo[inline]{#1}} %inline todo note
-    %\listoftodos
-    %\todototoc{ToC todo, just a random list}
-    %\todoG{Check for stuff}
-
 %%%%%%%%%%%%  macros/unirefs.sty  %%%%%%%%%%%%
     %%%% todo maybe move this to a lua-based function
     
@@ -715,83 +746,7 @@
     %\makeatother
     %
     %\newcommand{\reseturef}{\setcounter{unilabIN}{0}\stepcounter{unilabOUT}}
-
-%%%%%%%%%%%%  BibAndGloss.sty  %%%%%%%%%%%%
-    % requires enumitem for acronym styling
-    \usepackage[sorting=none]{biblatex}
-    
-    \newcommand{\citeT}[1]{\citetitle{#1}~\cite{#1}}
-    \renewrobustcmd*{\bibinitdelim}{\,}
-    \renewcommand*{\multicitedelim}{\addcomma\,}  % tighten [1,2,3] multi citations
-    
-    \defbibenvironment{bibliography}
-    {\begin{enumerate}[leftmargin=0pt,labelsep=2ex,itemsep=0.8ex]}
-    {\end{enumerate}}
-    {\item}
-    
-    
-    \usepackage[xindy,style=super,nopostdot, nogroupskip, nonumberlist, numberedsection, section=section,savewrites=true,acronym,nomain]{glossaries-extra}
-    \setabbreviationstyle[acronym]{long-short}
-    \GlsXtrEnableEntryCounting % % https://tex.stackexchange.com/questions/477581/glossaries-introduce-short-name-only-if-used-more-than-once-within-section-chap
-     {acronym}% list of categories to use entry counting
-     {1}% trigger value
-    %\glsenableentrycount % enable \cgls, \cglspl, \cGls, \cGlspl  supposed to not show accronym if only one
-    \glsdisablehyper  % to disable hyperlinks
-    \glstoctrue  % ToC
-    
-    \makeglossaries
-    
-    
-    \newglossarystyle{listwithwidth}{%
-    	\renewcommand*{\glossaryheader}{}%
-    	\renewcommand*{\glsgroupheading}[1]{}%
-    	\renewcommand*{\glossarysubentryfield}[6]{glssubentryitem{##2}{\strut\glstarget{##2}##4\glspostdescription\space ##6}}%
-    	\renewcommand*{\glsgroupskip}{\vspace{7pt}}% space between alphabetized groups
-    	\renewenvironment{theglossary}%
-    		{\enlargethispage{2em}\begin{description}[leftmargin=2.5cm,style=multiline,itemsep=3pt,format=\raggedright\sloppy]}%
-    		{\end{description}}%
-    	\renewcommand*{\glossaryentryfield}[5]{%
-    		\item[{\normalfont\bfseries\glsentryitem{##1}\glstarget{##1}{##2}}]{##3\glspostdescription\space ##5}
-    		}%
-    }
-    
-    \newglossarystyle{AcronymsTwoCol}{%
-    	\renewcommand*{\glossaryheader}{}%
-    	\renewcommand*{\glsgroupheading}[1]{}%
-    	\renewcommand*{\glossarysubentryfield}[6]{glssubentryitem{##2}{\strut\glstarget{##2}##4\glspostdescription\space ##6}}%
-    	\renewcommand*{\glsgroupskip}{\vspace{7pt}}% space between alphabetized groups
-    	\renewenvironment{theglossary}%
-    		{\vspace*{1ex}\setlength{\columnsep}{30pt}\begin{multicols}{2}%
-    		\begin{description}[font=\bfseries,leftmargin=1.7cm,style=multiline,itemsep=3pt]\raggedright}%
-    		{\end{description}\end{multicols}}%
-    	\renewcommand*{\glossaryentryfield}[5]{%
-    		\item[{\normalfont\bfseries\glsentryitem{##1}\glstarget{##1}{##2}}]{##3\glspostdescription\space ##5}
-    		}%
-    }
-    
-    
-    
-    % todo do this for \Gls and \GLS, maybe * + to gls
-    \usepackage{pdfcomment}
-    \let\oldgls\gls
-    \RenewDocumentCommand{\gls}{ O{} m O{} }{%
-        \ifglsused{#2}{%
-        	\pdftooltip{\oldgls[#1]{#2}[#3]}{\glsentrylong{#2}}%
-    	}{%
-    		\oldgls{#2}%
-    	}%
-    }%
-    \let\oldglspl\glspl
-    \RenewDocumentCommand{\glspl}{ O{} m O{} }{%
-        \ifglsused{#2}{%
-    	    \pdftooltip{\oldglspl[#1]{#2}[#3]}{\glsentrylong{#2}}%
-    	}{%
-    		\oldglspl{#2}%
-    	}%
-    }%
-
 \usepackage{graphbox}
-
 
 
 %%%%%%%%%%%%  TikZstuff.sty  %%%%%%%%%%%%
@@ -867,11 +822,10 @@
     
     %%%% END TIKZ STUFF
 
-
 \usepackage[pl,extras]{penlight}
 \usepackage{YAMLvars}
 \usepackage{lutabulartools}
-\usepackage[noenumitem]{autopuncitems}
+\usepackage{autopuncitems}
 
 \begin{luacode*}
 	YAMLvars.tabmidrule = 'gmidrule'
@@ -879,243 +833,4 @@
 
 
 
-\newtoggle{inlineframesubtitle}
-\newtoggle{sectionalToC}
 
-\NewDocumentCommand{\ifinsert}{ m +m +O{}}{\ifcsstring{insert#1}{}{#3}{#2}} %% easer conditional command
-
-% this was under mode<presentation>
-%\DeclareOptionBeamer{background}{\PassOptionsToPackage{background=#1}{beamerouterthemeSaarland}}
-%\DeclareOptionBeamer{logo}{\PassOptionsToPackage{logo=#1}{beamerouterthemeSaarland}}
-%\ProcessOptionsBeamer
-
-
-\mode<presentation>
-
-%%%% BEAMER SETTINGS %%%%  %%%%  %%%%  %%%%  %%%%  %%%%  %%%%  %%%%  %%%%  %%%%
-%%%%  %%%%  %%%%  %%%%  %%%%  %%%%  %%%%  %%%%  %%%%  %%%%  %%%%
-
-\setbeamertemplate{navigation symbols}{} 	% turn off pdf navigation symbols
-
-%%%% FONTS %%%%  %%%%  %%%%  %%%%  %%%%  %%%%  %%%%  %%%%  %%%%  %%%%
-\setbeamerfont{title}{family=\sffamily, series=\bfseries, size=\LARGE}
-\setbeamerfont{subtitle}{family=\sffamily, series=\mdseries, size=\large}
-\setbeamerfont{author}{family=\sffamily, series=\mdseries, shape=\itshape, size=\large}
-\setbeamerfont{institute}{family=\sffamily, series=\mdseries, size=\normalsize}
-\setbeamerfont{date}{family=\sffamily, series=\mdseries, size=\normalsize}
-\setbeamerfont{frametitle}{family=\sffamily, series=\bfseries, size=\Large}
-\setbeamerfont{framesubtitle}{family=\sffamily, series=\mdseries, size=\large}
-
-\setbeamerfont{structure}{family=\sffamily, series=\bfseries, size=\normalsize}
-
-%%%%  %%%%  %%%%  %%%%  %%%%  %%%%  %%%%  %%%%  %%%%  %%%%  %%%%
-
-
-%%%% COLORS %%%%  %%%%  %%%%  %%%%  %%%%  %%%%  %%%%  %%%%  %%%%  %%%%
-\setbeamercolor{background canvas}{bg=background}
-
-
-\setbeamercolor{structure}{fg=body} % descrioption and ToC color
-%\setbeamercolor{section in toc}{fg=body}
-
-\setbeamercolor{frametitle}{fg=main}
-\setbeamercolor{framesubtitle}{fg=main}
-\setbeamercolor{alerted text}{fg=caution}
-
-
-% block color settings
-\setbeamercolor{normal text}{fg=body, bg=background}
-
-\setbeamercolor{block title}{fg=main}
-\setbeamercolor{block body}{parent=normal text}
-\setbeamercolor{block title example}{fg=good}
-\setbeamercolor{block body example}{parent=normal text}
-\setbeamercolor{block title alerted}{fg=caution}
-\setbeamercolor{block body alerted}{parent=normal text}
-
-\setbeamercolor{title}{fg=main}
-\setbeamercolor{subtitle}{fg=main}
-%%%% %%%%  %%%%  %%%%  %%%%  %%%%  %%%%  %%%%  %%%%  %%%%  %%%%
-
-%%%% INNER THEME %%%%  %%%%  %%%%  %%%%  %%%%  %%%%  %%%%  %%%%  %%%%  %%%%
-\setlength{\parskip}{0.25\baselineskip}
-\newcommand{\@minipagerestore}{\setlength{\parskip}{0.25\baselineskip}} % for multi columns
-
-\setbeamertemplate{itemize item}{\raisebox{0.1ex}{\color{main}\scalebox{1.0}{$\bullet$}}}
-\setbeamertemplate{itemize subitem}{\raisebox{0.1ex}{\color{main}\scalebox{0.8}{$\bullet$}}}
-\setbeamertemplate{itemize subsubitem}{\raisebox{0.1ex}{\color{main}\scalebox{0.5}{$\bullet$}}}
-
-% list stuff https://tex.stackexchange.com/questions/31505/trouble-combining-enumitem-and-beamer
-%\patchcmd{\@listI}{\itemsep3\p@}{\itemsep2em}{}{}
-\patchcmd{\@listI}{\topsep 3\p@}{\topsep 0\p@}{}{}
-%\patchcmd{\@listI}{\parsep 0\p@}{\parsep 1\p@}{}{}
-\setlength\leftmargini{0em}
-\setlength\leftmarginii{1em}
-\setlength\leftmarginiii{1em}
-
-\setlength  \labelsep  {0.3em} % default 0.5
-%\setlength  \labelwidth{\leftmargini}
-%\addtolength\labelwidth{-\labelsep}
-
-%%%% %%%%  %%%%  %%%%  %%%%  %%%%  %%%%  %%%%  %%%%  %%%%  %%%%
-
-
-
-%%%% OUTER THEME %%%%  %%%%  %%%%  %%%%  %%%%  %%%%  %%%%  %%%%  %%%%  %%%%
-\setbeamertemplate{sidebar right}{}
-
-\setbeamertemplate{headline}{}
-\setbeamertemplate{frametitle}{%
-	\vspace*{1.7ex}{\usebeamerfont{frametitle}\usebeamercolor[fg]{frametitle}\strut\insertframetitle\strut}
-	\ifinsert{framesubtitle}{%
-		\iftoggle{inlineframesubtitle}{\hspace{2ex}}{\vskip 2pt}%
-			{\usebeamerfont{framesubtitle}\usebeamercolor[fg]{framesubtitle}\strut\insertframesubtitle\strut}}[\vskip 0pt]
-		\iftoggle{inlineframesubtitle}{\vskip 0pt}{}
-	\vspace*{0.1ex}}
-%\setbeamertemplate{framesubtitle}{\strut\insertframesubtitle\strut\vspace*{1ex}} ?
-
-\def\subtitleINline{\global\toggletrue{inlineframesubtitle}}
-\def\subtitleNEWline{\global\togglefalse{inlineframesubtitle}}
-
-%https://tex.stackexchange.com/questions/275044/how-do-i-insert-the-total-continuation-count-in-the-allowframbreaks-frame-title
-%% https://github.com/josephwright/beamer/issues/423
-%% if pagebreak occurs, make the subtitle say ... continued on subsequent breaks
-%https://tex.stackexchange.com/questions/275044/how-do-i-insert-the-total-continuation-count-in-the-allowframbreaks-frame-title
-\newcounter{beamercontcount}
-\defbeamertemplate*{frametitle continuation}{only if multiple}{%
-    \ifnum \numexpr \beamer@endpageofframe+1-\beamer@startpageofframe\relax > 1
-		\ifnum	\numexpr \insertcontinuationcount \relax > 1
-			\framesubtitle{\Llap{... }continued}
-    	\fi
-    \fi
-}
-
-
-\newcommand{\cpb@PageRule}{\vline height 1em depth 1.0em width \lightrulewidth}  %% Footer
-\setbeamertemplate{footline}{%
-    \null\hfill\rlap{\small\hspace*{1ex}\cpb@PageRule\enspace\insertframenumber{}}\hspace*{\beamer@rightmargin}
-		\vskip9pt
-}
-
-\let\company\institute  % alias for setting institution
-
-\let\oldlogo\logo
-\RenewDocumentCommand{\logo}{s m}{%
-	\IfBooleanTF{#1}{\oldlogo{\includegraphics[width=3cm,smash=tl]{#2}}}%
-	{\oldlogo{#2}}%
-}%
-
-\newlength{\cbp@BTPheight}
-\setlength{\cbp@BTPheight}{8cm}
-\newlength{\cbp@BTPwidth}
-\setlength{\cbp@BTPwidth}{\textwidth-6mm-\heavyrulewidth-3mm}
-
-\setbeamertemplate{title page}
-{   \Vfill\vspace*{5mm}%
-	\hspace*{1mm}%
-	\rule{\heavyrulewidth}{\cbp@BTPheight}% Vertical line
-	\hspace{7mm}% Whitespace between the vertical line and title page text
-	\begin{minipage}[b][\cbp@BTPheight][t]{\cbp@BTPwidth}
-		\Vfill\vfill\vfill
-		\ifinsert{title}{{\usebeamerfont{title}\usebeamercolor[fg]{title}\inserttitle\par\vspace{0.8ex}}}
-		\ifinsert{subtitle}{{\usebeamerfont{subtitle}\usebeamercolor[fg]{subtitle}\insertsubtitle\vspace{0.4ex}}}
-		\Vfill
-		\ifinsert{author}{\vfill{\usebeamerfont{author}\insertauthor}}
-		\ifinsert{institute}{\vfill{\usebeamerfont{institute}\insertinstitute}}
-		\ifinsert{date}{\vfill{\usebeamerfont{date}\insertdate}}
-		\ifinsert{logo}{\vfill\vfill\hfill\tikz[OL] \node at (-2,0) {\insertlogo};}
-%		\ifinsert{logo}{\vfill\vfill\hfill\insertlogo}
-%		\ifinsert{logo}{\vfill\vfill\hspace*{\widthof{\usebeamerfont{title}\inserttitle}}\insertlogo}
-		\Vfill\vfill\vfill\vfill\vfill
-	\end{minipage}
-	\Vfill\vfill
-}
-
-
-% Footnotes
-% https://tex.stackexchange.com/questions/432316/how-can-i-change-footnote-superscript-size-and-remove-superscript-from-footnote/432374
-
-\newlength{\extrafootnotespace}
-% if you need more footnote room on a slide, use \addfootnotespace [optional]
-\NewDocumentCommand{\addfootnotespace}{O{1em}}{\global\setlength{\global\extrafootnotespace}{#1}}
-
-\def\@makefnmarknosuper{\hbox{{\usebeamercolor[fg]{footnote mark}\usebeamerfont*{footnote}\smaller\@thefnmark.\ }}}
-\def\@makefntext#1{%
-  \def\insertfootnotetext{#1}%
-  \def\insertfootnotemark{\@makefnmarknosuper}%
-  \usebeamertemplate***{footnote}}
-\addtobeamertemplate{footnote}{\hskip -2em}{}
-
-\xpretocmd{\footnoterule}{\vspace*{\extrafootnotespace}}{}{}
-\xapptocmd{\footnoterule}{\global\setlength{\global\extrafootnotespace}{0pt}}{}{} % revert additional footnotespace
-
-
-\newcommand{\moresep}{\addtolength{\itemsep}{5pt}}
-
-
-%%%% %%%%  %%%%  %%%%  %%%%  %%%%  %%%%  %%%%  %%%%  %%%%  %%%%
-
-
-\mode<all>
-
-
-
-\newcommand{\cref}[1]{Slide \ref{#1}\xspace}  % likely to only reference slide numbers
-\newcommand<>{\freecaption}[1]{\onslide#2{\\[0.2ex]\footnotesize#1}}
-\setbeamertemplate{caption}{\raggedright\insertcaption\par}
-\setbeamerfont{caption}{size=\footnotesize}
-
-%	https://www.google.com/amp/s/nhigham.com/2013/01/18/top-5-beamer-tips/amp/
-\AtBeginDocument{
-	\iftoggle{sectionalToC}{
-\AtBeginSection[]{{\setbeamercolor{background canvas}{bg=transition}\frame{\frametitle{Outline}%%
-                  \usebeamerfont{structure}\tableofcontents[current]}}}
-		}{}
-
-}
-
-\newcommand\sectionalToC{\toggletrue{sectionalToC}}
-
-\def\allowframebreaksall{
-	\let\oldframe\frame
-	\global\renewcommand\frame[1][]{\oldframe[allowframebreaks,##1]}
-}
-
-
-% todo fix this vspace, want more room for multiples
-
-%%%% some frame types, 50/50, narrow-wide, wide-narrow
-
-\def\begCol{\vspace{2ex}\begin{columns}[t,onlytextwidth]\begin{column}[T]{\cpb@firstcolwidth\textwidth}}
-
-\newcommand{\begColFF}{\gdef\cpb@firstcolwidth{0.46}\begCol} %% fifty-fifty % todo consider adding args ??
-\newcommand{\begColNW}{\gdef\cpb@firstcolwidth{0.31}\begCol} %% narrow-wide
-\newcommand{\begColWN}{\gdef\cpb@firstcolwidth{0.61}\begCol} %% wide-narrow
-
-\def\cpb@calcnextcolwidth{\fpeval{1-0.08-\cpb@firstcolwidth}}
-
-\newcommand{\nextCol}{\end{column}\hfill\begin{column}[T]{\cpb@calcnextcolwidth\textwidth}}
-\def\endCol{\end{column}\end{columns}}
-
-
-\usepackage{multicol}
-\newcommand{\twoCol}[1]{%
-    \begin{multicols}{2}
-		#1
-	\end{multicols}%
-}
-\setlength{\columnsep}{0.08\textwidth}  % for two column, good for long lists, but use begCol otherwise
-
-
-%%% todo delete me
-%\newcommand{\begColFF}{\vspace{2ex}\begin{columns}[t,onlytextwidth]\begin{column}[T]{0.46\textwidth}}
-%\newcommand{\nextColFF}{\end{column}\hfill\begin{column}[T]{0.46\textwidth}}
-%\def\endColFF{\end{column}\end{columns}}
-%% narrow-wide
-%\newcommand{\begColNW}{\begin{columns}[t,onlytextwidth]\begin{column}[T]{0.31\textwidth}}
-%\newcommand{\nextColNW}{\end{column}\hfill\begin{column}[T]{0.61\textwidth}}
-%\def\endColNW{\end{column}\end{columns}}
-%% wide-narrow
-%\newcommand{\begColWN}{\begin{columns}[t,onlytextwidth]\begin{column}[T]{0.61\textwidth}}
-%\newcommand{\nextColWN}{\end{column}\hfill\begin{column}[T]{0.31\textwidth}}
-%\def\endColWN{\end{column}\end{columns}}

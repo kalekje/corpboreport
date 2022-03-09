@@ -1,8 +1,25 @@
 % ##############################################
+% KOMA-Script Settings
+% ##############################################
+\usepackage[headsepline,draft=false]{scrlayer-scrpage}  % enable header line
+\usepackage{scrhack} % helps with issues with other packages
+ % https://tex.stackexchange.com/questions/73248/what-packages-are-incompatible-with-koma-script
+
+\clearpairofpagestyles
+		% some example settings
+		%\KOMAoption{paper}{letter}
+		%\KOMAoption{DIV}{14}
+		%\KOMAoption{BCOR}{0mm}
+		%\KOMAoption{headlines}{2}
+		%\KOMAoption{footlines}{0}
+		%%%\usepackage{scrextend}  % not to be use with scr classes, but with article,letter etc to provide some koma features
+
+
+% ##############################################
 % Header and Footer
 % ##############################################
 
-%% NOTE: should adjust top margin height in GeometryCustom depending on number of lines
+	%% NOTE: should adjust top margin height in GeometryCustom depending on number of lines
 
 \addtokomafont{pageheadfoot}{\upshape}
 
@@ -22,9 +39,10 @@
 %\makeatother
 
 
-%
+% ##############################################
 %  Footnotes
-%
+% ##############################################
+
 \usepackage{footnotebackref}  % must be loaded before footnote backref
 \usepackage{footmisc}  %
 \setlength\footnotemargin{0pt}  % space between footnote and number.. might want to experiemnt with this

@@ -1,6 +1,8 @@
 %%% shortcut to use all format files of
 \let\footref\relax % if footref error appears
 
+\providecommand{\FormatDir}{class/}
+
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesClass{corpboreport}[2021-09-21]
 
@@ -44,41 +46,24 @@ fleqn,
 %https://github.com/mrpiggi/svg/issues/18
 \providecommand*{\Ifstr}{\ifstr}  % little hack that supposed to fix ifstr warning, see https://komascript.de/faq_deprecatedif
 
-\usepackage{ifluatex}
-\ifluatex
-    \usepackage{luapackageloader}
-    \usepackage{luacode}
-\else
-    \ClassWarning{corpboreport}{You did not use LuaLaTeX to compile, many packages will be skipped and you will lose features}{}
-    \usepackage[utf8]{inputenc}  % apparently this can be slow and is loaded by default % https://texfaq.org/FAQ-why-inp-font
-\fi
 
 
-
-% ##############################################
-% KOMA-Script Settings
-% ##############################################
-\usepackage[headsepline,draft=false]{scrlayer-scrpage}  % enable header line
-\usepackage{scrhack} % helps with issues with other packages
- % https://tex.stackexchange.com/questions/73248/what-packages-are-incompatible-with-koma-script
-
-\clearpairofpagestyles
-
-% some example settings
-%\KOMAoption{paper}{letter}
-%\KOMAoption{DIV}{14}
-%\KOMAoption{BCOR}{0mm}
-%\KOMAoption{headlines}{2}
-%\KOMAoption{footlines}{0}
-
-%\usepackage{scrextend}  % not to be use with scr classes, but with article,letter etc to provide some koma features
+%%%%%%%%%%%%  LuaStuff.sty  %%%%%%%%%%%%
+    
+    \usepackage{ifluatex}
+    \ifluatex
+        \usepackage{luapackageloader} % todo is this even needd
+        \usepackage{luacode}
+        \usepackage{luakeys}
+    %    \luadirect{}  % set default here
+    \else
+        \ClassError{corpboreport}{You did not use LuaLaTeX to compile! Try again}{}
+        \ClassError{corpborepres}{You did not use LuaLaTeX to compile! Try again}{}
+        \stop
+        \usepackage[utf8]{inputenc}  % apparently this can be slow and is loaded by default % https://texfaq.org/FAQ-why-inp-font
+    \fi
 
 
-% ####################################################################################
-%
-% Styling for this document
-%
-% ####################################################################################
 
 %%%%%%%%%%%%  GeometryCustom.sty  %%%%%%%%%%%%
     % ##############################################
@@ -102,14 +87,14 @@ fleqn,
     	]{geometry} 
     \else%
     \usepackage[
-    		top=1.25in,
+    		top=1.46in,
     		headheight=2em,
-    		headsep=0.25in,  % about 1.25 * 13.7 (baseline skip),
+    		headsep=0.29in,  % about 1.25 * 13.7 (baseline skip),
     		footskip=0.01pt,
-    		bottom=1.25in, % 1.125
+    		bottom=1.5in, % 1.125
     		bindingoffset=0.0in,
-    		left=1.375in,%1.25in,%1.125in,
-    		right=1.375in,%1.25in%,1.125in,
+    		left=1.50in,%1.25in,%1.125in,
+    		right=1.25in,%1.25in%,1.125in,
     		%showframe=true,
     	]{geometry}
     \fi%  finally do nothing
@@ -121,10 +106,6 @@ fleqn,
     %%%
 
 %%%%%%%%%%%%  Utilities.sty  %%%%%%%%%%%%
-    % ##############################################
-    % Utilities (tools to help with scripting, automating etc.)
-    % ##############################################
-    
     \usepackage{etoolbox} %
     
     \usepackage{xparse} % smart definition of commands
@@ -134,6 +115,9 @@ fleqn,
     \usepackage{calc}  % allows us to use expressions like {\linewidth-2ex} in commands
     \usepackage{xfp}  % floating point math
     \usepackage{xspace}  % smartly looks at space after commands
+    
+    %\usepackage{tabto}% possibly usful for two column lists %http://tug.ctan.org/tex-archive/macros/latex/contrib/tabto/tabto-doc.pdf
+    %%%
     
     \usepackage{catchfile} % catches a .tex file as a command
     
@@ -145,14 +129,15 @@ fleqn,
     
     \usepackage[export]{adjustbox} % provide additional commands for graphicsx allows us to adjust graphics,  http://mirrors.ibiblio.org/CTAN/macros/latex/contrib/adjustbox/adjustbox.pdf
     
-    \newtoggle{csdefined}
     
+    \newtoggle{csdefined}
     
     \newcommand{\ifdefOR}[4]{%
     \togglefalse{csdefined}%
     \ifdef{#1}{\toggletrue{csdefined}}{}%
     \ifdef{#2}{\toggletrue{csdefined}}{}%
         \iftoggle{csdefined}{#3}{#4}%
+        \togglefalse{csdefined}%<<<todo I should confirm global behaviour...
     }
     
     
@@ -165,7 +150,6 @@ fleqn,
     }
     
     
-    
     \let\strcmp\pdf@strcmp
     
     \NewDocumentCommand{\ifstringeqx}{m m m O{}}{% if string equal fully expanded
@@ -175,9 +159,9 @@ fleqn,
     \NewDocumentCommand{\DoIfnotEmpty}{m m O{}}{%
         \ifstringeqx{#1}{}{#2}{#3}%
     }
-    %\NewDocumentCommand{\DoIfnotEmpty}{m m O{}}{\ifthenelse{\equal{#1}{}}{#3}{#2}}
     
     % requires ifthen package, does #2 if #1 is NOT empty, othwerise (optionally) do #3 can take command inputs
+    
     \newcommand{\DoWithoutPrinting}[1]{\setbox0\vbox{#1}} % https://tex.stackexchange.com/questions/417327/is-it-possible-to-compile-but-not-showing-a-part
     
     \newcommand{\DontDo}[1]{} %command that does nothing
@@ -232,6 +216,34 @@ fleqn,
     -- do something here to make a definition
     \end{luacode*}
     }
+    
+    
+    
+    % enumerate text           *A +a   {pre} {num} {post} <inbetween>  <between last two>
+    \NewDocumentCommand{\enumtext}{s t+ O{} m  O{} D<>{, } D<>{#6}}{%
+    \foreach \n in {1,...,#4}{%
+        #3%
+        \IfBooleanTF{#1}{\makeAlph{\n}}{\IfBooleanTF{#2}{\makealph{\n}}{\n}}%
+        %
+        #5%
+        \ifnum\n<\fpeval{#4-1}%
+        #6%
+        \else%
+        \ifnum\n<\fpeval{#4}%
+        #7%
+        \fi%
+        \fi%
+    }}
+    
+    % iter text, sandwhich in between  [before] {list of text}  [after]
+    % mandatory argument can be {Kale,Britt,Serena}, or {1,3,...,9}
+    \NewDocumentCommand{\itertext}{O{} m D(){} O{,\ }}{%
+    \foreach \n in {#2}{%
+        \mbox{#1\n#3}#4%
+    }}
+    
+    %% todo better syntax
+    %\itertext<b>{1,2}<a>[; ] --> b1a, b2a,
 
 
 
@@ -304,7 +316,7 @@ fleqn,
 %%%%%%%%%%%%  FontKP.sty  %%%%%%%%%%%%
     \usepackage[T1]{fontenc}
     %frenchstyle,narrowiints,partialup < math settings for kp fonts
-    \usepackage[light,notextcomp]{kpfonts} % the light is also decent, could consider
+    \usepackage[light,notextcomp,oldstylenums]{kpfonts} % the light is also decent, could consider
     \renewcommand{\ttdefault}{cmtl} % monospace that looks nice with light kpfont
     \usepackage[activate=true,% this package makes the font look nicer
         final,%
@@ -333,6 +345,9 @@ fleqn,
         shrink=10]{microtype}
     
     \frenchspacing
+    
+    \usepackage{fourier} % lotsa symbols
+    
     
     %kerning=true,  $ NOT ALLOWED IN LUA
     %spacing=true,  $ NOW ALLOWED IN LUA
@@ -371,6 +386,8 @@ fleqn,
     factor=1000,% protrusion (/1000), subtle
     stretch=10,%(/1000 %)
     shrink=10]{microtype}
+    \usepackage{fourier} % lotsa symbols
+
 
     \fi
 %    https://comp.text.tex.narkive.com/KZW4PwZ4/cmbright-alternative
@@ -393,10 +410,27 @@ fleqn,
 
 %%%%%%%%%%%%  HeaderFooterFootnotes.sty  %%%%%%%%%%%%
     % ##############################################
+    % KOMA-Script Settings
+    % ##############################################
+    \usepackage[headsepline,draft=false]{scrlayer-scrpage}  % enable header line
+    \usepackage{scrhack} % helps with issues with other packages
+     % https://tex.stackexchange.com/questions/73248/what-packages-are-incompatible-with-koma-script
+    
+    \clearpairofpagestyles
+    		% some example settings
+    		%\KOMAoption{paper}{letter}
+    		%\KOMAoption{DIV}{14}
+    		%\KOMAoption{BCOR}{0mm}
+    		%\KOMAoption{headlines}{2}
+    		%\KOMAoption{footlines}{0}
+    		%%%\usepackage{scrextend}  % not to be use with scr classes, but with article,letter etc to provide some koma features
+    
+    
+    % ##############################################
     % Header and Footer
     % ##############################################
     
-    %% NOTE: should adjust top margin height in GeometryCustom depending on number of lines
+    	%% NOTE: should adjust top margin height in GeometryCustom depending on number of lines
     
     \addtokomafont{pageheadfoot}{\upshape}
     
@@ -416,9 +450,10 @@ fleqn,
     %\makeatother
     
     
-    %
+    % ##############################################
     %  Footnotes
-    %
+    % ##############################################
+    
     \usepackage{footnotebackref}  % must be loaded before footnote backref
     \usepackage{footmisc}  %
     \setlength\footnotemargin{0pt}  % space between footnote and number.. might want to experiemnt with this
@@ -485,28 +520,9 @@ fleqn,
 
 %%%%%%%%%%%%  SectionsToCCustom.sty  %%%%%%%%%%%%
     % ##############################################
-    % Section Headings
+    % Sections and ToC
     % ##############################################
     
-    %%% DEPENDENCIES
-    % KOMA-Script class
-    \usepackage{xcolor}
-    % ColorsCustom.sty
-    \usepackage{xpatch}
-    %%%
-    
-    
-    
-    % ##############################################
-    % Table of Contents
-    % ##############################################
-    
-    %%% DEPENDENCIES
-    % KOMA script class
-    %%%
-    
-    %% ADJUST
-    % todo consider switching to latex
     
     %%% EXTRA SPACE BEFORE SECTION AND START ON NEW PAGE
     
@@ -520,31 +536,26 @@ fleqn,
     
     \RequirePackage{etoolbox}
     
+    \RequirePackage{chngcntr}
+    
     \providetoggle{SecOnNewPage} %% only need one toggle
     \toggletrue{SecOnNewPage}
     
+    \providecommand{\cpb@secnumsize}{\smaller}
     
     \providetoggle{showListOfFigsTabs}
     \providetoggle{samepgListOfFigsTabs}
     \toggletrue{samepgListOfFigsTabs}
     
-    
+    \newcommand{\secwiselabelnums}{
+      \counterwithin{figure}{section}
+      \counterwithin{table}{section}
+    %  \counterwithin{listing}{section} % todo fix this
+    }
     
     \newdimen\tocsecskip  %%% todo rename this
     \tocsecskip=0.75em  % fit ToC as required
     
-    \newdimen\tocsubsecwidth
-    \newdimen\tocsubsubsecwidth
-    
-    \newdimen\tocsubindent  % should auto adjust
-    \newdimen\tocsubsubindent  % should auto adjust
-    
-    \tocsubsecwidth=4.4ex   % adjust this as needed. 4.6 is  good with single digit sections and no letter
-    \tocsubsubsecwidth=6.0ex   % adjust this as needed. 6.5 is  good with single digit sections and no letter (small size)
-    
-    \tocsubsubindent=0ex
-    \addtolength{\tocsubsubindent}{\tocsubsecwidth}
-    \addtolength{\tocsubsubindent}{4pt}  % correction to account for small vs medium size
     
     
     % diamond leaders.. staggered dots
@@ -567,11 +578,12 @@ fleqn,
     % determine if you should use baselineskip or not...
     
     \RedeclareSectionCommand[beforeskip=21.pt plus 2.1pt,
+    toclinefill=\diamondleaders,
     afterskip=0.01pt,
     %tocnumsep=1.5ex,
     %tocdynnumwidth=switch,
-    tocindent=-4.3ex,
-    tocnumwidth=4ex,
+    tocindent=-4.0ex,
+    tocnumwidth=4.0ex,
     tocbeforeskip=\tocsecskip,
     tocentryformat=\large\bfseries,
     tocentrynumberformat=\sectionentrynumberformat,
@@ -580,20 +592,20 @@ fleqn,
     \RedeclareSectionCommand[beforeskip=17.1pt plus 1.71pt,  % 1.25 * 13.7 (baseline)
     toclinefill=\diamondleaders,
     afterskip=0.01pt,
-    tocindent=0pt,
+    tocindent=0.5ex,
     tocbeforeskip=1pt,
-    tocnumwidth=\tocsubsecwidth,
+    tocnumwidth=4.4ex,
     tocentryformat=\normalsize,
-    tocentrynumberformat=\smaller,
+    tocentrynumberformat=\cpb@secnumsize,
     ]{subsection}%
     %
     \RedeclareSectionCommand[beforeskip=13.7pt plus 1.37pt,
     toclinefill=\diamondleaders,
     afterskip=0.01pt,
-    tocindent=\tocsubsecwidth,
-    tocnumwidth=\tocsubsubsecwidth,
+    tocindent=5.4ex,
+    tocnumwidth=6.6ex,
     tocentryformat=\small,
-    tocentrynumberformat=\smaller,
+    tocentrynumberformat=\cpb@secnumsize,
     ]{subsubsection}
     
     \RedeclareSectionCommand[beforeskip=3.01pt,
@@ -605,31 +617,22 @@ fleqn,
     \DeclareTOCStyleEntry[%
     linefill=\diamondleaders,
     indent=0pt,
-    numwidth=\tocsubsecwidth,
+    numwidth=4.4ex,
     entryformat=\normalsize,
-    entrynumberformat=\smaller,
+    entrynumberformat=\cpb@secnumsize,
     ]{tocline}{table}
     
     
     \DeclareTOCStyleEntry[%
     linefill=\diamondleaders,
     indent=0pt,
-    numwidth=\tocsubsecwidth,
+    numwidth=4.4ex,
     entryformat=\normalsize,
-    entrynumberformat=\smaller,
+    entrynumberformat=\cpb@secnumsize,
     ]{tocline}{figure}
-    
-    %%%  How to use in document:
-    %    \listoffigures
-    %\renewcommand{\SecOnNewPage}{no}  % only if you want these on the same page...
-    %    \listoftables
-    %\renewcommand{\SecOnNewPage}{yes}
     
     
     \setkomafont{disposition}{\normalfont\bfseries} % section preference
-    
-    
-    
     
     
     \if@twoside% if two-sided, put the section headings to right side and numbers in right margin
@@ -639,38 +642,13 @@ fleqn,
     
     
     
-    
-    %%% SECTION NUMBERS IN MARGIN OF PAGE, for two sided documents
-    % Check if two-sided https://tex.stackexchange.com/questions/360785/how-do-i-check-if-a-document-is-oneside-or-twoside  %
-    %%% for flipped sections heads, kind of ugly
-    %\makeatletter % https://tex.stackexchange.com/questions/470752/section-numbers-in-margins-in-double-sided-document
-    %%preamble
-    %\if@twoside% if two-sided, put the section headings to right side and numbers in right margin
-    %\renewcommand\sectionlinesformat[4]{%  for section numbers in right margin for a two sided document
-    %	\ifthispageodd
-    %	{\raggedleft#4\makebox[0pt][l]{\hspace{\marginparsep}\smaller#3}}
-    %	{\raggedright\makebox[0pt][r]{\smaller#3\hspace{\marginparsep}}#4}%
-    %}
-    %%\newcommand\side{stuff for twoside} %todo reconsider if this is needed
-    %\else% if not two sided, only apply to one sided
-    %\renewcommand\sectionlinesformat[4]{% used by free-standing headings with style=section
-    %	\makebox[0pt][r]{\smaller#3}#4%  puts section number in margin
-    %}	%\newcommand\side{stuff for onside} %todo reconsider if this is needed
-    %\fi%  finally do nothing
-    %\makeatother
-    
-    
     \renewcommand\sectionlinesformat[4]{% used by free-standing headings with style=section
-    	\makebox[0pt][r]{\smaller#3\hspace{3pt}}#4%  puts section number in margin
+    	\makebox[0pt][r]{\cpb@secnumsize#3\hspace{3pt}}#4%  puts section number in margin
     }
-    
-    %%% SECTION NUMBER SPACING:
-    % \renewcommand*\sectionformat{\thesection\autodot\hspace{5mm}} % maybe 14pt enspace?
     
     
     %%% SECTION NUMBER AND HEADING COLOR CHANGE
     %\addtokomafont{chapter}{\color{secCol}}
-    
     \addtokomafont{section}{\color{secCol}}
     \addtokomafont{subsection}{\color{subsecCol}}
     \addtokomafont{subsubsection}{\color{subsubsecCol}}
@@ -707,17 +685,6 @@ fleqn,
     \def\theHsection{\arabic{section}\alph{sectionletter}} % this is for hyperref (it does nothing if not loaded)
     
     %
-    %\newdimen\sectprespacelength
-    %\sectprespacelength=-20pt  % make less negative to increase spacing on new section title (always starts new page)
-    %\xpretocmd\sectionlinesformat
-    %{\ifstr{#1}{section}{%
-    %    \iftoggle{SecOnNewPage}{\clearpage\vspace*{\sectprespacelength}}{}%
-    %}{}}  % THIS IS AUTOMATICALLY CHANGED IN APPENDIX
-    %{}{\PatchFailed}
-    
-    %{\ifstr{#1}{section}{\ifdefstring{\SecOnNewPage}{yes}{\clearpage\vspace*{\sectprespacelength}}{}}{}}  % THIS IS AUTOMATICALLY CHANGED IN APPENDIX
-    
-    
     
     
     
@@ -741,10 +708,8 @@ fleqn,
             \unexpanded{{#5}}%
         }%
     }
-    \def\thesubsection{\arabic{section}\alph{sectionletter}.\arabic{subsection}\alph{subsectionletter}}
-    \def\theHsubsection{\arabic{section}\alph{sectionletter}.\arabic{subsection}\alph{subsectionletter}}
-    
-    
+    \def\thesubsection{\thesection.\arabic{subsection}\alph{subsectionletter}}
+    \def\theHsubsection{\thesection.\arabic{subsection}\alph{subsectionletter}}
     
     
     
@@ -769,9 +734,10 @@ fleqn,
             \unexpanded{{#5}}%
         }%
     }
-    \def\thesubsubsection{\arabic{section}\alph{sectionletter}.\arabic{subsection}\alph{subsectionletter}.\arabic{subsubsection}\alph{subsubsectionletter}}
+    \def\thesubsubsection{\thesubsection.\arabic{subsubsection}\alph{subsubsectionletter}}
     % this is for hyperref (it does nothing if not loaded)
-    \def\theHsubsubsection{\arabic{section}\alph{sectionletter}.\arabic{subsection}\alph{subsectionletter}.\arabic{subsubsection}\alph{subsubsectionletter}}
+    \def\theHsubsubsection{\thesubsection.\arabic{subsubsection}\alph{subsubsectionletter}}
+    
     
     
     
@@ -790,31 +756,31 @@ fleqn,
                 \unexpanded{{#4}}%
         }%
     }
-    %
-    
-    %\newcommand{\se}{def}
-    
-    %%%% FOR BLANK PAGE ON LEFT SIDE WHEN NEW SECTION STARTS:
-    %\newcommand{\IntentBlank}{\vspace*{\fill}
-    %	{\noindent\large\centering This Page Intentionally Left Blank \\[5cm]}
-    %	\vspace*{\fill}}
-    	%%% https://tex.stackexchange.com/questions/102451/have-cleardoublepage-working-in-oneside-scrreprt
-    %\newcommand\cleartooddpage{\clearpage
-    %	\ifodd\value{page}\else\null\IntentBlank\clearpage\fi}
-    %\let\secSame\section  % section on same page 
-    %\pretocmd{\section}{\cleartooddpage}{}{}
     
     
-    %%% USED IN SCRBOOK AND SCRREPRT
-    %\renewcommand*\othersectionlevelsformat[3]{%
-    %	\llap{#3\autodot\enskip}%
+    
+    %%%%% graveyard
+    
+    
+    
+    %%% SECTION NUMBERS IN MARGIN OF PAGE, for two sided documents
+    % Check if two-sided https://tex.stackexchange.com/questions/360785/how-do-i-check-if-a-document-is-oneside-or-twoside  %
+    %%% for flipped sections heads, kind of ugly
+    %\makeatletter % https://tex.stackexchange.com/questions/470752/section-numbers-in-margins-in-double-sided-document
+    %%preamble
+    %\if@twoside% if two-sided, put the section headings to right side and numbers in right margin
+    %\renewcommand\sectionlinesformat[4]{%  for section numbers in right margin for a two sided document
+    %	\ifthispageodd
+    %	{\raggedleft#4\makebox[0pt][l]{\hspace{\marginparsep}\cpb@secnumsize#3}}
+    %	{\raggedright\makebox[0pt][r]{\cpb@secnumsize#3\hspace{\marginparsep}}#4}%
     %}
-    %\renewcommand*{\chapterformat}{%
-    %	{\fontsize{20}{30}\scshape\chapappifchapterprefix{}}%
-    %	\fontsize{120}{30}\selectfont\rlap{\thechapter\autodot}%
-    %}
-    
-    
+    %%\newcommand\side{stuff for twoside} %to do reconsider if this is needed
+    %\else% if not two sided, only apply to one sided
+    %\renewcommand\sectionlinesformat[4]{% used by free-standing headings with style=section
+    %	\makebox[0pt][r]{\cpb@secnumsize#3}#4%  puts section number in margin
+    %}	%\newcommand\side{stuff for onside} %to do reconsider if this is needed
+    %\fi%  finally do nothing
+    %\makeatother
 
 
 %%%%%%%%%%%%  AppendixFormat.sty  %%%%%%%%%%%%
@@ -948,7 +914,6 @@ fleqn,
     \usepackage{xfrac}
     \usepackage{amssymb,amsfonts,gensymb}  % math fonts and symbols
     
-    \usepackage{fourier} % lotsa symbols
     
     \usepackage[free-standing-units,
     	unit-optional-argument,
@@ -974,18 +939,9 @@ fleqn,
 
 
 %%%%%%%%%%%%  Lists.sty  %%%%%%%%%%%%
-    % ##############################################
-    % Lists
-    % ##############################################
-    
-    % to change more: https://texblog.org/2008/10/16/lists-enumerate-itemize-description-and-how-to-change-them/
-    
-    %%% DEPENDENCIES
     
     \usepackage{enumitem} % https://muug.ca/mirror/ctan/macros/latex/contrib/enumitem/enumitem.pdf
     \usepackage{multicol}  % used for two column list
-    %\usepackage{tabto}% possibly usful for two column lists %http://tug.ctan.org/tex-archive/macros/latex/contrib/tabto/tabto-doc.pdf
-    %%%
     
     \newlength{\moreseplength}
     \setlength{\moreseplength}{2.5pt}  % this is only used for listed; indent is 2* this
@@ -1044,20 +1000,6 @@ fleqn,
 
 
 %%%%%%%%%%%%  Tables.sty  %%%%%%%%%%%%
-    % ##############################################
-    % Tables
-    % ##############################################
-    
-    %%% DEPENDENCIES
-    % KOMA-Script class
-    \usepackage{xparse}
-    %\usepackage{siunitx} % see MathSymbolsEtc for usage, dont use as settings are changed
-    \usepackage{xcolor}
-    % ColorsCustom.sty
-    % Macros
-    %%%
-    
-    % How to make nice tables: https://inf.ethz.ch/personal/markusp/teaching/guides/guide-tables.pdf
     
     %%% TABLES
     \usepackage{array}
@@ -1070,38 +1012,33 @@ fleqn,
     \usepackage{ltxtable}  % long table with tabularx
     \usepackage{longtable}
     
-    \usepackage{booktabs}  % better for tables without vertical rules.
-    % http://ctan.mirror.globo.tech/macros/latex/contrib/booktabs/booktabs.pdf
+    \usepackage{booktabs}  % http://ctan.mirror.globo.tech/macros/latex/contrib/booktabs/booktabs.pdf
     
     % Table spacing
     %\renewcommand{\arraystretch}{1.0}  % normal table stretch.. can modify
     %\setlength\tabcolsep{2ex}  % additional padding on sides of tables
     
-    \newcommand{\todash}{{\hspace{1.5ex}to\hspace{1.5ex}}} % used for tables with X ' to ' Y
     \setlength\heavyrulewidth{0.8pt}
     \setlength\lightrulewidth{0.4pt}  % latex default rule is 0.4 pt
     
-    %% gmidrule now in lutabulartools
     
+    \let\nl\\  % shortcut for \newline and \\
     
+    % fixed column width, ragged right instead of horizontally filled allows new line
+    \newcolumntype{P}[1]{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}p{#1}}
+    \newcolumntype{M}[1]{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+    \newcolumntype{B}[1]{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}b{#1}}
     
+    % vertical and horizontally centerred
+    \newcolumntype{T}[1]{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}p{#1}}  % vertically centered instead of top
+    \newcolumntype{V}[1]{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}  % vertically centered instead of top
     
-    
-    %\newcolumntype{M}[1]{>{\centering\arraybackslash}m{#1}}  % vertically/horizontally centered column (might not need(
-    %\newcolumntype{P}[1]{>{\centering\arraybackslash}p{#1}}  % horizontally centered P column
-    
-    
-    \newcolumntype{M}[1]{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
-    
-    % fixed column width, ragged right, allows new line
-    \newcolumntype{P}[1]{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}p{#1}}  % ragged right par new lune allowed
-    
-    \newcolumntype{Y}{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}X} % centered tabular X
     \newcolumntype{Z}{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}X}  % ragged right instead of filled, \newline lets you break lines
+    \newcolumntype{Y}{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}X} % centered tabular X
     
-    
-    
-    %\raggedright\let\newline\\\arraybackslash\hspace{0pt}
+    % things to consider, siunitx + tabularx?
+    % https://tex.stackexchange.com/questions/12663/how-to-use-siunitx-and-tabularx-together
+    % really want a way to distrubute columns evenly under a multicolumn cell that is wider than the two columns
     
     \sisetup{range-phrase=--,
     	table-number-alignment=center,
@@ -1133,10 +1070,20 @@ fleqn,
     
     %%%%% todo should I move this into unirefs?  maybe make a lua version
     \newcommand{\tfnote}[1]{\leavevmode\llap{#1.\enspace}} % use tnote{a} in the table, and \tfnote{a}Note here in the foot notes
-    \newcommand{\tnote}[1]{\textsuperscript{#1}} % use tnote{a} in the table, and \tfnote{a}Note here in the foot notes
+    \NewDocumentCommand{\tnote}{s m}{%
+    	\IfBooleanTF{#1}%
+    		{\textsuperscript{#2}}%
+    		{\rlap{\textsuperscript{#2}}}% without star, footnote label to take no space
+    }% use tnote{a} in the table, and \tfnote{a}Note here in the foot notes
     
     \newcommand{\atfnote}[1]{\tfnote{\uref{#1}}} % automatic table footnote
-    \newcommand{\atnote}[1]{\tnote{\uref{#1}}} % automatic table footnote
+    
+    %\newcommand{\atnote}[1]{\tnote{\uref{#1}}} % automatic table footnote
+    \NewDocumentCommand{\atnote}{s m}{%
+    	\IfBooleanTF{#1}%
+    		{\tnote*{\uref{#2}}}%
+    		{\tnote{\uref{#2}}}%
+    }% use tnote{a} in the table, and \tfnote{a}Note here in the foot notes
 
 
 %%%%%%%%%%%%  FloatsCaptions.sty  %%%%%%%%%%%%
@@ -1245,7 +1192,6 @@ fleqn,
     } %%% + will add a page break before, * will restore it back to normal
     
     
-    
     \newcommand{\RotFloatPage}[1]{% if a float takes up the whole page, just insert the float after the page, rotate, then restore
     	\afterpage{\RotPDF#1
     	\RotPDF+*}
@@ -1288,6 +1234,7 @@ fleqn,
     %    todo: should clean up the code and captionset
     %
     \NewDocumentCommand{\InsertTable}{ s t+ O{htbp} D<>{} m +m O{#6} m o }{%
+    	\reseturef%
     	\begin{table}[#3]% htbp! settings
     		#4% pre-amble
     		\IfBooleanT{#2}{\captionsetup{justification=justified}}%
@@ -1409,15 +1356,17 @@ fleqn,
     	rulecolor=\color{black},
     	numbers=left,
     	numberstyle=\ttfamily\footnotesize\color{codecomment},
+    %	keywords={for},  %% todo clean up keywords, i dont like built-ins..
     	keywordstyle=\color{codekey},
     	commentstyle=\color{codecomment},
     	stringstyle=\color{codestring},
     	prebreak=\raisebox{0ex}[0ex][0ex]{\ensuremath{\hookleftarrow}},
     	extendedchars=true,
     	breaklines=true,
+    	showstringspaces=false,
     	tabsize=4,
     	emph={True,False,None},
-    	emphstyle={\color{blue}},
+    	emphstyle={\color{codeemph}},
     	keywords={for,def},
     	otherkeywords={+,-,*,/,=,!,>,<},
     	morekeywords={},
@@ -1532,7 +1481,7 @@ fleqn,
     		contents={\texttt{DRAFT}}
     }}
     
-    \newcommand{\PreLimMark}{\usepackage{background}
+    \newcommand{\PreMark}{\usepackage{background}
     	\backgroundsetup{%
     		scale=8,       %% change accordingly
     		angle=45,       %% change accordingly
@@ -1540,6 +1489,9 @@ fleqn,
     		color =lightgray,  %% change accordingly
     		contents={\texttt{PRELIMINARY}}
     }}
+    
+    \let\PreLimMark\PreMark % old def just in case
+    
     
     
     \newcommand{\DarkModePDF}{%
@@ -1582,9 +1534,15 @@ fleqn,
 %%%%%%%%%%%%  BibAndGloss.sty  %%%%%%%%%%%%
     % requires enumitem for acronym styling
     \usepackage[sorting=none]{biblatex}
+    
     \newcommand{\citeT}[1]{\citetitle{#1}~\cite{#1}}
     \renewrobustcmd*{\bibinitdelim}{\,}
     \renewcommand*{\multicitedelim}{\addcomma\,}  % tighten [1,2,3] multi citations
+    
+    \defbibenvironment{bibliography}
+    {\begin{enumerate}[leftmargin=0pt,labelsep=2ex,itemsep=0.8ex]}
+    {\end{enumerate}}
+    {\item}
     
     
     \usepackage[xindy,style=super,nopostdot, nogroupskip, nonumberlist, numberedsection, section=section,savewrites=true,acronym,nomain]{glossaries-extra}
@@ -1730,8 +1688,6 @@ fleqn,
     
     \gdef\@tpOwn{
     \begin{titlepage} % Suppresses displaying the page number on the title page and the subsequent page counts as page 1
-    
-    	\newgeometry{bottom=2in, top=1.5in, left=1.75in, right=1.5in}%
     	\raggedright % Right align the title page
     	\rule{\heavyrulewidth}{7.4in} % Vertical line
     	\hspace{0.5in} % Whitespace between the vertical line and title page text
@@ -1831,7 +1787,7 @@ fleqn,
     \newcounter{unilabIN}% my referene counter withIN each new instance
     \newcounter{unilabOUT}% creates a new set of counters if incremented
     
-    \setcounter{unilabIN}{0}
+    \setcounter{unilabIN}{1}
     \setcounter{unilabOUT}{1}  % start at 1 -> a
     
     
@@ -1846,7 +1802,6 @@ fleqn,
     
     
     \newcommand{\reseturef}{\setcounter{unilabIN}{0}\stepcounter{unilabOUT}}% must use this outside of ttabbox
-    
     
     
     %Example usage:
@@ -1890,14 +1845,15 @@ fleqn,
 \ifluatex
 
 %%%%%%%%%%%%  KalePkgs.sty  %%%%%%%%%%%%
-        \usepackage[pl,extras]{penlight}
-        \usepackage{YAMLvars}
-        \usepackage{lutabulartools}
-        \usepackage{autopuncitems}
+    \usepackage[pl,extras]{penlight}
+    \usepackage{YAMLvars}
+    \usepackage{lutabulartools}
+    \usepackage{autopuncitems}
     
-        \begin{luacode*}
-            YAMLvars.tabmidrule = 'gmidrule'
-        \end{luacode*}
+    \begin{luacode*}
+        YAMLvars.tabmidrule = 'gmidrule'
+    \end{luacode*}
+
 \else
 \fi
 
@@ -2030,6 +1986,10 @@ author:
   xfm: lb2nl
   prc: setdocvar
 
+publishers:
+  xfm: lb2nl
+  prc: setdocvar
+
 date:
   xfm: lb2nl
   prc: setdocvar
@@ -2041,6 +2001,7 @@ subject:
 fileno:
   xfm: lb2nl
   prc: setdocvar
+
 
 
 
@@ -2060,6 +2021,10 @@ memoTo:
 
 logo:
   prc: setdocvarOpts
+
+institute:  # for beamer
+  prc: setdocvarOpts
+
 \end{declareYAMLvars}
 \else
 \fi

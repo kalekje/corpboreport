@@ -21,7 +21,7 @@
 		contents={\texttt{DRAFT}}
 }}
 
-\newcommand{\PreLimMark}{\usepackage{background}
+\newcommand{\PreMark}{\usepackage{background}
 	\backgroundsetup{%
 		scale=8,       %% change accordingly
 		angle=45,       %% change accordingly
@@ -29,6 +29,9 @@
 		color =lightgray,  %% change accordingly
 		contents={\texttt{PRELIMINARY}}
 }}
+
+\let\PreLimMark\PreMark % old def just in case
+
 
 
 \newcommand{\DarkModePDF}{%

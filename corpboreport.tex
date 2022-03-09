@@ -39,7 +39,7 @@
 	commentstyle=\ttfamily\small\color{gray},
 	frame=none,
 	numbers=left,
-	numberstyle=\ttfamily\small\color{gray},
+	numberstyle=\ttfamily\small\color{white},
 	prebreak=\raisebox{0ex}[0ex][0ex]{\color{gray}\ensuremath{\hookleftarrow}},
 	extendedchars=true,
 	breaklines=true,
@@ -80,88 +80,207 @@ bore{\smaller\smaller\normalfont ing} \\
 
 \newcommand{\llcmdlink}[2]{\href{#2}{\hspace{-15ex}}\hspace{15ex}\llcmd{#1}}%
 
+\BeforeBeginEnvironment{LTXexample}{\begin{addmargin}[-1.5cm]{2em}}
+\AfterEndEnvironment{LTXexample}{\end{addmargin}}
+
+\rohead{...}
+\lohead{corpboreport documentation}
 
 
 % todo
 
-
+%\secwiselabelnums
 
 %\setlength{\subsecneedspace}{15em}
+
+
+
 \begin{document}
 
-
-	TODO use \~ token for enlarging page with section command, probably a nice little easy thing to do
-
-	TODO pdf string stuff for yaml vars
-
-	TODO uni refs - make a lua table interface
+%
+%todo use /And command for authors? how to handle multiple? maybe use \{\} [] [] for multi authors?
+%
+%todo if at title or author (required meta data) not defined, should we throw an error telling the user that? Would be helpful
+%
+%todo adopt "string" cleaning for pdf string in MH report, clean the right header and set to pdf title, do same for author
+%
+%	TODO use \~ token for enlarging page with section command, probably a nice little easy thing to do
+%
+%	TODO pdf string stuff for yaml vars
+%
+%	TODO uni refs - make a lua table interface
 	% https://tex.stackexchange.com/questions/4805/whats-the-correct-use-of-author-when-multiple-authors
 	% https://tex.stackexchange.com/questions/466095/redefine-title-for-possibility-of-a-forced-line-breaking-in-a-predefined-place
-
-
-	\begin{LTXexample}
-		hello world
-
-		\begin{tabular}{ l l }
-			a & b \\
-		\end{tabular}
-	\end{LTXexample}
+%
+%
+%	\begin{LTXexample}
+%		hello world
+%
+%		\begin{tabular}{ l !{--} l }
+%			a & b \\
+%		\end{tabular}
+%	\end{LTXexample}
 
 \maketitle
 
 
 \IntentionallyBlankPage
 
-\section{hello}
 
-	dsa\\dsa\\dsa\\dsa\\dsa\\dsa\\dsa\\dsa\\dsa\\dsa\\dsa\\dsa\\dsa\\dsa\\
-	dsa\\dsa\\dsa\\dsa\\dsa\\dsa\\dsa\\dsa\\dsa\\dsa\\dsa\\dsa\\dsa\\dsa\\
-	dsa\\dsa\\dsa\\
-	dsa\\dsa\\dsa\\
-%	dsa\\dsa\\
-%	dsa\\dsa\\
-	dsa\\
 
-	\subsection{Hello}
-		dsa\\dsa\\dsa\\dsa\\dsa\\dsa\\dsa\\dsa\\dsa\\dsa\\dsa\\dsa\\dsa\\dsa\\
+\section{Quick Start}
+\begin{itemize}
+    \item Install MiKTeX (\url{https://miktex.org/download}) (do a single user installation)
+    \item This report uses LuaLaTeX---ensure you use \texttt{lualatex} to compile and do not use the \texttt{pdftex}/\texttt{pdflatex} command to compile
+    \item Strongly recommended to use \texttt{output-directory=./out} when compiling to push all generated files in a sub-folder
+    \item For the CM-Bright (sans serif) font, you must go to MiKTeX console (hit Windows key and type miktex and it should pop up) and manually download hfbright and cm-super packages by clicking Packages (left menu) and searching, right-click, then install. Or you can run these commands: \texttt{mpm -\/-install=hfbright} and \texttt{mpm -\/-install=cm-super}
+    \item you should also install markdown package: \texttt{mpm -\/-install=markdown}
+    \item Install Perl for the makeglossaries package (\url{https://strawberryperl.com/}) and ensure perl is in the path (used for acronyms)
+    \begin{itemize}
+        \item Possibility: If you get an error in the \texttt{xindy.pl} script when trying makeglossaries, this means a certain folder cannot be found,
+                and we must patch the code to get it working. I've found this issue occurs for admin type installations mostly. Use the error file and line and locate the issue. In the else part, the 'die' statement forces the crash.
+                We must replace this with the following (ensure correct / direction is used):\\
+                \texttt{\$cmd\_dir = "C:/Path/To/Where/tex2xindy.exe/is/located";}
+        \item Common locations are:
+        \begin{itemize}
+            \item \url{C:/Users/Kale/AppData/Roaming/MiKTeX/2.9/miktex/bin/x64}
+            \item \url{C:/Program Files/MiKTeX/miktex/bin/x64/internal}
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+
+
+Important note for beginners: When you install MiKTeX, you get a LaTeX installation and package manager.
+This operates independently of what tool you use to write LaTeX in (TeXStudio, TeXWorks, PyCharn, VScode, notepad).
+To compile a LaTeX document, you simle need to go to the command line and run a command that more or less says "compile this file".
+The tool that you use to write you code in just helps execute these commands, captures the output from the compilation process,
+and helps point to any errors.
+
+This package uses lualatex instead the default pdftex command.
+You should be able to modify TeXStudio or VScode (example below) or whatever you use to make this the default. I also like to push the .pdf, and other auxiliary files to an 'out' folder.
+
+Recommended compile command:\\ \cmd{lualatex -file-line-error -interaction=nonstopmode -synctex=1 -output-format=pdf -output-directory=out main.tex}
+
+Biblography: \cmd{biber main --output-directory ./out}
+
+Glossary/Acronym: \cmd{makeglossaries -d ./out main}
+
+PDF viewer: I like Sumatra as you can leave a PDF open in it and still re-compile (Adobe hogs the file).\url{https://www.sumatrapdfreader.org/free-pdf-reader}
+
+\pagebreak
+
+\subsection{Compiling with VSCode}
+
+Open VSCode and the \cmd{settings.json} file. Add the following code. If the outer-most brackets aren't there, copy this verbatim.
+If there are brackets, skip the outermost brackets and place the code inside.
+\enlargethispage*{3em}
+\begin{lstlisting}
+{
+    "latex-workshop.latex.recipes": [
+        {
+            "name": "compile lualatex",
+            "tools": [
+                "mylualatex",
+            ]
+        },
+        {
+            "name": "compile bib gloss",
+            "tools": [
+                "mybiber", "myglossary",
+            ]
+        },
+
+    ],
+    "latex-workshop.latex.tools": [
+        {
+            "name": "mylualatex",
+            "command": "lualatex",
+            "args": [
+                "-synctex=1",
+                "-interaction=nonstopmode",
+                "-file-line-error",
+                "-output-format=-pdf",
+                "-output-directory=%DIR%/out",
+                "%DOCFILE%"
+            ]
+        },
+        {
+            "name": "mybiber",
+            "command": "biber",
+            "args": [
+                "main",
+                "--output-directory", "out",
+            ]
+        },
+        {
+            "name": "myglossary",
+            "command": "makeglossaries",
+            "args": [
+                "-d", "out",
+                "main"
+            ]
+        },
+    ]
+
+}
+\end{lstlisting}
 
 \section{Introduction}
-todo use /And command for authors? how to handle multiple? maybe use \{\} [] [] for multi authors?
 
-todo clean files a bit
-
-todo if at title or author (required meta data) not defined, should we throw an error telling the user that? Would be helpful
-
-todo adopt "string" cleaning for pdf string in MH report, clean the right header and set to pdf title, do same for author
-
-A Corporate-Friendly Boring Template.
-
-This class is based off the scrartcl class in the KOMA-Script family.
-Don't let the name fool you---although plain and unassuming with a (dare I say) Word-like appearance,
-this template has a few bells and whistles that make your TeXing easier.
-It could easily lend itself well to school assignments or lab reports,
-
-\section{Quick start guide}
-
-\section{Options}
-Memo
-Serif
-Compact
+This class is based off the \cmd{scrartcl} class in the KOMA-Script family.
+Don't let the name fool you---although plain and unassuming with a (dare I say) Microsoft Word-like appearance,
+this template has numerous bells and whistles that make your \LaTeX ing easier.
+It could easily lend itself well to school assignments or lab reports as well.
 
 
-This document uses the "compact" version of the report. This simply disables section breaking on a new page,
-and instead of a dedicated title page, it places the title as a top part. \cref{TitlePage} shows
-what the title page would look like if no options are passed to this class.
 
-The memo format is intead to be used as an Interoffice Memorandum. It adds a few doc parameters
+\section!{Class Options}
+\llcmd{memo}use a memo format instead.\\
+\llcmd{compact}use a compact format  (sections not on a new page, and different title page.)\\
+\llcmd{serif}change the font to serif (kpfonts light instead of CM-Bright).
 
-\section{Sections}
 
-This format uses KOMA script, so any commands are fair-game.
+\section!{Switches}
+
+\begin{lstlisting}
+%%% Draft toggles
+\DarkModePDF %< if you want a dark theme
+\DraftMark %< puts a draft water mark
+\PreLimMark %< auto set
+
+%%% some formatting toggles
+\togglefalse{SecOnNewPage}  % insert new page before each section?
+\secwiselabelnums % if you want figures and table numbers to be based on section, ie 1.1, 1.2, etc.
+
+\providelength{\tpsignheight}{7cm}  % adjust height of tp area
+
+\setlength{\tocsecskip}{0.7em}  % if you want to spread or compress ToC to fit page better
+\setlength{\pullToCcloser}{-12pt} % pulls ToC closer to section heading for more room
+\setlength{\moreToCbottom}{2em} % enlarges ToC page to help cram stuff
+
+\toggletrue{showListOfFigsTabs} %< show figs/tables contents
+\togglefalse{samepgListOfFigsTabs} %< on the same page?
+
+\end{lstlisting}
+
+
+\section!{Some Basic Settings}
+The title of this document is redefined, and uses the KOMA commands
+\cmd{\title{}}
+\cmd{\subtitle{}}
+\cmd{\author{}}
+\cmd{\date{}}
+\cmd{\company{}} (equivalent to publishers)
+\cmd{\logo{}} (added, path to graphics) to set some title page parameters
+
+Since this document class uses KOMA Script, change the header with
+\cmd{\lohead{}, \rohead{}}
+
+
+\section{Sections}\label{s.sett}
 
 This class by default will insert a page break on a new section.
 Using the etoolbox package, you can disable this behaviour.
-
 if you want to invert the behaviour for a particular section, use !
 
 For paragraphs, if you would like the text to appear on a new line (rather than run in), use !.
@@ -182,28 +301,42 @@ On any of the section/sub commands, using a + will add a letter after it.
 
 The sections are redefined so that \texttt{+} will append a letter. \cmd{\reset[sub]sectionletter}
 
-	\subsection{test}
-	\subsection+{test}
-		\subsubsection{test}
-		\subsubsection+{test}
-	\subsection+{test}
-	\resetsubsectionletter
-	\subsection+{test}
-%
-todo use AtBeginDocument and AtEndDocument -- do at end for  end of memo/report\\
-	1\\2\\3\\4
+\begin{LTXexample}
 
-\section{Document Commands}
-THe title of this document is redined, and uses the kOMA commands
-\subsection{Yo}
-title
-subtitle
-author
-date
-company (equivalent to publishers)
-logo (added, path to graphics)
+\subsection{sub}
+\subsection+{sub plus}
+  \subsubsection{subsub}
+  \subsubsection+{subsub plus}
+\subsection+{sub plus}
+\resetsubsectionletter
+\subsection+{reset, then sub plus}
 
-\section{Tweaking the format}
+\end{LTXexample}
+
+
+Add a manual page break in ToC \cmd{\addtocontents{toc}{\protect\newpage}}
+
+
+
+
+\section{References and Citations}
+
+\subsection{References}
+
+I use the facilities of the cleveref package, which automatically type Figure Table etc
+I like using s. f. t. etc. to label my things, it's easier to type than the typically recommended sec: fig: tab:
+Examples:
+\cmd{\cref{f.m602fTOV}}
+\cmd{\label{s.steadystate}}
+
+\subsection{Citation}
+
+The .bib files contain the reference information. Call the key with \cmd{\cite{key}}.
+
+I have a command that prints the title then adds the reference (in italic): \cmd{\citeT{key}}
+
+I like JabRef to help manage my .bib files \url{https://www.jabref.org/}
+
 
 \section{Float commands}
 
@@ -211,24 +344,25 @@ This package offers float commands for inserting tables and figures
 
 \lstset{language=tex}
 \begin{lstlisting}
-\InsertTable[htbp]%  NOTE: if you put a * after InsertTable, it will make it a wide table, no star will indent the table a bit
-{you can \input here or type \begin{tabular}...%
+\InsertTable[htbp]%
+{you can \input here or type \begin{tabular}...}%
 {Caption goes here: egManitoba interface transfers.}%
 {\label{t.trans}}% label goes here
 [optional]%Optional table footnotes here
-\end{lstlisting}
 
-
-
-\lstset{language=tex}
-\begin{lstlisting}
-\InsertFigure[htbp]%NOTE: if you put a * after InsertFigure it will make it a wide Figure, no star will indent the table a bit
-{\includegraphics{+filler/fig}}%
+\InsertFigure[htbp]%
+{\includegraphics[options]{path/to/figure.pdf}}%
 {A long run on caption that is needlessly long}%
 {\label{f.1}}%
+
+NOTE: you can put a *  directly after
+InsertTable or InsertFigure,
+and it will make it a wide table/fig
+that is flush left, no star will indent the float a bit
 \end{lstlisting}
 
 
+Some helpful commands.
 
 \lstset{language=tex}
 \begin{lstlisting}
@@ -236,61 +370,108 @@ This package offers float commands for inserting tables and figures
 	* star will restore the pdf back to normal orientation
 	+ will add a pagebreak before
 
-\RotFloatPage{\Insert...}
+\RotFloatPage{\Insert [H]...}
    If you want a rotated float (figure or table) on its own page, use this with the [H] float placement
+
+\FloatNextPage{\Insert [H]...}
+  If you have a big float and you know it should be on its own page right after
+
+\BoxSameSizeImg{O{t} O{t} m m}
+  make a box the same size of an image
 \end{lstlisting}
 
 
 
 \section{Tabular matter}
 
+This class uses the author's \cmd{lutabulartools} package, and the author highly suggests we follow
+the \cmd{booktabs} way of making tables (no vertical lines).
+
+
 \subsection{References}
 
-todo add links here
+Tabular 101:\url{https://en.wikibooks.org/wiki/LaTeX/Tables}\\
+How to make nice tables: \url{https://inf.ethz.ch/personal/markusp/teaching/guides/guide-tables.pdf}
 
-	\url{https://en.wikibooks.org/wiki/LaTeX/Tables}
-	\url{booktabs}
-\url{https://ctan.org/pkg/lutabulartools}
+\subsection{Columns}
 
-	\begin{tabular}{l l}\toprule
-		Column & Use \\
-		N\{X.Y\} & siunitx number column (where X.Y is number format)\\
-		X,Z,Y & tabularx column, ragged right, or cenered\\
-		P\{, M & top/middle center p column\\
-		p\{, m, b & top/middle/borrom left align column\\
-%		\~ & inject default tablcolsep\\
+	\begin{tabularx}{\linewidth}{l Z}\toprule
+		Column & Use \\\midrule
+		L,N,R\{X.Y\} & \cmd{siunitx} number column (where X.Y is number format)\\
+		X,Z,Y & tabularx column, X=justified, Z=ragged (usually preferred),\nl or Y=centered\\
+		P,M,B \{wid\} & ragged instead of justified equiv to p,m,b\\
+	  V, T \{wid\} & horizontally centered plus vertically centered (V) / top aligned (T) paragraph cell\\
+		\cmd{~}\phantom{1} & inject default tablcolsep, equiv to \cmd{@{\hspace{\tabcolsep}}}\\
+		\\
+  	\MC[2]{The defaults}\\
+		S & see siunitx doc \\
+		l,c,r & Left, center, right, fits to width\\
+	  p,m,b \{wid\} & A top, middle, bottom aligned paragraph cell, allows \cmd{\newline and \nl}\\
 		\bottomrule
-		\end{tabular}
+	\end{tabularx}
 
+
+In a paragraph cell (ie p, P, X, Z, Y, you can specify line-breaks with \cmd{\newline} or a short version \cmd{\nl} (defined in this class))
+
+Rules (lines)
 \begin{lstlisting}
-		P{} hori centered p clolumn
-	lrc	p{}
-		b{}		R{X.Y}, N{X,Y}, and L{X.Y}
-		m{}
-
-
 \toprule
 \midrule
 \bottomrule		\cmidrule(){}
 \gmidrule		custom light gray mid rule
-
 \end{lstlisting}
 
-	\begin{tabular}{l c}
-		hello\newline world & c \\
-	\end{tabular}
+Footnotes
+\begin{lstlisting}
+tnote{ltr}:
+tfnote{ltr}:
+
+\reseturef or \resetatnotes - reset automatic lettering
+atnote{key}: automatic table note
+atfnote{key}: automatic table footnote
+\end{lstlisting}
+
 
 Note: if using a float,
 After end{tabular}\%\\
 Make sure a \% and no new lines after, this improves
 
-\subsection{hacks}
-\begin{lstlisting}
-		 for vertical spacing, use \renewcommand{\arraystretch}{1.2}
-		 use @{} before and after column types, @{'code'} removes the spacing, but inserts code between column
-		 use >{'code'} <{'code'} to sandwich a cell with code of your choice
-		 with N, Q, L, R type columns, need to surround text with {} (and text that may come after a number) to get alignment correct
-\end{lstlisting}
+\subsection{Hacks}
+
+\subsubsection{Spacing}
+Use the following commands outside the tabular environment.
+For different vertical spacing, use \cmd{\renewcommand{\arraystretch}{1.2}}.\\
+For different spacing, \cmd{\setlength\tabcolsep{2ex}}
+
+\subsubsection{Columns}
+
+If you have a multicolumn (say by using \cmd{\MC}), and the multicolumn is wider than the combined width of your
+columns underneath and they were not fixed-width columns (p,P,m,M,b,B,T,V,X,Z,Y), if you want them to be the same width,
+just use one of the aforementioned fixed-width columns. You might need to tweak a bit though.
+
+Out of convenience, I erase the padding on the ends of tabular, because I like the way it looks.
+To bring it back with the \cmd{~} column like  \cmd{~lllr~}. Here's an example:
+
+\begin{LTXexample}
+\begin{tabular}{~ll~}\toprule
+hello & world \\
+\bottomrule
+\end{tabular}
+
+\begin{tabular}{ll}\toprule
+hello & world \\
+\bottomrule
+\end{tabular}
+\end{LTXexample}
+
+
+Use \cmd{@{}} to remove space between columns, or \cmd{@{'code'}} to insert code between column
+\cmd{!{code}} adds code keeps the space though.\\
+Use \cmd{>{'code'} <{'code'}} to sandwich a cell with code of your choice
+
+Note: with the siunitx columns N, L, R type columns, need to surround text with \cmd{{}} (and text that may come after a number) to get alignment correct
+
+	
 
 
 \subsection{Common Errors}
@@ -300,8 +481,13 @@ Common Errors
 	tex capacity exeeded	put \{\} after midrule ?
 	\textbackslash MC on a p\{\} column?
 
+Misplaced noalign -if you use \cmd{\midrule} etc before the \cmd{\\} you will get this error
+
+Misplaced omit or span if you use a multicolumn or non-number column in an siunitx column and
+forget to wrap with \{\}
 
 \section{List commands}
+\url{https://texblog.org/2008/10/16/lists-enumerate-itemize-description-and-how-to-change-them/}
 
 \begin{lstlisting}
 \ContParaAfterList	If you're showing a list (itemize) and want the list to be in the same paragraph as the next lines, use this command to fix the spacing
@@ -319,26 +505,17 @@ Lists	\begin{itemize/enumerate}[moresep] will give more room between items
 	\item four
 \end{itemize}
 
-\section{Hacks}
+	\section{Utilities}
+in addition to etoolbox,we have
+\cmd{\invtoggle{}}, \cmd{\gettogglestate}, \cmd{\ifdefOR{d1}{d2}{t}{f}},
+\cmd{\ifstringeqx{}{}{}[]}, \cmd{\DoIfnotEmpty{}{}[]},
+\cmd{\DoWithoutPrinting{}},
+\cmd{\DontDo{}},
 
-\lstset{language=tex}
-\begin{lstlisting}
-With KOMA-Script, we can make margin wider or smaller
-\begin{addmargin}[left indentation]{indentation}
-content
-\end{addmargin}
-\phantom{} makes an invisible character
+Some other stuff:
 
-\llap, \rlap, \clap	Allows text to have no width, left, right, center aligned
-	llap used for hanging labels (section, fig, tables), but these are good for table hacking to create an item of zero width
-
-Horizontal spacing	%https://tex.stackexchange.com/questions/74353/what-commands-are-there-for-horizontal-spacing
-	I use \, to produce a thin space
-
-
-\end{lstlisting}
-
-\section{Other}
+\cmd{\makealph{num}}
+\cmd{\makeAlph{num}}
 
 \begin{lstlisting}
 \hl{highlight text}
@@ -347,61 +524,130 @@ Horizontal spacing	%https://tex.stackexchange.com/questions/74353/what-commands-
 \end{lstlisting}
 
 
-\IntentionallyBlankPage
+\section{Hacks}
 
-\section{packages}
+With KOMA-Script, we can make margin wider or smaller:\\ \cmd{\begin{addmargin}[left indentation]{indentation} ... \end{addmargin}}
 
-\llcmdlink{makecell}{http://mirrors.ctan.org/macros/latex/contrib/makecell/makecell.pdf}Used by
+\cmd{\phantom{xx}} makes an invisible character of same size
+
+\cmd{\llap{}, \rlap{}, \clap{}}	allows text to have no width (ie overlaps), left, right or center aligned
+\cmd{\llap{}} useful for left hanging labels (section, fig, tables), but these in general are good for
+hacking tables to create an item of zero width which will not adjust column width.
+If you want to use these as the first thing in a paragraph, use \cmd{\Llap, \Rlap, and \Clap},
+otherwise, you may get some unwanted space.
+
+Horizontal spacing: I use \cmd{\,} to produce a thin space: good for initials, or units like \cmd{K.\,Ewasiuk, 177\,lbs}
+
+\cmd{\enlargethispage} \url{https://latexref.xyz/_005cenlargethispage.html}
+
+\url{https://tex.stackexchange.com/questions/74353/what-commands-are-there-for-horizontal-spacing}
+
+
+If you need to add a forced page break, we have some options. These should be done at the very end of the report writing process though.
+
+\url{https://tex.stackexchange.com/questions/9852/what-is-the-difference-between-page-break-and-new-page/9855#9855}
+pagebreak -- create a new page and fill the page\\
+newpage  -- perform a new page and don't let the paragraphs spread\\
+clearpage -- perform new page but ensure all floats are inputted\\
+
+
 
 \section{Typography}
 
 \begin{lstlisting}
-References
-	I use the facilities of the cleveref package, which automatically type Figure Table etc
-	I like using s. f. t. etc. to label my things, it's easier to type than the typically used sec: fig: tab:
-	Examples:
-	\cref{f.m602fTOV}
-	\label{s.steadystate}
 
-Citation
-	The .bib files contain the refence information
-	\cite
-	\citeT
 
 
 Typing units like kV, MW
 	Use a backslash in front. I define units using the siunitx package
 	\kV  \MW
 	This produces a smaller space and keeps the units together
-
-Know your dashes
-	- is a hyphen: old-timers
-	-- is an en-dash, used for ranges like 0--60
-	--- is an em-dash, Kale---the cool guy---said that…
-
-Know how spaces, new lines, and comments work in LaTeX
-	this will
-	be on the same line.
-
-	New paragraph.
-	Supercali%
-	fragilstitic
-
-
-	This is useful to break
-	ideas into separate lines
-	And it's easy to move lines around if you change you mind
 \end{lstlisting}
 
 
+\subsubsection{Know your dashes}
+\begin{LTXexample}
+- is a hyphen: old-timers\\
+-- is an en-dash and used for ranges like: 0--60\\
+--- is an em-dash: Kale---the cool guy---said that
+       em-dashes are cool!
+\end{LTXexample}
 
-\section{Dependencies}
-dsdasdas dsadas
-dsaas dsadas
 
-\PrintEndOfDocument*
+
+\subsubsection{Know how spaces, new lines, and comments work in LaTeX}
+\begin{LTXexample}
+This will all
+be one sentence.
+
+\ \ \ \ New paragraph from blank line.
+Supercali%<<see percent/comment
+fragilstitic%<<<
+expilaidocuious  % << no space
+
+\ \ \ \ It is useful to break ideas
+into separate lines.
+And makes it easy to
+move lines around
+if you change you mind, or
+parse out lists like
+cat,
+dog, and
+fish.
+\end{LTXexample}
+
+
+
+
+\section{Packages}
+
+Here are some packages which I think the documentation is worth reading.
+
+\llcmd{V links V}
+
+
+\llcmdlink{xparse}{https://muug.ca/mirror/ctan/macros/latex/contrib/l3packages/xparse.pdf}The smart way to define commands and environments.\\
+\llcmdlink{etoolbox}{http://mirrors.ctan.org/macros/latex/contrib/etoolbox/etoolbox.pdf}Useful ``scripting'' tools like toggles, if-else, and hook into commands and environments.\\
+
+\llcmdlink{booktabs}{http://mirrors.ctan.org/macros/latex/contrib/booktabs/booktabs.pdf}Better rules(lines) for tables\\
+\llcmdlink{lutabulartools}{https://muug.ca/mirror/ctan/macros/luatex/generic/lutabulartools/lutabulartools.pdf}Provides \cmd{\MC} and enhances booktabs.\\You may want to see \hspace{10ex}
+\llcmdlink{makecell}{http://mirrors.ctan.org/macros/latex/contrib/makecell/makecell.pdf} and \hspace{10ex}
+\llcmdlink{multirow}{https://ctan.mirror.globo.tech/macros/latex/contrib/multirow/multirow.pdf} as well.\\
+\llcmdlink{tabularx}{http://mirrors.ibiblio.org/CTAN/macros/latex/required/tools/tabularx.pdf}The tabularx environment.\\
+\llcmdlink{longtable}{https://ctan.mirror.rafal.ca/macros/latex/required/tools/longtable.pdf}table that can extend past one page\\
+\llcmdlink{ltxtable}{https://ctan.mirror.globo.tech/macros/latex/contrib/carlisle/ltxtable.pdf}Long tabularx
+
+\llcmdlink{siunitx}{https://texdoc.org/serve/siunitx/0}Units and numbers in text and tables.
+
+\llcmdlink{enumitem}{http://mirrors.ctan.org/macros/latex/contrib/enumitem/enumitem.pdf}Fancy lists and key-val options.\\
+\llcmdlink{autopuncitems}{https://mirror.csclub.uwaterloo.ca/CTAN/macros/luatex/latex/autopuncitems/autopuncitems.pdf}Automatically punctuate lists
+
+\llcmdlink{floatrow}{http://mirrors.ctan.org/macros/latex/contrib/floatrow/floatrow.pdf}Used to help with the InsertTable/Figure.\\
+\llcmdlink{caption}{https://mirror.csclub.uwaterloo.ca/CTAN/macros/latex/contrib/caption/caption-eng.pdf}Tweak captions.\\
+\llcmdlink{graphicx}{https://ctan.mirror.rafal.ca/macros/latex/required/graphics/grfguide.pdf}enhanced includegraphics\\
+
+\llcmdlink{cleveref}{http://tug.ctan.org/tex-archive/macros/latex/contrib/cleveref/cleveref.pdf}Allows cref and coustomization of captions\\
+
+\llcmdlink{relsize}{https://mirror.csclub.uwaterloo.ca/CTAN/macros/latex/contrib/relsize/relsize-doc.pdf}Provides relative sizing commands like \cmd{\smaller}.\\
+
+\llcmdlink{KOMA-Script}{https://texdoc.org/serve/KOMA-Script/0}You shouldn't have to mess around with this,
+but if you wanna tweak the class go for it.
+
+\llcmdlink{yamlvars}{https://ctan.mirror.globo.tech/macros/luatex/latex/yamlvars/YAMLvars.pdf}Make definitions with yaml.
+Used for report variables
+
+
+\llcmdlink{LuaTeX}{https://www.pragma-ade.com/general/manuals/luatex.pdf}The reference manual.
+
 
 \section{Hydro Stuff}
+
+Note: the settings of \cref{s.sett} do not apply to Hydro reports.
+
+\subsection{Report Variables}
+This package can use YAMLvars.
+
+\subsection{Interconnection Study Macros}
 
 \begin{lstlisting}
 	Hydro Report Macros	R:\TariffStudies\MH-Report-Template\_boilerplate\HydroMacros.sty

@@ -1,7 +1,7 @@
 % ##############################################
 % References / Hyperlinks
 % ##############################################
-
+\usepackage{bookmark}
 \usepackage{hyperref}
 \hypersetup{
 hidelinks,
@@ -14,7 +14,7 @@ pdfpagemode=UseOutlines,%
 }
 
 
-\usepackage[nameinlink,noabbrev,capitalize]{cleveref}  % cref
+\usepackage[nameinlink,noabbrev]{cleveref}  % cref
 
 %% REFERENCING SECTIONS - lowercase s for sections, uppercase everything else
 \Crefname{section}{Section}{Sections}% {<type>}{<singular>}{<plural>}
@@ -23,6 +23,15 @@ pdfpagemode=UseOutlines,%
 \Crefname{table}{Table}{Tables}
 \Crefname{figure}{Figure}{Figures}
 \Crefname{frame}{Slide}{Slides}
+\Crefname{lstlisting}{Listing}{Listings}
+
+\crefname{section}{section}{sections}% {<type>}{<singular>}{<plural>}
+\crefname{equation}{equation}{equations}% {<type>}{<singular>}{<plural>}
+\crefname{appsec}{appendix}{appendices}
+\crefname{table}{table}{tables}
+\crefname{figure}{figure}{figures}
+\crefname{frame}{slide}{slides}
+\crefname{lstlisting}{listing}{listings}
 
 \creflabelformat{equation}{#2#1#3}
 \crefrangelabelformat{equation}{#3#1#4 to #5#2#6}
@@ -36,3 +45,13 @@ pdfpagemode=UseOutlines,%
 \def\textbf#1{<#1>}%
 \def\textit#1{<#1>}%
 }
+
+\usepackage[a-3u]{pdfx}
+
+
+\begin{luacode*}
+    __PDFmetadata__ = {Language='en-ca'}
+\end{luacode*}
+
+
+

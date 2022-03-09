@@ -3,7 +3,6 @@ import os, shutil, re
 from stat import S_IREAD, S_IRGRP, S_IROTH, S_IWUSR
 
 def make_file(multifile, newfile):
-
     try:
         os.chmod(newfile, S_IWUSR | S_IREAD)  # This makes the file read/write for the owner
     except:
@@ -28,6 +27,7 @@ def make_file(multifile, newfile):
 
 make_file(r'corpboreportMulti.cls',  './../corpboreport.cls')
 make_file(r'corpborepresMulti.cls',  './../corpborepres.cls')
+make_file(r'corpboreloneMulti.cls',  './../corpborelone.cls')
 
 
 

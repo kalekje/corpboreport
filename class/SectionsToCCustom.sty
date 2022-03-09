@@ -1,26 +1,7 @@
 % ##############################################
-% Section Headings
+% Sections and ToC
 % ##############################################
 
-%%% DEPENDENCIES
-% KOMA-Script class
-\usepackage{xcolor}
-% ColorsCustom.sty
-\usepackage{xpatch}
-%%%
-
-
-
-% ##############################################
-% Table of Contents
-% ##############################################
-
-%%% DEPENDENCIES
-% KOMA script class
-%%%
-
-%% ADJUST
-% todo consider switching to latex
 
 %%% EXTRA SPACE BEFORE SECTION AND START ON NEW PAGE
 
@@ -34,31 +15,26 @@
 
 \RequirePackage{etoolbox}
 
+\RequirePackage{chngcntr}
+
 \providetoggle{SecOnNewPage} %% only need one toggle
 \toggletrue{SecOnNewPage}
 
+\providecommand{\cpb@secnumsize}{\smaller}
 
 \providetoggle{showListOfFigsTabs}
 \providetoggle{samepgListOfFigsTabs}
 \toggletrue{samepgListOfFigsTabs}
 
-
+\newcommand{\secwiselabelnums}{
+  \counterwithin{figure}{section}
+  \counterwithin{table}{section}
+%  \counterwithin{listing}{section} % todo fix this
+}
 
 \newdimen\tocsecskip  %%% todo rename this
 \tocsecskip=0.75em  % fit ToC as required
 
-\newdimen\tocsubsecwidth
-\newdimen\tocsubsubsecwidth
-
-\newdimen\tocsubindent  % should auto adjust
-\newdimen\tocsubsubindent  % should auto adjust
-
-\tocsubsecwidth=4.4ex   % adjust this as needed. 4.6 is  good with single digit sections and no letter
-\tocsubsubsecwidth=6.0ex   % adjust this as needed. 6.5 is  good with single digit sections and no letter (small size)
-
-\tocsubsubindent=0ex
-\addtolength{\tocsubsubindent}{\tocsubsecwidth}
-\addtolength{\tocsubsubindent}{4pt}  % correction to account for small vs medium size
 
 
 % diamond leaders.. staggered dots
@@ -73,7 +49,7 @@
 %https://tex.stackexchange.com/questions/381261/right-align-chapter-numbering-in-koma-script-toc?rq=1
 \newcommand\sectionentrynumberformat[1]{% define the new format for the chapter numbers in ToC
 	% \renewcommand\autodot{.}% dot after chapter
-	\hfill\smaller#1\enspace\hspace{1pt}% align chapter numbers right
+	\hfill\cpb@secnumsize#1\enspace\hspace{1pt}% align chapter numbers right
 }
 
 
@@ -81,11 +57,12 @@
 % determine if you should use baselineskip or not...
 
 \RedeclareSectionCommand[beforeskip=21.pt plus 2.1pt,
+toclinefill=\diamondleaders,
 afterskip=0.01pt,
 %tocnumsep=1.5ex,
 %tocdynnumwidth=switch,
-tocindent=-4.3ex,
-tocnumwidth=4ex,
+tocindent=-4.0ex,
+tocnumwidth=4.0ex,
 tocbeforeskip=\tocsecskip,
 tocentryformat=\large\bfseries,
 tocentrynumberformat=\sectionentrynumberformat,
@@ -94,20 +71,20 @@ tocentrynumberformat=\sectionentrynumberformat,
 \RedeclareSectionCommand[beforeskip=17.1pt plus 1.71pt,  % 1.25 * 13.7 (baseline)
 toclinefill=\diamondleaders,
 afterskip=0.01pt,
-tocindent=0pt,
+tocindent=0.5ex,
 tocbeforeskip=1pt,
-tocnumwidth=\tocsubsecwidth,
+tocnumwidth=4.4ex,
 tocentryformat=\normalsize,
-tocentrynumberformat=\smaller,
+tocentrynumberformat=\cpb@secnumsize,
 ]{subsection}%
 %
 \RedeclareSectionCommand[beforeskip=13.7pt plus 1.37pt,
 toclinefill=\diamondleaders,
 afterskip=0.01pt,
-tocindent=\tocsubsecwidth,
-tocnumwidth=\tocsubsubsecwidth,
+tocindent=5.4ex,
+tocnumwidth=6.6ex,
 tocentryformat=\small,
-tocentrynumberformat=\smaller,
+tocentrynumberformat=\cpb@secnumsize,
 ]{subsubsection}
 
 \RedeclareSectionCommand[beforeskip=3.01pt,
@@ -119,31 +96,22 @@ afterskip=-4ex,
 \DeclareTOCStyleEntry[%
 linefill=\diamondleaders,
 indent=0pt,
-numwidth=\tocsubsecwidth,
+numwidth=4.4ex,
 entryformat=\normalsize,
-entrynumberformat=\smaller,
+entrynumberformat=\cpb@secnumsize,
 ]{tocline}{table}
 
 
 \DeclareTOCStyleEntry[%
 linefill=\diamondleaders,
 indent=0pt,
-numwidth=\tocsubsecwidth,
+numwidth=4.4ex,
 entryformat=\normalsize,
-entrynumberformat=\smaller,
+entrynumberformat=\cpb@secnumsize,
 ]{tocline}{figure}
-
-%%%  How to use in document:
-%    \listoffigures
-%\renewcommand{\SecOnNewPage}{no}  % only if you want these on the same page...
-%    \listoftables
-%\renewcommand{\SecOnNewPage}{yes}
 
 
 \setkomafont{disposition}{\normalfont\bfseries} % section preference
-
-
-
 
 
 \if@twoside% if two-sided, put the section headings to right side and numbers in right margin
@@ -153,38 +121,13 @@ entrynumberformat=\smaller,
 
 
 
-
-%%% SECTION NUMBERS IN MARGIN OF PAGE, for two sided documents
-% Check if two-sided https://tex.stackexchange.com/questions/360785/how-do-i-check-if-a-document-is-oneside-or-twoside  %
-%%% for flipped sections heads, kind of ugly
-%\makeatletter % https://tex.stackexchange.com/questions/470752/section-numbers-in-margins-in-double-sided-document
-%%preamble
-%\if@twoside% if two-sided, put the section headings to right side and numbers in right margin
-%\renewcommand\sectionlinesformat[4]{%  for section numbers in right margin for a two sided document
-%	\ifthispageodd
-%	{\raggedleft#4\makebox[0pt][l]{\hspace{\marginparsep}\smaller#3}}
-%	{\raggedright\makebox[0pt][r]{\smaller#3\hspace{\marginparsep}}#4}%
-%}
-%%\newcommand\side{stuff for twoside} %todo reconsider if this is needed
-%\else% if not two sided, only apply to one sided
-%\renewcommand\sectionlinesformat[4]{% used by free-standing headings with style=section
-%	\makebox[0pt][r]{\smaller#3}#4%  puts section number in margin
-%}	%\newcommand\side{stuff for onside} %todo reconsider if this is needed
-%\fi%  finally do nothing
-%\makeatother
-
-
 \renewcommand\sectionlinesformat[4]{% used by free-standing headings with style=section
-	\makebox[0pt][r]{\smaller#3\hspace{3pt}}#4%  puts section number in margin
+	\makebox[0pt][r]{\cpb@secnumsize#3\hspace{3pt}}#4%  puts section number in margin
 }
-
-%%% SECTION NUMBER SPACING:
-% \renewcommand*\sectionformat{\thesection\autodot\hspace{5mm}} % maybe 14pt enspace?
 
 
 %%% SECTION NUMBER AND HEADING COLOR CHANGE
 %\addtokomafont{chapter}{\color{secCol}}
-
 \addtokomafont{section}{\color{secCol}}
 \addtokomafont{subsection}{\color{subsecCol}}
 \addtokomafont{subsubsection}{\color{subsubsecCol}}
@@ -221,17 +164,6 @@ entrynumberformat=\smaller,
 \def\theHsection{\arabic{section}\alph{sectionletter}} % this is for hyperref (it does nothing if not loaded)
 
 %
-%\newdimen\sectprespacelength
-%\sectprespacelength=-20pt  % make less negative to increase spacing on new section title (always starts new page)
-%\xpretocmd\sectionlinesformat
-%{\ifstr{#1}{section}{%
-%    \iftoggle{SecOnNewPage}{\clearpage\vspace*{\sectprespacelength}}{}%
-%}{}}  % THIS IS AUTOMATICALLY CHANGED IN APPENDIX
-%{}{\PatchFailed}
-
-%{\ifstr{#1}{section}{\ifdefstring{\SecOnNewPage}{yes}{\clearpage\vspace*{\sectprespacelength}}{}}{}}  % THIS IS AUTOMATICALLY CHANGED IN APPENDIX
-
-
 
 
 
@@ -255,10 +187,8 @@ entrynumberformat=\smaller,
         \unexpanded{{#5}}%
     }%
 }
-\def\thesubsection{\arabic{section}\alph{sectionletter}.\arabic{subsection}\alph{subsectionletter}}
-\def\theHsubsection{\arabic{section}\alph{sectionletter}.\arabic{subsection}\alph{subsectionletter}}
-
-
+\def\thesubsection{\thesection.\arabic{subsection}\alph{subsectionletter}}
+\def\theHsubsection{\thesection.\arabic{subsection}\alph{subsectionletter}}
 
 
 
@@ -283,9 +213,10 @@ entrynumberformat=\smaller,
         \unexpanded{{#5}}%
     }%
 }
-\def\thesubsubsection{\arabic{section}\alph{sectionletter}.\arabic{subsection}\alph{subsectionletter}.\arabic{subsubsection}\alph{subsubsectionletter}}
+\def\thesubsubsection{\thesubsection.\arabic{subsubsection}\alph{subsubsectionletter}}
 % this is for hyperref (it does nothing if not loaded)
-\def\theHsubsubsection{\arabic{section}\alph{sectionletter}.\arabic{subsection}\alph{subsectionletter}.\arabic{subsubsection}\alph{subsubsectionletter}}
+\def\theHsubsubsection{\thesubsection.\arabic{subsubsection}\alph{subsubsectionletter}}
+
 
 
 
@@ -304,28 +235,71 @@ entrynumberformat=\smaller,
             \unexpanded{{#4}}%
     }%
 }
-%
-
-%\newcommand{\se}{def}
-
-%%%% FOR BLANK PAGE ON LEFT SIDE WHEN NEW SECTION STARTS:
-%\newcommand{\IntentBlank}{\vspace*{\fill}
-%	{\noindent\large\centering This Page Intentionally Left Blank \\[5cm]}
-%	\vspace*{\fill}}
-	%%% https://tex.stackexchange.com/questions/102451/have-cleardoublepage-working-in-oneside-scrreprt
-%\newcommand\cleartooddpage{\clearpage
-%	\ifodd\value{page}\else\null\IntentBlank\clearpage\fi}
-%\let\secSame\section  % section on same page 
-%\pretocmd{\section}{\cleartooddpage}{}{}
 
 
-%%% USED IN SCRBOOK AND SCRREPRT
-%\renewcommand*\othersectionlevelsformat[3]{%
-%	\llap{#3\autodot\enskip}%
+
+
+\NewDocumentCommand{\sectionM}{ t- m }{% section Matter (front or back matter). No number, goes to ToC, goes to pdf bookmark
+  \IfBooleanT{#1}{\addtocontents{toc}{\vspace*{-1.3ex}}}
+  \section*{#2}
+  \addtocentrydefault{section}{\phantom{.}}{#2}{}
+}
+
+\NewDocumentCommand{\sectionF}{m}{\section*{#1}}
+
+\def\frontmatter{
+  \pdfbookmark[0]{Front-Matter}{LabelFMPDF}
+  \pdfbookmark[1]{Title}{LabelTitlePDF}
+}
+
+\def\addcontentslists{
+  \pdfbookmark[1]{Contents}{LabelContentsPDF}
+%   \addtocontents{toc}{\protect\enlargethispage{2em}} % enlarge toc page if needed, todo add length for this
+  \tableofcontents
+  
+  \addtocentrydefault{section}{\phantom{.}}{Figures}\addtocontents{toc}{\vspace*{-1.3ex}}%
+  \listoffigures
+  
+  \addtocentrydefault{section}{\phantom{.}}{Tables}%
+  \listoftables
+  
+  \bookmarksetup{startatroot}
+}
+
+
+\def\backmatter{\pdfbookmark[0]{Back-Matter}{LabelBMPDF}}
+
+\pretocmd{\appendix}{
+  \addtocontents{toc}{%
+    \vspace*{1.3ex}%
+    \protect\contentsline{section}{\hspace{3.5ex}Appendix\hfill\ }{}{}}
+  
+  \pdfbookmark[0]{Appendix}{LabelAppendicesPDF}
+}{}{}
+
+
+
+
+
+%%%%% graveyard
+
+
+
+%%% SECTION NUMBERS IN MARGIN OF PAGE, for two sided documents
+% Check if two-sided https://tex.stackexchange.com/questions/360785/how-do-i-check-if-a-document-is-oneside-or-twoside  %
+%%% for flipped sections heads, kind of ugly
+%\makeatletter % https://tex.stackexchange.com/questions/470752/section-numbers-in-margins-in-double-sided-document
+%%preamble
+%\if@twoside% if two-sided, put the section headings to right side and numbers in right margin
+%\renewcommand\sectionlinesformat[4]{%  for section numbers in right margin for a two sided document
+%	\ifthispageodd
+%	{\raggedleft#4\makebox[0pt][l]{\hspace{\marginparsep}\cpb@secnumsize#3}}
+%	{\raggedright\makebox[0pt][r]{\cpb@secnumsize#3\hspace{\marginparsep}}#4}%
 %}
-%\renewcommand*{\chapterformat}{%
-%	{\fontsize{20}{30}\scshape\chapappifchapterprefix{}}%
-%	\fontsize{120}{30}\selectfont\rlap{\thechapter\autodot}%
-%}
-
-
+%%\newcommand\side{stuff for twoside} %to do reconsider if this is needed
+%\else% if not two sided, only apply to one sided
+%\renewcommand\sectionlinesformat[4]{% used by free-standing headings with style=section
+%	\makebox[0pt][r]{\cpb@secnumsize#3}#4%  puts section number in margin
+%}	%\newcommand\side{stuff for onside} %to do reconsider if this is needed
+%\fi%  finally do nothing
+%\makeatother

@@ -17,9 +17,11 @@
 	description width=0.5em,
 }
 
-\usepackage{\FormatDir TextandParas} %%% MATH RELATED PACKAGES
-\usepackage{\FormatDir FontCMBlua} %%% MATH RELATED PACKAGES
-\usepackage{\FormatDir MathSymbolsEtc} %%% MATH RELATED PACKAGES
+\usepackage{\FormatDir LuaStuff}
+
+\usepackage{\FormatDir TextandParas}
+\usepackage{\FormatDir FontCMBotf}
+\usepackage{\FormatDir MathSymbolsEtc}
 \usepackage{\FormatDir Utilities} %%% GENERAL UTILITIES, FOR SHAPING, IMPORTING, ETC
 \usepackage{\FormatDir Tables} %
 \usepackage{\FormatDir ColorsCustom} %
@@ -181,24 +183,36 @@
 		\vskip9pt
 }
 
-\newlength{\cbp@TPheight}
-\setlength{\cbp@TPheight}{8cm}
+\let\company\institute  % alias for setting institution
+
+\let\oldlogo\logo
+\RenewDocumentCommand{\logo}{s m}{%
+	\IfBooleanTF{#1}{\oldlogo{\includegraphics[width=3cm,smash=tl]{#2}}}%
+	{\oldlogo{#2}}%
+}%
+
+\newlength{\cbp@BTPheight}
+\setlength{\cbp@BTPheight}{8cm}
+\newlength{\cbp@BTPwidth}
+\setlength{\cbp@BTPwidth}{\textwidth-6mm-\heavyrulewidth-3mm}
 
 \setbeamertemplate{title page}
-{   \Vfill\vspace*{5mm}
-	\hspace{1mm} %
-	\rule{\heavyrulewidth}{\cbp@TPheight} % Vertical line
-	\hspace{3mm} % Whitespace between the vertical line and title page text
-	\begin{minipage}[b][\cbp@TPheight][t]{0.7\textwidth}
-	\Vfill\vfill\vfill
-	\ifinsert{title}{{\usebeamerfont{title}\usebeamercolor[fg]{title}\inserttitle\par\vspace{0.8ex}}}
-	\ifinsert{subtitle}{{\usebeamerfont{subtitle}\usebeamercolor[fg]{subtitle}\insertsubtitle\vspace{0.4ex}}}
-	\Vfill
-	\ifinsert{author}{\vfill{\usebeamerfont{author}\insertauthor}}
-	\ifinsert{institute}{\vfill{\usebeamerfont{institute}\insertinstitute}}
-	\ifinsert{date}{\vfill{\usebeamerfont{date}\insertdate}}
-	\ifinsert{logo}{\vfill\vfill\hfill\insertlogo}
-	\Vfill\vfill\vfill\vfill\vfill
+{   \Vfill\vspace*{5mm}%
+	\hspace*{1mm}%
+	\rule{\heavyrulewidth}{\cbp@BTPheight}% Vertical line
+	\hspace{7mm}% Whitespace between the vertical line and title page text
+	\begin{minipage}[b][\cbp@BTPheight][t]{\cbp@BTPwidth}
+		\Vfill\vfill\vfill
+		\ifinsert{title}{{\usebeamerfont{title}\usebeamercolor[fg]{title}\inserttitle\par\vspace{0.8ex}}}
+		\ifinsert{subtitle}{{\usebeamerfont{subtitle}\usebeamercolor[fg]{subtitle}\insertsubtitle\vspace{0.4ex}}}
+		\Vfill
+		\ifinsert{author}{\vfill{\usebeamerfont{author}\insertauthor}}
+		\ifinsert{institute}{\vfill{\usebeamerfont{institute}\insertinstitute}}
+		\ifinsert{date}{\vfill{\usebeamerfont{date}\insertdate}}
+		\ifinsert{logo}{\vfill\vfill\hfill\tikz[OL] \node at (-2,0) {\insertlogo};}
+%		\ifinsert{logo}{\vfill\vfill\hfill\insertlogo}
+%		\ifinsert{logo}{\vfill\vfill\hspace*{\widthof{\usebeamerfont{title}\inserttitle}}\insertlogo}
+		\Vfill\vfill\vfill\vfill\vfill
 	\end{minipage}
 	\Vfill\vfill
 }

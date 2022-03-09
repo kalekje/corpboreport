@@ -1,0 +1,226 @@
+%\clearpairofpagestyles
+\providecommand{\cpb@secnumsize}{}
+
+
+
+% ##############################################
+% Table of Contents
+% ##############################################
+
+\newdimen\tocsecskip  %%% todo rename this
+\tocsecskip=0.75em  % fit ToC as required
+
+
+% diamond leaders.. staggered dots
+\countdef\counter=255
+\def\diamondleaders{\global\advance\counter by 1
+	\ifodd\counter \kern-10pt \fi
+	\leaders\hbox to 20pt{\ifodd\counter \kern13pt \else\kern3pt \fi
+		.\hss}\hfil}
+
+
+%%% EXTRA SPACE BEFORE SECTION AND START ON NEW PAGE
+
+\RequirePackage{needspace}
+\newlength{\secneedspace}
+\setlength{\secneedspace}{8\baselineskip}
+\newlength{\subsecneedspace}
+\setlength{\subsecneedspace}{6\baselineskip}
+\newlength{\subsubsecneedspace}
+\setlength{\subsubsecneedspace}{4\baselineskip}
+
+
+
+
+
+%%% HEADER
+\renewcommand{\chaptermark}[1]{%
+  \markboth{\chapapp\ \thechapter\autodot}{#1}}
+\renewcommand{\addchapmark}[1]{\markboth{#1}{#1}}
+
+
+
+
+% ##############################################
+% Section Headings
+% ##############################################
+
+
+%%% CHAPTER SECTION HEADINGS FORMAT
+\addtokomafont{chapterprefix}{\raggedleft}
+
+\newcommand{\ShowChapterPrefix}{
+\renewcommand*{\chapterformat}{%
+\color{brown}%
+\mbox{\raisebox{5ex}{\normalsize
+\chapappifchapterprefix
+{\nobreakspace}}%
+\scalebox{3}{\classicstylenums\thechapter\autodot}\enskip}}
+}%
+
+\newcommand{\HideChapterPrefix}{
+\renewcommand*{\chapterformat}{%
+\color{brown}%
+\mbox{\scalebox{3}{\classicstylenums\thechapter\autodot}\enskip}}}%
+
+\HideChapterPrefix
+
+
+% Hanging section, % NUMBERS IN LEFT MARGIN
+%https://tex.stackexchange.com/questions/381261/right-align-chapter-numbering-in-koma-script-toc?rq=1
+\renewcommand\sectionlinesformat[4]{%
+	\makebox[0pt][r]{\cpb@secnumsize#3\hspace{2pt}}#4%
+}
+\renewcommand\sectioncatchphraseformat[4]{% used by run-in headings with style=section
+	\makebox[0pt][r]{\cpb@secnumsize#3\hspace{1pt}}#4%
+}
+
+%https://tex.stackexchange.com/questions/381261/right-align-chapter-numbering-in-koma-script-toc?rq=1
+\newcommand\sectionentrynumberformat[1]{% define the new format for the chapter numbers in ToC
+	\hfill\cpb@secnumsize#1\enspace\hspace{1pt}% align chapter numbers right
+}
+
+\setkomafont{disposition}{\normalfont\bfseries} % section preference
+\newcommand{\vparspace}{\vspace{\parskip}}
+
+
+% https://umanitoba.ca/sites/default/files/2019-12/UM_Brand-Guidelines.pdf
+\definecolor{brown}{RGB}{79, 44, 29}
+\definecolor{darkblue}{RGB}{56, 94, 157}
+\definecolor{lightblue}{RGB}{0, 163, 224}
+\definecolor{yellow}{RGB}{242, 169, 0}
+
+
+
+\addtokomafont{chapter}{\color{brown}}
+\addtokomafont{section}{\color{brown}\Large}
+\addtokomafont{subsection}{\color{brown}\large}
+\addtokomafont{subsubsection}{\color{brown}\normalsize}
+\addtokomafont{paragraph}{\color{brown}}
+
+
+%%% TOC
+\setcounter{tocdepth}{1} %%% TOC Depth
+
+\RedeclareSectionCommand[
+beforeskip=1.0\baselineskip plus 3pt minus 1pt,  % negative will suppress first indent
+tocbeforeskip=1.2em plus 0.2em minus 1pt,
+afterskip=15pt,
+tocindent=-4ex,
+tocnumwidth=4ex,
+tocbeforeskip=16pt,
+toclinefill=\diamondleaders,
+tocentryformat=\large\bfseries,
+tocentrynumberformat=\sectionentrynumberformat,
+]{chapter}
+
+\RedeclareSectionCommand[
+beforeskip=1.0\baselineskip plus 3pt minus 1pt,  % negative will suppress first indent
+afterskip=3pt,
+tocbeforeskip=2pt,
+tocindent=0.5ex,
+tocnumwidth=6ex,
+toclinefill=\diamondleaders,
+tocentrynumberformat=\cpb@secnumsize,
+tocentryformat=\large,
+]{section}
+
+\RedeclareSectionCommand[
+beforeskip=2.0\baselineskip plus 4pt minus 2pt,
+afterskip=0.01mm,%\baselineskip,
+tocindent=6.5ex,
+tocnumwidth=6ex,
+toclinefill=\diamondleaders,
+tocentrynumberformat=\cpb@secnumsize,
+tocentryformat=\normalsize,
+]{subsection}
+
+\RedeclareSectionCommand[
+beforeskip=1.0\baselineskip plus 4pt minus 2pt,
+afterskip=0.01mm,
+runin=false,  % text on same line
+tocindent=6ex,
+tocnumwidth=10ex,
+tocentrynumberformat=\cpb@secnumsize,
+tocentryformat=\small,
+]{subsubsection}
+
+\RedeclareSectionCommand[
+beforeskip=.5\baselineskip,
+afterskip=-1em]{paragraph}
+
+\RedeclareSectionCommand[
+beforeskip=-.5\baselineskip,
+afterskip=-1em]{subparagraph}
+
+
+
+\DeclareTOCStyleEntry[%
+linefill=\diamondleaders,
+indent=-5ex,
+numwidth=5ex,
+entryformat=\normalsize,
+entrynumberformat=\cpb@secnumsize,
+]{tocline}{table}
+\renewcaptionname{english}{\listtablename}{Tables}
+
+
+\DeclareTOCStyleEntry[%
+linefill=\diamondleaders,
+indent=-5ex,
+numwidth=5ex,
+entryformat=\normalsize,
+entrynumberformat=\cpb@secnumsize,
+]{tocline}{figure}
+\renewcaptionname{english}{\listfigurename}{Figures}
+
+\counterwithin{figure}{chapter}
+\counterwithin{table}{chapter}
+
+
+% front matter chapter (acknowledgements or abstract)
+\newcommand{\chapterF}[1]{\RedeclareSectionCommand[beforeskip=8.0\baselineskip plus 3pt minus 1pt]{chapter}
+\pdfbookmark[0]{#1}{Label#1PDF}%
+\chapter*{#1}%
+\RedeclareSectionCommand[beforeskip=1.0\baselineskip plus 3pt minus 1pt]{chapter}}
+
+
+
+\NewDocumentCommand{\chapterM}{ t- m }{% chapter Matter (front or back), ToC and pdf bookmark but no number
+  \IfBooleanT{#1}{\addtocontents{toc}{\vspace*{-1.3ex}}}
+  \chapter*{#2}
+  \addtocentrydefault{chapter}{\phantom{.}}{#2}{}
+  \chaptermark{#2}%
+}
+
+\def\frontmatter{
+  \pdfbookmark[-1]{Front-Matter}{LabelFMPDF}
+  \pdfbookmark[0]{Title}{LabelTitlePDF}
+}
+
+\def\addcontentslists{
+  \pdfbookmark[0]{Contents}{LabelContentsPDF}
+  \tableofcontents
+  \chaptermark{Contents}
+  
+  \addtocentrydefault{chapter}{\phantom{.}}{Figures}\addtocontents{toc}{\vspace*{-1.3ex}}%
+  \listoffigures
+  \chaptermark{Figures}
+  
+  \addtocentrydefault{chapter}{\phantom{.}}{Tables}%
+  \listoftables
+  \chaptermark{Tables}
+  
+  \bookmarksetup{startatroot}
+}
+
+
+\def\backmatter{\pdfbookmark[-1]{Back-Matter}{LabelBMPDF}}
+
+\pretocmd{\appendix}{
+  \addtocontents{toc}{%
+    \vspace*{1.3ex}%
+    \protect\contentsline{chapter}{\hspace{3.5ex}Appendix\hfill\ }{}{}}
+  
+  \pdfbookmark[-1]{Appendix}{LabelAppendicesPDF}
+}{}{}

@@ -1,0 +1,39 @@
+% ##############################################
+% Appendix Formatting
+% ##############################################
+
+%%% DEPENDENCIES
+% KOMA-script class
+% ToC.sty (for ToC skip)
+
+%%% todo can test for \thechapter, can just set to blank if toplevel is section!!!
+
+\providecommand*\appendixname{Appendix}
+\let\originalappendix\appendix
+
+\renewcommand\appendix{%
+	\originalappendix
+	% NOTE you cannot use the alphabetized subsections anymore
+	%
+	\def\thechapter{{\scshape\alph{chapter}}}
+	\def\theHchapter{{\scshape\alph{chapter}}}
+
+	\crefalias{chapter}{appsec}
+
+	\chapter*{Appendix}
+   \ \ \clearpage
+}
+
+%    pretty sure this isn't needed
+%	\def\thesection{\thechapter.\arabic{section}}  % restore subsection behaviour (I change it with macro seclettering)
+%	\def\theHsection{\thechapter.\arabic{section}}  % restore subsection behaviour (I change it with macro seclettering)
+%	\def\thesubsection{\thesection.\arabic{subsection}}  % restore subsection behaviour (I change it with macro seclettering)
+%	\def\theHsubsection{\thesection.\arabic{subsection}}
+%	\def\thesubsubsection{\thesubsection.\arabic{subsubsection}}
+%	\def\theHsubsubsection{\thesubsection.\arabic{subsubsection}}
+%	%
+
+
+
+% for lettering, could be used for assignment template, type this \def\thesubsection{\arabic{section} (\alph{subsection})}
+

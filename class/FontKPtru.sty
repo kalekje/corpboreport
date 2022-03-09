@@ -1,0 +1,24 @@
+\usepackage[T1]{fontenc}
+%frenchstyle,narrowiints,partialup < math settings for kp fonts
+\usepackage[light,notextcomp,oldstylenums]{kpfonts} % the light is also decent, could consider
+\renewcommand{\ttdefault}{cmtl} % monospace that looks nice with light kpfont
+\usepackage[activate=true,% this package makes the font look nicer
+    final,%
+    tracking=true,%
+%	kerning=true, % only works with pdftex
+]{microtype}
+\SetTracking{encoding=*, shape=sc}{18}  % adjust small caps letter spacing
+\def\cpb@secnumsize{} % dont allow cpb to use smaller numbers in section
+
+\def\togunums{\fontfamily{jkpl}\selectfont} %% from kpfonts.sty
+\def\toglnums{\fontfamily{jkplosn}\selectfont}
+
+\let\lnum\oldstylenums
+\let\unum\classicstylenums
+
+\AtBeginEnvironment{tabular}{\togunums}
+\AtBeginEnvironment{tikzpicture}{\togunums}
+
+%% for non-light option
+%\def\togunums{\fontfamily{jkp}\selectfont} %% from kpfonts.sty
+%\def\toglnums{\fontfamily{jkpxosn}\selectfont} for non-light

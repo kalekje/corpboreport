@@ -1,34 +1,35 @@
 % requires enumitem for acronym styling
 \usepackage[sorting=none]{biblatex}
+
 \newcommand{\citeT}[1]{\citetitle{#1}~\cite{#1}}
 \renewrobustcmd*{\bibinitdelim}{\,}
 \renewcommand*{\multicitedelim}{\addcomma\,}  % tighten [1,2,3] multi citations
 
+\defbibenvironment{bibliography}
+{\begin{enumerate}[leftmargin=0pt,labelsep=1.5ex,itemsep=0.8ex,label={\unum{\arabic*}.}]}%
+{\end{enumerate}}
+{\item}
 
-\usepackage[xindy,style=super,nopostdot, nogroupskip, nonumberlist, numberedsection, section=section,savewrites=true,acronym,nomain]{glossaries-extra}
-\setabbreviationstyle[acronym]{long-short}
+\renewcommand*{\citesetup}{%
+\togunums\biburlsetup}
+
+
+\usepackage[xindy,acronym,nonumberlist,toc]{glossaries-extra}
+\renewcommand{\glossarysection}[2][]{} % remove glossary section heading entirely, requires manual but more flexible
+
+
 \GlsXtrEnableEntryCounting % % https://tex.stackexchange.com/questions/477581/glossaries-introduce-short-name-only-if-used-more-than-once-within-section-chap
- {acronym}% list of categories to use entry counting
- {1}% trigger value
+ 	{acronym}% list of categories to use entry counting
+ 	{1}% trigger value
+
+\setabbreviationstyle[acronym]{long-short}
+
 %\glsenableentrycount % enable \cgls, \cglspl, \cGls, \cGlspl  supposed to not show accronym if only one
 \glsdisablehyper  % to disable hyperlinks
 \glstoctrue  % ToC
 
 \makeglossaries
 
-
-\newglossarystyle{listwithwidth}{%
-	\renewcommand*{\glossaryheader}{}%
-	\renewcommand*{\glsgroupheading}[1]{}%
-	\renewcommand*{\glossarysubentryfield}[6]{glssubentryitem{##2}{\strut\glstarget{##2}##4\glspostdescription\space ##6}}%
-	\renewcommand*{\glsgroupskip}{\vspace{7pt}}% space between alphabetized groups
-	\renewenvironment{theglossary}%
-		{\enlargethispage{2em}\begin{description}[leftmargin=2.5cm,style=multiline,itemsep=3pt,format=\raggedright\sloppy]}%
-		{\end{description}}%
-	\renewcommand*{\glossaryentryfield}[5]{%
-		\item[{\normalfont\bfseries\glsentryitem{##1}\glstarget{##1}{##2}}]{##3\glspostdescription\space ##5}
-		}%
-}
 
 \newglossarystyle{AcronymsTwoCol}{%
 	\renewcommand*{\glossaryheader}{}%
@@ -46,21 +47,86 @@
 
 
 
-% todo do this for \Gls and \GLS, maybe * + to gls
+\newglossarystyle{GlossList}{%
+	\renewcommand*{\glossaryheader}{}%
+	\renewcommand*{\glsgroupheading}[1]{}%
+	\renewcommand*{\glossarysubentryfield}[6]{glssubentryitem{##2}{\strut\glstarget{##2}##4\glspostdescription\space ##6}}%
+	\renewcommand*{\glsgroupskip}{\vspace{7pt}}% space between alphabetized groups
+	\renewenvironment{theglossary}%
+		{\vspace*{1ex}%
+		\begin{description}[font=\bfseries,leftmargin=2.7cm,style=multiline,itemsep=3pt]\raggedright}%
+		{\end{description}}%
+	\renewcommand*{\glossaryentryfield}[5]{%
+		\item[{\normalfont\bfseries\glsentryitem{##1}\glstarget{##1}{##2}}]{##3\glspostdescription\space ##5}
+		}%
+}
+
+
+
+
+
+
+
 \usepackage{pdfcomment}
-\let\oldgls\gls
-\RenewDocumentCommand{\gls}{ O{} m O{} }{%
-    \ifglsused{#2}{%
-    	\pdftooltip{\oldgls[#1]{#2}[#3]}{\glsentrylong{#2}}%
-	}{%
-		\oldgls{#2}%
-	}%
+
+\newcommand{\getTheToolTipText}[1]{%
+  \ifcsname#1ToolTipText\endcsname%
+    \csname#1ToolTipText\endcsname%
+  \else%
+    \glsentrylong{#1}%
+  \fi%
+}
+
+
+\newcommand{\ac}[1]{%
+      \ifglsused{#1}{%
+%         \pdftooltip{\gls*{#1}}{\getTheToolTipText{#1}}\xspace%
+				 {\scshape\pdftooltip{\gls*{#1}}{\getTheToolTipText{#1}}}%
+%         \pdftooltip{\textsc{\MakeLowercase{\gls*{#1}}}}{\getTheToolTipText{#1}}\xspace% todo consider small caps for serfif
+    }{%
+%        \gls*{#1}\xspace%
+				{\scshape\gls*{#1}}% todo get to root, make sure acronyms specifically are small caps!
+%				{\textsc{\MakeLowercase{\gls*{#1}}}}
+    }%
 }%
-\let\oldglspl\glspl
-\RenewDocumentCommand{\glspl}{ O{} m O{} }{%
-    \ifglsused{#2}{%
-	    \pdftooltip{\oldglspl[#1]{#2}[#3]}{\glsentrylong{#2}}%
-	}{%
-		\oldglspl{#2}%
-	}%
-}%
+
+
+%add tool tip to acronyms
+
+% todo do this for \Gls and \GLS, maybe * + to gls
+
+%\let\oldgls\gls
+%\RenewDocumentCommand{\gls}{ O{} m O{} }{%
+%    \ifglsused{#2}{%
+%    	\pdftooltip{\oldgls[#1]{#2}[#3]}{\glsentrylong{#2}}%
+%	}{%
+%		\oldgls{#2}%
+%	}%
+%}%
+%\let\oldglspl\glspl
+%
+%
+%
+
+
+%\RenewDocumentCommand{\glspl}{ O{} m O{} }{%
+%    \ifglsused{#2}{%
+%	    \pdftooltip{\oldglspl[#1]{#2}[#3]}{\glsentrylong{#2}}%
+%	}{%
+%		\oldglspl{#2}%
+%	}%
+%}%
+
+
+
+% override some acronyms that don't appear as we want
+\newcommand{\besToolTipText}{Bulk Electric System}
+\newcommand{\ioaToolTipText}{Interconnection and Operating Agreement}
+\newcommand{\rasToolTipText}{Remedial Action Scheme}
+\newcommand{\poiToolTipText}{Point(s) of Interconnection}
+\newcommand{\podToolTipText}{Point(s) of Delivery}
+\newcommand{\oaitToolTipText}{Open Access Interconnection Tariff}
+\newcommand{\oattToolTipText}{Open Access Transmission Tariff}
+\newcommand{\isuToolTipText}{Interconnection System Upgrade(s)}
+
+

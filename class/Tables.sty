@@ -1,17 +1,3 @@
-% ##############################################
-% Tables
-% ##############################################
-
-%%% DEPENDENCIES
-% KOMA-Script class
-\usepackage{xparse}
-%\usepackage{siunitx} % see MathSymbolsEtc for usage, dont use as settings are changed
-\usepackage{xcolor}
-% ColorsCustom.sty
-% Macros
-%%%
-
-% How to make nice tables: https://inf.ethz.ch/personal/markusp/teaching/guides/guide-tables.pdf
 
 %%% TABLES
 \usepackage{array}
@@ -24,38 +10,40 @@
 \usepackage{ltxtable}  % long table with tabularx
 \usepackage{longtable}
 
-\usepackage{booktabs}  % better for tables without vertical rules.
-% http://ctan.mirror.globo.tech/macros/latex/contrib/booktabs/booktabs.pdf
+\usepackage{booktabs}  % http://ctan.mirror.globo.tech/macros/latex/contrib/booktabs/booktabs.pdf
 
 % Table spacing
 %\renewcommand{\arraystretch}{1.0}  % normal table stretch.. can modify
 %\setlength\tabcolsep{2ex}  % additional padding on sides of tables
 
-\newcommand{\todash}{{\hspace{1.5ex}to\hspace{1.5ex}}} % used for tables with X ' to ' Y
 \setlength\heavyrulewidth{0.8pt}
 \setlength\lightrulewidth{0.4pt}  % latex default rule is 0.4 pt
+\setlength\cmidrulewidth{0.3pt}  % latex default rule is 0.4 pt
 
-%% gmidrule now in lutabulartools
+\providetoggle{useSerif}
+\iftoggle{useSerif}{
+	\setlength\heavyrulewidth{0.7pt}
+	\setlength\lightrulewidth{0.4pt}  % latex default rule is 0.4 pt
+	\setlength\cmidrulewidth{0.3pt}
+}{}
 
+\let\nl\\  % shortcut for \newline and \\
 
+% fixed column width, ragged right instead of horizontally filled allows new line
+\newcolumntype{P}[1]{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}p{#1}}
+\newcolumntype{M}[1]{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+\newcolumntype{B}[1]{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}b{#1}}
 
+% vertical and horizontally centerred
+\newcolumntype{T}[1]{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}p{#1}}  % vertically centered instead of top
+\newcolumntype{V}[1]{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}  % vertically centered instead of top
 
-
-%\newcolumntype{M}[1]{>{\centering\arraybackslash}m{#1}}  % vertically/horizontally centered column (might not need(
-%\newcolumntype{P}[1]{>{\centering\arraybackslash}p{#1}}  % horizontally centered P column
-
-
-\newcolumntype{M}[1]{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
-
-% fixed column width, ragged right, allows new line
-\newcolumntype{P}[1]{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}p{#1}}  % ragged right par new lune allowed
-
-\newcolumntype{Y}{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}X} % centered tabular X
 \newcolumntype{Z}{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}X}  % ragged right instead of filled, \newline lets you break lines
+\newcolumntype{Y}{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}X} % centered tabular X
 
-
-
-%\raggedright\let\newline\\\arraybackslash\hspace{0pt}
+% things to consider, siunitx + tabularx?
+% https://tex.stackexchange.com/questions/12663/how-to-use-siunitx-and-tabularx-together
+% really want a way to distrubute columns evenly under a multicolumn cell that is wider than the two columns
 
 \sisetup{range-phrase=--,
 	table-number-alignment=center,
@@ -87,7 +75,17 @@
 
 %%%%% todo should I move this into unirefs?  maybe make a lua version
 \newcommand{\tfnote}[1]{\leavevmode\llap{#1.\enspace}} % use tnote{a} in the table, and \tfnote{a}Note here in the foot notes
-\newcommand{\tnote}[1]{\textsuperscript{#1}} % use tnote{a} in the table, and \tfnote{a}Note here in the foot notes
+\NewDocumentCommand{\tnote}{s m}{%
+	\IfBooleanTF{#1}%
+		{\textsuperscript{#2}}%
+		{\rlap{\textsuperscript{#2}}}% without star, footnote label to take no space
+}% use tnote{a} in the table, and \tfnote{a}Note here in the foot notes
 
 \newcommand{\atfnote}[1]{\tfnote{\uref{#1}}} % automatic table footnote
-\newcommand{\atnote}[1]{\tnote{\uref{#1}}} % automatic table footnote
+
+%\newcommand{\atnote}[1]{\tnote{\uref{#1}}} % automatic table footnote
+\NewDocumentCommand{\atnote}{s m}{%
+	\IfBooleanTF{#1}%
+		{\tnote*{\uref{#2}}}%
+		{\tnote{\uref{#2}}}%
+}% use tnote{a} in the table, and \tfnote{a}Note here in the foot notes
