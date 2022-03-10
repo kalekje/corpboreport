@@ -97,42 +97,74 @@
     \brokenpenalty=101
     \displaywidowpenalty=50
     \vfuzz \hfuzz
+    
+    
+    \if@twoside% if two-sided, put the section headings to right side and numbers in right margin
+    	\raggedbottom
+    \fi%  finally do nothing
+    	\raggedbottom
+    
+    
+    
 
-%%%%%%%%%%%%  FontCMBlua.sty  %%%%%%%%%%%%
-    \usepackage[T1]{fontenc}  % used for accented letter, OT1 works better with cmbright, makes font work
-    \usepackage{cmbright}  % use hfbright and cm-super
-    \usefont{OT1}{cmbr}{m}{n}
+
+%%%%%%%%%%%%  FontCMBotf.sty  %%%%%%%%%%%%
+    \usepackage{fontspec}
+    
+    \usepackage[T1]{fontenc}
+    \usepackage{cmbright} %for math only, will be overwritten
     \renewcommand\bfdefault{sb}
-    \newcommand\sbdefault{bx}
-        \usepackage[%
-        protrusion=true,
-        expansion,
-        final,
-        tracking=true,
-        letterspace=120,
-        factor=1000,% protrusion (/1000), subtle
-        stretch=10,%(/1000 %)
-        shrink=10]{microtype}
+    \newcommand\sbdefault{bx} % swap sb with bf
     
-    \frenchspacing
-    
-    \usepackage{fourier} % lotsa symbols
+    \setmainfont[
+      Ligatures = TeX,
+    %  Numbers = Uppercase,
+    %  Numbers = Lowercase,
+    %  Numbers = Oldstyle,
+      ItalicFont = CMU Bright Oblique,
+      BoldFont = CMU Bright SemiBold,
+      BoldItalicFont = CMU Bright SemiBold Oblique,
+    ]{CMU Bright}
+    \setmonofont[Numbers=Lining]{CMU Typewriter Text Light}
     
     
-    %kerning=true,  $ NOT ALLOWED IN LUA
-    %spacing=true,  $ NOW ALLOWED IN LUA
+    % https://tex.stackexchange.com/questions/204778/difficulty-finding-selecting-cm-bright-using-fontspec
+    % https://tex.stackexchange.com/questions/358418/using-cmbright-in-xelatex-for-math-and-text
+    % https://tex.stackexchange.com/questions/25293/replace-integral-sign-in-cmu-bright-with-iwona-while-keeping-proper-position-o
+    % https://tex.stackexchange.com/questions/572015/using-the-cmbright-package-in-a-limited-range-of-my-document
+    
+    \DeclareSymbolFont{iwonalargesymbols}{OMX}{iwona}{m}{n}
+    \DeclareMathSymbol{\intop}{\mathop}{iwonalargesymbols}{"52}
+    
+    \usepackage[%
+      protrusion=true,
+      expansion,
+      final,
+      tracking=true,
+      letterspace=120,
+      factor=1000,%(/1000), subtle
+      stretch=10,%(/1000 %)
+      shrink=10
+    ]{microtype}
+    
+    % upper and lowercase number commands
+    \def\togunums{}
+    \def\toglnums{}
+    \def\lnum#1{#1}
+    \def\unum#1{#1}
     
     
-    %% FONT
-    %%% IF YOU GET AN ERROR WITH microtype, there is an issue with font:
-    % Install cm-super and hfbright packages via MiKTeX console,  you need the scalable version of cmbright, for ex.
-    %    \usepackage{fontspec}          % lualatex font engine
-    %    \setmainfont[Numbers = Uppercase,
-    %                 Ligatures = TeX,
-    %                 BoldFont  = CMU Bright SemiBold,
-    %                 ItalicFont = CMU Bright Oblique,
-    %                ]{CMU Bright Roman}
-    % NOTE OPEN font version of CMU Bright doesnt look as nice, we use type 1 here
+    % why doesn't this work ???
+    %\usepackage{unicode-math}
+    %\setmathfont{CMU Bright}
+    %    \setmathfont[range=\mathup]{CMU Bright Roman}
+    %    \setmathfont[range=\mathbfup]{CMU Bright SemiBold}
+    %    \setmathfont[range=\mathbfit]{CMU Bright SemiBold}
+    %    \setmathfont[range=\mathit]{CMU Bright Oblique}
+    
+    
+    
+
 
 %%%%%%%%%%%%  MathSymbolsEtc.sty  %%%%%%%%%%%%
     % ##############################################
@@ -144,25 +176,28 @@
     
     \usepackage[fleqn]{mathtools} % should load amsmath
     %\usepackage{amsmath}
+    %\usepackage{amssymb} % issue with kpfonts, I think it already loads it..
     
     \usepackage{xfrac}
-    \usepackage{amssymb,amsfonts,gensymb}  % math fonts and symbols
+    \usepackage{amsfonts,gensymb}  % math fonts and symbols
     
-    
-    \usepackage[free-standing-units,
-    	unit-optional-argument,
+    \providecommand{\togunums}{}  % toggle to uppercase number shortcut
+    \usepackage[free-standing-units, % allow declared units usage outside of \qty and \unit
+    	unit-optional-argument,  % allows declared units to have number after \kV[10]
     	detect-all=true, % allows italic/bold units
     	space-before-unit=true,
-    	inter-unit-product=\,,
-    	use-xspace=true]{siunitx}  % \SI \num used for physical units and S column in tables
-    
-    \sisetup{range-phrase=--,
+    	text-font-command=\togunums,
+    	use-xspace=true,
     	table-number-alignment=center,
     	table-text-alignment=center,
     	table-align-text-post=false,
     	table-align-text-pre=false,
-    }
-    % http://ctan.mirror.rafal.ca/macros/latex/contrib/siunitx/siunitx.pdf
+    ]{siunitx} % http://ctan.mirror.rafal.ca/macros/latex/contrib/siunitx/siunitx.pdf
+    
+    
+    %	inter-unit-product=\,, % default
+    %\sisetup{range-phrase=--,
+    
     
     
     %\def\sbfCMB#1{\ThisStyle{\setbox0=\hbox{$\SavedStyle#1$}%
@@ -246,9 +281,9 @@
     \ProvideDocumentCommand{\providelength}{ m m }{%
         \ifdeflength{#1}{% It is already defined!
         }{% Not defined, so define it!
-        \newlength{#1}%
-        \setlength{#1}{#2}
-        }%
+            \newlength{#1}%
+            \setlength{#1}{#2}
+        }{}%
         }%
     
     
@@ -334,7 +369,14 @@
     
     \setlength\heavyrulewidth{0.8pt}
     \setlength\lightrulewidth{0.4pt}  % latex default rule is 0.4 pt
+    \setlength\cmidrulewidth{0.3pt}  % latex default rule is 0.4 pt
     
+    \providetoggle{useSerif}
+    \iftoggle{useSerif}{
+    	\setlength\heavyrulewidth{0.7pt}
+    	\setlength\lightrulewidth{0.4pt}  % latex default rule is 0.4 pt
+    	\setlength\cmidrulewidth{0.3pt}
+    }{}
     
     \let\nl\\  % shortcut for \newline and \\
     
@@ -725,35 +767,30 @@
     \renewcommand*{\multicitedelim}{\addcomma\,}  % tighten [1,2,3] multi citations
     
     \defbibenvironment{bibliography}
-    {\begin{enumerate}[leftmargin=0pt,labelsep=2ex,itemsep=0.8ex]}
+    {\begin{enumerate}[leftmargin=0pt,labelsep=1.5ex,itemsep=0.8ex,label={\unum{\arabic*}.}]}%
     {\end{enumerate}}
     {\item}
     
+    \renewcommand*{\citesetup}{%
+    \togunums\biburlsetup}
     
-    \usepackage[xindy,style=super,nopostdot, nogroupskip, nonumberlist, numberedsection, section=section,savewrites=true,acronym,nomain]{glossaries-extra}
-    \setabbreviationstyle[acronym]{long-short}
+    
+    \usepackage[xindy,acronym,nonumberlist,toc]{glossaries-extra}
+    \renewcommand{\glossarysection}[2][]{} % remove glossary section heading entirely, requires manual but more flexible
+    
+    
     \GlsXtrEnableEntryCounting % % https://tex.stackexchange.com/questions/477581/glossaries-introduce-short-name-only-if-used-more-than-once-within-section-chap
-     {acronym}% list of categories to use entry counting
-     {1}% trigger value
+     	{acronym}% list of categories to use entry counting
+     	{1}% trigger value
+    
+    \setabbreviationstyle[acronym]{long-short}
+    
     %\glsenableentrycount % enable \cgls, \cglspl, \cGls, \cGlspl  supposed to not show accronym if only one
     \glsdisablehyper  % to disable hyperlinks
     \glstoctrue  % ToC
     
     \makeglossaries
     
-    
-    \newglossarystyle{listwithwidth}{%
-    	\renewcommand*{\glossaryheader}{}%
-    	\renewcommand*{\glsgroupheading}[1]{}%
-    	\renewcommand*{\glossarysubentryfield}[6]{glssubentryitem{##2}{\strut\glstarget{##2}##4\glspostdescription\space ##6}}%
-    	\renewcommand*{\glsgroupskip}{\vspace{7pt}}% space between alphabetized groups
-    	\renewenvironment{theglossary}%
-    		{\enlargethispage{2em}\begin{description}[leftmargin=2.5cm,style=multiline,itemsep=3pt,format=\raggedright\sloppy]}%
-    		{\end{description}}%
-    	\renewcommand*{\glossaryentryfield}[5]{%
-    		\item[{\normalfont\bfseries\glsentryitem{##1}\glstarget{##1}{##2}}]{##3\glspostdescription\space ##5}
-    		}%
-    }
     
     \newglossarystyle{AcronymsTwoCol}{%
     	\renewcommand*{\glossaryheader}{}%
@@ -771,24 +808,89 @@
     
     
     
-    % todo do this for \Gls and \GLS, maybe * + to gls
+    \newglossarystyle{GlossList}{%
+    	\renewcommand*{\glossaryheader}{}%
+    	\renewcommand*{\glsgroupheading}[1]{}%
+    	\renewcommand*{\glossarysubentryfield}[6]{glssubentryitem{##2}{\strut\glstarget{##2}##4\glspostdescription\space ##6}}%
+    	\renewcommand*{\glsgroupskip}{\vspace{7pt}}% space between alphabetized groups
+    	\renewenvironment{theglossary}%
+    		{\vspace*{1ex}%
+    		\begin{description}[font=\bfseries,leftmargin=2.7cm,style=multiline,itemsep=3pt]\raggedright}%
+    		{\end{description}}%
+    	\renewcommand*{\glossaryentryfield}[5]{%
+    		\item[{\normalfont\bfseries\glsentryitem{##1}\glstarget{##1}{##2}}]{##3\glspostdescription\space ##5}
+    		}%
+    }
+    
+    
+    
+    
+    
+    
+    
     \usepackage{pdfcomment}
-    \let\oldgls\gls
-    \RenewDocumentCommand{\gls}{ O{} m O{} }{%
-        \ifglsused{#2}{%
-        	\pdftooltip{\oldgls[#1]{#2}[#3]}{\glsentrylong{#2}}%
-    	}{%
-    		\oldgls{#2}%
-    	}%
+    
+    \newcommand{\getTheToolTipText}[1]{%
+      \ifcsname#1ToolTipText\endcsname%
+        \csname#1ToolTipText\endcsname%
+      \else%
+        \glsentrylong{#1}%
+      \fi%
+    }
+    
+    
+    \newcommand{\ac}[1]{%
+          \ifglsused{#1}{%
+    %         \pdftooltip{\gls*{#1}}{\getTheToolTipText{#1}}\xspace%
+    				 {\scshape\pdftooltip{\gls*{#1}}{\getTheToolTipText{#1}}}%
+    %         \pdftooltip{\textsc{\MakeLowercase{\gls*{#1}}}}{\getTheToolTipText{#1}}\xspace% todo consider small caps for serfif
+        }{%
+    %        \gls*{#1}\xspace%
+    				{\scshape\gls*{#1}}% todo get to root, make sure acronyms specifically are small caps!
+    %				{\textsc{\MakeLowercase{\gls*{#1}}}}
+        }%
     }%
-    \let\oldglspl\glspl
-    \RenewDocumentCommand{\glspl}{ O{} m O{} }{%
-        \ifglsused{#2}{%
-    	    \pdftooltip{\oldglspl[#1]{#2}[#3]}{\glsentrylong{#2}}%
-    	}{%
-    		\oldglspl{#2}%
-    	}%
-    }%
+    
+    
+    %add tool tip to acronyms
+    
+    % todo do this for \Gls and \GLS, maybe * + to gls
+    
+    %\let\oldgls\gls
+    %\RenewDocumentCommand{\gls}{ O{} m O{} }{%
+    %    \ifglsused{#2}{%
+    %    	\pdftooltip{\oldgls[#1]{#2}[#3]}{\glsentrylong{#2}}%
+    %	}{%
+    %		\oldgls{#2}%
+    %	}%
+    %}%
+    %\let\oldglspl\glspl
+    %
+    %
+    %
+    
+    
+    %\RenewDocumentCommand{\glspl}{ O{} m O{} }{%
+    %    \ifglsused{#2}{%
+    %	    \pdftooltip{\oldglspl[#1]{#2}[#3]}{\glsentrylong{#2}}%
+    %	}{%
+    %		\oldglspl{#2}%
+    %	}%
+    %}%
+    
+    
+    
+    % override some acronyms that don't appear as we want
+    \newcommand{\besToolTipText}{Bulk Electric System}
+    \newcommand{\ioaToolTipText}{Interconnection and Operating Agreement}
+    \newcommand{\rasToolTipText}{Remedial Action Scheme}
+    \newcommand{\poiToolTipText}{Point(s) of Interconnection}
+    \newcommand{\podToolTipText}{Point(s) of Delivery}
+    \newcommand{\oaitToolTipText}{Open Access Interconnection Tariff}
+    \newcommand{\oattToolTipText}{Open Access Transmission Tariff}
+    \newcommand{\isuToolTipText}{Interconnection System Upgrade(s)}
+    
+    
 
 \usepackage{graphbox}
 

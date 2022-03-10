@@ -4,33 +4,26 @@
 \providecommand{\FormatDir}{class/}
 
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{corpboreport}[2021-09-21]
+\ProvidesClass{cbthesis}[2022-02-19]
 
 %%% Document Class
 \LoadClass[11pt,
-%letterpaper,  %
-paper=letter,  % paper size
-pagesize,      % force given paper size in pdf
+letterpaper,
 twoside=false,
-%twoside,% for two sided doc
-%open=right,
 hidelinks,
-parskip=full-,
-bibliography=numbered,
-numbers=noenddot,
+parskip=half-,
+bibliography=totoc,
+open=right,%
+chapterprefix=true,
 fleqn,
 %listof=totoc,% for list of figures, tables
-%draft=true,
-]{scrartcl}
+numbers=noenddot]{scrreprt}
 
 \RequirePackage{etoolbox}
 \newtoggle{samepgTitle}
 \newtoggle{useMemo}
-\newtoggle{useSerif}
-\newtoggle{showListOfFigsTabs}
-\newtoggle{samepgListOfFigsTabs}
+\newtoggle{useSerif}\toggletrue{useSerif}
 
-\newtoggle{SectionOnNewPage}  % todo work this in to the template
 
 \newlength{\pullToCcloser}
 \setlength{\pullToCcloser}{-12pt}
@@ -40,10 +33,6 @@ fleqn,
 
 \gdef\TitleLogoPlaceDefault{tl}
 
-\DeclareOption{memo}{\toggletrue{useMemo}}
-\DeclareOption{compact}{\toggletrue{samepgTitle}\gdef\TitleLogoPlaceDefault{bl}}
-\DeclareOption{serif}{\toggletrue{useSerif}}
-\ProcessOptions\relax
 
 %https://github.com/mrpiggi/svg/issues/18
 \providecommand*{\Ifstr}{\ifstr}  % little hack that supposed to fix ifstr warning, see https://komascript.de/faq_deprecatedif
@@ -323,9 +312,6 @@ fleqn,
 
 
 
-\iftoggle{useSerif}{
-
-
 %%%%%%%%%%%%  FontKPotf.sty  %%%%%%%%%%%%
     \usepackage[onlyrm,light,oldstylenums]{kpfonts-otf} % the light is also decent, could consider
     \setsansfont{CMU Bright} % monospace that looks nice with light kpfont
@@ -362,185 +348,6 @@ fleqn,
     %\def\toglnums{\fontfamily{jkpxosn}\selectfont} for non-light
 
 
-}{
-    \ifluatex
-
-
-%%%%%%%%%%%%  FontCMBlua.sty  %%%%%%%%%%%%
-    \usepackage[T1]{fontenc}  % used for accented letter, OT1 works better with cmbright, makes font work
-    \usepackage{cmbright}  % use hfbright and cm-super
-    \usefont{OT1}{cmbr}{m}{n}
-    \renewcommand\bfdefault{sb}
-    \newcommand\sbdefault{bx}
-        \usepackage[%
-        protrusion=true,
-        expansion,
-        final,
-        tracking=true,
-        letterspace=120,
-        factor=1000,% protrusion (/1000), subtle
-        stretch=10,%(/1000 %)
-        shrink=10]{microtype}
-    
-    %\DeclareSymbolFont{iwonalargesymbols}{OMX}{iwona}{m}{n}
-    %\DeclareMathSymbol{\intop}{\mathop}{iwonalargesymbols}{"52}
-    %\usepackage{fourier} % lotsa symbols
-    
-    \def\togunums{}
-    \def\toglnums{}
-    \def\lnum#1{#1}
-    \def\unum#1{#1}
-    
-    %\frenchspacing
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    %kerning=true,  $ NOT ALLOWED IN LUA
-    %spacing=true,  $ NOW ALLOWED IN LUA
-    
-    
-    %% FONT
-    %%% IF YOU GET AN ERROR WITH microtype, there is an issue with font:
-    % Install cm-super and hfbright packages via MiKTeX console,  you need the scalable version of cmbright, for ex.
-    %    \usepackage{fontspec}          % lualatex font engine
-    %    \setmainfont[Numbers = Uppercase,
-    %                 Ligatures = TeX,
-    %                 BoldFont  = CMU Bright SemiBold,
-    %                 ItalicFont = CMU Bright Oblique,
-    %                ]{CMU Bright Roman} or medium
-    % NOTE OPEN font version of CMU Bright doesnt look as nice, we use type 1 here
-    
-    
-    
-    
-    
-    
-    
-    %  SemiBoldFont=CMU Bright Bold,
-    %\newcommand\sbdefault{bx}
-    %\renewcommand{\familydefault}{\sfdefault}
-    
-    %kerning=true,  $ NOT ALLOWED IN LUA
-    %spacing=true,  $ NOW ALLOWED IN LUA
-    
-    %% FONT
-    %%% IF YOU GET AN ERROR WITH microtype, there is an issue with font:
-    % Install cm-super and hfbright packages via MiKTeX console,  you need the scalable version of cmbright, for ex.
-    %    \usepackage{fontspec}          % lualatex font engine
-    %    \setmainfont[Numbers = Uppercase,
-    %                 Ligatures = TeX,
-    %                 BoldFont  = CMU Bright SemiBold,
-    %                 ItalicFont = CMU Bright Oblique,
-    %                ]{CMU Bright Roman} or medium
-    % NOTE OPEN font version of CMU Bright doesnt look as nice, we use type 1 here
-
-%%%%%%%%%%%%  FontCMBotf.sty  %%%%%%%%%%%%
-    \usepackage{fontspec}
-    
-    \usepackage[T1]{fontenc}
-    \usepackage{cmbright} %for math only, will be overwritten
-    \renewcommand\bfdefault{sb}
-    \newcommand\sbdefault{bx} % swap sb with bf
-    
-    \setmainfont[
-      Ligatures = TeX,
-    %  Numbers = Uppercase,
-    %  Numbers = Lowercase,
-    %  Numbers = Oldstyle,
-      ItalicFont = CMU Bright Oblique,
-      BoldFont = CMU Bright SemiBold,
-      BoldItalicFont = CMU Bright SemiBold Oblique,
-    ]{CMU Bright}
-    \setmonofont[Numbers=Lining]{CMU Typewriter Text Light}
-    
-    
-    % https://tex.stackexchange.com/questions/204778/difficulty-finding-selecting-cm-bright-using-fontspec
-    % https://tex.stackexchange.com/questions/358418/using-cmbright-in-xelatex-for-math-and-text
-    % https://tex.stackexchange.com/questions/25293/replace-integral-sign-in-cmu-bright-with-iwona-while-keeping-proper-position-o
-    % https://tex.stackexchange.com/questions/572015/using-the-cmbright-package-in-a-limited-range-of-my-document
-    
-    \DeclareSymbolFont{iwonalargesymbols}{OMX}{iwona}{m}{n}
-    \DeclareMathSymbol{\intop}{\mathop}{iwonalargesymbols}{"52}
-    
-    \usepackage[%
-      protrusion=true,
-      expansion,
-      final,
-      tracking=true,
-      letterspace=120,
-      factor=1000,%(/1000), subtle
-      stretch=10,%(/1000 %)
-      shrink=10
-    ]{microtype}
-    
-    % upper and lowercase number commands
-    \def\togunums{}
-    \def\toglnums{}
-    \def\lnum#1{#1}
-    \def\unum#1{#1}
-    
-    
-    % why doesn't this work ???
-    %\usepackage{unicode-math}
-    %\setmathfont{CMU Bright}
-    %    \setmathfont[range=\mathup]{CMU Bright Roman}
-    %    \setmathfont[range=\mathbfup]{CMU Bright SemiBold}
-    %    \setmathfont[range=\mathbfit]{CMU Bright SemiBold}
-    %    \setmathfont[range=\mathit]{CMU Bright Oblique}
-    
-    
-    
-
-
-    \else
-
-
-%%%%%%%%%%%%  FontCMBpdf.sty  %%%%%%%%%%%%
-    %\usepackage{microtype}  % helps with hyphen and scaling,
-    % NOT SURE IF THIS DOES ANYTHING.. BUT ITS SUPPOSED TO
-    \usepackage[T1]{fontenc}  % used for accented letter, OT1 works better with cmbright
-    \let\CMserif\rmdefault % save the default family name
-    \usepackage{cmbright}  % use hfbright and cm-super
-    \renewcommand\bfdefault{sb}
-    \newcommand\sbdefault{bx}
-    \usepackage[%
-    protrusion=true,
-    expansion,
-    final,
-    tracking=true,
-    kerning=true,
-    spacing=true,
-    letterspace=120,
-    factor=1000,% protrusion (/1000), subtle
-    stretch=10,%(/1000 %)
-    shrink=10]{microtype}
-    
-    \usepackage{fourier} % lotsa symbols
-
-
-    \fi
-%    https://comp.text.tex.narkive.com/KZW4PwZ4/cmbright-alternative
-    \gdef\sbseries{\fontseries{sb}\selectfont}
-
-    \DeclareRobustCommand{\sm@ller}{%
-    \dimen@\f@size\p@
-    \ifdim \dimen@ > 12\p@
-    \dimen@=0.83333\dimen@
-    \else
-    \advance \dimen@ -2\p@
-    \fi
-    \math@fontsfalse
-    \fontsize{\the\dimen@}\z@
-    \selectfont
-    }
-    \newcommand{\textc}[1]{{\sm@ller\uppercase{#1}}}
-}
 
 
 %%%%%%%%%%%%  HeaderFooterFootnotes.sty  %%%%%%%%%%%%
@@ -651,6 +458,7 @@ fleqn,
     
     \lefoot[\LeftPageMarkLine]{\LeftPageMarkLine}
     
+
 
 
 %%%%%%%%%%%%  SectionsToCCustom.sty  %%%%%%%%%%%%
@@ -961,6 +769,235 @@ fleqn,
     %\makeatother
 
 
+%%%%%%%%%%%%  SecThesis.sty  %%%%%%%%%%%%
+    %\clearpairofpagestyles
+    \providecommand{\cpb@secnumsize}{}
+    
+    
+    
+    % ##############################################
+    % Table of Contents
+    % ##############################################
+    
+    \newdimen\tocsecskip  %%% todo rename this
+    \tocsecskip=0.75em  % fit ToC as required
+    
+    
+    % diamond leaders.. staggered dots
+    \countdef\counter=255
+    \def\diamondleaders{\global\advance\counter by 1
+    	\ifodd\counter \kern-10pt \fi
+    	\leaders\hbox to 20pt{\ifodd\counter \kern13pt \else\kern3pt \fi
+    		.\hss}\hfil}
+    
+    
+    %%% EXTRA SPACE BEFORE SECTION AND START ON NEW PAGE
+    
+    \RequirePackage{needspace}
+    \newlength{\secneedspace}
+    \setlength{\secneedspace}{8\baselineskip}
+    \newlength{\subsecneedspace}
+    \setlength{\subsecneedspace}{6\baselineskip}
+    \newlength{\subsubsecneedspace}
+    \setlength{\subsubsecneedspace}{4\baselineskip}
+    
+    
+    
+    
+    
+    %%% HEADER
+    \renewcommand{\chaptermark}[1]{%
+      \markboth{\chapapp\ \thechapter\autodot}{#1}}
+    \renewcommand{\addchapmark}[1]{\markboth{#1}{#1}}
+    
+    
+    
+    
+    % ##############################################
+    % Section Headings
+    % ##############################################
+    
+    
+    %%% CHAPTER SECTION HEADINGS FORMAT
+    \addtokomafont{chapterprefix}{\raggedleft}
+    
+    \newcommand{\ShowChapterPrefix}{
+    \renewcommand*{\chapterformat}{%
+    \color{brown}%
+    \mbox{\raisebox{5ex}{\normalsize
+    \chapappifchapterprefix
+    {\nobreakspace}}%
+    \scalebox{3}{\classicstylenums\thechapter\autodot}\enskip}}
+    }%
+    
+    \newcommand{\HideChapterPrefix}{
+    \renewcommand*{\chapterformat}{%
+    \color{brown}%
+    \mbox{\scalebox{3}{\classicstylenums\thechapter\autodot}\enskip}}}%
+    
+    \HideChapterPrefix
+    
+    
+    % Hanging section, % NUMBERS IN LEFT MARGIN
+    %https://tex.stackexchange.com/questions/381261/right-align-chapter-numbering-in-koma-script-toc?rq=1
+    \renewcommand\sectionlinesformat[4]{%
+    	\makebox[0pt][r]{\cpb@secnumsize#3\hspace{2pt}}#4%
+    }
+    \renewcommand\sectioncatchphraseformat[4]{% used by run-in headings with style=section
+    	\makebox[0pt][r]{\cpb@secnumsize#3\hspace{1pt}}#4%
+    }
+    
+    %https://tex.stackexchange.com/questions/381261/right-align-chapter-numbering-in-koma-script-toc?rq=1
+    \newcommand\sectionentrynumberformat[1]{% define the new format for the chapter numbers in ToC
+    	\hfill\cpb@secnumsize#1\enspace\hspace{1pt}% align chapter numbers right
+    }
+    
+    \setkomafont{disposition}{\normalfont\bfseries} % section preference
+    \newcommand{\vparspace}{\vspace{\parskip}}
+    
+    
+    % https://umanitoba.ca/sites/default/files/2019-12/UM_Brand-Guidelines.pdf
+    \definecolor{brown}{RGB}{79, 44, 29}
+    \definecolor{darkblue}{RGB}{56, 94, 157}
+    \definecolor{lightblue}{RGB}{0, 163, 224}
+    \definecolor{yellow}{RGB}{242, 169, 0}
+    
+    
+    
+    \addtokomafont{chapter}{\color{brown}}
+    \addtokomafont{section}{\color{brown}\Large}
+    \addtokomafont{subsection}{\color{brown}\large}
+    \addtokomafont{subsubsection}{\color{brown}\normalsize}
+    \addtokomafont{paragraph}{\color{brown}}
+    
+    
+    %%% TOC
+    \setcounter{tocdepth}{1} %%% TOC Depth
+    
+    \RedeclareSectionCommand[
+    beforeskip=1.0\baselineskip plus 3pt minus 1pt,  % negative will suppress first indent
+    tocbeforeskip=1.2em plus 0.2em minus 1pt,
+    afterskip=15pt,
+    tocindent=-4ex,
+    tocnumwidth=4ex,
+    tocbeforeskip=16pt,
+    toclinefill=\diamondleaders,
+    tocentryformat=\large\bfseries,
+    tocentrynumberformat=\sectionentrynumberformat,
+    ]{chapter}
+    
+    \RedeclareSectionCommand[
+    beforeskip=1.0\baselineskip plus 3pt minus 1pt,  % negative will suppress first indent
+    afterskip=3pt,
+    tocbeforeskip=2pt,
+    tocindent=0.5ex,
+    tocnumwidth=6ex,
+    toclinefill=\diamondleaders,
+    tocentrynumberformat=\cpb@secnumsize,
+    tocentryformat=\large,
+    ]{section}
+    
+    \RedeclareSectionCommand[
+    beforeskip=2.0\baselineskip plus 4pt minus 2pt,
+    afterskip=0.01mm,%\baselineskip,
+    tocindent=6.5ex,
+    tocnumwidth=6ex,
+    toclinefill=\diamondleaders,
+    tocentrynumberformat=\cpb@secnumsize,
+    tocentryformat=\normalsize,
+    ]{subsection}
+    
+    \RedeclareSectionCommand[
+    beforeskip=1.0\baselineskip plus 4pt minus 2pt,
+    afterskip=0.01mm,
+    runin=false,  % text on same line
+    tocindent=6ex,
+    tocnumwidth=10ex,
+    tocentrynumberformat=\cpb@secnumsize,
+    tocentryformat=\small,
+    ]{subsubsection}
+    
+    \RedeclareSectionCommand[
+    beforeskip=.5\baselineskip,
+    afterskip=-1em]{paragraph}
+    
+    \RedeclareSectionCommand[
+    beforeskip=-.5\baselineskip,
+    afterskip=-1em]{subparagraph}
+    
+    
+    
+    \DeclareTOCStyleEntry[%
+    linefill=\diamondleaders,
+    indent=-5ex,
+    numwidth=5ex,
+    entryformat=\normalsize,
+    entrynumberformat=\cpb@secnumsize,
+    ]{tocline}{table}
+    \renewcaptionname{english}{\listtablename}{Tables}
+    
+    
+    \DeclareTOCStyleEntry[%
+    linefill=\diamondleaders,
+    indent=-5ex,
+    numwidth=5ex,
+    entryformat=\normalsize,
+    entrynumberformat=\cpb@secnumsize,
+    ]{tocline}{figure}
+    \renewcaptionname{english}{\listfigurename}{Figures}
+    
+    \counterwithin{figure}{chapter}
+    \counterwithin{table}{chapter}
+    
+    
+    % front matter chapter (acknowledgements or abstract)
+    \newcommand{\chapterF}[1]{\RedeclareSectionCommand[beforeskip=8.0\baselineskip plus 3pt minus 1pt]{chapter}
+    \pdfbookmark[0]{#1}{Label#1PDF}%
+    \chapter*{#1}%
+    \RedeclareSectionCommand[beforeskip=1.0\baselineskip plus 3pt minus 1pt]{chapter}}
+    
+    
+    
+    \NewDocumentCommand{\chapterM}{ t- m }{% chapter Matter (front or back), ToC and pdf bookmark but no number
+      \IfBooleanT{#1}{\addtocontents{toc}{\vspace*{-1.3ex}}}
+      \chapter*{#2}
+      \addtocentrydefault{chapter}{\phantom{.}}{#2}{}
+      \chaptermark{#2}%
+    }
+    
+    \def\frontmatter{
+      \pdfbookmark[-1]{Front-Matter}{LabelFMPDF}
+      \pdfbookmark[0]{Title}{LabelTitlePDF}
+    }
+    
+    \def\addcontentslists{
+      \pdfbookmark[0]{Contents}{LabelContentsPDF}
+      \tableofcontents
+      \chaptermark{Contents}
+      
+      \addtocentrydefault{chapter}{\phantom{.}}{Figures}\addtocontents{toc}{\vspace*{-1.3ex}}%
+      \listoffigures
+      \chaptermark{Figures}
+      
+      \addtocentrydefault{chapter}{\phantom{.}}{Tables}%
+      \listoftables
+      \chaptermark{Tables}
+      
+      \bookmarksetup{startatroot}
+    }
+    
+    
+    \def\backmatter{\pdfbookmark[-1]{Back-Matter}{LabelBMPDF}}
+    
+    \pretocmd{\appendix}{
+      \addtocontents{toc}{%
+        \vspace*{1.3ex}%
+        \protect\contentsline{chapter}{\hspace{3.5ex}Appendix\hfill\ }{}{}}
+      
+      \pdfbookmark[-1]{Appendix}{LabelAppendicesPDF}
+    }{}{}
+
+
 %%%%%%%%%%%%  AppendixFormat.sty  %%%%%%%%%%%%
     % ##############################################
     % Appendix Formatting
@@ -1023,6 +1060,49 @@ fleqn,
     
     % for lettering, could be used for assignment template, type this \def\thesubsection{\arabic{section} (\alph{subsection})}
     
+
+
+%%%%%%%%%%%%  AppendixFormatThesis.sty  %%%%%%%%%%%%
+    % ##############################################
+    % Appendix Formatting
+    % ##############################################
+    
+    %%% DEPENDENCIES
+    % KOMA-script class
+    % ToC.sty (for ToC skip)
+    
+    %%% todo can test for \thechapter, can just set to blank if toplevel is section!!!
+    
+    \providecommand*\appendixname{Appendix}
+    \let\originalappendix\appendix
+    
+    \renewcommand\appendix{%
+    	\originalappendix
+    	% NOTE you cannot use the alphabetized subsections anymore
+    	%
+    	\def\thechapter{{\scshape\alph{chapter}}}
+    	\def\theHchapter{{\scshape\alph{chapter}}}
+    
+    	\crefalias{chapter}{appsec}
+    
+    	\chapter*{Appendix}
+       \ \ \clearpage
+    }
+    
+    %    pretty sure this isn't needed
+    %	\def\thesection{\thechapter.\arabic{section}}  % restore subsection behaviour (I change it with macro seclettering)
+    %	\def\theHsection{\thechapter.\arabic{section}}  % restore subsection behaviour (I change it with macro seclettering)
+    %	\def\thesubsection{\thesection.\arabic{subsection}}  % restore subsection behaviour (I change it with macro seclettering)
+    %	\def\theHsubsection{\thesection.\arabic{subsection}}
+    %	\def\thesubsubsection{\thesubsection.\arabic{subsubsection}}
+    %	\def\theHsubsubsection{\thesubsection.\arabic{subsubsection}}
+    %	%
+    
+    
+    
+    % for lettering, could be used for assignment template, type this \def\thesubsection{\arabic{section} (\alph{subsection})}
+    
+
 
 
 %%%%%%%%%%%%  ColorsCustom.sty  %%%%%%%%%%%%
@@ -1194,6 +1274,7 @@ fleqn,
       \setlist[description]{font={\normalfont\bfseries}}
     }{}
 
+
 %%%%%%%%%%%%  Tables.sty  %%%%%%%%%%%%
     
     %%% TABLES
@@ -1286,6 +1367,8 @@ fleqn,
     		{\tnote*{\uref{#2}}}%
     		{\tnote{\uref{#2}}}%
     }% use tnote{a} in the table, and \tfnote{a}Note here in the foot notes
+
+%\setlength\heavyrulewidth{0.7pt}
 
 
 %%%%%%%%%%%%  FloatsCaptions.sty  %%%%%%%%%%%%
@@ -1416,6 +1499,8 @@ fleqn,
       \afterpage{#1}
     }
     
+
+
 
 
 %%%%%%%%%%%%  CodeBoxes.sty  %%%%%%%%%%%%
@@ -1666,6 +1751,7 @@ fleqn,
     
 
 
+
 %%%%%%%%%%%%  BibAndGloss.sty  %%%%%%%%%%%%
     % requires enumitem for acronym styling
     \usepackage[sorting=none]{biblatex}
@@ -1799,6 +1885,7 @@ fleqn,
     \newcommand{\isuToolTipText}{Interconnection System Upgrade(s)}
     
     
+
 
 
 %%%%%%%%%%%%  Hyperlinks.sty  %%%%%%%%%%%%
@@ -2052,6 +2139,7 @@ fleqn,
     %
     %\newcommand{\reseturef}{\setcounter{unilabIN}{0}\stepcounter{unilabOUT}}
 
+
 \usepackage[pl,extras]{penlight}
 \usepackage{lutabulartools}
 \usepackage{autopuncitems}
@@ -2060,8 +2148,6 @@ fleqn,
 \begin{luacode*}
     YAMLvars.tabmidrule = 'gmidrule'
 \end{luacode*}
-
-
 
 
 
@@ -2089,9 +2175,8 @@ fleqn,
     
 
 
+\rohead{}
 
-
-\ifluatex
 %! language = yaml
 \begin{declareYAMLvars}
 title:
@@ -2103,10 +2188,6 @@ subtitle:
   prc: setdocvar
 
 author:
-  xfm: lb2nl
-  prc: setdocvar
-
-publishers:
   xfm: lb2nl
   prc: setdocvar
 
@@ -2122,133 +2203,14 @@ fileno:
   xfm: lb2nl
   prc: setdocvar
 
-pdf:
-  prc: setPDFdata
-
-
-attachments:
+publishers:
   xfm: lb2nl
   prc: setdocvar
-
-memoHeader:
-  xfm: lb2nl
-  prc: setdocvar
-
-memoFr:
-  xfm: lb2nl
-  prc: setATvar
-
-memoFrAddr:
-  xfm: lb2nl
-  prc: setATvar
-
-memoTo:
-  xfm: lb2nl
-  prc: setATvar
-
-memoToAddr:
-  xfm: lb2nl
-  prc: setATvar
-
 
 logo:
   prc: setdocvarOpts
-
-institute:  # for beamer
-  prc: setdocvarOpts
-
+  
+pdf:
+  prc: setPDFdata
+  
 \end{declareYAMLvars}
-\else
-\fi
-
-
-
-
-%%%%%%%%%%%%  MemoSty.sty  %%%%%%%%%%%%
-    %%%% memo variabls
-    
-    
-    \NewDocumentCommand{\memoTo}{m o o o o}{
-    \gdef\@memoToA{#1}
-    \IfValueT{#2}{\gdef\@memoToB{#2}}
-    \IfValueT{#3}{\gdef\@memoToC{#3}}
-    \IfValueT{#4}{\gdef\@memoToD{#4}}
-    \IfValueT{#5}{\gdef\@memoToE{#5}}
-    }
-    \NewDocumentCommand{\memoFr}{m o o o o}{
-    \gdef\@memoFrA{#1}
-    \IfValueT{#2}{\gdef\@memoFrB{#2}}
-    \IfValueT{#3}{\gdef\@memoFrC{#3}}
-    \IfValueT{#4}{\gdef\@memoFrD{#4}}
-    \IfValueT{#5}{\gdef\@memoFrE{#5}}
-    }
-    
-    \providecommand{\@memoTo}{}
-    \providecommand{\@memoFr}{}
-    \providecommand{\@memoFrAddr}{}
-    \providecommand{\@memoToAddr}{}
-    
-    \def\@memoHeader{}
-    \newcommand{\memoHeader}[1]{\gdef\@memoHeader{#1}}
-    \newcommand{\fileno}[1]{\gdef\@fileno{#1}}
-    \newcommand{\attachments}[1]{\gdef\@attachments{#1}}
-    
-    \newcommand{\@HangingLabel}[1]{\leavevmode\llap{\scriptsize\uppercase{#1}:\enspace}}
-    
-    %    	\ifdefOR{\@memoToB}{\@memoFrB}{\ifdef{\@memoToB}{\@memoToB}{}	&&   \ifdef{\@memoFrB}{\@memoFrB}{}	 \\}{}
-    %    	\ifdefOR{\@memoToC}{\@memoFrC}{\ifdef{\@memoToC}{\@memoToC}{}	&&   \ifdef{\@memoFrC}{\@memoFrC}{}	 \\}{}
-    %    	\ifdefOR{\@memoToD}{\@memoFrD}{\ifdef{\@memoToD}{\@memoToD}{}	&&   \ifdef{\@memoFrD}{\@memoFrD}{}	 \\}{}
-    %    	\ifdefOR{\@memoToE}{\@memoFrE}{\ifdef{\@memoToE}{\@memoToE}{}	&&   \ifdef{\@memoFrE}{\@memoFrE}{}	 \\}{}
-        %
-    
-    \gdef\makeMemotitle{%
-        \thispagestyle{plain}
-        \vspace*{-4.5em}
-        \ifdef{\@memoHeader}{\vspace*{-2em}  \ \hfill {\large\bfseries \@memoHeader } \hfill \  \\[1.2em]}{}
-        \begin{tabularx}{\textwidth}{lXl}
-        	\@HangingLabel{to}\textit{\@memoTo}  &&
-        	      \@HangingLabel{fr}\textit{\@memoFr}\\ \noalign{\vskip 0.5mm} % add a bit more space %%% todo need an ifdefOR{\cs1}{\cs2}{}{}
-          \makecell[tl]{\@memoToAddr{}}  && \makecell[tl]{\@memoFrAddr{}} \\
-        	\\\noalign{\vskip -1.3ex}
-        	\midrule
-        \end{tabularx}
-        \par
-    
-        \vspace*{1em}
-    
-        \parbox{\linewidth}{\setstretch{1.3}
-        	\ifdef{\@subject}{\@HangingLabel{subject}\raggedright\textbf{\Large\@subject}\\[8pt]}{}%
-        	\ifdef{\@date}{\@HangingLabel{date}\textbf{\Large\@date}\\[8pt]}{}
-        	\ifdef{\@fileno}{\@HangingLabel{file}\textbf{\Large\@fileno}\\[8pt]}{}
-        	\ifdef{\@attachments}{\@HangingLabel{attached}\@attachments\\[8pt]}{}
-        	\par
-        }%
-    }
-    
-    
-    \iftoggle{useMemo}{
-    
-      \AtBeginDocument{
-            \ifdef{\@memoToA}{\lohead{\textit\@memoToA}}{}
-            \ifdef{\@date}{\rohead{\@date}}{}
-            \makeMemotitle
-            }
-    
-        \togglefalse{SecOnNewPage}         %%% PATCH sections
-        \addtokomafont{section}{\color{black}\large}
-        \addtokomafont{subsection}{\color{black}\normalsize}
-        \addtokomafont{subsubsection}{\color{black}}  % do not use in a memo
-    
-        \gdef\scr@section@beforeskip{17.1pt \@plus 1.7pt}
-        \gdef\scr@section@afterskip{0.1pt}
-        \gdef\scr@subsection@beforeskip{13.1pt \@plus 1.3pt}
-        \gdef\scr@subsection@afterskip{0.1pt}
-    
-    
-        \setcounter{secnumdepth}{-\maxdimen}  % remove sec num
-        \KOMAoptions{bibliography=totoc}  % uncomment if you want numbered reference section
-        \floatsetup{objectset=raggedright}
-        \captionsetup{labelformat=widecap}
-    }{}
-    
-

@@ -79,9 +79,9 @@
     \ProvideDocumentCommand{\providelength}{ m m }{%
         \ifdeflength{#1}{% It is already defined!
         }{% Not defined, so define it!
-        \newlength{#1}%
-        \setlength{#1}{#2}
-        }%
+            \newlength{#1}%
+            \setlength{#1}{#2}
+        }{}%
         }%
     
     
@@ -229,61 +229,117 @@
     \brokenpenalty=101
     \displaywidowpenalty=50
     \vfuzz \hfuzz
+    
+    
+    \if@twoside% if two-sided, put the section headings to right side and numbers in right margin
+    	\raggedbottom
+    \fi%  finally do nothing
+    	\raggedbottom
+    
+    
+    
+
 
 
 \iftoggle{useSerif}{
 
 
-%%%%%%%%%%%%  FontKP.sty  %%%%%%%%%%%%
-    \usepackage[T1]{fontenc}
-    %frenchstyle,narrowiints,partialup < math settings for kp fonts
-    \usepackage[light,notextcomp,oldstylenums]{kpfonts} % the light is also decent, could consider
-    \renewcommand{\ttdefault}{cmtl} % monospace that looks nice with light kpfont
+%%%%%%%%%%%%  FontKPotf.sty  %%%%%%%%%%%%
+    \usepackage[onlyrm,light,oldstylenums]{kpfonts-otf} % the light is also decent, could consider
+    \setsansfont{CMU Bright} % monospace that looks nice with light kpfont
+    \setmonofont[Numbers=Lining]{CMU Typewriter Text Light} % monospace that looks nice with light kpfont
+    
     \usepackage[activate=true,% this package makes the font look nicer
         final,%
         tracking=true,%
     %	kerning=true, % only works with pdftex
     ]{microtype}
     \SetTracking{encoding=*, shape=sc}{18}  % adjust small caps letter spacing
+    
+    
+    \def\togunums{\addfontfeature{Numbers=Lining}} %% from kpfonts.sty
+    \def\toglnums{\addfontfeature{Numbers=OldStyle}}
+    
+    \let\lnum\oldstylenums
+    \let\unum\liningnums
+    \let\classicstylenums\liningnums
+    
+    \AtBeginEnvironment{tabular}{\togunums}
+    \AtBeginEnvironment{tabular*}{\togunums}
+    \AtBeginEnvironment{tikzpicture}{\togunums}
+    
+    \def\cpb@secnumsize{} % dont allow cpb to use smaller numbers in section
+    \newcommand{\cbp@appendixletformat}[1]{\scshape\alph{#1}}
+    \def\cbp@appendixsecformat{\scshape\MakeLowercase}
+    
+    
+    
+    
+    %% for non-light option
+    %\def\togunums{\fontfamily{jkp}\selectfont} %% from kpfonts.sty
+    %\def\toglnums{\fontfamily{jkpxosn}\selectfont} for non-light
+
 
 }{
 
 
-%%%%%%%%%%%%  FontCMBlua.sty  %%%%%%%%%%%%
-    \usepackage[T1]{fontenc}  % used for accented letter, OT1 works better with cmbright, makes font work
-    \usepackage{cmbright}  % use hfbright and cm-super
-    \usefont{OT1}{cmbr}{m}{n}
+%%%%%%%%%%%%  FontCMBotf.sty  %%%%%%%%%%%%
+    \usepackage{fontspec}
+    
+    \usepackage[T1]{fontenc}
+    \usepackage{cmbright} %for math only, will be overwritten
     \renewcommand\bfdefault{sb}
-    \newcommand\sbdefault{bx}
-        \usepackage[%
-        protrusion=true,
-        expansion,
-        final,
-        tracking=true,
-        letterspace=120,
-        factor=1000,% protrusion (/1000), subtle
-        stretch=10,%(/1000 %)
-        shrink=10]{microtype}
+    \newcommand\sbdefault{bx} % swap sb with bf
     
-    \frenchspacing
-    
-    \usepackage{fourier} % lotsa symbols
+    \setmainfont[
+      Ligatures = TeX,
+    %  Numbers = Uppercase,
+    %  Numbers = Lowercase,
+    %  Numbers = Oldstyle,
+      ItalicFont = CMU Bright Oblique,
+      BoldFont = CMU Bright SemiBold,
+      BoldItalicFont = CMU Bright SemiBold Oblique,
+    ]{CMU Bright}
+    \setmonofont[Numbers=Lining]{CMU Typewriter Text Light}
     
     
-    %kerning=true,  $ NOT ALLOWED IN LUA
-    %spacing=true,  $ NOW ALLOWED IN LUA
+    % https://tex.stackexchange.com/questions/204778/difficulty-finding-selecting-cm-bright-using-fontspec
+    % https://tex.stackexchange.com/questions/358418/using-cmbright-in-xelatex-for-math-and-text
+    % https://tex.stackexchange.com/questions/25293/replace-integral-sign-in-cmu-bright-with-iwona-while-keeping-proper-position-o
+    % https://tex.stackexchange.com/questions/572015/using-the-cmbright-package-in-a-limited-range-of-my-document
+    
+    \DeclareSymbolFont{iwonalargesymbols}{OMX}{iwona}{m}{n}
+    \DeclareMathSymbol{\intop}{\mathop}{iwonalargesymbols}{"52}
+    
+    \usepackage[%
+      protrusion=true,
+      expansion,
+      final,
+      tracking=true,
+      letterspace=120,
+      factor=1000,%(/1000), subtle
+      stretch=10,%(/1000 %)
+      shrink=10
+    ]{microtype}
+    
+    % upper and lowercase number commands
+    \def\togunums{}
+    \def\toglnums{}
+    \def\lnum#1{#1}
+    \def\unum#1{#1}
     
     
-    %% FONT
-    %%% IF YOU GET AN ERROR WITH microtype, there is an issue with font:
-    % Install cm-super and hfbright packages via MiKTeX console,  you need the scalable version of cmbright, for ex.
-    %    \usepackage{fontspec}          % lualatex font engine
-    %    \setmainfont[Numbers = Uppercase,
-    %                 Ligatures = TeX,
-    %                 BoldFont  = CMU Bright SemiBold,
-    %                 ItalicFont = CMU Bright Oblique,
-    %                ]{CMU Bright Roman}
-    % NOTE OPEN font version of CMU Bright doesnt look as nice, we use type 1 here
+    % why doesn't this work ???
+    %\usepackage{unicode-math}
+    %\setmathfont{CMU Bright}
+    %    \setmathfont[range=\mathup]{CMU Bright Roman}
+    %    \setmathfont[range=\mathbfup]{CMU Bright SemiBold}
+    %    \setmathfont[range=\mathbfit]{CMU Bright SemiBold}
+    %    \setmathfont[range=\mathit]{CMU Bright Oblique}
+    
+    
+    
+
 
 }
 
@@ -298,25 +354,28 @@
     
     \usepackage[fleqn]{mathtools} % should load amsmath
     %\usepackage{amsmath}
+    %\usepackage{amssymb} % issue with kpfonts, I think it already loads it..
     
     \usepackage{xfrac}
-    \usepackage{amssymb,amsfonts,gensymb}  % math fonts and symbols
+    \usepackage{amsfonts,gensymb}  % math fonts and symbols
     
-    
-    \usepackage[free-standing-units,
-    	unit-optional-argument,
+    \providecommand{\togunums}{}  % toggle to uppercase number shortcut
+    \usepackage[free-standing-units, % allow declared units usage outside of \qty and \unit
+    	unit-optional-argument,  % allows declared units to have number after \kV[10]
     	detect-all=true, % allows italic/bold units
     	space-before-unit=true,
-    	inter-unit-product=\,,
-    	use-xspace=true]{siunitx}  % \SI \num used for physical units and S column in tables
-    
-    \sisetup{range-phrase=--,
+    	text-font-command=\togunums,
+    	use-xspace=true,
     	table-number-alignment=center,
     	table-text-alignment=center,
     	table-align-text-post=false,
     	table-align-text-pre=false,
-    }
-    % http://ctan.mirror.rafal.ca/macros/latex/contrib/siunitx/siunitx.pdf
+    ]{siunitx} % http://ctan.mirror.rafal.ca/macros/latex/contrib/siunitx/siunitx.pdf
+    
+    
+    %	inter-unit-product=\,, % default
+    %\sisetup{range-phrase=--,
+    
     
     
     %\def\sbfCMB#1{\ThisStyle{\setbox0=\hbox{$\SavedStyle#1$}%
@@ -347,7 +406,14 @@
     
     \setlength\heavyrulewidth{0.8pt}
     \setlength\lightrulewidth{0.4pt}  % latex default rule is 0.4 pt
+    \setlength\cmidrulewidth{0.3pt}  % latex default rule is 0.4 pt
     
+    \providetoggle{useSerif}
+    \iftoggle{useSerif}{
+    	\setlength\heavyrulewidth{0.7pt}
+    	\setlength\lightrulewidth{0.4pt}  % latex default rule is 0.4 pt
+    	\setlength\cmidrulewidth{0.3pt}
+    }{}
     
     \let\nl\\  % shortcut for \newline and \\
     
@@ -535,7 +601,11 @@
     \renewcommand\labelitemi{\raisebox{0.3ex}{\scalebox{0.9}{\scriptsize$\bullet$}}}
     \renewcommand\labelitemii{\raisebox{0.3ex}{\scalebox{0.7}{\scriptsize$\bullet$}}}
     \renewcommand\labelitemiii{\raisebox{0.3ex}{\scalebox{0.4}{\scriptsize$\bullet$}}}
-
+    
+    \providetoggle{useSerif}
+    \iftoggle{useSerif}{
+      \setlist[description]{font={\normalfont\bfseries}}
+    }{}
 
 
 %%%%%%%%%%%%  CodeBoxes.sty  %%%%%%%%%%%%
