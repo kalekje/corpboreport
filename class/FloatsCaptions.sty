@@ -29,6 +29,7 @@
 \captionsetup{labelformat=hangcap}
 \providetoggle{useSerif}
 \DeclareCaptionLabelSeparator{enspace}{\enspace}
+\captionsetup{labelfont=bf,labelformat=hangcap,labelsep=enspace}
 \iftoggle{useSerif}{
 %  \DeclareCaptionLabelFormat{lc}{\MakeLowercase{#1}~#2}
   \DeclareCaptionLabelFormat{hangcap}{\llap{\MakeLowercase{#1}~#2\enspace}}

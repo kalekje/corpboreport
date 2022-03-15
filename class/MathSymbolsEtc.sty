@@ -5,12 +5,20 @@
 % rename to MathSciSymbols
 
 
-\usepackage[fleqn]{mathtools} % should load amsmath
-%\usepackage{amsmath}
-%\usepackage{amssymb} % issue with kpfonts, I think it already loads it..
+\usepackage[fleqn]{mathtools} % NOTE: amsmath loaded before kpfonts for fleqn issue should load amsmath
+\iftoggle{useSerif}{}{ % issue with kpfonts, I think it already loads it..
+	\usepackage{amssymb}   % only load if not serif
+}
 
 \usepackage{xfrac}
 \usepackage{amsfonts,gensymb}  % math fonts and symbols
+
+
+\renewcommand{\theequation}{\arabic{section}.\arabic{equation}}
+\def\@cpb@mathline{\raisebox{0pt}[0pt][0pt]{\vline height 0.8em depth 0.6em width \arrayrulewidth}}
+\renewcommand\tagform@[1]{\maketag@@@{\ignorespaces\@cpb@mathline\;\cpb@secnumsize#1\unskip\@@italiccorr\hspace*{5ex}}}
+
+
 
 \providecommand{\togunums}{}  % toggle to uppercase number shortcut
 \usepackage[free-standing-units, % allow declared units usage outside of \qty and \unit

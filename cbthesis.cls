@@ -103,6 +103,9 @@ numbers=noenddot]{scrreprt}
     \usepackage{pdftexcmds}  % string comparison with expanded input args
     \usepackage{xpatch}  %add to e toolbox pre, app, etc. to command or environments, https://ctan.math.illinois.edu/macros/latex/contrib/xpatch/xpatch.pdf
     
+    \RequirePackage{datetime2}
+    \DTMsetup{datesep={-}}
+    
     \usepackage{calc}  % allows us to use expressions like {\linewidth-2ex} in commands
     \usepackage{xfp}  % floating point math
     \usepackage{xspace}  % smartly looks at space after commands
@@ -311,9 +314,12 @@ numbers=noenddot]{scrreprt}
     
 
 
+\usepackage[fleqn]{amsmath} % need to load before kpfonts-otf
+
 
 %%%%%%%%%%%%  FontKPotf.sty  %%%%%%%%%%%%
-    \usepackage[onlyrm,light,oldstylenums]{kpfonts-otf} % the light is also decent, could consider
+    %\usepackage[onlyrm,light,oldstylenums]{kpfonts-otf} % the light is also decent, could consider
+    \usepackage[onlyrm,light]{kpfonts-otf} % the light is also decent, could consider
     \setsansfont{CMU Bright} % monospace that looks nice with light kpfont
     \setmonofont[Numbers=Lining]{CMU Typewriter Text Light} % monospace that looks nice with light kpfont
     
@@ -332,11 +338,15 @@ numbers=noenddot]{scrreprt}
     \let\unum\liningnums
     \let\classicstylenums\liningnums
     
+    \def\act{\scshape\toglnums}
+    \def\actext#1{\textsc{\toglnums#1}}
+    
     \AtBeginEnvironment{tabular}{\togunums}
     \AtBeginEnvironment{tabular*}{\togunums}
     \AtBeginEnvironment{tikzpicture}{\togunums}
     
-    \def\cpb@secnumsize{} % dont allow cpb to use smaller numbers in section
+    \def\cpb@secnumsize{\toglnums} % dont allow cpb to use smaller numbers in section
+    %\def\cpb@secnumsize{} % dont allow cpb to use smaller numbers in section
     \newcommand{\cbp@appendixletformat}[1]{\scshape\alph{#1}}
     \def\cbp@appendixsecformat{\scshape\MakeLowercase}
     
@@ -440,6 +450,7 @@ numbers=noenddot]{scrreprt}
     \setlength{\lineFooterLen}{2em}
     %https://tex.stackexchange.com/questions/114570/koma-script-scrpage2-footer-height
     
+    \renewcommand*{\pnumfont}{\normalfont\cpb@secnumsize} % https://www.dickimaw-books.com/latex/thesis/html/newpagestyle.html
     
     
     \newcommand{\PageRule}{\vline height 1em depth \lineFooterLen width \arrayrulewidth}
@@ -515,6 +526,16 @@ numbers=noenddot]{scrreprt}
     	% \renewcommand\autodot{.}% dot after chapter
     	\hfill\cpb@secnumsize#1\enspace\hspace{1pt}% align chapter numbers right
     }
+    
+    %
+    %\renewcommand\sectionlinesformat[4]{%
+    %	\makebox[0pt][r]{\cpb@secnumsize#3\hspace{2pt}}#4%
+    %}
+    %\renewcommand\sectioncatchphraseformat[4]{% used by run-in headings with style=section
+    %	\makebox[0pt][r]{\cpb@secnumsize#3\hspace{1pt}}#4%
+    %}
+    
+    
     
     
     % SECTION SPACING ON PAPER AND ToC - should change if section lettering is used
@@ -1176,12 +1197,20 @@ numbers=noenddot]{scrreprt}
     % rename to MathSciSymbols
     
     
-    \usepackage[fleqn]{mathtools} % should load amsmath
-    %\usepackage{amsmath}
-    %\usepackage{amssymb} % issue with kpfonts, I think it already loads it..
+    \usepackage[fleqn]{mathtools} % NOTE: amsmath loaded before kpfonts for fleqn issue should load amsmath
+    \iftoggle{useSerif}{}{ % issue with kpfonts, I think it already loads it..
+    	\usepackage{amssymb}   % only load if not serif
+    }
     
     \usepackage{xfrac}
     \usepackage{amsfonts,gensymb}  % math fonts and symbols
+    
+    
+    \renewcommand{\theequation}{\arabic{section}.\arabic{equation}}
+    \def\@cpb@mathline{\raisebox{0pt}[0pt][0pt]{\vline height 0.8em depth 0.6em width \arrayrulewidth}}
+    \renewcommand\tagform@[1]{\maketag@@@{\ignorespaces\@cpb@mathline\;\cpb@secnumsize#1\unskip\@@italiccorr\hspace*{5ex}}}
+    
+    
     
     \providecommand{\togunums}{}  % toggle to uppercase number shortcut
     \usepackage[free-standing-units, % allow declared units usage outside of \qty and \unit
@@ -1403,6 +1432,7 @@ numbers=noenddot]{scrreprt}
     \captionsetup{labelformat=hangcap}
     \providetoggle{useSerif}
     \DeclareCaptionLabelSeparator{enspace}{\enspace}
+    \captionsetup{labelfont=bf,labelformat=hangcap,labelsep=enspace}
     \iftoggle{useSerif}{
     %  \DeclareCaptionLabelFormat{lc}{\MakeLowercase{#1}~#2}
       \DeclareCaptionLabelFormat{hangcap}{\llap{\MakeLowercase{#1}~#2\enspace}}
@@ -1508,21 +1538,33 @@ numbers=noenddot]{scrreprt}
     % Code Boxes
     % ##############################################
     
+    % todo need to figure out listings a bit better...
+    
+    
     % https://tex.stackexchange.com/questions/77996/how-to-show-a-hint-when-lstlisting-is-breaking-page?rq=1
     % continued on next page... want to move this
     % read this and try it out more...
+    % customize the appearance of the continuing notes:
+    
+    \def\continuingfont{\slshape} % put size here
+    \def\continuingtext{Listing continues on next page\ldots}
+    \def\continuedtext{\ldots Listing continued from previous page}
+    
+    
     \usepackage[framemethod=tikz]{mdframed}  % for multi-page codeboxes
+    \usepackage{listings}  %
+    
     \mdfdefinestyle{listing}
     {
     	hidealllines = true,
-    	leftmargin = 0pt,
-    	rightmargin = 0pt,
-    	innerleftmargin = 0pt,
-    	innerrightmargin = 0pt,
-    	innertopmargin = 0pt,
-    	innerbottommargin = 0pt,
-    	splittopskip=30pt,
-    	splitbottomskip=30pt,
+    	leftmargin = 0.01pt,
+    	rightmargin = 0.01pt,
+    	innerleftmargin = 0.01pt,
+    	innerrightmargin = 0.01pt,
+    	innertopmargin = 0.01pt,
+    	innerbottommargin = 0.01pt,
+    	splittopskip=30.01pt,
+    	splitbottomskip=30.01pt,
     	skipabove    = \parskip,
     	skipbelow    = \parskip,
     	% innertopmargin = \parskip,
@@ -1544,21 +1586,15 @@ numbers=noenddot]{scrreprt}
     		at (O |- P) {\continuedtext};
     	}
     }
-    % customize the appearance of the continuing notes:
-    \newcommand*\continuingfont{\itshape} % put size here
-    \newcommand*\continuingtext{Listing continues on next page\ldots}
-    \newcommand*\continuedtext{\ldots Listing continued from previous page}
     
     
     
-    \usepackage{listings}  % 
     
     % toodo should really clean this up
     \providecolor{codekey}{RGB}{180, 0, 0}
     \providecolor{codestring}{RGB}{0, 130, 10}  % green color, used for code syntax and plots
     \providecolor{codecomment}{RGB}{128, 128, 128}
     \providecolor{codeemph}{RGB}{4, 1, 180}
-    
     
     
     % http://texdoc.net/texmf-dist/doc/latex/listings/listings.pdf
@@ -1603,6 +1639,21 @@ numbers=noenddot]{scrreprt}
     
     
     
+    %\lstdefinestyle{code}{
+    %}
+    %\lstset{
+    %	language=[LaTeX]TeX,
+    %	basicstyle=\ttfamily\small,
+    %	commentstyle=\ttfamily\small\color{gray},
+    %	numbers=left,
+    %	numberstyle=\ttfamily\small\color{white},
+    %	prebreak=\raisebox{0ex}[0ex][0ex]{\color{gray}\ensuremath{\hookleftarrow}},
+    %	extendedchars=true,
+    %	breaklines=true,
+    %	tabsize=2,
+    %}
+    
+    
     %False	def	if	raise
     %None	del	import	return
     %True	elif	in	try
@@ -1618,16 +1669,18 @@ numbers=noenddot]{scrreprt}
     
     
     \lstdefinestyle{code}{
-    	language         = [LaTeX]TeX,
     	basicstyle       = \small\ttfamily ,
     	numbers          = left,
-    	numberstyle      = \tiny,
+    	numberstyle      = \scriptsize,
     	numberblanklines = true,
     	breaklines       = true,
     	keepspaces       = true,
     	columns          = fullflexible,
+    	frame=tb,
     	% whatever else you want ...
     }
+    
+    
     
     
     \lstnewenvironment{listing}
@@ -1949,43 +2002,66 @@ numbers=noenddot]{scrreprt}
 
 
 %%%%%%%%%%%%  Titles.sty  %%%%%%%%%%%%
-    \let\company\publishers
     
-    
-    %% https://tex.stackexchange.com/questions/466095/redefine-title-for-possibility-of-a-forced-line-breaking-in-a-predefined-place
-    
-    %%% todo do this for other paras
-    %\ExplSyntaxOn
-    %\RenewDocumentCommand{\title}{m}
-    % {
-    %  \tl_gset:cn { @title } { #1 } % needed by \maketitle
-    %  \tl_gset:Nn { \realtitle } { #1 }
-    %  \seq_set_split:Nnn \l_tmpa_seq { \\ } { #1 }
-    %  \tl_gset:Nx \inlinetitle { \seq_use:Nn \l_tmpa_seq { ~ } }
-    % \ExplSyntaxOff
-    % \hypersetup{pdftitle=\inlinetitle}
-    % }
+    %\NewDocumentCommand{\client}{o m O{#1}}{% declare document var with option. Allow [] on either side of {} for flexibiliy
+    %\gdef\Client{#2}
+    %\IfValueTF{#3}%
+    %  {\gdef\ClientAddr{#3}}%
+    %  {\gdef\ClientAddr{}}%
+    %  \luadirect{pl.tex.makeInTextcmd('TheClientAddr', \luastringN{#3})}
+    %  \luadirect{pl.tex.setPDFvar('Author',            \luastringO{\TheClientAddr})}
+    %}
     %
-    %\ExplSyntaxOn
-    %\RenewDocumentCommand{\author}{m}
-    % {
-    %  \tl_gset:cn { @author } { #1 } % needed by \maketitle
-    %  \tl_gset:Nn { \realauthor } { #1 }
-    %  \seq_set_split:Nnn \l_tmpa_seq { \\ } { #1 }
-    %  \tl_gset:Nx \inlineauthor { \seq_use:Nn \l_tmpa_seq { ~ } }
-    % \ExplSyntaxOff
-    % \hypersetup{pdfauthor=\inlineauthor}
-    % }
+    %\NewDocumentCommand{\title}{o m O{#1}}{% declare document var with option. Allow [] on either side of {} for flexibiliy
+    %\gdef\@title{#2}
+    %\IfValueTF{#3}%
+    %  {\gdef\ClientAddr{#3}}%
+    %  {\gdef\ClientAddr{}}%
+    %  \luadirect{pl.tex.makeInTextcmd('thetitle', 		\luastringN{#3})}
+    %  \luadirect{pl.tex.setPDFvar('Title',           \luastringO{\thetitle})}
+    %}
+    
+    % todo
+    % for authors, use \and when declaring
+    % in penlight, preserve \and for title page \@ definition
+    %    for thetitle, change \and to , and and
+    % for PDF var, do the same cleaning, but replace \and with \sep
+    % maybe do a list to \and in yamlvars too
+    % todo star variants?
     
     %todo square bracket option for setting pdf val?
-    \RenewDocumentCommand{\title}{m}{\luadirect{pl.tex.setTitlePDFvar('title',     \luastringN{#1})}}
-    \RenewDocumentCommand{\author}{m}{\luadirect{pl.tex.setTitlePDFvar('author',   \luastringN{#1})}}
     
+    \RenewDocumentCommand{\title}{m}{\luadirect{
+    	pl.tex.defcmdAT('@title', \luastringN{#1})
+    	pl.tex.updatePDFtable('Title', makePDFvarstr(\luastringN{#1}), false)
+    	pl.tex.defcmd('thetitle', pl.tex.makeInTextstr(\luastringN{#1}))
+    }}
     
+    \RenewDocumentCommand{\author}{m}{\luadirect{
+    	pl.tex.defcmdAT('@author', \luastringN{#1})
+    	pl.tex.updatePDFtable('Author', makePDFvarstr(\luastringN{#1}), false)
+    	pl.tex.defcmd('theauthor', pl.tex.makeInTextstr(\luastringN{#1}))
+    }}
     
-    \NewDocumentCommand{\logo}{O{width=4cm} m >{\ExpArgOnceProc}O{\TitleLogoPlaceDefault} }{%
-        \gdef\@logo{\includegraphics[#1,smash=#3]{#2}}%
+    \NewDocumentCommand{\company}{m}{\luadirect{
+    	pl.tex.defcmdAT('@publishers', \luastringN{#1})
+    	pl.tex.updatePDFtable('Publisher', makePDFvarstr(\luastringN{#1}), false)
+    	pl.tex.defcmd('thecompany', pl.tex.makeInTextstr(\luastringN{#1}))
+    }}
+    \let\publishers\company
+    % yse @publishers to match KOMA, Publisher for PDFvar
+    % for beamer, company = institute
+    
+    \def\logoset{}
+    \NewDocumentCommand{\logo}{ >{\ExpArgOnceProc}O{\logoset} m }{%
+    	\gdef\@logo{\includegraphics[width=4cm,smash=tl,#1]{#2}}%
     }
+    		%	\gdef\@logo{\includegraphics[width=4cm,smash=tl]{#1}}%
+    		%\NewDocumentCommand{\logo}{ m }{%
+    		%\NewDocumentCommand{\logo}{O{width=4cm} m >{\ExpArgOnceProc}O{\TitleLogoPlaceDefault} }{%
+    		%    \gdef\@logo{\includegraphics[#1,smash=#3]{#2}}%
+    		%}
+    		%\def\logoset{width=4cm,smash=tl}
     
     
     \gdef\@tpOwn{
@@ -2004,11 +2080,11 @@ numbers=noenddot]{scrreprt}
     		\null\vfill\par
     			\parbox[t]{\linewidth}{\large\itshape\@subtitle} % Subtitle or further description
     		}{}
-    		\ifdef{\@publishers}{
+    		\ifdef{\@publishers}{\def\and{\\}
     			\null\vfill\par
     			\parbox[t]{\linewidth}{\Large\@publishers} % or company
     		}{}
-    		\ifdef{\@author}{
+    		\ifdef{\@author}{\def\and{\\}
     			\null\vfill\par
     			\parbox[t]{\linewidth}{\bfseries\Large\@author}
     		}{}
@@ -2041,8 +2117,8 @@ numbers=noenddot]{scrreprt}
     		\vspace{0.5em}
     
     		\ifdef{\@subtitle}{\titlesubbox{\itshape \@subtitle}}{}
-    		\ifdef{\@publishers}{\titlesubbox{\large \@publishers}}{}
-    		\ifdef{\@author}{\titlesubbox{\large\bfseries \@author}}{}
+    		\ifdef{\@publishers}{\titlesubbox{\def\and{\, }\large \@publishers}}{}
+    		\ifdef{\@author}{\titlesubbox{\def\and{\, }\large\bfseries \@author}}{}
     		\ifdef{\@date}{\titlesubbox{\large \@date}}{}
     
     		\vspace*{1em}

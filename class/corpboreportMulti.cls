@@ -56,42 +56,21 @@ fleqn,
 
 \usepackage{\FormatDir TextAndParas} %%% MAIN FONT SETTINGS
 
+\usepackage[fleqn]{amsmath} % need to load before kpfonts-otf
 
 \iftoggle{useSerif}{
 
     \usepackage{\FormatDir FontKPotf}
 
 }{
-    \ifluatex
 
-%        \usepackage{\FormatDir FontCMBlua}
         \usepackage{\FormatDir FontCMBotf}
 
-    \else
-
-       \usepackage{\FormatDir FontCMBpdf}
-
-    \fi
-%    https://comp.text.tex.narkive.com/KZW4PwZ4/cmbright-alternative
-    \gdef\sbseries{\fontseries{sb}\selectfont}
-
-    \DeclareRobustCommand{\sm@ller}{%
-    \dimen@\f@size\p@
-    \ifdim \dimen@ > 12\p@
-    \dimen@=0.83333\dimen@
-    \else
-    \advance \dimen@ -2\p@
-    \fi
-    \math@fontsfalse
-    \fontsize{\the\dimen@}\z@
-    \selectfont
-    }
-    \newcommand{\textc}[1]{{\sm@ller\uppercase{#1}}}
 }
 
 \usepackage{\FormatDir HeaderFooterFootnotes} %%% HEADER AND FOOTER AND FOOTNOTES
-\usepackage{\FormatDir PageNumberInMargin} %%% PLACING PAGE NUMBER IN THE LOWER RIGHT MARGIN
 \usepackage{\FormatDir SectionsToCCustom} %%% SECTION HEADINGS, TOC, AND FORMATTING
+\usepackage{\FormatDir PageNumberInMargin} %%% PLACING PAGE NUMBER IN THE LOWER RIGHT MARGIN
 \usepackage{\FormatDir AppendixFormat} %%% APPENDIX FORMATTINGS (depends on some ToC)
 \usepackage{\FormatDir ColorsCustom} %%% CUSTOM COLORS
 \usepackage{\FormatDir MathSymbolsEtc} %%% MATH RELATED PACKAGES
@@ -110,25 +89,29 @@ fleqn,
 
 \usepackage{\FormatDir macros/UniRefs}  % macro to create unique labels, useful for tabular notes
 
+\usepackage{\FormatDir EndOf}
+
+
 \usepackage[pl,extras]{penlight}
 \usepackage{lutabulartools}
 \usepackage{autopuncitems}
 
+\newcommand{\cbpheaderbox}[1]{\parbox[b][2em][b]{0.4\linewidth}{\setstretch{0.8}#1}}
+
 \usepackage{YAMLvars}
 \begin{luacode*}
     YAMLvars.tabmidrule = 'gmidrule'
+    function YAMLvars.xfm.headerbox(var, val)
+      if var:find('r', 1, true) == 1 then
+        val = '\\flushright '.. val
+      end
+      return '\\cbpheaderbox{'..val..'}'
+    end
 \end{luacode*}
 
 
 
-
-
-
-\usepackage{\FormatDir EndOf}
-
-
-
-\ifluatex
+\lowercasevarYVon
 %! language = yaml
 \begin{declareYAMLvars}
 title:
@@ -140,63 +123,41 @@ subtitle:
   prc: setdocvar
 
 author:
-  xfm: lb2nl
+  xfm: [list2and,lb2nl]
   prc: setdocvar
 
-publishers:
-  xfm: lb2nl
+company:
+  xfm: [list2and,lb2nl]
   prc: setdocvar
 
 date:
   xfm: lb2nl
   prc: setdocvar
 
-subject:
-  xfm: lb2nl
+logo:
   prc: setdocvar
 
-fileno:
-  xfm: lb2nl
+institute:  # for beamer, company recommended though
   prc: setdocvar
 
+publishers:  # company recommended
+  xfm: [list2and,lb2nl]
+  prc: setdocvar
+
+lohead:
+  xfm: [lb2nl, headerbox]
+  prc: setdocvar
+
+rohead:
+  xfm: [lb2nl, headerbox]
+  prc: setdocvar
+  
 pdf:
   prc: setPDFdata
-
-
-attachments:
-  xfm: lb2nl
-  prc: setdocvar
-
-memoHeader:
-  xfm: lb2nl
-  prc: setdocvar
-
-memoFr:
-  xfm: lb2nl
-  prc: setATvar
-
-memoFrAddr:
-  xfm: lb2nl
-  prc: setATvar
-
-memoTo:
-  xfm: lb2nl
-  prc: setATvar
-
-memoToAddr:
-  xfm: lb2nl
-  prc: setATvar
-
-
-logo:
-  prc: setdocvarOpts
-
-institute:  # for beamer
-  prc: setdocvarOpts
-
+  
 \end{declareYAMLvars}
-\else
-\fi
+\lowercasevarYVoff
+
 
 
 

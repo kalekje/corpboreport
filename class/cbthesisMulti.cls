@@ -45,6 +45,8 @@ numbers=noenddot]{scrreprt}
 
 \usepackage{\FormatDir TextAndParas} %%% MAIN FONT SETTINGS
 
+\usepackage[fleqn]{amsmath} % need to load before kpfonts-otf
+
 \usepackage{\FormatDir FontKPotf}
 
 

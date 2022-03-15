@@ -2,21 +2,33 @@
 % Code Boxes
 % ##############################################
 
+% todo need to figure out listings a bit better...
+
+
 % https://tex.stackexchange.com/questions/77996/how-to-show-a-hint-when-lstlisting-is-breaking-page?rq=1
 % continued on next page... want to move this
 % read this and try it out more...
+% customize the appearance of the continuing notes:
+
+\def\continuingfont{\slshape} % put size here
+\def\continuingtext{Listing continues on next page\ldots}
+\def\continuedtext{\ldots Listing continued from previous page}
+
+
 \usepackage[framemethod=tikz]{mdframed}  % for multi-page codeboxes
+\usepackage{listings}  %
+
 \mdfdefinestyle{listing}
 {
 	hidealllines = true,
-	leftmargin = 0pt,
-	rightmargin = 0pt,
-	innerleftmargin = 0pt,
-	innerrightmargin = 0pt,
-	innertopmargin = 0pt,
-	innerbottommargin = 0pt,
-	splittopskip=30pt,
-	splitbottomskip=30pt,
+	leftmargin = 0.01pt,
+	rightmargin = 0.01pt,
+	innerleftmargin = 0.01pt,
+	innerrightmargin = 0.01pt,
+	innertopmargin = 0.01pt,
+	innerbottommargin = 0.01pt,
+	splittopskip=30.01pt,
+	splitbottomskip=30.01pt,
 	skipabove    = \parskip,
 	skipbelow    = \parskip,
 	% innertopmargin = \parskip,
@@ -38,21 +50,15 @@
 		at (O |- P) {\continuedtext};
 	}
 }
-% customize the appearance of the continuing notes:
-\newcommand*\continuingfont{\itshape} % put size here
-\newcommand*\continuingtext{Listing continues on next page\ldots}
-\newcommand*\continuedtext{\ldots Listing continued from previous page}
 
 
 
-\usepackage{listings}  % 
 
 % toodo should really clean this up
 \providecolor{codekey}{RGB}{180, 0, 0}
 \providecolor{codestring}{RGB}{0, 130, 10}  % green color, used for code syntax and plots
 \providecolor{codecomment}{RGB}{128, 128, 128}
 \providecolor{codeemph}{RGB}{4, 1, 180}
-
 
 
 % http://texdoc.net/texmf-dist/doc/latex/listings/listings.pdf
@@ -97,6 +103,21 @@
 
 
 
+%\lstdefinestyle{code}{
+%}
+%\lstset{
+%	language=[LaTeX]TeX,
+%	basicstyle=\ttfamily\small,
+%	commentstyle=\ttfamily\small\color{gray},
+%	numbers=left,
+%	numberstyle=\ttfamily\small\color{white},
+%	prebreak=\raisebox{0ex}[0ex][0ex]{\color{gray}\ensuremath{\hookleftarrow}},
+%	extendedchars=true,
+%	breaklines=true,
+%	tabsize=2,
+%}
+
+
 %False	def	if	raise
 %None	del	import	return
 %True	elif	in	try
@@ -112,16 +133,18 @@
 
 
 \lstdefinestyle{code}{
-	language         = [LaTeX]TeX,
 	basicstyle       = \small\ttfamily ,
 	numbers          = left,
-	numberstyle      = \tiny,
+	numberstyle      = \scriptsize,
 	numberblanklines = true,
 	breaklines       = true,
 	keepspaces       = true,
 	columns          = fullflexible,
+	frame=tb,
 	% whatever else you want ...
 }
+
+
 
 
 \lstnewenvironment{listing}

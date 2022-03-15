@@ -22,80 +22,86 @@
 % OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE
 % OR OTHER DEALINGS IN THE SOFTWARE.
 
-\documentclass{corpboreport}
+%\documentclass[serif]{corpboreport}
+
+\def\FormatDir{../class/}
+%\documentclass[memo,serif]{\FormatDir corpboreportMulti}
+%\documentclass[serif]{\FormatDir corpboreportMulti}
+\documentclass{\FormatDir corpboreportMulti}
 
 
 \setlength{\parindent}{0ex}
 \newcommand{\llcmd}[1]{\leavevmode\llap{\texttt{\detokenize{#1}\ }}}
 \newcommand{\cmd}[1]{\texttt{\detokenize{#1}}}
 \newcommand{\qcmd}[1]{``\cmd{#1}''}
+\newcommand{\llcmdlink}[2]{\href{#2}{\hspace{-15ex}}\hspace{15ex}\llcmd{#1}}%
+
 \RequirePackage{url}
 \RequirePackage{showexpl}
 \lstset{explpreset={justification=\raggedright,pos=r,wide=true}}
-\setlength\ResultBoxRule{0mm}
-\lstset{
-	language=[LaTeX]TeX,
-	basicstyle=\ttfamily\small,
-	commentstyle=\ttfamily\small\color{gray},
-	frame=none,
-	numbers=left,
-	numberstyle=\ttfamily\small\color{white},
-	prebreak=\raisebox{0ex}[0ex][0ex]{\color{gray}\ensuremath{\hookleftarrow}},
-	extendedchars=true,
-	breaklines=true,
-	tabsize=4,
-}
-\addtokomafont{title}{\raggedright}
-\addtokomafont{author}{\raggedright}
-\addtokomafont{date}{\raggedright}
-\author{Kale Ewasiuk (\url{kalekje@gmail.com})}
-\RequirePackage[yyyymmdd]{datetime}\renewcommand{\dateseparator}{--}
-\date{\today}
+\lstset{language=tex}
 
-
-
-
-\title{a template for a rather \\[0.2ex]
-corp{\smaller\smaller\normalfont orate} \\
-bore{\smaller\smaller\normalfont ing} \\
-\leavevmode\llap{{\smaller\smaller\normalfont re}}port \\[0.1ex]
-}
-\author{\textcopyright\ 2021 by {\bfseries Kale K.J.\ Ewasiuk}, \url{kalekje@gmail.com}}
-\subtitle{%
-		Some thought-provoking\\
-		sub-title that inspires\\
-		someone to read your\\
-		boring report.
-}
-
-\logo{example-image-a}
-\company{Your Organization Name Here.}
-\date{\today}
-
-
-\usepackage{showexpl}
-\setlength\ResultBoxRule{0mm}
+\setlength\ResultBoxRule{0.0pt}
 \edef\LTXset{justification=\raggedright,pos=r,width=0.3\linewidth}
-
-
-\newcommand{\llcmdlink}[2]{\href{#2}{\hspace{-15ex}}\hspace{15ex}\llcmd{#1}}%
 
 \BeforeBeginEnvironment{LTXexample}{\begin{addmargin}[-1.5cm]{2em}}
 \AfterEndEnvironment{LTXexample}{\end{addmargin}}
 
-\rohead{...}
-\lohead{corpboreport documentation}
-
-
-% todo
 
 %\secwiselabelnums
 
 %\setlength{\subsecneedspace}{15em}
 
+%\RenewDocumentEnvironment{lstlisting}{+b}{}{}  % todo something wrong with lstlisting... fix
+%\RenewDocumentEnvironment{LTXexample}{+b}{}{}  % todo something wrong with lstlisting... fix
+
+
+
+%! language = yaml
+\begin{parseYAMLvars}
+Title: |-
+  a template for a rather
+  corp{\smaller\smaller\normalfont orate}
+  bore{\smaller\smaller\normalfont ing}
+  \leavevmode\llap{{\smaller\smaller\normalfont re}}port
+
+autHor:
+ - John Smith
+ - Jane Doe \url{kalekje@gmail.com}
+
+subtitle: |-
+		Some thought-provoking
+		sub-title that inspires
+		someone to read your
+		boring report.
+
+company: |-
+  Some Department
+  A University
+
+logo: example-image-a
+
+date: \today
+
+rohead: ...
+lohead: |-
+  corpboreport
+  documentation
+
+
+pdf:
+  keywords: [a,b,c]
+  language: en-CA
+  subject: a test document
+  copyright: Kale Ewasiuk
+  date: 2021-02-02
+#  urllink: pass
+\end{parseYAMLvars}
+\writePDFmetadata
 
 
 \begin{document}
+
 
 %
 %todo use /And command for authors? how to handle multiple? maybe use \{\} [] [] for multi authors?
@@ -127,6 +133,8 @@ bore{\smaller\smaller\normalfont ing} \\
 \IntentionallyBlankPage
 
 
+\thetitle
+\theauthor
 
 \section{Quick Start}
 \begin{itemize}
@@ -175,6 +183,7 @@ Open VSCode and the \cmd{settings.json} file. Add the following code. If the out
 If there are brackets, skip the outermost brackets and place the code inside.
 \enlargethispage*{3em}
 \begin{lstlisting}
+
 {
     "latex-workshop.latex.recipes": [
         {
@@ -260,7 +269,6 @@ It could easily lend itself well to school assignments or lab reports as well.
 
 \toggletrue{showListOfFigsTabs} %< show figs/tables contents
 \togglefalse{samepgListOfFigsTabs} %< on the same page?
-
 \end{lstlisting}
 
 
@@ -285,7 +293,6 @@ if you want to invert the behaviour for a particular section, use !
 
 For paragraphs, if you would like the text to appear on a new line (rather than run in), use !.
 
-\lstset{language=tex}
 \begin{lstlisting}
 use [short title for ToC]{Section title}
 		* will suppress number and ToC listing
@@ -302,7 +309,6 @@ On any of the section/sub commands, using a + will add a letter after it.
 The sections are redefined so that \texttt{+} will append a letter. \cmd{\reset[sub]sectionletter}
 
 \begin{LTXexample}
-
 \subsection{sub}
 \subsection+{sub plus}
   \subsubsection{subsub}
@@ -310,7 +316,6 @@ The sections are redefined so that \texttt{+} will append a letter. \cmd{\reset[
 \subsection+{sub plus}
 \resetsubsectionletter
 \subsection+{reset, then sub plus}
-
 \end{LTXexample}
 
 
@@ -342,7 +347,6 @@ I like JabRef to help manage my .bib files \url{https://www.jabref.org/}
 
 This package offers float commands for inserting tables and figures
 
-\lstset{language=tex}
 \begin{lstlisting}
 \InsertTable[htbp]%
 {you can \input here or type \begin{tabular}...}%
@@ -364,8 +368,8 @@ that is flush left, no star will indent the float a bit
 
 Some helpful commands.
 
-\lstset{language=tex}
 \begin{lstlisting}
+
 \RotPDF*+{\include...}
 	* star will restore the pdf back to normal orientation
 	+ will add a pagebreak before
@@ -438,6 +442,8 @@ Make sure a \% and no new lines after, this improves
 
 \subsection{Hacks}
 
+{\toglnums 1234567890 abcdefghi}
+
 \subsubsection{Spacing}
 Use the following commands outside the tabular environment.
 For different vertical spacing, use \cmd{\renewcommand{\arraystretch}{1.2}}.\\
@@ -492,8 +498,9 @@ forget to wrap with \{\}
 \begin{lstlisting}
 \ContParaAfterList	If you're showing a list (itemize) and want the list to be in the same paragraph as the next lines, use this command to fix the spacing
 	Otherwise, it will assume a new pagagraph follows the list and space will be larger
-Lists	\begin{itemize/enumerate}[moresep] will give more room between items
+Lists	\ begin{itemize/enumerate}[moresep] will give more room between items
 	[twocol] will put them over two columns
+
 \end{lstlisting}
 
 	Added an autoamtically punctuate list. This is particularly useful if you have a large list and aren't entirely sure of the order
@@ -650,7 +657,7 @@ This package can use YAMLvars.
 \subsection{Interconnection Study Macros}
 
 \begin{lstlisting}
-	Hydro Report Macros	R:\TariffStudies\MH-Report-Template\_boilerplate\HydroMacros.sty
+Hydro Report Macros	R:\TariffStudies\MH-Report-Template\_boilerplate\HydroMacros.sty
 
 \Study	Produces ies, ifs, sis, fs (or group in front) and enters glossary item
 \aStudy	an ies, a fs, etc. does this correctly
@@ -675,5 +682,7 @@ When typing acronyms	Excel spreadsheet is used to manage acronyms
 	For example. This will ensure Open Access Interconnection Tariff is only typed the first time
 
 \end{lstlisting}
+
+\PrintEndOfDocument
 
 \end{document}

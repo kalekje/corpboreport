@@ -1,20 +1,28 @@
-* add `luakeys` package and test the default options
+## Packages
+* Update YAMLvars and penlight
 
 
-Fonts: test python matching? siu
+## This class
+* fix the damn logo command
+* update \date with ISO format for pdf var
 
-FIX cmbright, use otf among the classes, now use otf!!
+### Aux
+* Test kv settings?
+* kv-pdf var command
+* add `luakeys` package and test the default options.
+* acro/gloss test tooltip
 
-look into siunitx math mode for new numbers -- why isn't match working?
+### Fonts
+* Fonts: test python matching? siu
+* FIX cmbright, use otf among the classes, now use otf!!
+** look into siunitx math mode for new numbers -- why isn't match working?
   ideally I would like mode=match then set lining  for serif
-
-acro/gloss test tooltip
 
 if using serif, 
 	should I rely on CBP serif option??? probably, and make it work between presentation and lone class!
 	must patch caption package
 
-confirm label-text spacing, choose a good number
+confirm label-text spacing (eg \enspace), choose a good number
 
 debate on lower vs uppercase numbers if using both:
 	upper-case for math, numbers, and citations

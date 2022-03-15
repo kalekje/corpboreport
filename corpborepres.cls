@@ -113,8 +113,8 @@
     
     \usepackage[T1]{fontenc}
     \usepackage{cmbright} %for math only, will be overwritten
-    \renewcommand\bfdefault{sb}
-    \newcommand\sbdefault{bx} % swap sb with bf
+    \gdef\bfdefault{sb}
+    \gdef\sbdefault{bx} % swap sb with bf
     
     \setmainfont[
       Ligatures = TeX,
@@ -153,6 +153,8 @@
     \def\lnum#1{#1}
     \def\unum#1{#1}
     
+    \def\act{}
+    \def\actext#1{#1}
     
     % why doesn't this work ???
     %\usepackage{unicode-math}
@@ -164,7 +166,21 @@
     
     
     
-
+    
+    \gdef\sbseries{\fontseries{sb}\selectfont}
+    
+    \DeclareRobustCommand{\sm@ller}{%
+    \dimen@\f@size\p@
+    \ifdim \dimen@ > 12\p@
+    \dimen@=0.83333\dimen@
+    \else
+    \advance \dimen@ -2\p@
+    \fi
+    \math@fontsfalse
+    \fontsize{\the\dimen@}\z@
+    \selectfont
+    }
+    \newcommand{\textc}[1]{{\sm@ller\uppercase{#1}}}
 
 %%%%%%%%%%%%  MathSymbolsEtc.sty  %%%%%%%%%%%%
     % ##############################################
@@ -174,12 +190,20 @@
     % rename to MathSciSymbols
     
     
-    \usepackage[fleqn]{mathtools} % should load amsmath
-    %\usepackage{amsmath}
-    %\usepackage{amssymb} % issue with kpfonts, I think it already loads it..
+    \usepackage[fleqn]{mathtools} % NOTE: amsmath loaded before kpfonts for fleqn issue should load amsmath
+    \iftoggle{useSerif}{}{ % issue with kpfonts, I think it already loads it..
+    	\usepackage{amssymb}   % only load if not serif
+    }
     
     \usepackage{xfrac}
     \usepackage{amsfonts,gensymb}  % math fonts and symbols
+    
+    
+    \renewcommand{\theequation}{\arabic{section}.\arabic{equation}}
+    \def\@cpb@mathline{\raisebox{0pt}[0pt][0pt]{\vline height 0.8em depth 0.6em width \arrayrulewidth}}
+    \renewcommand\tagform@[1]{\maketag@@@{\ignorespaces\@cpb@mathline\;\cpb@secnumsize#1\unskip\@@italiccorr\hspace*{5ex}}}
+    
+    
     
     \providecommand{\togunums}{}  % toggle to uppercase number shortcut
     \usepackage[free-standing-units, % allow declared units usage outside of \qty and \unit
@@ -213,6 +237,9 @@
     \usepackage{xparse} % smart definition of commands
     \usepackage{pdftexcmds}  % string comparison with expanded input args
     \usepackage{xpatch}  %add to e toolbox pre, app, etc. to command or environments, https://ctan.math.illinois.edu/macros/latex/contrib/xpatch/xpatch.pdf
+    
+    \RequirePackage{datetime2}
+    \DTMsetup{datesep={-}}
     
     \usepackage{calc}  % allows us to use expressions like {\linewidth-2ex} in commands
     \usepackage{xfp}  % floating point math
@@ -529,21 +556,33 @@
     % Code Boxes
     % ##############################################
     
+    % todo need to figure out listings a bit better...
+    
+    
     % https://tex.stackexchange.com/questions/77996/how-to-show-a-hint-when-lstlisting-is-breaking-page?rq=1
     % continued on next page... want to move this
     % read this and try it out more...
+    % customize the appearance of the continuing notes:
+    
+    \def\continuingfont{\slshape} % put size here
+    \def\continuingtext{Listing continues on next page\ldots}
+    \def\continuedtext{\ldots Listing continued from previous page}
+    
+    
     \usepackage[framemethod=tikz]{mdframed}  % for multi-page codeboxes
+    \usepackage{listings}  %
+    
     \mdfdefinestyle{listing}
     {
     	hidealllines = true,
-    	leftmargin = 0pt,
-    	rightmargin = 0pt,
-    	innerleftmargin = 0pt,
-    	innerrightmargin = 0pt,
-    	innertopmargin = 0pt,
-    	innerbottommargin = 0pt,
-    	splittopskip=30pt,
-    	splitbottomskip=30pt,
+    	leftmargin = 0.01pt,
+    	rightmargin = 0.01pt,
+    	innerleftmargin = 0.01pt,
+    	innerrightmargin = 0.01pt,
+    	innertopmargin = 0.01pt,
+    	innerbottommargin = 0.01pt,
+    	splittopskip=30.01pt,
+    	splitbottomskip=30.01pt,
     	skipabove    = \parskip,
     	skipbelow    = \parskip,
     	% innertopmargin = \parskip,
@@ -565,21 +604,15 @@
     		at (O |- P) {\continuedtext};
     	}
     }
-    % customize the appearance of the continuing notes:
-    \newcommand*\continuingfont{\itshape} % put size here
-    \newcommand*\continuingtext{Listing continues on next page\ldots}
-    \newcommand*\continuedtext{\ldots Listing continued from previous page}
     
     
     
-    \usepackage{listings}  % 
     
     % toodo should really clean this up
     \providecolor{codekey}{RGB}{180, 0, 0}
     \providecolor{codestring}{RGB}{0, 130, 10}  % green color, used for code syntax and plots
     \providecolor{codecomment}{RGB}{128, 128, 128}
     \providecolor{codeemph}{RGB}{4, 1, 180}
-    
     
     
     % http://texdoc.net/texmf-dist/doc/latex/listings/listings.pdf
@@ -624,6 +657,21 @@
     
     
     
+    %\lstdefinestyle{code}{
+    %}
+    %\lstset{
+    %	language=[LaTeX]TeX,
+    %	basicstyle=\ttfamily\small,
+    %	commentstyle=\ttfamily\small\color{gray},
+    %	numbers=left,
+    %	numberstyle=\ttfamily\small\color{white},
+    %	prebreak=\raisebox{0ex}[0ex][0ex]{\color{gray}\ensuremath{\hookleftarrow}},
+    %	extendedchars=true,
+    %	breaklines=true,
+    %	tabsize=2,
+    %}
+    
+    
     %False	def	if	raise
     %None	del	import	return
     %True	elif	in	try
@@ -639,16 +687,18 @@
     
     
     \lstdefinestyle{code}{
-    	language         = [LaTeX]TeX,
     	basicstyle       = \small\ttfamily ,
     	numbers          = left,
-    	numberstyle      = \tiny,
+    	numberstyle      = \scriptsize,
     	numberblanklines = true,
     	breaklines       = true,
     	keepspaces       = true,
     	columns          = fullflexible,
+    	frame=tb,
     	% whatever else you want ...
     }
+    
+    
     
     
     \lstnewenvironment{listing}

@@ -13,6 +13,7 @@
 \usepackage{\FormatDir LuaStuff}
 \usepackage{\FormatDir TextandParas}
 
+\usepackage[fleqn]{amsmath} % need to load before kpfonts-otf
 
 \iftoggle{useSerif}{
 

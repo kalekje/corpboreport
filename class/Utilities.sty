@@ -4,6 +4,9 @@
 \usepackage{pdftexcmds}  % string comparison with expanded input args
 \usepackage{xpatch}  %add to e toolbox pre, app, etc. to command or environments, https://ctan.math.illinois.edu/macros/latex/contrib/xpatch/xpatch.pdf
 
+\RequirePackage{datetime2}
+\DTMsetup{datesep={-}}
+
 \usepackage{calc}  % allows us to use expressions like {\linewidth-2ex} in commands
 \usepackage{xfp}  % floating point math
 \usepackage{xspace}  % smartly looks at space after commands

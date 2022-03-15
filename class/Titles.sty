@@ -1,40 +1,63 @@
-\let\company\publishers
 
-
-%% https://tex.stackexchange.com/questions/466095/redefine-title-for-possibility-of-a-forced-line-breaking-in-a-predefined-place
-
-%%% todo do this for other paras
-%\ExplSyntaxOn
-%\RenewDocumentCommand{\title}{m}
-% {
-%  \tl_gset:cn { @title } { #1 } % needed by \maketitle
-%  \tl_gset:Nn { \realtitle } { #1 }
-%  \seq_set_split:Nnn \l_tmpa_seq { \\ } { #1 }
-%  \tl_gset:Nx \inlinetitle { \seq_use:Nn \l_tmpa_seq { ~ } }
-% \ExplSyntaxOff
-% \hypersetup{pdftitle=\inlinetitle}
-% }
+%\NewDocumentCommand{\client}{o m O{#1}}{% declare document var with option. Allow [] on either side of {} for flexibiliy
+%\gdef\Client{#2}
+%\IfValueTF{#3}%
+%  {\gdef\ClientAddr{#3}}%
+%  {\gdef\ClientAddr{}}%
+%  \luadirect{pl.tex.makeInTextcmd('TheClientAddr', \luastringN{#3})}
+%  \luadirect{pl.tex.setPDFvar('Author',            \luastringO{\TheClientAddr})}
+%}
 %
-%\ExplSyntaxOn
-%\RenewDocumentCommand{\author}{m}
-% {
-%  \tl_gset:cn { @author } { #1 } % needed by \maketitle
-%  \tl_gset:Nn { \realauthor } { #1 }
-%  \seq_set_split:Nnn \l_tmpa_seq { \\ } { #1 }
-%  \tl_gset:Nx \inlineauthor { \seq_use:Nn \l_tmpa_seq { ~ } }
-% \ExplSyntaxOff
-% \hypersetup{pdfauthor=\inlineauthor}
-% }
+%\NewDocumentCommand{\title}{o m O{#1}}{% declare document var with option. Allow [] on either side of {} for flexibiliy
+%\gdef\@title{#2}
+%\IfValueTF{#3}%
+%  {\gdef\ClientAddr{#3}}%
+%  {\gdef\ClientAddr{}}%
+%  \luadirect{pl.tex.makeInTextcmd('thetitle', 		\luastringN{#3})}
+%  \luadirect{pl.tex.setPDFvar('Title',           \luastringO{\thetitle})}
+%}
+
+% todo
+% for authors, use \and when declaring
+% in penlight, preserve \and for title page \@ definition
+%    for thetitle, change \and to , and and
+% for PDF var, do the same cleaning, but replace \and with \sep
+% maybe do a list to \and in yamlvars too
+% todo star variants?
 
 %todo square bracket option for setting pdf val?
-\RenewDocumentCommand{\title}{m}{\luadirect{pl.tex.setTitlePDFvar('title',     \luastringN{#1})}}
-\RenewDocumentCommand{\author}{m}{\luadirect{pl.tex.setTitlePDFvar('author',   \luastringN{#1})}}
 
+\RenewDocumentCommand{\title}{m}{\luadirect{
+	pl.tex.defcmdAT('@title', \luastringN{#1})
+	pl.tex.updatePDFtable('Title', makePDFvarstr(\luastringN{#1}), false)
+	pl.tex.defcmd('thetitle', pl.tex.makeInTextstr(\luastringN{#1}))
+}}
 
+\RenewDocumentCommand{\author}{m}{\luadirect{
+	pl.tex.defcmdAT('@author', \luastringN{#1})
+	pl.tex.updatePDFtable('Author', makePDFvarstr(\luastringN{#1}), false)
+	pl.tex.defcmd('theauthor', pl.tex.makeInTextstr(\luastringN{#1}))
+}}
 
-\NewDocumentCommand{\logo}{O{width=4cm} m >{\ExpArgOnceProc}O{\TitleLogoPlaceDefault} }{%
-    \gdef\@logo{\includegraphics[#1,smash=#3]{#2}}%
+\NewDocumentCommand{\company}{m}{\luadirect{
+	pl.tex.defcmdAT('@publishers', \luastringN{#1})
+	pl.tex.updatePDFtable('Publisher', makePDFvarstr(\luastringN{#1}), false)
+	pl.tex.defcmd('thecompany', pl.tex.makeInTextstr(\luastringN{#1}))
+}}
+\let\publishers\company
+% yse @publishers to match KOMA, Publisher for PDFvar
+% for beamer, company = institute
+
+\def\logoset{}
+\NewDocumentCommand{\logo}{ >{\ExpArgOnceProc}O{\logoset} m }{%
+	\gdef\@logo{\includegraphics[width=4cm,smash=tl,#1]{#2}}%
 }
+		%	\gdef\@logo{\includegraphics[width=4cm,smash=tl]{#1}}%
+		%\NewDocumentCommand{\logo}{ m }{%
+		%\NewDocumentCommand{\logo}{O{width=4cm} m >{\ExpArgOnceProc}O{\TitleLogoPlaceDefault} }{%
+		%    \gdef\@logo{\includegraphics[#1,smash=#3]{#2}}%
+		%}
+		%\def\logoset{width=4cm,smash=tl}
 
 
 \gdef\@tpOwn{
@@ -53,11 +76,11 @@
 		\null\vfill\par
 			\parbox[t]{\linewidth}{\large\itshape\@subtitle} % Subtitle or further description
 		}{}
-		\ifdef{\@publishers}{
+		\ifdef{\@publishers}{\def\and{\\}
 			\null\vfill\par
 			\parbox[t]{\linewidth}{\Large\@publishers} % or company
 		}{}
-		\ifdef{\@author}{
+		\ifdef{\@author}{\def\and{\\}
 			\null\vfill\par
 			\parbox[t]{\linewidth}{\bfseries\Large\@author}
 		}{}
@@ -90,8 +113,8 @@
 		\vspace{0.5em}
 
 		\ifdef{\@subtitle}{\titlesubbox{\itshape \@subtitle}}{}
-		\ifdef{\@publishers}{\titlesubbox{\large \@publishers}}{}
-		\ifdef{\@author}{\titlesubbox{\large\bfseries \@author}}{}
+		\ifdef{\@publishers}{\titlesubbox{\def\and{\, }\large \@publishers}}{}
+		\ifdef{\@author}{\titlesubbox{\def\and{\, }\large\bfseries \@author}}{}
 		\ifdef{\@date}{\titlesubbox{\large \@date}}{}
 
 		\vspace*{1em}

@@ -2,8 +2,8 @@
 
 \usepackage[T1]{fontenc}
 \usepackage{cmbright} %for math only, will be overwritten
-\renewcommand\bfdefault{sb}
-\newcommand\sbdefault{bx} % swap sb with bf
+\gdef\bfdefault{sb}
+\gdef\sbdefault{bx} % swap sb with bf
 
 \setmainfont[
   Ligatures = TeX,
@@ -42,6 +42,8 @@
 \def\lnum#1{#1}
 \def\unum#1{#1}
 
+\def\act{}
+\def\actext#1{#1}
 
 % why doesn't this work ???
 %\usepackage{unicode-math}
@@ -53,3 +55,18 @@
 
 
 
+
+\gdef\sbseries{\fontseries{sb}\selectfont}
+
+\DeclareRobustCommand{\sm@ller}{%
+\dimen@\f@size\p@
+\ifdim \dimen@ > 12\p@
+\dimen@=0.83333\dimen@
+\else
+\advance \dimen@ -2\p@
+\fi
+\math@fontsfalse
+\fontsize{\the\dimen@}\z@
+\selectfont
+}
+\newcommand{\textc}[1]{{\sm@ller\uppercase{#1}}}

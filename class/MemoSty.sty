@@ -1,47 +1,55 @@
 %%%% memo variabls
+\lowercasevarYVon
+\begin{declareYAMLvars}
+fileno:
+  xfm: lb2nl
+  prc: setATvar
+  
+attachments:
+  xfm: lb2nl
+  prc: setATvar
 
+memoheader:
+  xfm: lb2nl
+  prc: setATvar
 
-\NewDocumentCommand{\memoTo}{m o o o o}{
-\gdef\@memoToA{#1}
-\IfValueT{#2}{\gdef\@memoToB{#2}}
-\IfValueT{#3}{\gdef\@memoToC{#3}}
-\IfValueT{#4}{\gdef\@memoToD{#4}}
-\IfValueT{#5}{\gdef\@memoToE{#5}}
-}
-\NewDocumentCommand{\memoFr}{m o o o o}{
-\gdef\@memoFrA{#1}
-\IfValueT{#2}{\gdef\@memoFrB{#2}}
-\IfValueT{#3}{\gdef\@memoFrC{#3}}
-\IfValueT{#4}{\gdef\@memoFrD{#4}}
-\IfValueT{#5}{\gdef\@memoFrE{#5}}
-}
+memofr:
+  xfm: lb2nl
+  prc: setATvar
 
-\providecommand{\@memoTo}{}
-\providecommand{\@memoFr}{}
-\providecommand{\@memoFrAddr}{}
-\providecommand{\@memoToAddr}{}
+memofraddr:
+  xfm: lb2nl
+  prc: setATvar
 
-\def\@memoHeader{}
-\newcommand{\memoHeader}[1]{\gdef\@memoHeader{#1}}
-\newcommand{\fileno}[1]{\gdef\@fileno{#1}}
-\newcommand{\attachments}[1]{\gdef\@attachments{#1}}
+memoto:
+  xfm: lb2nl
+  prc: setATvar
+
+memotoaddr:
+  xfm: lb2nl
+  prc: setATvar
+\end{declareYAMLvars}
+\lowercasevarYVoff
+
+\providecommand{\@memoto}{}
+\providecommand{\@memofr}{}
+\providecommand{\@memofraddr}{}
+\providecommand{\@memotoaddr}{}
+\providecommand\@memoheader{}
+\providecommand\@attachments{}
+\providecommand\@fileno{}
 
 \newcommand{\@HangingLabel}[1]{\leavevmode\llap{\scriptsize\uppercase{#1}:\enspace}}
 
-%    	\ifdefOR{\@memoToB}{\@memoFrB}{\ifdef{\@memoToB}{\@memoToB}{}	&&   \ifdef{\@memoFrB}{\@memoFrB}{}	 \\}{}
-%    	\ifdefOR{\@memoToC}{\@memoFrC}{\ifdef{\@memoToC}{\@memoToC}{}	&&   \ifdef{\@memoFrC}{\@memoFrC}{}	 \\}{}
-%    	\ifdefOR{\@memoToD}{\@memoFrD}{\ifdef{\@memoToD}{\@memoToD}{}	&&   \ifdef{\@memoFrD}{\@memoFrD}{}	 \\}{}
-%    	\ifdefOR{\@memoToE}{\@memoFrE}{\ifdef{\@memoToE}{\@memoToE}{}	&&   \ifdef{\@memoFrE}{\@memoFrE}{}	 \\}{}
-    %
 
 \gdef\makeMemotitle{%
     \thispagestyle{plain}
     \vspace*{-4.5em}
-    \ifdef{\@memoHeader}{\vspace*{-2em}  \ \hfill {\large\bfseries \@memoHeader } \hfill \  \\[1.2em]}{}
+    \ifdef{\@memoheader}{\vspace*{-2em}  \ \hfill {\large\bfseries \@memoheader } \hfill \  \\[1.2em]}{}
     \begin{tabularx}{\textwidth}{lXl}
-    	\@HangingLabel{to}\textit{\@memoTo}  &&
-    	      \@HangingLabel{fr}\textit{\@memoFr}\\ \noalign{\vskip 0.5mm} % add a bit more space %%% todo need an ifdefOR{\cs1}{\cs2}{}{}
-      \makecell[tl]{\@memoToAddr{}}  && \makecell[tl]{\@memoFrAddr{}} \\
+    	\@HangingLabel{to}\textit{\@memoto}  &&
+    	      \@HangingLabel{fr}\textit{\@memofr}\\ \noalign{\vskip 0.5mm} % add a bit more space %%% todo need an ifdefOR{\cs1}{\cs2}{}{}
+      \makecell[tl]{\@memotoaddr{}}  && \makecell[tl]{\@memofraddr{}} \\
     	\\\noalign{\vskip -1.3ex}
     	\midrule
     \end{tabularx}
@@ -50,7 +58,7 @@
     \vspace*{1em}
 
     \parbox{\linewidth}{\setstretch{1.3}
-    	\ifdef{\@subject}{\@HangingLabel{subject}\raggedright\textbf{\Large\@subject}\\[8pt]}{}%
+    	\ifdef{\@title}{\@HangingLabel{subject}\raggedright\textbf{\Large\@title}\\[8pt]}{}%
     	\ifdef{\@date}{\@HangingLabel{date}\textbf{\Large\@date}\\[8pt]}{}
     	\ifdef{\@fileno}{\@HangingLabel{file}\textbf{\Large\@fileno}\\[8pt]}{}
     	\ifdef{\@attachments}{\@HangingLabel{attached}\@attachments\\[8pt]}{}
@@ -62,7 +70,7 @@
 \iftoggle{useMemo}{
 
   \AtBeginDocument{
-        \ifdef{\@memoToA}{\lohead{\textit\@memoToA}}{}
+        \ifdef{\@memoto}{\lohead{\textit\@memoto}}{}
         \ifdef{\@date}{\rohead{\@date}}{}
         \makeMemotitle
         }
@@ -82,5 +90,9 @@
     \KOMAoptions{bibliography=totoc}  % uncomment if you want numbered reference section
     \floatsetup{objectset=raggedright}
     \captionsetup{labelformat=widecap}
+
+  \renewcommand{\theequation}{\arabic{equation}}
+  \renewcommand{\thetable}{\arabic{table}}
+  % todo etc
 }{}
 
