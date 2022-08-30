@@ -1,62 +1,51 @@
 ## Packages
-* Update YAMLvars and penlight
+* Upload ALL packages for updates
+* add debug code to more YAMLvars functions
 
 
 ## This class
-* fix the damn logo command
-* update \date with ISO format for pdf var
+* update \date with ISO format (YYYY-MM-DD) for pdf var
+* pdfx trimbox printarea etc reddit question, see if that applies
+* clean all .sty files and use a similar comment format for sections
+* fix the logo command--not sure if I like the smash=
+* Make better front/back/main matter and appendix commands. Redefine section commands, and then revert. Still group front, back, appendix. But keep sectionF sectionM "hidden" from the user such that they don't need to use it.
+* confirm label-text spacing (eg \enspace), choose a good number
+* MATH: good environments for "Where: x= etc."
+* adjust toc space factor for front and back matter
 
-### Aux
+
+### Other
 * Test kv settings?
-* kv-pdf var command
-* add `luakeys` package and test the default options.
-* acro/gloss test tooltip
+* kv-pdf var command (title= etc.)
+* add `luakeys` package and test with various options.
+* acro/gloss test tooltip--not workig with sumatra only it seems
+* work with subcaption... might need an option there
+* equation: same indent as float. I don't like centered!
+* itemize--spacing between paras, should really fix.
+* clean document examples would be nice
+
 
 ### Fonts
-* Fonts: test python matching? siu
+* Fonts: test python matching, siunitx with MPL
 * FIX cmbright, use otf among the classes, now use otf!!
-** look into siunitx math mode for new numbers -- why isn't match working?
+** look into siunitx math mode for new numbers 
   ideally I would like mode=match then set lining  for serif
+*if using serif, 
+    should I rely on CBP serif option??? probably, and make it work between presentation and lone class!
+    * must patch caption package for sans and serif?
+* check upper/lowercase numbers -- need to patch footnotes 
+* USE SLANT SHAPE FOR serif, define slant as just italic for CMU.
+* The idea: use slant for notes etc. like table or listings continued. Use true italic otherwise
+* tighter 1's for kp fonts would be great...  maybe ask a stack exchange question?
 
-if using serif, 
-	should I rely on CBP serif option??? probably, and make it work between presentation and lone class!
-	must patch caption package
 
-confirm label-text spacing (eg \enspace), choose a good number
-
-debate on lower vs uppercase numbers if using both:
-	upper-case for math, numbers, and citations
-	lower-case for everything else (footnotes, years, section/page/figure labels)
-	
-
+### Thesis?
 appendx normal vs thesis - test
 todo must modify format for appendix-- if using serif, we use small caps on the section letter
 make a \def\donothing#1{#1} that does nothing, if serif, re-populate this..
+* front/main/backmatter
 
-hanging list of figs and tables for report
 
 
-adjust toc space factor for front and back matter
 
-tighter 1's for kp fonts would be great...
-	maybe ask a stack exchange question?
-
-clean document examples would be nice
-
-USE SLANT SHAPE FOR serif, define slant as just italic for CMU.
-The idea: use slant for notes etc. like table or listings continued. Use true italic otherwise
-work with subcaption... might need an option there
-  
-  CLEAN UP TEXT in the floats file
-    equation: same indent as float. I don't like centered!
-  itemize--spacing between paras, should really fix.
-  
-  PDF/A compliant + meta data:
-    https://shen.hong.io/reproducible-pdfa-compliant-latex/
-	parse yaml to lua table, then luatable to file
-	make a global meta data table in lua. Option to create new or add on
-	
-	
-YAMLvars bud for undeclared... the backslash is getting missed.. might be the cause of missing{} inserted
-	YAMLvars--incorporate penlight deeper with pakcage warn and declare functions
 

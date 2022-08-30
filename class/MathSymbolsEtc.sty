@@ -16,7 +16,7 @@
 
 \renewcommand{\theequation}{\arabic{section}.\arabic{equation}}
 \def\@cpb@mathline{\raisebox{0pt}[0pt][0pt]{\vline height 0.8em depth 0.6em width \arrayrulewidth}}
-\renewcommand\tagform@[1]{\maketag@@@{\ignorespaces\@cpb@mathline\;\cpb@secnumsize#1\unskip\@@italiccorr\hspace*{5ex}}}
+\renewcommand\tagform@[1]{\maketag@@@{\ignorespaces\makebox[6ex][l]{\@cpb@mathline\;\cpb@secnumsize#1\unskip\@@italiccorr\hfill}\hspace*{5ex}}}
 
 
 
@@ -34,13 +34,32 @@
 ]{siunitx} % http://ctan.mirror.rafal.ca/macros/latex/contrib/siunitx/siunitx.pdf
 
 
+
+
+
+%\newenvironment{mathwhere}
+%  {where:\vspace{\abovedisplayskip}\noindent\begin{tabularx}{\linewidth}{>{$}l<{$} !{is} Z}}
+%  {\end{tabularx}\par\vspace{\belowdisplayskip}}
+
+
+\NewDocumentEnvironment{mathwhere*}{ +b }{%
+\begin{tabularx}{0.8\linewidth}[t]{>{$}l<{$}  Z}
+					 #1
+\end{tabularx}\par\vspace{\belowdisplayskip}
+	}{}
+
+\NewDocumentEnvironment{mathwhere}{+b}{%
+where:\\[0.3ex]
+\hspace*{3ex}
+\begin{AutoPuncTabular}
+	\begin{mathwhere*}
+		#1
+	\end{mathwhere*}
+\end{AutoPuncTabular}
+	}{}
+
+
+
 %	inter-unit-product=\,, % default
 %\sisetup{range-phrase=--,
-
-
-
-%\def\sbfCMB#1{\ThisStyle{\setbox0=\hbox{$\SavedStyle#1$}%
-%		#1\kern.2pt\kern-\wd0%
-%		\raisebox{.1pt}{$\SavedStyle#1$}}}
-\newcommand{\sbfCMB}[1]{\textbf{\textit{#1}}}
 

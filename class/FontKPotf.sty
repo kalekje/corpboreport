@@ -18,8 +18,8 @@
 \let\unum\liningnums
 \let\classicstylenums\liningnums
 
-\def\act{\scshape\toglnums}
-\def\actext#1{\textsc{\toglnums#1}}
+\def\acs{\scshape\toglnums}  % acronym series
+\def\act#1{\textsc{\toglnums#1}}  % acronym text
 
 \AtBeginEnvironment{tabular}{\togunums}
 \AtBeginEnvironment{tabular*}{\togunums}

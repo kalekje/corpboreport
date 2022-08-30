@@ -72,7 +72,8 @@
 	belowskip={1.0\baselineskip},
 	captionpos=t,
 	belowcaptionskip=5pt, % trial and error gve this a good result
-	frame=\cbp@listframe,
+%	frame=\cbp@listframe,
+	frame=tb,
 	rulecolor=\color{black},
 	numbers=left,
 	numberstyle=\ttfamily\footnotesize\color{codecomment},
@@ -132,24 +133,11 @@
 
 
 
-\lstdefinestyle{code}{
-	basicstyle       = \small\ttfamily ,
-	numbers          = left,
-	numberstyle      = \scriptsize,
-	numberblanklines = true,
-	breaklines       = true,
-	keepspaces       = true,
-	columns          = fullflexible,
-	frame=tb,
-	% whatever else you want ...
-}
-
 
 
 
 \lstnewenvironment{listing}
 {%
-	\lstset{style=code}%
 	\mdframed[style=note]%
 }
 {%

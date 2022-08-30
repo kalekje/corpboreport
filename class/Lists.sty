@@ -35,8 +35,16 @@
 }
 %
 
+
 \setlist[enumerate,2]{label=\alph*.}
 \SetEnumitemKey{moresep}{itemsep=\moreseplength}
+
+\providetoggle{useSerif}
+\iftoggle{useSerif}{
+%	\setlist[enumerate,2]{label=\alph*., format=\toglnums}
+	\setlist[enumerate,1]{label=\toglnums\arabic*.}
+}{}
+
 
 %%%
 \SetEnumitemKey{twocol}{

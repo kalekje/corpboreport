@@ -1,67 +1,53 @@
-
-%\NewDocumentCommand{\client}{o m O{#1}}{% declare document var with option. Allow [] on either side of {} for flexibiliy
-%\gdef\Client{#2}
-%\IfValueTF{#3}%
-%  {\gdef\ClientAddr{#3}}%
-%  {\gdef\ClientAddr{}}%
-%  \luadirect{pl.tex.makeInTextcmd('TheClientAddr', \luastringN{#3})}
-%  \luadirect{pl.tex.setPDFvar('Author',            \luastringO{\TheClientAddr})}
-%}
-%
-%\NewDocumentCommand{\title}{o m O{#1}}{% declare document var with option. Allow [] on either side of {} for flexibiliy
-%\gdef\@title{#2}
-%\IfValueTF{#3}%
-%  {\gdef\ClientAddr{#3}}%
-%  {\gdef\ClientAddr{}}%
-%  \luadirect{pl.tex.makeInTextcmd('thetitle', 		\luastringN{#3})}
-%  \luadirect{pl.tex.setPDFvar('Title',           \luastringO{\thetitle})}
-%}
-
-% todo
-% for authors, use \and when declaring
-% in penlight, preserve \and for title page \@ definition
-%    for thetitle, change \and to , and and
-% for PDF var, do the same cleaning, but replace \and with \sep
-% maybe do a list to \and in yamlvars too
-% todo star variants?
-
-%todo square bracket option for setting pdf val?
+%%% document variables
 
 \RenewDocumentCommand{\title}{m}{\luadirect{
 	pl.tex.defcmdAT('@title', \luastringN{#1})
-	pl.tex.updatePDFtable('Title', makePDFvarstr(\luastringN{#1}), false)
+	pl.tex.updatePDFtable('Title', pl.tex.makePDFvarstr(\luastringN{#1}), false)
 	pl.tex.defcmd('thetitle', pl.tex.makeInTextstr(\luastringN{#1}))
 }}
 
 \RenewDocumentCommand{\author}{m}{\luadirect{
 	pl.tex.defcmdAT('@author', \luastringN{#1})
-	pl.tex.updatePDFtable('Author', makePDFvarstr(\luastringN{#1}), false)
+	pl.tex.updatePDFtable('Author', pl.tex.makePDFvarstr(\luastringN{#1}), false)
 	pl.tex.defcmd('theauthor', pl.tex.makeInTextstr(\luastringN{#1}))
 }}
 
+\RenewDocumentCommand{\date}{m}{\luadirect{
+	pl.tex.defcmdAT('@date', \luastringN{#1})
+	pl.tex.defcmd('thedate', pl.tex.makeInTextstr(\luastringN{#1}))
+}
+\luaexec{pl.tex.updatePDFtable('Date', os.date'\%Y-\%m-\%d', false)}
+}
+
 \NewDocumentCommand{\company}{m}{\luadirect{
 	pl.tex.defcmdAT('@publishers', \luastringN{#1})
-	pl.tex.updatePDFtable('Publisher', makePDFvarstr(\luastringN{#1}), false)
+	pl.tex.updatePDFtable('Publisher', pl.tex.makePDFvarstr(\luastringN{#1}), false)
 	pl.tex.defcmd('thecompany', pl.tex.makeInTextstr(\luastringN{#1}))
 }}
+
 \let\publishers\company
-% yse @publishers to match KOMA, Publisher for PDFvar
+% use @publishers to match KOMA, Publisher for PDFvar
 % for beamer, company = institute
 
-\def\logoset{}
-\NewDocumentCommand{\logo}{ >{\ExpArgOnceProc}O{\logoset} m }{%
-	\gdef\@logo{\includegraphics[width=4cm,smash=tl,#1]{#2}}%
+\def\@logoset{} % additional logo settings
+\NewDocumentCommand\logoset{m}{\gdef\@logoset{#1}}
+
+\NewDocumentCommand{\logo}{ s >{\ExpArgOnceProc}O{\@logoset} m }{%
+% star to overwrite custom settings for image, otherwise, try to let the class place it
+	\IfBooleanTF{#1}%
+	{\gdef\@logo{#3}}%
+	{\iftoggle{samepgTitle}%
+		{\gdef\@logo{\Llap{\raisebox{\dimexpr(-\height+16pt)\relax}[0pt][0pt]{\includegraphics[width=4cm,#2]{#3}}}}}%
+		{\gdef\@logo{\includegraphics[width=4cm,smash=tl,#2]{#3}}}
+	}%
 }
-		%	\gdef\@logo{\includegraphics[width=4cm,smash=tl]{#1}}%
-		%\NewDocumentCommand{\logo}{ m }{%
-		%\NewDocumentCommand{\logo}{O{width=4cm} m >{\ExpArgOnceProc}O{\TitleLogoPlaceDefault} }{%
-		%    \gdef\@logo{\includegraphics[#1,smash=#3]{#2}}%
-		%}
-		%\def\logoset{width=4cm,smash=tl}
 
 
-\gdef\@tpOwn{
+%%% title pages
+
+\gdef\cpb@tpOwn{
 \begin{titlepage} % Suppresses displaying the page number on the title page and the subsequent page counts as page 1
+	\toglnums
 	\raggedright % Right align the title page
 	\rule{\heavyrulewidth}{7.4in} % Vertical line
 	\hspace{0.5in} % Whitespace between the vertical line and title page text
@@ -101,32 +87,27 @@
 }
 
 
-\gdef\titlesubbox#1{\hspace*{0.7cm}
-\pbox{\dimexpr(\linewidth-0.7cm)\relax}{#1}\par\vspace{-1ex}
-}
 
-\gdef\@tpSame{\thispagestyle{plain}
+
+\gdef\cpb@tpSame{\thispagestyle{plain}
 		\gdef\And{\hspace*{3ex}}
+		\vspace*{-2.5cm}
 		{\RaggedRight                             % \pbox[t]{\linewidth}  %% todo top align logo with title
-		\pbox[t]{0.45\linewidth}{\LARGE\bfseries \@title} \hfill	 \ifdef{\@logo}{\@logo}{}\par
-
-		\vspace{0.5em}
-
-		\ifdef{\@subtitle}{\titlesubbox{\itshape \@subtitle}}{}
-		\ifdef{\@publishers}{\titlesubbox{\def\and{\, }\large \@publishers}}{}
-		\ifdef{\@author}{\titlesubbox{\def\and{\, }\large\bfseries \@author}}{}
-		\ifdef{\@date}{\titlesubbox{\large \@date}}{}
-
-		\vspace*{1em}
-		\rule{\linewidth}{\heavyrulewidth}\\[-2ex]
-		\ \hfill\rule{\dimexpr(\linewidth-0.7cm)\relax}{\lightrulewidth}
-		\vspace*{1em}
+		\hspace*{-10mm}\pbox[t]{0.8\linewidth}{\LARGE\bfseries \@title} \hfill	 \ifdef{\@logo}{\@logo}{}\par
+		
+		\ifdef{\@subtitle}{{\itshape\@subtitle}\medskip}{}
+		\ifdef{\@publishers}{{\def\and{\, }\large\@publishers}\smallskip}{}
+		\ifdef{\@author}{{\def\and{\, }\large\bfseries\@author}}{}
+		\ifdef{\@date}{{\large\@date}}{}
+		\\\smallskip
+		\ \hfill\llap{\rule{\dimexpr(\linewidth+1.0cm)\relax}{\heavyrulewidth}}\\[-2ex]%
+		\ \hfill\llap{\rule{\dimexpr(\linewidth-0.0pt)\relax}{\lightrulewidth}}%
 }}
 
 
 
 \def\maketitle{%
-	\iftoggle{samepgTitle}{\togglefalse{SecOnNewPage}\@tpSame}{\@tpOwn}%
+	\iftoggle{samepgTitle}{\cpb@tpSame}{\cpb@tpOwn}%
 }
 
 

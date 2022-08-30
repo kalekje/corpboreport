@@ -1,5 +1,6 @@
 %\providelength{\floatindentlength}{10ex}
 
+%%% Intentionally blank page command
 \newcommand{\IntentionallyBlankPage}{
 \pagebreak
 \thispagestyle{empty}
@@ -10,10 +11,11 @@
 }
 
 
-%%% End of document
+%%% End of document command
 \NewDocumentCommand{\PrintEndOfDocument}{ s O{document}}{%
 \IfBooleanTF{#1}{\vspace*{2.5cm}}{\pagebreak\null\vfill}
 {\noindent\hspace*{\floatindentlength}\large\slshape End\ of\ #2.\hfill\vspace{5cm}}
 \IfBooleanF{#1}{\null\vfill}
+\pdfbookmark{End}{End}
 }
 

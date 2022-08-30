@@ -29,6 +29,8 @@
 
 \let\nl\\  % shortcut for \newline and \\
 
+\def\MoreRowHeight{\rule{0pt}{0.9em}}
+
 % fixed column width, ragged right instead of horizontally filled allows new line
 \newcolumntype{P}[1]{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}p{#1}}
 \newcolumntype{M}[1]{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}

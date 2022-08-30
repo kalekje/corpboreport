@@ -32,7 +32,6 @@
 
 
 
-
 %%% HEADER
 \renewcommand{\chaptermark}[1]{%
   \markboth{\chapapp\ \thechapter\autodot}{#1}}
@@ -47,7 +46,15 @@
 
 
 %%% CHAPTER SECTION HEADINGS FORMAT
-\addtokomafont{chapterprefix}{\raggedleft}
+
+
+\addtokomafont{chapterprefix}{\raggedleft\toglnums}
+%\addtokomafont{pagenumber}{\toglnums}
+
+%https://tex.stackexchange.com/questions/43619/changing-toc-subsection-entry-font-in-scrartcl
+\newcommand\tocmainfont[1]{%
+  \toglnums #1%
+}
 
 \newcommand{\ShowChapterPrefix}{
 \renewcommand*{\chapterformat}{%
@@ -55,13 +62,13 @@
 \mbox{\raisebox{5ex}{\normalsize
 \chapappifchapterprefix
 {\nobreakspace}}%
-\scalebox{3}{\classicstylenums\thechapter\autodot}\enskip}}
+\scalebox{3}{\thechapter\autodot}\enskip}}
 }%
 
 \newcommand{\HideChapterPrefix}{
 \renewcommand*{\chapterformat}{%
 \color{brown}%
-\mbox{\scalebox{3}{\classicstylenums\thechapter\autodot}\enskip}}}%
+\mbox{\scalebox{3}{\thechapter\autodot}\enskip}}}%
 
 \HideChapterPrefix
 
@@ -77,8 +84,9 @@
 
 %https://tex.stackexchange.com/questions/381261/right-align-chapter-numbering-in-koma-script-toc?rq=1
 \newcommand\sectionentrynumberformat[1]{% define the new format for the chapter numbers in ToC
-	\hfill\cpb@secnumsize#1\enspace\hspace{1pt}% align chapter numbers right
+	\hfill\cpb@secnumsize#1\enspace\hspace*{0.01pt}% align chapter numbers right
 }
+
 
 \setkomafont{disposition}{\normalfont\bfseries} % section preference
 \newcommand{\vparspace}{\vspace{\parskip}}
@@ -112,6 +120,7 @@ tocbeforeskip=16pt,
 toclinefill=\diamondleaders,
 tocentryformat=\large\bfseries,
 tocentrynumberformat=\sectionentrynumberformat,
+%tocpagenumberformat=\tocmainfont,
 ]{chapter}
 
 \RedeclareSectionCommand[
@@ -123,6 +132,7 @@ tocnumwidth=6ex,
 toclinefill=\diamondleaders,
 tocentrynumberformat=\cpb@secnumsize,
 tocentryformat=\large,
+%tocpagenumberformat=\tocmainfont,
 ]{section}
 
 \RedeclareSectionCommand[
@@ -174,16 +184,28 @@ entrynumberformat=\cpb@secnumsize,
 ]{tocline}{figure}
 \renewcaptionname{english}{\listfigurename}{Figures}
 
+% todo need something for code boxes?
+
+%\setkomafont{tocentrypagenumber}{\toglnums}
+%\addtokomafont{chapterentrypagenumber}{\toglnums}
+%\setkomafont{sectionentrypagenumber}{\toglnums}
+%\addtokomafont{entrypagenumber}{\toglnums}
+
+%\addtokomafont{sectionentrypagenumber}{\toglnums}
+% https://tex.stackexchange.com/questions/241210/fonts-used-in-scrrprt-toc
+
+%\usepackage{tocstyle}
+%\settocstylefeature{pagenumberhook}{\toglnums}
+
 \counterwithin{figure}{chapter}
 \counterwithin{table}{chapter}
 
 
 % front matter chapter (acknowledgements or abstract)
-\newcommand{\chapterF}[1]{\RedeclareSectionCommand[beforeskip=8.0\baselineskip plus 3pt minus 1pt]{chapter}
+\newcommand{\chapterF}[1]{\RedeclareSectionCommand[beforeskip=6.0\baselineskip plus 3pt minus 1pt]{chapter}
 \pdfbookmark[0]{#1}{Label#1PDF}%
 \chapter*{#1}%
 \RedeclareSectionCommand[beforeskip=1.0\baselineskip plus 3pt minus 1pt]{chapter}}
-
 
 
 \NewDocumentCommand{\chapterM}{ t- m }{% chapter Matter (front or back), ToC and pdf bookmark but no number
@@ -198,6 +220,8 @@ entrynumberformat=\cpb@secnumsize,
   \pdfbookmark[0]{Title}{LabelTitlePDF}
 }
 
+
+
 \def\addcontentslists{
   \pdfbookmark[0]{Contents}{LabelContentsPDF}
   \tableofcontents
@@ -206,14 +230,13 @@ entrynumberformat=\cpb@secnumsize,
   \addtocentrydefault{chapter}{\phantom{.}}{Figures}\addtocontents{toc}{\vspace*{-1.3ex}}%
   \listoffigures
   \chaptermark{Figures}
-  
+%
   \addtocentrydefault{chapter}{\phantom{.}}{Tables}%
   \listoftables
   \chaptermark{Tables}
-  
-  \bookmarksetup{startatroot}
 }
 
+\def\mainmatter{\bookmarksetup{startatroot}}
 
 \def\backmatter{\pdfbookmark[-1]{Back-Matter}{LabelBMPDF}}
 
@@ -224,3 +247,9 @@ entrynumberformat=\cpb@secnumsize,
   
   \pdfbookmark[-1]{Appendix}{LabelAppendicesPDF}
 }{}{}
+
+
+%% BACK MATTER
+%\HideChapterPrefix
+%\addtocontents{toc}{Back-Matter}
+

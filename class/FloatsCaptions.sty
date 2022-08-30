@@ -24,8 +24,8 @@
   \fi}
 
 
-\DeclareCaptionLabelFormat{hangcap}{\llap{#1 #2:\ }}
-\DeclareCaptionLabelFormat{widecap}{#1 #2}
+\DeclareCaptionLabelFormat{hangcap}{\llap{#1~#2:\enspace}}
+\DeclareCaptionLabelFormat{widecap}{#1~#2:}
 \captionsetup{labelformat=hangcap}
 \providetoggle{useSerif}
 \DeclareCaptionLabelSeparator{enspace}{\enspace}
@@ -34,14 +34,17 @@
 %  \DeclareCaptionLabelFormat{lc}{\MakeLowercase{#1}~#2}
   \DeclareCaptionLabelFormat{hangcap}{\llap{\MakeLowercase{#1}~#2\enspace}}
   \DeclareCaptionLabelFormat{widecap}{\MakeLowercase{#1}~#2}
-  \DeclareCaptionFont{bfsc}{\bfseries\scshape}
-  \captionsetup{labelfont=bfsc,labelformat=hangcap,labelsep=enspace}
+  \DeclareCaptionFont{bfscln}{\bfseries\scshape\toglnums}
+  \captionsetup{labelfont=bfscln,labelformat=hangcap,labelsep=enspace}
 }{}
 \captionsetup[sub]{skip=8pt, aboveskip=5pt, font=small, labelfont={small,bf,sc},
 	position=top,labelformat=hangcap,labelsep=enspace}  % formats \subcaptionbox
 \floatsetup{justification=raggedright,objectset=raggedright}
 \floatsetup[table]{captionskip=0.3ex} %	 http://tug.ctan.org/tex-archive/macros/latex/contrib/floatrow/floatrow.pdf
-\floatsetup[figure]{captionskip=0.3ex}
+
+% todo need an option for caption position for figure
+%\iftoggle{TopFigCap}{\floatsetup[figure]{captionskip=0.3ex}\let\captop\{}}  % todo incorporate this
+\floatsetup[figure]{captionskip=0.5ex} % for bottom caption
 
 \newcommand{\WideFloatCaption}{\captionsetup{labelformat=widecap,format=plain}}
 
@@ -51,6 +54,9 @@
 \setlength{\floatsep}{24pt plus 2.0pt minus 2.0pt} % distance between two floats; add rubber here
 \setlength{\textfloatsep}{24pt plus 2.0pt minus 2.0pt} % distance between floats inserted inside the page text (using h) and the text proper, add rubber here
 
+
+\newlength{\fullheight}  % full height for pdfs/figures
+\setlength{\fullheight}{22cm}
 
 
 \NewDocumentCommand{\cpb@setFloatCap}{m m}{%
@@ -75,7 +81,7 @@
   \cpb@setFloatCap{#1}{#2}%
   \begin{figure}[#3]%
     #4%
-    \captop%
+%    \captop%
     \caption[#7]{#6}#8%
     \IfBooleanTF{#1}%
       {\ffigbox{}{#5\IfValueT{#9}{\vspace{\TabNoteSpace}\floatfoot*{#9}}}}%  FBwidth doesn't work with sub-figure, hack for now
@@ -126,3 +132,37 @@
   \afterpage{#1}
 }
 
+
+%% includes generator data sheet, rotates first three pages
+%%  \RotPDFninety now == \RotPDF, if on section, do this  BEFORE the section
+%% todo add a starting page
+\NewDocumentCommand{\RotFirstXpdf}{m O{3}}{
+%	\RotPDF  % todo determine if RotPDF would be better here
+	\enlargethispage{8in}
+	\includegraphics[angle=90,height=\fullheight]{#1}
+	\includepdf[pages=2-\fpeval{#2},angle=90,pagecommand={}, height=\fullheight]{#1}
+	\RotPDF*
+	\includepdf[pages=\fpeval{#2+1}-,angle=0,pagecommand={},height=\fullheight]{#1}
+}
+
+
+\NewDocumentCommand{\inputPDF}{m O{3}}{
+%  todo need option for rotating some pages here, that would be nice
+	\enlargethispage{8in}
+  \includegraphics[height=\fullheight]{#1}
+	\includepdf[pages=2-,angle=0,pagecommand={},height=\fullheight]{#1}
+}
+
+%https://tex.stackexchange.com/questions/198091/get-number-of-pages-of-external-pdf
+\newcommand*{\pdfnumberofpages}[1]{%
+  \directlua{%
+    local doc = epdf.open("\luatexluaescapestring{#1}")
+    local pages
+    if (doc) then
+      pages = doc:getCatalog():getNumPages()
+    else
+      pages = 0
+    end
+    tex.write(pages)
+  }%
+}

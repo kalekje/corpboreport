@@ -133,9 +133,6 @@ pdf:
 \IntentionallyBlankPage
 
 
-\thetitle
-\theauthor
-
 \section{Quick Start}
 \begin{itemize}
     \item Install MiKTeX (\url{https://miktex.org/download}) (do a single user installation)
@@ -176,6 +173,7 @@ Glossary/Acronym: \cmd{makeglossaries -d ./out main}
 PDF viewer: I like Sumatra as you can leave a PDF open in it and still re-compile (Adobe hogs the file).\url{https://www.sumatrapdfreader.org/free-pdf-reader}
 
 \pagebreak
+
 
 \subsection{Compiling with VSCode}
 
@@ -241,54 +239,76 @@ Don't let the name fool you---although plain and unassuming with a (dare I say) 
 this template has numerous bells and whistles that make your \LaTeX ing easier.
 It could easily lend itself well to school assignments or lab reports as well.
 
+This document is intended to be a guide on how to use it as well as offer some tips and hacks
+for producing a good doc.
 
 
-\section!{Class Options}
+\section{Customizing your Doc}
+
+\subsection!{Class Options}
 \llcmd{memo}use a memo format instead.\\
 \llcmd{compact}use a compact format  (sections not on a new page, and different title page.)\\
 \llcmd{serif}change the font to serif (kpfonts light instead of CM-Bright).
 
 
-\section!{Switches}
+\subsection{Tweaking Switches}
 
 \begin{lstlisting}
 %%% Draft toggles
 \DarkModePDF %< if you want a dark theme
 \DraftMark %< puts a draft water mark
 \PreLimMark %< auto set
+\ShowGrid
+
 
 %%% some formatting toggles
 \togglefalse{SecOnNewPage}  % insert new page before each section?
 \secwiselabelnums % if you want figures and table numbers to be based on section, ie 1.1, 1.2, etc.
 
-\providelength{\tpsignheight}{7cm}  % adjust height of tp area
 
-\setlength{\tocsecskip}{0.7em}  % if you want to spread or compress ToC to fit page better
-\setlength{\pullToCcloser}{-12pt} % pulls ToC closer to section heading for more room
-\setlength{\moreToCbottom}{2em} % enlarges ToC page to help cram stuff
+\TocCecskip=0.7em  % if you want to spread or compress ToC to fit page better
+\ToCextrabottomroom=2em % enlarges ToC page to help cram stuff
+\ToCrightmargin=0pt % pushes page numbers closer to ToC for easier reading
+\pullToCcloser=-12pt % pulls ToC closer to section heading for more room
 
 \toggletrue{showListOfFigsTabs} %< show figs/tables contents
 \togglefalse{samepgListOfFigsTabs} %< on the same page?
 \end{lstlisting}
 
 
-\section!{Some Basic Settings}
-The title of this document is redefined, and uses the KOMA commands
-\cmd{\title{}}
-\cmd{\subtitle{}}
-\cmd{\author{}}
-\cmd{\date{}}
-\cmd{\company{}} (equivalent to publishers)
-\cmd{\logo{}} (added, path to graphics) to set some title page parameters
+\subsection{Document Data}
+The title of this document is redefined, and uses the KOMA commands:\\
+\cmd{\title{}}\\
+\cmd{\subtitle{}}\\
+\cmd{\author{}}\\
+\cmd{\date{}}\\
+\cmd{\company{}} (equivalent to publishers)\\
+\cmd{\logo{}} (give the path to graphics). Can use the * variant if you want to manually include \cmd{\includegraphics}\\
+\cmd{\logoset} (some logo settings)
 
+If you want to print the title (and have deliberate line breaks removed), or author, etc.,
+try \cmd{\thetitle} -> ``\thetitle'' and \cmd{\theauthor} -> ``\theauthor''
+
+
+\subsection{Header and Footer}
 Since this document class uses KOMA Script, change the header with
 \cmd{\lohead{}, \rohead{}}
+
+
+
+
+\subsection{PDF metadata and PDF-A Compliance}
+
+This class tries to be PDF-A compliant.
+It uses the pdfx class to write document metadata (pdf properties).
+Most of the titling commands will clean and store the pdf data, but to write it,
+use \cmd{\writePDFmetadata} (see penlight documentation for details) before the document.
 
 
 \section{Sections}\label{s.sett}
 
 This class by default will insert a page break on a new section.
-Using the etoolbox package, you can disable this behaviour.
+Using the etoolbox package, you can disable this behaviour with \cmd{\togglefalse{SecOnNewPage}}.
 if you want to invert the behaviour for a particular section, use !
 
 For paragraphs, if you would like the text to appear on a new line (rather than run in), use !.
@@ -304,7 +324,11 @@ Custom
 \section! will not necessarily put the section on a new page. By default, sections go on a new page
 \paragraph!   Will push the following text on a new line. Without "!", the text begins on the same line as the heading
 On any of the section/sub commands, using a + will add a letter after it.
+
+\sectionM{} is a front/back-matter section--will make a section that shows up in ToC and PDF bookmarks, but no number
+
 \end{lstlisting}
+
 
 The sections are redefined so that \texttt{+} will append a letter. \cmd{\reset[sub]sectionletter}
 
@@ -442,7 +466,17 @@ Make sure a \% and no new lines after, this improves
 
 \subsection{Hacks}
 
-{\toglnums 1234567890 abcdefghi}
+%{\toglnums 1234567890 abcdefghi}
+
+I like exploiting \cmd{\rlap} for hanging characters, ex:
+
+\begin{LTXexample}
+\begin{tabular}{ll}\toprule
+\MC{Voltage\rlap{,}\\kV} & \MC{Current\rlap{,}\\Amps} \\\bottomrule
+\end{tabular}
+\end{LTXexample}
+
+
 
 \subsubsection{Spacing}
 Use the following commands outside the tabular environment.

@@ -49,12 +49,12 @@ numbers=noenddot]{scrreprt}
 
 \usepackage{\FormatDir FontKPotf}
 
-
 \usepackage{\FormatDir HeaderFooterFootnotes} %%% HEADER AND FOOTER AND FOOTNOTES
 \usepackage{\FormatDir PageNumberInMargin} %%% PLACING PAGE NUMBER IN THE LOWER RIGHT MARGIN
 
 %\usepackage{\FormatDir SectionsToCCustom} %%% SECTION HEADINGS, TOC, AND FORMATTING
 \usepackage{\FormatDir SecThesis}
+\usepackage{\FormatDir TocExtra}
 
 %\usepackage{\FormatDir AppendixFormat} %%% APPENDIX FORMATTINGS (depends on some ToC)
 \usepackage{\FormatDir AppendixFormatThesis} %%% APPENDIX FORMATTINGS (depends on some ToC)
@@ -88,52 +88,6 @@ numbers=noenddot]{scrreprt}
 \usepackage{lutabulartools}
 \usepackage{autopuncitems}
 
-\usepackage{YAMLvars}
-\begin{luacode*}
-    YAMLvars.tabmidrule = 'gmidrule'
-\end{luacode*}
-
-
-
+\usepackage{\FormatDir YAMLvarsDec}
 
 \usepackage{\FormatDir EndOf}
-
-\rohead{}
-
-%! language = yaml
-\begin{declareYAMLvars}
-title:
-  xfm: lb2nl
-  prc: setdocvar
-
-subtitle:
-  xfm: lb2nl
-  prc: setdocvar
-
-author:
-  xfm: lb2nl
-  prc: setdocvar
-
-date:
-  xfm: lb2nl
-  prc: setdocvar
-
-subject:
-  xfm: lb2nl
-  prc: setdocvar
-
-fileno:
-  xfm: lb2nl
-  prc: setdocvar
-
-publishers:
-  xfm: lb2nl
-  prc: setdocvar
-
-logo:
-  prc: setdocvarOpts
-  
-pdf:
-  prc: setPDFdata
-  
-\end{declareYAMLvars}

@@ -44,6 +44,16 @@
 \colorlet{subsecCol}{darkindigo}
 \colorlet{subsubsecCol}{verydarkindigo}
 
+\def\blacksectionheadings{
+   \setaccentcolor{.} % . is current color, so if you invert it will change
+}
+
+
+\NewDocumentCommand{\setaccentcolor}{m}{
+    \colorlet{secCol}{#1}
+    \colorlet{subsecCol}{#1}
+    \colorlet{subsubsecCol}{#1}
+}
 
 
 \definecolor{pltblue}{HTML}{1000F0}

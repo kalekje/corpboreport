@@ -41,7 +41,7 @@ fleqn,
 \gdef\TitleLogoPlaceDefault{tl}
 
 \DeclareOption{memo}{\toggletrue{useMemo}}
-\DeclareOption{compact}{\toggletrue{samepgTitle}\gdef\TitleLogoPlaceDefault{bl}}
+\DeclareOption{compact}{\toggletrue{samepgTitle}\gdef\TitleLogoPlaceDefault{bl}\AtBeginDocument{\togglefalse{SecOnNewPage}}}
 \DeclareOption{serif}{\toggletrue{useSerif}}
 \ProcessOptions\relax
 
@@ -70,6 +70,7 @@ fleqn,
 
 \usepackage{\FormatDir HeaderFooterFootnotes} %%% HEADER AND FOOTER AND FOOTNOTES
 \usepackage{\FormatDir SectionsToCCustom} %%% SECTION HEADINGS, TOC, AND FORMATTING
+\usepackage{\FormatDir ToCextra} %%% SECTION HEADINGS, TOC, AND FORMATTING
 \usepackage{\FormatDir PageNumberInMargin} %%% PLACING PAGE NUMBER IN THE LOWER RIGHT MARGIN
 \usepackage{\FormatDir AppendixFormat} %%% APPENDIX FORMATTINGS (depends on some ToC)
 \usepackage{\FormatDir ColorsCustom} %%% CUSTOM COLORS
@@ -95,68 +96,8 @@ fleqn,
 \usepackage[pl,extras]{penlight}
 \usepackage{lutabulartools}
 \usepackage{autopuncitems}
+\usepackage{\FormatDir YAMLvarsDec}
 
-\newcommand{\cbpheaderbox}[1]{\parbox[b][2em][b]{0.4\linewidth}{\setstretch{0.8}#1}}
-
-\usepackage{YAMLvars}
-\begin{luacode*}
-    YAMLvars.tabmidrule = 'gmidrule'
-    function YAMLvars.xfm.headerbox(var, val)
-      if var:find('r', 1, true) == 1 then
-        val = '\\flushright '.. val
-      end
-      return '\\cbpheaderbox{'..val..'}'
-    end
-\end{luacode*}
-
-
-
-\lowercasevarYVon
-%! language = yaml
-\begin{declareYAMLvars}
-title:
-  xfm: lb2nl
-  prc: setdocvar
-
-subtitle:
-  xfm: lb2nl
-  prc: setdocvar
-
-author:
-  xfm: [list2and,lb2nl]
-  prc: setdocvar
-
-company:
-  xfm: [list2and,lb2nl]
-  prc: setdocvar
-
-date:
-  xfm: lb2nl
-  prc: setdocvar
-
-logo:
-  prc: setdocvar
-
-institute:  # for beamer, company recommended though
-  prc: setdocvar
-
-publishers:  # company recommended
-  xfm: [list2and,lb2nl]
-  prc: setdocvar
-
-lohead:
-  xfm: [lb2nl, headerbox]
-  prc: setdocvar
-
-rohead:
-  xfm: [lb2nl, headerbox]
-  prc: setdocvar
-  
-pdf:
-  prc: setPDFdata
-  
-\end{declareYAMLvars}
-\lowercasevarYVoff
 
 
 
