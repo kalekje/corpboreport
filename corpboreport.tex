@@ -28,11 +28,11 @@
 %\documentclass[memo,serif]{\FormatDir corpboreportMulti}
 %\documentclass[serif]{\FormatDir corpboreportMulti}
 \documentclass{\FormatDir corpboreportMulti}
+%\setlength{\parindent}{0ex}
 
 
-\setlength{\parindent}{0ex}
-\newcommand{\llcmd}[1]{\leavevmode\llap{\texttt{\detokenize{#1}\ }}}
 \newcommand{\cmd}[1]{\texttt{\detokenize{#1}}}
+\newcommand{\llcmd}[1]{\leavevmode\llap{\texttt{\detokenize{#1}\ }}}
 \newcommand{\qcmd}[1]{``\cmd{#1}''}
 \newcommand{\llcmdlink}[2]{\href{#2}{\hspace{-15ex}}\hspace{15ex}\llcmd{#1}}%
 
@@ -358,13 +358,26 @@ Examples:
 \cmd{\cref{f.m602fTOV}}
 \cmd{\label{s.steadystate}}
 
-\subsection{Citation}
+\subsection{Citations/Bibliography}
 
 The .bib files contain the reference information. Call the key with \cmd{\cite{key}}.
 
-I have a command that prints the title then adds the reference (in italic): \cmd{\citeT{key}}
+I have a command that prints the title then adds the reference (in italic): \cmd{\citeT{key}}.
+
+If you want to use data from a .bib file, but not add it to the citation list, wrape the command like so
+\cmd{\begin{refsection}\fullcite{#1}\end{refsection}}
 
 I like JabRef to help manage my .bib files \url{https://www.jabref.org/}
+
+
+\subsection{Acronyms}
+
+This class provides acronyms with \cmd{\ac}. It supresses links to the Acronym entry
+(unlike \cmd{\gls{}} which links to the glossary), and instead
+tries to use tooltips over the acronyms that show the long-form.
+If you want to place something different in place of the tooltip text, set
+\cmd{\def\ackeyToolTipText{Text shown on tooltip for ackey}}
+
 
 
 \section{Float commands}

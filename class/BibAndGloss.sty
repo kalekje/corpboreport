@@ -1,7 +1,6 @@
 % requires enumitem for acronym styling
 \usepackage[sorting=none]{biblatex}
 
-\newcommand{\citeT}[1]{\citetitle{#1}~\cite{#1}}
 \renewrobustcmd*{\bibinitdelim}{\,}
 \renewcommand*{\multicitedelim}{\addcomma\,}  % tighten [1,2,3] multi citations
 
@@ -13,6 +12,22 @@
 \renewcommand*{\citesetup}{%
 \togunums\biburlsetup}
 
+
+\newcommand{\citeT}[1]{\citetitle{#1}~\cite{#1}}
+\NewDocumentCommand{\citenumber}{m}{\citefield{#1}[]{number}}
+
+%% citing without pushing to bibliography
+\NewDocumentCommand{\fullcitenobib}{m}{\begin{refsection}\fullcite{#1}\end{refsection}}
+
+\NewDocumentCommand{\citestd}{m}{\begin{refsection}\citeauthor{#1} \citefield{#1}[]{number} -- \citefield{#1}[]{year}: \citetitle{#1}\end{refsection}}
+
+
+%% todo: possibly rebuild the cite commands but add a '-' decorator to supress referencing
+
+
+
+
+%%% acrnonym and gloassaries stuff
 
 \usepackage[xindy,acronym,nonumberlist,toc]{glossaries-extra}
 \renewcommand{\glossarysection}[2][]{} % remove glossary section heading entirely, requires manual but more flexible
@@ -116,17 +131,3 @@
 %		\oldglspl{#2}%
 %	}%
 %}%
-
-
-
-% override some acronyms that don't appear as we want
-\newcommand{\besToolTipText}{Bulk Electric System}
-\newcommand{\ioaToolTipText}{Interconnection and Operating Agreement}
-\newcommand{\rasToolTipText}{Remedial Action Scheme}
-\newcommand{\poiToolTipText}{Point(s) of Interconnection}
-\newcommand{\podToolTipText}{Point(s) of Delivery}
-\newcommand{\oaitToolTipText}{Open Access Interconnection Tariff}
-\newcommand{\oattToolTipText}{Open Access Transmission Tariff}
-\newcommand{\isuToolTipText}{Interconnection System Upgrade(s)}
-
-
