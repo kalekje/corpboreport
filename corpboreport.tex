@@ -31,9 +31,17 @@
 %\setlength{\parindent}{0ex}
 
 
-\newcommand{\cmd}[1]{\texttt{\detokenize{#1}}}
-\newcommand{\llcmd}[1]{\leavevmode\llap{\texttt{\detokenize{#1}\ }}}
-\newcommand{\qcmd}[1]{``\cmd{#1}''}
+
+
+%\newcommand{\cmds}[1]{\texttt{\detokenize{#1}}} % command, but note \test{} -> \test {}
+%\makeatletter
+%\def\cmd#1{\texttt{\expandafter\zap@space\detokenize{#1} \@empty}}  % spaced will be removed
+%\makeatother
+
+\def\cmd{\bgroup\catcode`\\=12 \catcode`\ =12 \cmdA}
+\def\cmdA#1{\egroup{\texttt{\detokenize{#1}}}}
+
+\newcommand{\llcmd}[1]{\leavevmode\llap{\cmd{#1}\texttt{\ }}}
 \newcommand{\llcmdlink}[2]{\href{#2}{\hspace{-15ex}}\hspace{15ex}\llcmd{#1}}%
 
 \RequirePackage{url}
@@ -56,6 +64,8 @@
 %\RenewDocumentEnvironment{LTXexample}{+b}{}{}  % todo something wrong with lstlisting... fix
 
 
+%\usepackage{acronyms.sty}
+
 
 %! language = yaml
 \begin{parseYAMLvars}
@@ -65,9 +75,9 @@ Title: |-
   bore{\smaller\smaller\normalfont ing}
   \leavevmode\llap{{\smaller\smaller\normalfont re}}port
 
-autHor:
- - John Smith
- - Jane Doe \url{kalekje@gmail.com}
+author:
+  - Kale Ewasiuk \url{kalekje@gmail.com}
+  - Another Example
 
 subtitle: |-
 		Some thought-provoking
@@ -95,13 +105,12 @@ pdf:
   subject: a test document
   copyright: Kale Ewasiuk
   date: 2021-02-02
-#  urllink: pass
 \end{parseYAMLvars}
-\writePDFmetadata
+
+\writePDFmetadata  % write the PDF data set in yaml above to file.
 
 
 \begin{document}
-
 
 %
 %todo use /And command for authors? how to handle multiple? maybe use \{\} [] [] for multi authors?
@@ -376,7 +385,7 @@ This class provides acronyms with \cmd{\ac}. It supresses links to the Acronym e
 (unlike \cmd{\gls{}} which links to the glossary), and instead
 tries to use tooltips over the acronyms that show the long-form.
 If you want to place something different in place of the tooltip text, set
-\cmd{\def\ackeyToolTipText{Text shown on tooltip for ackey}}
+\cmd{\def\ackeyToolTipText{Text Shown On Tooltip For: ackey}}
 
 
 
@@ -431,7 +440,7 @@ the \cmd{booktabs} way of making tables (no vertical lines).
 
 \subsection{References}
 
-Tabular 101:\url{https://en.wikibooks.org/wiki/LaTeX/Tables}\\
+Tabular 101: \url{https://en.wikibooks.org/wiki/LaTeX/Tables}\\
 How to make nice tables: \url{https://inf.ethz.ch/personal/markusp/teaching/guides/guide-tables.pdf}
 
 \subsection{Columns}

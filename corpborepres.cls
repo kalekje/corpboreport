@@ -181,6 +181,15 @@
     \selectfont
     }
     \newcommand{\textc}[1]{{\sm@ller\uppercase{#1}}}
+    
+    
+    
+    %\def\sbfCMB#1{\ThisStyle{\setbox0=\hbox{$\SavedStyle#1$}%
+    %		#1\kern.2pt\kern-\wd0%
+    %		\raisebox{.1pt}{$\SavedStyle#1$}}}
+    \newcommand{\sbfCMB}[1]{\textbf{\textit{#1}}}
+    
+
 
 %%%%%%%%%%%%  MathSymbolsEtc.sty  %%%%%%%%%%%%
     % ##############################################
@@ -201,7 +210,7 @@
     
     \renewcommand{\theequation}{\arabic{section}.\arabic{equation}}
     \def\@cpb@mathline{\raisebox{0pt}[0pt][0pt]{\vline height 0.8em depth 0.6em width \arrayrulewidth}}
-    \renewcommand\tagform@[1]{\maketag@@@{\ignorespaces\@cpb@mathline\;\cpb@secnumsize#1\unskip\@@italiccorr\hspace*{5ex}}}
+    \renewcommand\tagform@[1]{\maketag@@@{\ignorespaces\makebox[6ex][l]{\@cpb@mathline\;\cpb@secnumsize#1\unskip\@@italiccorr\hfill}\hspace*{5ex}}}
     
     
     
@@ -219,15 +228,34 @@
     ]{siunitx} % http://ctan.mirror.rafal.ca/macros/latex/contrib/siunitx/siunitx.pdf
     
     
+    
+    
+    
+    %\newenvironment{mathwhere}
+    %  {where:\vspace{\abovedisplayskip}\noindent\begin{tabularx}{\linewidth}{>{$}l<{$} !{is} Z}}
+    %  {\end{tabularx}\par\vspace{\belowdisplayskip}}
+    
+    
+    \NewDocumentEnvironment{mathwhere*}{ +b }{%
+    \begin{tabularx}{0.8\linewidth}[t]{>{$}l<{$}  Z}
+    					 #1
+    \end{tabularx}\par\vspace{\belowdisplayskip}
+    	}{}
+    
+    \NewDocumentEnvironment{mathwhere}{+b}{%
+    where:\\[0.3ex]
+    \hspace*{3ex}
+    \begin{AutoPuncTabular}
+    	\begin{mathwhere*}
+    		#1
+    	\end{mathwhere*}
+    \end{AutoPuncTabular}
+    	}{}
+    
+    
+    
     %	inter-unit-product=\,, % default
     %\sisetup{range-phrase=--,
-    
-    
-    
-    %\def\sbfCMB#1{\ThisStyle{\setbox0=\hbox{$\SavedStyle#1$}%
-    %		#1\kern.2pt\kern-\wd0%
-    %		\raisebox{.1pt}{$\SavedStyle#1$}}}
-    \newcommand{\sbfCMB}[1]{\textbf{\textit{#1}}}
     
 
 
@@ -407,6 +435,8 @@
     
     \let\nl\\  % shortcut for \newline and \\
     
+    \def\MoreRowHeight{\rule{0pt}{0.9em}}
+    
     % fixed column width, ragged right instead of horizontally filled allows new line
     \newcolumntype{P}[1]{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}p{#1}}
     \newcolumntype{M}[1]{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
@@ -516,6 +546,16 @@
     \colorlet{subsecCol}{darkindigo}
     \colorlet{subsubsecCol}{verydarkindigo}
     
+    \def\blacksectionheadings{
+       \setaccentcolor{.} % . is current color, so if you invert it will change
+    }
+    
+    
+    \NewDocumentCommand{\setaccentcolor}{m}{
+        \colorlet{secCol}{#1}
+        \colorlet{subsecCol}{#1}
+        \colorlet{subsubsecCol}{#1}
+    }
     
     
     \definecolor{pltblue}{HTML}{1000F0}
@@ -626,7 +666,8 @@
     	belowskip={1.0\baselineskip},
     	captionpos=t,
     	belowcaptionskip=5pt, % trial and error gve this a good result
-    	frame=\cbp@listframe,
+    %	frame=\cbp@listframe,
+    	frame=tb,
     	rulecolor=\color{black},
     	numbers=left,
     	numberstyle=\ttfamily\footnotesize\color{codecomment},
@@ -686,24 +727,11 @@
     
     
     
-    \lstdefinestyle{code}{
-    	basicstyle       = \small\ttfamily ,
-    	numbers          = left,
-    	numberstyle      = \scriptsize,
-    	numberblanklines = true,
-    	breaklines       = true,
-    	keepspaces       = true,
-    	columns          = fullflexible,
-    	frame=tb,
-    	% whatever else you want ...
-    }
-    
     
     
     
     \lstnewenvironment{listing}
     {%
-    	\lstset{style=code}%
     	\mdframed[style=note]%
     }
     {%
@@ -728,8 +756,8 @@
     % Todo Notes (with Example)
     % ##############################################
     
-    \usepackage[color=orange!50!,
-    bordercolor=orange!50!,
+    \usepackage[color=white,
+    bordercolor=orange,
     textsize=scriptsize,
     textwidth=0.9in,
     %disable,    % uncomment to disable package entirely
@@ -738,8 +766,8 @@
     \newcommand{\todoINV}[1]{%  can just use \todototoc
     	\todo[linecolor=white, backgroundcolor=white,bordercolor=white, textcolor=white]{#1}%
     }
-    \newcommand{\todoG}[1]{%  can just use \todototoc
-    	\todo[color=green!90!]{#1}%
+    \newcommand{\todoG}[1]{%
+    	\todo[bordercolor=green!90!]{#1}%
     }
     
     %\newcommand{\todoL}[1]{\todo[inline,textsize=\small]{#1}} %inline todo note
@@ -812,7 +840,6 @@
     % requires enumitem for acronym styling
     \usepackage[sorting=none]{biblatex}
     
-    \newcommand{\citeT}[1]{\citetitle{#1}~\cite{#1}}
     \renewrobustcmd*{\bibinitdelim}{\,}
     \renewcommand*{\multicitedelim}{\addcomma\,}  % tighten [1,2,3] multi citations
     
@@ -824,6 +851,22 @@
     \renewcommand*{\citesetup}{%
     \togunums\biburlsetup}
     
+    
+    \newcommand{\citeT}[1]{\citetitle{#1}~\cite{#1}}
+    \NewDocumentCommand{\citenumber}{m}{\citefield{#1}[]{number}}
+    
+    %% citing without pushing to bibliography
+    \NewDocumentCommand{\fullcitenobib}{m}{\begin{refsection}\fullcite{#1}\end{refsection}}
+    
+    \NewDocumentCommand{\citestd}{m}{\begin{refsection}\citeauthor{#1} \citefield{#1}[]{number} -- \citefield{#1}[]{year}: \citetitle{#1}\end{refsection}}
+    
+    
+    %% todo: possibly rebuild the cite commands but add a '-' decorator to supress referencing
+    
+    
+    
+    
+    %%% acrnonym and gloassaries stuff
     
     \usepackage[xindy,acronym,nonumberlist,toc]{glossaries-extra}
     \renewcommand{\glossarysection}[2][]{} % remove glossary section heading entirely, requires manual but more flexible
@@ -927,20 +970,6 @@
     %		\oldglspl{#2}%
     %	}%
     %}%
-    
-    
-    
-    % override some acronyms that don't appear as we want
-    \newcommand{\besToolTipText}{Bulk Electric System}
-    \newcommand{\ioaToolTipText}{Interconnection and Operating Agreement}
-    \newcommand{\rasToolTipText}{Remedial Action Scheme}
-    \newcommand{\poiToolTipText}{Point(s) of Interconnection}
-    \newcommand{\podToolTipText}{Point(s) of Delivery}
-    \newcommand{\oaitToolTipText}{Open Access Interconnection Tariff}
-    \newcommand{\oattToolTipText}{Open Access Transmission Tariff}
-    \newcommand{\isuToolTipText}{Interconnection System Upgrade(s)}
-    
-    
 
 \usepackage{graphbox}
 

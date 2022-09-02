@@ -66,6 +66,7 @@ numbers=noenddot]{scrreprt}
     %preamble
     \if@twoside% if two-sided, put the section headings to right side and numbers in right margin 
     	\usepackage[
+    		letterpaper,
     		top=1.25in,
     		headheight=2em, % 17pt as per the warning by fancyhdr 17pt = about 0.6cm
     		headsep=0.25in,  % about 1.25 * 13.7 (baseline skip),
@@ -78,6 +79,7 @@ numbers=noenddot]{scrreprt}
     	]{geometry} 
     \else%
     \usepackage[
+    		letterpaper,
     		top=1.46in,
     		headheight=2em,
     		headsep=0.29in,  % about 1.25 * 13.7 (baseline skip),
@@ -85,7 +87,7 @@ numbers=noenddot]{scrreprt}
     		bottom=1.5in, % 1.125
     		bindingoffset=0.0in,
     		left=1.50in,%1.25in,%1.125in,
-    		right=1.25in,%1.25in%,1.125in,
+    		right=1.50in,%1.25in%,1.125in,
     		%showframe=true,
     	]{geometry}
     \fi%  finally do nothing
@@ -338,8 +340,8 @@ numbers=noenddot]{scrreprt}
     \let\unum\liningnums
     \let\classicstylenums\liningnums
     
-    \def\act{\scshape\toglnums}
-    \def\actext#1{\textsc{\toglnums#1}}
+    \def\acs{\scshape\toglnums}  % acronym series
+    \def\act#1{\textsc{\toglnums#1}}  % acronym text
     
     \AtBeginEnvironment{tabular}{\togunums}
     \AtBeginEnvironment{tabular*}{\togunums}
@@ -356,7 +358,6 @@ numbers=noenddot]{scrreprt}
     %% for non-light option
     %\def\togunums{\fontfamily{jkp}\selectfont} %% from kpfonts.sty
     %\def\toglnums{\fontfamily{jkpxosn}\selectfont} for non-light
-
 
 
 
@@ -386,8 +387,8 @@ numbers=noenddot]{scrreprt}
     
     \addtokomafont{pageheadfoot}{\upshape}
     
-    \lohead{set me with lohead command}
-    \rohead{set me with rohead command}
+    \lohead{set me with \textbackslash lohead\{\} command}
+    \rohead{set me with \textbackslash rohead\{\} command}
     
     %\makeatletter
     %\if@twoside%
@@ -418,7 +419,7 @@ numbers=noenddot]{scrreprt}
     {0em}% paragraph indent in footnotes (footnotes should never have paragraphs!)
     % allows for back-references footnotes
     % can put a llap before \textsuper to have a hanging footnote!
-    {\makebox[\footnotemarkspace][l]{\llap{{\hyperref[\BackrefFootnoteTag]{\thefootnotemark}}}}.\enspace} % footfont with period for footnote marks in footnote
+    {\makebox[\footnotemarkspace][l]{\llap{{\hyperref[\BackrefFootnoteTag]{\toglnums\thefootnotemark}}}}.\enspace} % footfont with period for footnote marks in footnote
     % hanging footnote
     
     
@@ -429,7 +430,7 @@ numbers=noenddot]{scrreprt}
     	\refstepcounter{BackrefHyperFootnoteCounter}%
     	\xdef\BackrefFootnoteTag{bhfn:\theBackrefHyperFootnoteCounter}%
     	\label{\BackrefFootnoteTag}%
-    	\BHFN@Old@footnotemark
+    	{\toglnums\BHFN@Old@footnotemark}
     }
     
     
@@ -450,7 +451,9 @@ numbers=noenddot]{scrreprt}
     \setlength{\lineFooterLen}{2em}
     %https://tex.stackexchange.com/questions/114570/koma-script-scrpage2-footer-height
     
-    \renewcommand*{\pnumfont}{\normalfont\cpb@secnumsize} % https://www.dickimaw-books.com/latex/thesis/html/newpagestyle.html
+    % normal font for page number (not lowercase nums)
+    \renewcommand*{\pnumfont}{\normalfont\small} % https://www.dickimaw-books.com/latex/thesis/html/newpagestyle.html
+    %\renewcommand*{\pnumfont}{\normalfont\cpb@secnumsize} % https://www.dickimaw-books.com/latex/thesis/html/newpagestyle.html
     
     
     \newcommand{\PageRule}{\vline height 1em depth \lineFooterLen width \arrayrulewidth}
@@ -507,10 +510,11 @@ numbers=noenddot]{scrreprt}
     %  \counterwithin{listing}{section} % todo fix this
     }
     
-    \newdimen\tocsecskip  %%% todo rename this
-    \tocsecskip=0.75em  % fit ToC as required
+    \newdimen\ToCsecskip  %%% todo rename this
+    \ToCsecskip=0.75em  % fit ToC as required
     
-    
+    \newdimen\ToCextrabottomroom
+    \ToCextrabottomroom=0em
     
     % diamond leaders.. staggered dots
     \countdef\counter=255
@@ -548,7 +552,7 @@ numbers=noenddot]{scrreprt}
     %tocdynnumwidth=switch,
     tocindent=-4.0ex,
     tocnumwidth=4.0ex,
-    tocbeforeskip=\tocsecskip,
+    tocbeforeskip=\ToCsecskip,
     tocentryformat=\large\bfseries,
     tocentrynumberformat=\sectionentrynumberformat,
     ]{section}%
@@ -618,8 +622,8 @@ numbers=noenddot]{scrreprt}
     \addtokomafont{subsubsection}{\color{subsubsecCol}}
     
     
-    \newdimen\sectprespacelength
-    \sectprespacelength=-1.5cm  % make less negative to increase spacing on new section title (always starts new page)
+    \newdimen\cpb@sectprespacelengthnewpage
+    \cpb@sectprespacelengthnewpage=-1.5cm  % make less negative to increase spacing on new section title (always starts new page)
     % WAS 20pt
     
     \newcounter{sectionletter}%
@@ -629,7 +633,7 @@ numbers=noenddot]{scrreprt}
     \RenewDocumentCommand{\section}{ s t+ t! o m }{%
         %   * (no number, no ToC),  + (add sec letter) ! (on new page)
         \IfBooleanT{#3}{\invtoggle{SecOnNewPage}}%
-        \iftoggle{SecOnNewPage}{\clearpage\vspace*{\sectprespacelength}}{}%
+        \iftoggle{SecOnNewPage}{\clearpage\vspace*{\cpb@sectprespacelengthnewpage}}{}%
         \Needspace{\secneedspace}%
         \IfBooleanTF{#2}{%
             	\ifnum\value{sectionletter}>0% if we're into section lettering already
@@ -739,7 +743,7 @@ numbers=noenddot]{scrreprt}
     
     \def\addcontentslists{
       \pdfbookmark[1]{Contents}{LabelContentsPDF}
-    %   \addtocontents{toc}{\protect\enlargethispage{2em}} % enlarge toc page if needed, todo add length for this
+      \addtocontents{toc}{\protect\enlargethispage{\ToCextrabottomroom}} % enlarge toc page if needed, todo add length for this
       \tableofcontents
       
       \addtocentrydefault{section}{\phantom{.}}{Figures}\addtocontents{toc}{\vspace*{-1.3ex}}%
@@ -748,9 +752,10 @@ numbers=noenddot]{scrreprt}
       \addtocentrydefault{section}{\phantom{.}}{Tables}%
       \listoftables
       
-      \bookmarksetup{startatroot}
+      \mainmatter
     }
     
+    \def\mainmatter{\bookmarksetup{startatroot}}
     
     \def\backmatter{\pdfbookmark[0]{Back-Matter}{LabelBMPDF}}
     
@@ -825,7 +830,6 @@ numbers=noenddot]{scrreprt}
     
     
     
-    
     %%% HEADER
     \renewcommand{\chaptermark}[1]{%
       \markboth{\chapapp\ \thechapter\autodot}{#1}}
@@ -840,7 +844,15 @@ numbers=noenddot]{scrreprt}
     
     
     %%% CHAPTER SECTION HEADINGS FORMAT
-    \addtokomafont{chapterprefix}{\raggedleft}
+    
+    
+    \addtokomafont{chapterprefix}{\raggedleft\toglnums}
+    %\addtokomafont{pagenumber}{\toglnums}
+    
+    %https://tex.stackexchange.com/questions/43619/changing-toc-subsection-entry-font-in-scrartcl
+    \newcommand\tocmainfont[1]{%
+      \toglnums #1%
+    }
     
     \newcommand{\ShowChapterPrefix}{
     \renewcommand*{\chapterformat}{%
@@ -848,13 +860,13 @@ numbers=noenddot]{scrreprt}
     \mbox{\raisebox{5ex}{\normalsize
     \chapappifchapterprefix
     {\nobreakspace}}%
-    \scalebox{3}{\classicstylenums\thechapter\autodot}\enskip}}
+    \scalebox{3}{\thechapter\autodot}\enskip}}
     }%
     
     \newcommand{\HideChapterPrefix}{
     \renewcommand*{\chapterformat}{%
     \color{brown}%
-    \mbox{\scalebox{3}{\classicstylenums\thechapter\autodot}\enskip}}}%
+    \mbox{\scalebox{3}{\thechapter\autodot}\enskip}}}%
     
     \HideChapterPrefix
     
@@ -870,8 +882,9 @@ numbers=noenddot]{scrreprt}
     
     %https://tex.stackexchange.com/questions/381261/right-align-chapter-numbering-in-koma-script-toc?rq=1
     \newcommand\sectionentrynumberformat[1]{% define the new format for the chapter numbers in ToC
-    	\hfill\cpb@secnumsize#1\enspace\hspace{1pt}% align chapter numbers right
+    	\hfill\cpb@secnumsize#1\enspace\hspace*{0.01pt}% align chapter numbers right
     }
+    
     
     \setkomafont{disposition}{\normalfont\bfseries} % section preference
     \newcommand{\vparspace}{\vspace{\parskip}}
@@ -905,6 +918,7 @@ numbers=noenddot]{scrreprt}
     toclinefill=\diamondleaders,
     tocentryformat=\large\bfseries,
     tocentrynumberformat=\sectionentrynumberformat,
+    %tocpagenumberformat=\tocmainfont,
     ]{chapter}
     
     \RedeclareSectionCommand[
@@ -916,6 +930,7 @@ numbers=noenddot]{scrreprt}
     toclinefill=\diamondleaders,
     tocentrynumberformat=\cpb@secnumsize,
     tocentryformat=\large,
+    %tocpagenumberformat=\tocmainfont,
     ]{section}
     
     \RedeclareSectionCommand[
@@ -967,16 +982,28 @@ numbers=noenddot]{scrreprt}
     ]{tocline}{figure}
     \renewcaptionname{english}{\listfigurename}{Figures}
     
+    % todo need something for code boxes?
+    
+    %\setkomafont{tocentrypagenumber}{\toglnums}
+    %\addtokomafont{chapterentrypagenumber}{\toglnums}
+    %\setkomafont{sectionentrypagenumber}{\toglnums}
+    %\addtokomafont{entrypagenumber}{\toglnums}
+    
+    %\addtokomafont{sectionentrypagenumber}{\toglnums}
+    % https://tex.stackexchange.com/questions/241210/fonts-used-in-scrrprt-toc
+    
+    %\usepackage{tocstyle}
+    %\settocstylefeature{pagenumberhook}{\toglnums}
+    
     \counterwithin{figure}{chapter}
     \counterwithin{table}{chapter}
     
     
     % front matter chapter (acknowledgements or abstract)
-    \newcommand{\chapterF}[1]{\RedeclareSectionCommand[beforeskip=8.0\baselineskip plus 3pt minus 1pt]{chapter}
+    \newcommand{\chapterF}[1]{\RedeclareSectionCommand[beforeskip=6.0\baselineskip plus 3pt minus 1pt]{chapter}
     \pdfbookmark[0]{#1}{Label#1PDF}%
     \chapter*{#1}%
     \RedeclareSectionCommand[beforeskip=1.0\baselineskip plus 3pt minus 1pt]{chapter}}
-    
     
     
     \NewDocumentCommand{\chapterM}{ t- m }{% chapter Matter (front or back), ToC and pdf bookmark but no number
@@ -991,6 +1018,8 @@ numbers=noenddot]{scrreprt}
       \pdfbookmark[0]{Title}{LabelTitlePDF}
     }
     
+    
+    
     \def\addcontentslists{
       \pdfbookmark[0]{Contents}{LabelContentsPDF}
       \tableofcontents
@@ -999,14 +1028,13 @@ numbers=noenddot]{scrreprt}
       \addtocentrydefault{chapter}{\phantom{.}}{Figures}\addtocontents{toc}{\vspace*{-1.3ex}}%
       \listoffigures
       \chaptermark{Figures}
-      
+    %
       \addtocentrydefault{chapter}{\phantom{.}}{Tables}%
       \listoftables
       \chaptermark{Tables}
-      
-      \bookmarksetup{startatroot}
     }
     
+    \def\mainmatter{\bookmarksetup{startatroot}}
     
     \def\backmatter{\pdfbookmark[-1]{Back-Matter}{LabelBMPDF}}
     
@@ -1017,6 +1045,43 @@ numbers=noenddot]{scrreprt}
       
       \pdfbookmark[-1]{Appendix}{LabelAppendicesPDF}
     }{}{}
+    
+    
+    %% BACK MATTER
+    %\HideChapterPrefix
+    %\addtocontents{toc}{Back-Matter}
+    
+
+
+%%%%%%%%%%%%  TocExtra.sty  %%%%%%%%%%%%
+    % todo build list of listings and equations
+    
+    \newlength{\ToCrightmargin}
+    \setlength{\ToCrightmargin}{0in}
+    
+    
+    \let\old@tableofcontents\tableofcontents
+    \let\old@listoffigures\listoffigures
+    \let\old@listoftables\listoftables
+    
+    \def\tableofcontents{
+      \begin{addmargin}[0pt]{\ToCrightmargin}
+      \old@tableofcontents
+      \end{addmargin}
+    }
+    
+    \def\listoffigures{
+      \begin{addmargin}[0pt]{\ToCrightmargin}
+      \old@listoffigures
+      \end{addmargin}
+    }
+    
+    \def\listoftables{
+      \begin{addmargin}[0pt]{\ToCrightmargin}
+      \old@listoftables
+      \end{addmargin}
+    }
+
 
 
 %%%%%%%%%%%%  AppendixFormat.sty  %%%%%%%%%%%%
@@ -1173,6 +1238,16 @@ numbers=noenddot]{scrreprt}
     \colorlet{subsecCol}{darkindigo}
     \colorlet{subsubsecCol}{verydarkindigo}
     
+    \def\blacksectionheadings{
+       \setaccentcolor{.} % . is current color, so if you invert it will change
+    }
+    
+    
+    \NewDocumentCommand{\setaccentcolor}{m}{
+        \colorlet{secCol}{#1}
+        \colorlet{subsecCol}{#1}
+        \colorlet{subsubsecCol}{#1}
+    }
     
     
     \definecolor{pltblue}{HTML}{1000F0}
@@ -1208,7 +1283,7 @@ numbers=noenddot]{scrreprt}
     
     \renewcommand{\theequation}{\arabic{section}.\arabic{equation}}
     \def\@cpb@mathline{\raisebox{0pt}[0pt][0pt]{\vline height 0.8em depth 0.6em width \arrayrulewidth}}
-    \renewcommand\tagform@[1]{\maketag@@@{\ignorespaces\@cpb@mathline\;\cpb@secnumsize#1\unskip\@@italiccorr\hspace*{5ex}}}
+    \renewcommand\tagform@[1]{\maketag@@@{\ignorespaces\makebox[6ex][l]{\@cpb@mathline\;\cpb@secnumsize#1\unskip\@@italiccorr\hfill}\hspace*{5ex}}}
     
     
     
@@ -1226,15 +1301,34 @@ numbers=noenddot]{scrreprt}
     ]{siunitx} % http://ctan.mirror.rafal.ca/macros/latex/contrib/siunitx/siunitx.pdf
     
     
+    
+    
+    
+    %\newenvironment{mathwhere}
+    %  {where:\vspace{\abovedisplayskip}\noindent\begin{tabularx}{\linewidth}{>{$}l<{$} !{is} Z}}
+    %  {\end{tabularx}\par\vspace{\belowdisplayskip}}
+    
+    
+    \NewDocumentEnvironment{mathwhere*}{ +b }{%
+    \begin{tabularx}{0.8\linewidth}[t]{>{$}l<{$}  Z}
+    					 #1
+    \end{tabularx}\par\vspace{\belowdisplayskip}
+    	}{}
+    
+    \NewDocumentEnvironment{mathwhere}{+b}{%
+    where:\\[0.3ex]
+    \hspace*{3ex}
+    \begin{AutoPuncTabular}
+    	\begin{mathwhere*}
+    		#1
+    	\end{mathwhere*}
+    \end{AutoPuncTabular}
+    	}{}
+    
+    
+    
     %	inter-unit-product=\,, % default
     %\sisetup{range-phrase=--,
-    
-    
-    
-    %\def\sbfCMB#1{\ThisStyle{\setbox0=\hbox{$\SavedStyle#1$}%
-    %		#1\kern.2pt\kern-\wd0%
-    %		\raisebox{.1pt}{$\SavedStyle#1$}}}
-    \newcommand{\sbfCMB}[1]{\textbf{\textit{#1}}}
     
 
 
@@ -1276,8 +1370,16 @@ numbers=noenddot]{scrreprt}
     }
     %
     
+    
     \setlist[enumerate,2]{label=\alph*.}
     \SetEnumitemKey{moresep}{itemsep=\moreseplength}
+    
+    \providetoggle{useSerif}
+    \iftoggle{useSerif}{
+    %	\setlist[enumerate,2]{label=\alph*., format=\toglnums}
+    	\setlist[enumerate,1]{label=\toglnums\arabic*.}
+    }{}
+    
     
     %%%
     \SetEnumitemKey{twocol}{
@@ -1335,6 +1437,8 @@ numbers=noenddot]{scrreprt}
     }{}
     
     \let\nl\\  % shortcut for \newline and \\
+    
+    \def\MoreRowHeight{\rule{0pt}{0.9em}}
     
     % fixed column width, ragged right instead of horizontally filled allows new line
     \newcolumntype{P}[1]{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}p{#1}}
@@ -1427,8 +1531,8 @@ numbers=noenddot]{scrreprt}
       \fi}
     
     
-    \DeclareCaptionLabelFormat{hangcap}{\llap{#1 #2:\ }}
-    \DeclareCaptionLabelFormat{widecap}{#1 #2}
+    \DeclareCaptionLabelFormat{hangcap}{\llap{#1~#2:\enspace}}
+    \DeclareCaptionLabelFormat{widecap}{#1~#2:}
     \captionsetup{labelformat=hangcap}
     \providetoggle{useSerif}
     \DeclareCaptionLabelSeparator{enspace}{\enspace}
@@ -1437,14 +1541,17 @@ numbers=noenddot]{scrreprt}
     %  \DeclareCaptionLabelFormat{lc}{\MakeLowercase{#1}~#2}
       \DeclareCaptionLabelFormat{hangcap}{\llap{\MakeLowercase{#1}~#2\enspace}}
       \DeclareCaptionLabelFormat{widecap}{\MakeLowercase{#1}~#2}
-      \DeclareCaptionFont{bfsc}{\bfseries\scshape}
-      \captionsetup{labelfont=bfsc,labelformat=hangcap,labelsep=enspace}
+      \DeclareCaptionFont{bfscln}{\bfseries\scshape\toglnums}
+      \captionsetup{labelfont=bfscln,labelformat=hangcap,labelsep=enspace}
     }{}
     \captionsetup[sub]{skip=8pt, aboveskip=5pt, font=small, labelfont={small,bf,sc},
     	position=top,labelformat=hangcap,labelsep=enspace}  % formats \subcaptionbox
     \floatsetup{justification=raggedright,objectset=raggedright}
     \floatsetup[table]{captionskip=0.3ex} %	 http://tug.ctan.org/tex-archive/macros/latex/contrib/floatrow/floatrow.pdf
-    \floatsetup[figure]{captionskip=0.3ex}
+    
+    % todo need an option for caption position for figure
+    %\iftoggle{TopFigCap}{\floatsetup[figure]{captionskip=0.3ex}\let\captop\{}}  % todo incorporate this
+    \floatsetup[figure]{captionskip=0.5ex} % for bottom caption
     
     \newcommand{\WideFloatCaption}{\captionsetup{labelformat=widecap,format=plain}}
     
@@ -1454,6 +1561,9 @@ numbers=noenddot]{scrreprt}
     \setlength{\floatsep}{24pt plus 2.0pt minus 2.0pt} % distance between two floats; add rubber here
     \setlength{\textfloatsep}{24pt plus 2.0pt minus 2.0pt} % distance between floats inserted inside the page text (using h) and the text proper, add rubber here
     
+    
+    \newlength{\fullheight}  % full height for pdfs/figures
+    \setlength{\fullheight}{22cm}
     
     
     \NewDocumentCommand{\cpb@setFloatCap}{m m}{%
@@ -1478,7 +1588,7 @@ numbers=noenddot]{scrreprt}
       \cpb@setFloatCap{#1}{#2}%
       \begin{figure}[#3]%
         #4%
-        \captop%
+    %    \captop%
         \caption[#7]{#6}#8%
         \IfBooleanTF{#1}%
           {\ffigbox{}{#5\IfValueT{#9}{\vspace{\TabNoteSpace}\floatfoot*{#9}}}}%  FBwidth doesn't work with sub-figure, hack for now
@@ -1529,6 +1639,40 @@ numbers=noenddot]{scrreprt}
       \afterpage{#1}
     }
     
+    
+    %% includes generator data sheet, rotates first three pages
+    %%  \RotPDFninety now == \RotPDF, if on section, do this  BEFORE the section
+    %% todo add a starting page
+    \NewDocumentCommand{\RotFirstXpdf}{m O{3}}{
+    %	\RotPDF  % todo determine if RotPDF would be better here
+    	\enlargethispage{8in}
+    	\includegraphics[angle=90,height=\fullheight]{#1}
+    	\includepdf[pages=2-\fpeval{#2},angle=90,pagecommand={}, height=\fullheight]{#1}
+    	\RotPDF*
+    	\includepdf[pages=\fpeval{#2+1}-,angle=0,pagecommand={},height=\fullheight]{#1}
+    }
+    
+    
+    \NewDocumentCommand{\inputPDF}{m O{3}}{
+    %  todo need option for rotating some pages here, that would be nice
+    	\enlargethispage{8in}
+      \includegraphics[height=\fullheight]{#1}
+    	\includepdf[pages=2-,angle=0,pagecommand={},height=\fullheight]{#1}
+    }
+    
+    %https://tex.stackexchange.com/questions/198091/get-number-of-pages-of-external-pdf
+    \newcommand*{\pdfnumberofpages}[1]{%
+      \directlua{%
+        local doc = epdf.open("\luatexluaescapestring{#1}")
+        local pages
+        if (doc) then
+          pages = doc:getCatalog():getNumPages()
+        else
+          pages = 0
+        end
+        tex.write(pages)
+      }%
+    }
 
 
 
@@ -1608,7 +1752,8 @@ numbers=noenddot]{scrreprt}
     	belowskip={1.0\baselineskip},
     	captionpos=t,
     	belowcaptionskip=5pt, % trial and error gve this a good result
-    	frame=\cbp@listframe,
+    %	frame=\cbp@listframe,
+    	frame=tb,
     	rulecolor=\color{black},
     	numbers=left,
     	numberstyle=\ttfamily\footnotesize\color{codecomment},
@@ -1668,24 +1813,11 @@ numbers=noenddot]{scrreprt}
     
     
     
-    \lstdefinestyle{code}{
-    	basicstyle       = \small\ttfamily ,
-    	numbers          = left,
-    	numberstyle      = \scriptsize,
-    	numberblanklines = true,
-    	breaklines       = true,
-    	keepspaces       = true,
-    	columns          = fullflexible,
-    	frame=tb,
-    	% whatever else you want ...
-    }
-    
     
     
     
     \lstnewenvironment{listing}
     {%
-    	\lstset{style=code}%
     	\mdframed[style=note]%
     }
     {%
@@ -1710,8 +1842,8 @@ numbers=noenddot]{scrreprt}
     % Todo Notes (with Example)
     % ##############################################
     
-    \usepackage[color=orange!50!,
-    bordercolor=orange!50!,
+    \usepackage[color=white,
+    bordercolor=orange,
     textsize=scriptsize,
     textwidth=0.9in,
     %disable,    % uncomment to disable package entirely
@@ -1720,8 +1852,8 @@ numbers=noenddot]{scrreprt}
     \newcommand{\todoINV}[1]{%  can just use \todototoc
     	\todo[linecolor=white, backgroundcolor=white,bordercolor=white, textcolor=white]{#1}%
     }
-    \newcommand{\todoG}[1]{%  can just use \todototoc
-    	\todo[color=green!90!]{#1}%
+    \newcommand{\todoG}[1]{%
+    	\todo[bordercolor=green!90!]{#1}%
     }
     
     %\newcommand{\todoL}[1]{\todo[inline,textsize=\small]{#1}} %inline todo note
@@ -1800,6 +1932,8 @@ numbers=noenddot]{scrreprt}
     	\showlayer[red!30]{scrheadings.foot.above.line}%
     }
     
+    \newcommand{\ShowGrid}{\usepackage[enable]{pagegrid}\pagegridsetup{tl,tr}}
+    
     
     
 
@@ -1809,7 +1943,6 @@ numbers=noenddot]{scrreprt}
     % requires enumitem for acronym styling
     \usepackage[sorting=none]{biblatex}
     
-    \newcommand{\citeT}[1]{\citetitle{#1}~\cite{#1}}
     \renewrobustcmd*{\bibinitdelim}{\,}
     \renewcommand*{\multicitedelim}{\addcomma\,}  % tighten [1,2,3] multi citations
     
@@ -1821,6 +1954,22 @@ numbers=noenddot]{scrreprt}
     \renewcommand*{\citesetup}{%
     \togunums\biburlsetup}
     
+    
+    \newcommand{\citeT}[1]{\citetitle{#1}~\cite{#1}}
+    \NewDocumentCommand{\citenumber}{m}{\citefield{#1}[]{number}}
+    
+    %% citing without pushing to bibliography
+    \NewDocumentCommand{\fullcitenobib}{m}{\begin{refsection}\fullcite{#1}\end{refsection}}
+    
+    \NewDocumentCommand{\citestd}{m}{\begin{refsection}\citeauthor{#1} \citefield{#1}[]{number} -- \citefield{#1}[]{year}: \citetitle{#1}\end{refsection}}
+    
+    
+    %% todo: possibly rebuild the cite commands but add a '-' decorator to supress referencing
+    
+    
+    
+    
+    %%% acrnonym and gloassaries stuff
     
     \usepackage[xindy,acronym,nonumberlist,toc]{glossaries-extra}
     \renewcommand{\glossarysection}[2][]{} % remove glossary section heading entirely, requires manual but more flexible
@@ -1924,20 +2073,6 @@ numbers=noenddot]{scrreprt}
     %		\oldglspl{#2}%
     %	}%
     %}%
-    
-    
-    
-    % override some acronyms that don't appear as we want
-    \newcommand{\besToolTipText}{Bulk Electric System}
-    \newcommand{\ioaToolTipText}{Interconnection and Operating Agreement}
-    \newcommand{\rasToolTipText}{Remedial Action Scheme}
-    \newcommand{\poiToolTipText}{Point(s) of Interconnection}
-    \newcommand{\podToolTipText}{Point(s) of Delivery}
-    \newcommand{\oaitToolTipText}{Open Access Interconnection Tariff}
-    \newcommand{\oattToolTipText}{Open Access Transmission Tariff}
-    \newcommand{\isuToolTipText}{Interconnection System Upgrade(s)}
-    
-    
 
 
 
@@ -1980,6 +2115,11 @@ numbers=noenddot]{scrreprt}
     \creflabelformat{equation}{#2#1#3}
     \crefrangelabelformat{equation}{#3#1#4 to #5#2#6}
     
+    \providetoggle{useSerif}
+    \iftoggle{useSerif}{
+        \crefdefaultlabelformat{#2{\toglnums#1}#3}
+    }{}
+    
     
     % https://tex.stackexchange.com/questions/10555/hyperref-warning-token-not-allowed-in-a-pdf-string/330980#330980
     \pdfstringdefDisableCommands{% to clean pdf attributes string
@@ -2002,70 +2142,57 @@ numbers=noenddot]{scrreprt}
 
 
 %%%%%%%%%%%%  Titles.sty  %%%%%%%%%%%%
-    
-    %\NewDocumentCommand{\client}{o m O{#1}}{% declare document var with option. Allow [] on either side of {} for flexibiliy
-    %\gdef\Client{#2}
-    %\IfValueTF{#3}%
-    %  {\gdef\ClientAddr{#3}}%
-    %  {\gdef\ClientAddr{}}%
-    %  \luadirect{pl.tex.makeInTextcmd('TheClientAddr', \luastringN{#3})}
-    %  \luadirect{pl.tex.setPDFvar('Author',            \luastringO{\TheClientAddr})}
-    %}
-    %
-    %\NewDocumentCommand{\title}{o m O{#1}}{% declare document var with option. Allow [] on either side of {} for flexibiliy
-    %\gdef\@title{#2}
-    %\IfValueTF{#3}%
-    %  {\gdef\ClientAddr{#3}}%
-    %  {\gdef\ClientAddr{}}%
-    %  \luadirect{pl.tex.makeInTextcmd('thetitle', 		\luastringN{#3})}
-    %  \luadirect{pl.tex.setPDFvar('Title',           \luastringO{\thetitle})}
-    %}
-    
-    % todo
-    % for authors, use \and when declaring
-    % in penlight, preserve \and for title page \@ definition
-    %    for thetitle, change \and to , and and
-    % for PDF var, do the same cleaning, but replace \and with \sep
-    % maybe do a list to \and in yamlvars too
-    % todo star variants?
-    
-    %todo square bracket option for setting pdf val?
+    %%% document variables
     
     \RenewDocumentCommand{\title}{m}{\luadirect{
     	pl.tex.defcmdAT('@title', \luastringN{#1})
-    	pl.tex.updatePDFtable('Title', makePDFvarstr(\luastringN{#1}), false)
+    	pl.tex.updatePDFtable('Title', pl.tex.makePDFvarstr(\luastringN{#1}), false)
     	pl.tex.defcmd('thetitle', pl.tex.makeInTextstr(\luastringN{#1}))
     }}
     
     \RenewDocumentCommand{\author}{m}{\luadirect{
     	pl.tex.defcmdAT('@author', \luastringN{#1})
-    	pl.tex.updatePDFtable('Author', makePDFvarstr(\luastringN{#1}), false)
+    	pl.tex.updatePDFtable('Author', pl.tex.makePDFvarstr(\luastringN{#1}), false)
     	pl.tex.defcmd('theauthor', pl.tex.makeInTextstr(\luastringN{#1}))
     }}
     
+    \RenewDocumentCommand{\date}{m}{\luadirect{
+    	pl.tex.defcmdAT('@date', \luastringN{#1})
+    	pl.tex.defcmd('thedate', pl.tex.makeInTextstr(\luastringN{#1}))
+    }
+    \luaexec{pl.tex.updatePDFtable('Date', os.date'\%Y-\%m-\%d', false)}
+    }
+    
     \NewDocumentCommand{\company}{m}{\luadirect{
     	pl.tex.defcmdAT('@publishers', \luastringN{#1})
-    	pl.tex.updatePDFtable('Publisher', makePDFvarstr(\luastringN{#1}), false)
+    	pl.tex.updatePDFtable('Publisher', pl.tex.makePDFvarstr(\luastringN{#1}), false)
     	pl.tex.defcmd('thecompany', pl.tex.makeInTextstr(\luastringN{#1}))
     }}
+    
     \let\publishers\company
-    % yse @publishers to match KOMA, Publisher for PDFvar
+    \let\thepublishers\thecompany
+    % use @publishers to match KOMA, Publisher for PDFvar
     % for beamer, company = institute
     
-    \def\logoset{}
-    \NewDocumentCommand{\logo}{ >{\ExpArgOnceProc}O{\logoset} m }{%
-    	\gdef\@logo{\includegraphics[width=4cm,smash=tl,#1]{#2}}%
+    \def\@logoset{} % additional logo settings
+    \NewDocumentCommand\logoset{m}{\gdef\@logoset{#1}}
+    
+    \NewDocumentCommand{\logo}{ s >{\ExpArgOnceProc}O{\@logoset} m }{%
+    % star to overwrite custom settings for image, otherwise, try to let the class place it
+    	\IfBooleanTF{#1}%
+    	{\gdef\@logo{#3}}%
+    	{\iftoggle{samepgTitle}%
+    		{\gdef\@logo{\Llap{\raisebox{\dimexpr(-\height+16pt)\relax}[0pt][0pt]{\includegraphics[width=4cm,#2]{#3}}}}}%
+    		{\gdef\@logo{\includegraphics[width=4cm,smash=tl,#2]{#3}}}
+    	}%
     }
-    		%	\gdef\@logo{\includegraphics[width=4cm,smash=tl]{#1}}%
-    		%\NewDocumentCommand{\logo}{ m }{%
-    		%\NewDocumentCommand{\logo}{O{width=4cm} m >{\ExpArgOnceProc}O{\TitleLogoPlaceDefault} }{%
-    		%    \gdef\@logo{\includegraphics[#1,smash=#3]{#2}}%
-    		%}
-    		%\def\logoset{width=4cm,smash=tl}
     
     
-    \gdef\@tpOwn{
+    %%% title pages
+    
+    \gdef\cpb@tpOwn{
     \begin{titlepage} % Suppresses displaying the page number on the title page and the subsequent page counts as page 1
+    	\toglnums
     	\raggedright % Right align the title page
     	\rule{\heavyrulewidth}{7.4in} % Vertical line
     	\hspace{0.5in} % Whitespace between the vertical line and title page text
@@ -2105,32 +2232,27 @@ numbers=noenddot]{scrreprt}
     }
     
     
-    \gdef\titlesubbox#1{\hspace*{0.7cm}
-    \pbox{\dimexpr(\linewidth-0.7cm)\relax}{#1}\par\vspace{-1ex}
-    }
     
-    \gdef\@tpSame{\thispagestyle{plain}
+    
+    \gdef\cpb@tpSame{\thispagestyle{plain}
     		\gdef\And{\hspace*{3ex}}
+    		\vspace*{-2.5cm}
     		{\RaggedRight                             % \pbox[t]{\linewidth}  %% todo top align logo with title
-    		\pbox[t]{0.45\linewidth}{\LARGE\bfseries \@title} \hfill	 \ifdef{\@logo}{\@logo}{}\par
-    
-    		\vspace{0.5em}
-    
-    		\ifdef{\@subtitle}{\titlesubbox{\itshape \@subtitle}}{}
-    		\ifdef{\@publishers}{\titlesubbox{\def\and{\, }\large \@publishers}}{}
-    		\ifdef{\@author}{\titlesubbox{\def\and{\, }\large\bfseries \@author}}{}
-    		\ifdef{\@date}{\titlesubbox{\large \@date}}{}
-    
-    		\vspace*{1em}
-    		\rule{\linewidth}{\heavyrulewidth}\\[-2ex]
-    		\ \hfill\rule{\dimexpr(\linewidth-0.7cm)\relax}{\lightrulewidth}
-    		\vspace*{1em}
+    		\hspace*{-10mm}\pbox[t]{0.8\linewidth}{\LARGE\bfseries \@title} \hfill	 \ifdef{\@logo}{\@logo}{}\par
+    		
+    		\ifdef{\@subtitle}{{\itshape\@subtitle}\medskip}{}
+    		\ifdef{\@publishers}{{\def\and{\, }\large\@publishers}\smallskip}{}
+    		\ifdef{\@author}{{\def\and{\, }\large\bfseries\@author}}{}
+    		\ifdef{\@date}{{\large\@date}}{}
+    		\\\smallskip
+    		\ \hfill\llap{\rule{\dimexpr(\linewidth+1.0cm)\relax}{\heavyrulewidth}}\\[-2ex]%
+    		\ \hfill\llap{\rule{\dimexpr(\linewidth-0.0pt)\relax}{\lightrulewidth}}%
     }}
     
     
     
     \def\maketitle{%
-    	\iftoggle{samepgTitle}{\togglefalse{SecOnNewPage}\@tpSame}{\@tpOwn}%
+    	\iftoggle{samepgTitle}{\cpb@tpSame}{\cpb@tpOwn}%
     }
     
     
@@ -2220,18 +2342,74 @@ numbers=noenddot]{scrreprt}
 \usepackage{lutabulartools}
 \usepackage{autopuncitems}
 
-\usepackage{YAMLvars}
-\begin{luacode*}
-    YAMLvars.tabmidrule = 'gmidrule'
-\end{luacode*}
 
-
-
+%%%%%%%%%%%%  YAMLvarsDec.sty  %%%%%%%%%%%%
+    
+    \newcommand{\cbpheaderbox}[1]{\parbox[b][2em][b]{0.4\linewidth}{\setstretch{0.8}#1}}
+    \usepackage{YAMLvars}
+    \begin{luacode*}
+        YAMLvars.tabmidrule = 'gmidrule'
+        function YAMLvars.xfm.headerbox(var, val)
+          if var:find('r', 1, true) == 1 then
+            val = '\\flushright '.. val
+          end
+          return '\\cbpheaderbox{'..val..'}'
+        end
+    \end{luacode*}
+    
+    
+    \lowercasevarYVon
+    %! language = yaml
+    \begin{declareYAMLvars}
+    title:
+      xfm: lb2nl
+      prc: setdocvar
+    
+    subtitle:
+      xfm: lb2nl
+      prc: setdocvar
+    
+    author:
+      xfm: [list2and,lb2nl]
+      prc: setdocvar
+    
+    company:
+      xfm: [list2and,lb2nl]
+      prc: setdocvar
+    
+    date:
+      xfm: lb2nl
+      prc: setdocvar
+    
+    logo:
+      prc: setdocvar
+    
+    institute:  # for beamer, company recommended though
+      prc: setdocvar
+    
+    publishers:  # company recommended
+      xfm: [list2and,lb2nl]
+      prc: setdocvar
+    
+    lohead:
+      xfm: [lb2nl, headerbox]
+      prc: setdocvar
+    
+    rohead:
+      xfm: [lb2nl, headerbox]
+      prc: setdocvar
+      
+    pdf:
+      prc: setPDFdata
+      
+    \end{declareYAMLvars}
+    \lowercasevarYVoff
 
 
 %%%%%%%%%%%%  EndOf.sty  %%%%%%%%%%%%
     %\providelength{\floatindentlength}{10ex}
     
+    %%% Intentionally blank page command
     \newcommand{\IntentionallyBlankPage}{
     \pagebreak
     \thispagestyle{empty}
@@ -2242,51 +2420,12 @@ numbers=noenddot]{scrreprt}
     }
     
     
-    %%% End of document
+    %%% End of document command
     \NewDocumentCommand{\PrintEndOfDocument}{ s O{document}}{%
     \IfBooleanTF{#1}{\vspace*{2.5cm}}{\pagebreak\null\vfill}
     {\noindent\hspace*{\floatindentlength}\large\slshape End\ of\ #2.\hfill\vspace{5cm}}
     \IfBooleanF{#1}{\null\vfill}
+    \pdfbookmark{End}{End}
     }
     
 
-
-\rohead{}
-
-%! language = yaml
-\begin{declareYAMLvars}
-title:
-  xfm: lb2nl
-  prc: setdocvar
-
-subtitle:
-  xfm: lb2nl
-  prc: setdocvar
-
-author:
-  xfm: lb2nl
-  prc: setdocvar
-
-date:
-  xfm: lb2nl
-  prc: setdocvar
-
-subject:
-  xfm: lb2nl
-  prc: setdocvar
-
-fileno:
-  xfm: lb2nl
-  prc: setdocvar
-
-publishers:
-  xfm: lb2nl
-  prc: setdocvar
-
-logo:
-  prc: setdocvarOpts
-  
-pdf:
-  prc: setPDFdata
-  
-\end{declareYAMLvars}

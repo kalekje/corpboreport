@@ -269,8 +269,8 @@
     \let\unum\liningnums
     \let\classicstylenums\liningnums
     
-    \def\act{\scshape\toglnums}
-    \def\actext#1{\textsc{\toglnums#1}}
+    \def\acs{\scshape\toglnums}  % acronym series
+    \def\act#1{\textsc{\toglnums#1}}  % acronym text
     
     \AtBeginEnvironment{tabular}{\togunums}
     \AtBeginEnvironment{tabular*}{\togunums}
@@ -365,6 +365,15 @@
     \selectfont
     }
     \newcommand{\textc}[1]{{\sm@ller\uppercase{#1}}}
+    
+    
+    
+    %\def\sbfCMB#1{\ThisStyle{\setbox0=\hbox{$\SavedStyle#1$}%
+    %		#1\kern.2pt\kern-\wd0%
+    %		\raisebox{.1pt}{$\SavedStyle#1$}}}
+    \newcommand{\sbfCMB}[1]{\textbf{\textit{#1}}}
+    
+
 
 }
 
@@ -388,7 +397,7 @@
     
     \renewcommand{\theequation}{\arabic{section}.\arabic{equation}}
     \def\@cpb@mathline{\raisebox{0pt}[0pt][0pt]{\vline height 0.8em depth 0.6em width \arrayrulewidth}}
-    \renewcommand\tagform@[1]{\maketag@@@{\ignorespaces\@cpb@mathline\;\cpb@secnumsize#1\unskip\@@italiccorr\hspace*{5ex}}}
+    \renewcommand\tagform@[1]{\maketag@@@{\ignorespaces\makebox[6ex][l]{\@cpb@mathline\;\cpb@secnumsize#1\unskip\@@italiccorr\hfill}\hspace*{5ex}}}
     
     
     
@@ -406,15 +415,34 @@
     ]{siunitx} % http://ctan.mirror.rafal.ca/macros/latex/contrib/siunitx/siunitx.pdf
     
     
+    
+    
+    
+    %\newenvironment{mathwhere}
+    %  {where:\vspace{\abovedisplayskip}\noindent\begin{tabularx}{\linewidth}{>{$}l<{$} !{is} Z}}
+    %  {\end{tabularx}\par\vspace{\belowdisplayskip}}
+    
+    
+    \NewDocumentEnvironment{mathwhere*}{ +b }{%
+    \begin{tabularx}{0.8\linewidth}[t]{>{$}l<{$}  Z}
+    					 #1
+    \end{tabularx}\par\vspace{\belowdisplayskip}
+    	}{}
+    
+    \NewDocumentEnvironment{mathwhere}{+b}{%
+    where:\\[0.3ex]
+    \hspace*{3ex}
+    \begin{AutoPuncTabular}
+    	\begin{mathwhere*}
+    		#1
+    	\end{mathwhere*}
+    \end{AutoPuncTabular}
+    	}{}
+    
+    
+    
     %	inter-unit-product=\,, % default
     %\sisetup{range-phrase=--,
-    
-    
-    
-    %\def\sbfCMB#1{\ThisStyle{\setbox0=\hbox{$\SavedStyle#1$}%
-    %		#1\kern.2pt\kern-\wd0%
-    %		\raisebox{.1pt}{$\SavedStyle#1$}}}
-    \newcommand{\sbfCMB}[1]{\textbf{\textit{#1}}}
     
 
 
@@ -449,6 +477,8 @@
     }{}
     
     \let\nl\\  % shortcut for \newline and \\
+    
+    \def\MoreRowHeight{\rule{0pt}{0.9em}}
     
     % fixed column width, ragged right instead of horizontally filled allows new line
     \newcolumntype{P}[1]{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}p{#1}}
@@ -559,6 +589,16 @@
     \colorlet{subsecCol}{darkindigo}
     \colorlet{subsubsecCol}{verydarkindigo}
     
+    \def\blacksectionheadings{
+       \setaccentcolor{.} % . is current color, so if you invert it will change
+    }
+    
+    
+    \NewDocumentCommand{\setaccentcolor}{m}{
+        \colorlet{secCol}{#1}
+        \colorlet{subsecCol}{#1}
+        \colorlet{subsubsecCol}{#1}
+    }
     
     
     \definecolor{pltblue}{HTML}{1000F0}
@@ -613,8 +653,16 @@
     }
     %
     
+    
     \setlist[enumerate,2]{label=\alph*.}
     \SetEnumitemKey{moresep}{itemsep=\moreseplength}
+    
+    \providetoggle{useSerif}
+    \iftoggle{useSerif}{
+    %	\setlist[enumerate,2]{label=\alph*., format=\toglnums}
+    	\setlist[enumerate,1]{label=\toglnums\arabic*.}
+    }{}
+    
     
     %%%
     \SetEnumitemKey{twocol}{
@@ -716,7 +764,8 @@
     	belowskip={1.0\baselineskip},
     	captionpos=t,
     	belowcaptionskip=5pt, % trial and error gve this a good result
-    	frame=\cbp@listframe,
+    %	frame=\cbp@listframe,
+    	frame=tb,
     	rulecolor=\color{black},
     	numbers=left,
     	numberstyle=\ttfamily\footnotesize\color{codecomment},
@@ -776,24 +825,11 @@
     
     
     
-    \lstdefinestyle{code}{
-    	basicstyle       = \small\ttfamily ,
-    	numbers          = left,
-    	numberstyle      = \scriptsize,
-    	numberblanklines = true,
-    	breaklines       = true,
-    	keepspaces       = true,
-    	columns          = fullflexible,
-    	frame=tb,
-    	% whatever else you want ...
-    }
-    
     
     
     
     \lstnewenvironment{listing}
     {%
-    	\lstset{style=code}%
     	\mdframed[style=note]%
     }
     {%
