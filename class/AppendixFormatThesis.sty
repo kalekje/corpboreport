@@ -12,15 +12,24 @@
 \let\originalappendix\appendix
 
 \renewcommand\appendix{%
+	%
+  \addtocontents{toc}{%
+    \vspace*{1.3ex}%
+    \protect\contentsline{chapter}{\hspace{3.5ex}Appendix\hfill\ }{}{}}
+  %
+  \pdfbookmark[-1]{Appendix}{LabelAppendicesPDF}
+	%
 	\originalappendix
-	% NOTE you cannot use the alphabetized subsections anymore
+	% NOTE you cannot use the alphabetized subsections anymore like you can with corpboreport, shouldn't be an issue
 	%
 	\def\thechapter{{\scshape\alph{chapter}}}
 	\def\theHchapter{{\scshape\alph{chapter}}}
 
 	\crefalias{chapter}{appsec}
-
+	%
+	\cbp@largechapspace   % see SecThesis.sty
 	\chapter*{Appendix}
+	\cbp@normalchapspace  % see SecThesis.sty
    \ \ \clearpage
 }
 

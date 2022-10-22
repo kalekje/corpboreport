@@ -205,13 +205,12 @@
     }
     
     \usepackage{xfrac}
-    \usepackage{amsfonts,gensymb}  % math fonts and symbols
-    
+    \usepackage{amsfonts}  % math fonts and symbols
+    %\usepackage{gensymb}
     
     \renewcommand{\theequation}{\arabic{section}.\arabic{equation}}
-    \def\@cpb@mathline{\raisebox{0pt}[0pt][0pt]{\vline height 0.8em depth 0.6em width \arrayrulewidth}}
-    \renewcommand\tagform@[1]{\maketag@@@{\ignorespaces\makebox[6ex][l]{\@cpb@mathline\;\cpb@secnumsize#1\unskip\@@italiccorr\hfill}\hspace*{5ex}}}
-    
+    \def\@cbp@mathline{\raisebox{0pt}[0pt][0pt]{\vline height 0.8em depth 0.6em width \arrayrulewidth}}
+    \renewcommand\tagform@[1]{\maketag@@@{\ignorespaces\makebox[6ex][l]{\@cbp@mathline\;\cbp@secnumsize#1\unskip\@@italiccorr\hfill}\hspace*{5ex}}}
     
     
     \providecommand{\togunums}{}  % toggle to uppercase number shortcut
@@ -270,7 +269,7 @@
     \DTMsetup{datesep={-}}
     
     \usepackage{calc}  % allows us to use expressions like {\linewidth-2ex} in commands
-    \usepackage{xfp}  % floating point math
+    \usepackage{xfp}  % floating point math, should remove as it is a part of new latex dist
     \usepackage{xspace}  % smartly looks at space after commands
     
     %\usepackage{tabto}% possibly usful for two column lists %http://tug.ctan.org/tex-archive/macros/latex/contrib/tabto/tabto-doc.pdf
@@ -473,12 +472,30 @@
     \newlength{\TabNoteSpace}
     \newlength{\LongTabNoteSpace}
     \setlength\TabNoteSpace{-1.3ex}
-    \setlength\LongTabNoteSpace{-5.5ex}
+    \setlength\LongTabNoteSpace{-4.5ex}
     
     
     \newcommand{\LongTableNotes}[2][\linewidth]{% todo might wanna fix this so it's more automatic
         \vspace{\LongTabNoteSpace}% manually tested
         \parbox{#1}{\footnotesize #2}}
+    
+    
+    \NewDocumentCommand{\LTcaption}{O{#2} m O{}}{{\WideFloatCaption\captionof{table}[#1]{#2}#3}}
+    %% example longtable header
+    %\NewDocumentCommand{\LTcontinues}{O{+}}{\MC[#1r]{\textsl{Table continues on next page\ldots}}}
+    %\NewDocumentCommand{\LTcontinued}{O{+}}{\MC[#1l]{\textsl{\ldots Table continued from previous page}}\\}
+    \def\LTcontinues{\MC[+r]{\Llap{\ \hfill\textsl{Table continues on next page\ldots}}}}
+    \def\LTcontinued{\MC[+l]{\Rlap{\textsl{\ldots Table continued from previous page}}}\\}
+    %\def\LTheader{\toprule {Section} & {Item} & {Comment}\\\midrule}
+    %\setmidruleX{reset=true}
+    %\begin{longtable}{@{}lp{3cm}X@{\midruleX}}
+    %\WideFloatCaption%
+    %\caption{TSIR review.}\label{t.tsir}\\[\smallskipamount]
+    %\LTheader\endfirsthead        % first header
+    %\LTcontinued\LTheader\endhead % headers after page break
+    %\LTcontinues\endfoot          % footers before page break
+    %\bottomrule\endlastfoot       % last footer
+    %\resetmidruleX
     
     
     %%%%% todo should I move this into unirefs?  maybe make a lua version
@@ -497,7 +514,22 @@
     		{\tnote*{\uref{#2}}}%
     		{\tnote{\uref{#2}}}%
     }% use tnote{a} in the table, and \tfnote{a}Note here in the foot notes
-
+    
+    
+    
+    %\NewDocumentCommand{\LongTablePreamble}{ s m O{\bottomrule} }{%  *= dont resetmidruleX on header. {table's header} [table's footer]
+    %	#2
+    %\endfirsthead
+    %%  \MC[3l]{\textsl{\ldots Table continued from previous page\vspace*{0.4ex}}}\\%
+    %  #2%\IfBooleanTF{#1}{}{\noalign{\resetmidruleX}}
+    %\endhead % all the lines above this will be repeated on every page
+    %%  \\%
+    %%  	\MC[3r]{\textsl{Table continues on next page\ldots}}
+    %	\\%\IfBooleanTF{#1}{}{\noalign{\resetmidruleX}}
+    %\endfoot
+    %  #3
+    %\endlastfoot
+    %}
 
 %%%%%%%%%%%%  ColorsCustom.sty  %%%%%%%%%%%%
     % ##############################################
@@ -609,6 +641,7 @@
     \def\continuedtext{\ldots Listing continued from previous page}
     
     
+    
     \usepackage[framemethod=tikz]{mdframed}  % for multi-page codeboxes
     \usepackage{listings}  %
     
@@ -646,6 +679,7 @@
     }
     
     
+    \renewcommand{\lstlistlistingname}{Code Listings}
     
     
     % toodo should really clean this up
@@ -670,7 +704,7 @@
     	frame=tb,
     	rulecolor=\color{black},
     	numbers=left,
-    	numberstyle=\ttfamily\footnotesize\color{codecomment},
+    	numberstyle=\color{codecomment}\ttfamily\scriptsize,
     %	keywords={for},  %% todo clean up keywords, i dont like built-ins..
     	keywordstyle=\color{codekey},
     	commentstyle=\color{codecomment},
@@ -868,8 +902,21 @@
     
     %%% acrnonym and gloassaries stuff
     
-    \usepackage[xindy,acronym,nonumberlist,toc]{glossaries-extra}
+    \usepackage[xindy,acronym]{glossaries-extra}
+    %,nonumberlist <<< dont use as custom styles are made
+    % toc <<< dont use ToC option as manually entered
+    
     \renewcommand{\glossarysection}[2][]{} % remove glossary section heading entirely, requires manual but more flexible
+    
+    
+    \newglossary[ilg]{index}{ind}{idx}{\indexname}
+    %\newglossary[ilg]{index}{ind}{idx}{\indexname}
+    
+    
+    % https://tex.stackexchange.com/questions/269565/glossaries-how-to-customize-list-of-symbols-with-additional-column-for-units
+    % todo make symbols glossary OR just print a simple table with an excel macro, might be easiest
+    \newglossary[slg]{symbols}{syi}{syg}{Symbolslist} % create add. symbolslist
+    
     
     
     \GlsXtrEnableEntryCounting % % https://tex.stackexchange.com/questions/477581/glossaries-introduce-short-name-only-if-used-more-than-once-within-section-chap
@@ -881,6 +928,10 @@
     %\glsenableentrycount % enable \cgls, \cglspl, \cGls, \cGlspl  supposed to not show accronym if only one
     \glsdisablehyper  % to disable hyperlinks
     \glstoctrue  % ToC
+    
+    
+    
+    
     
     \makeglossaries
     
@@ -895,7 +946,7 @@
     		\begin{description}[font=\bfseries,leftmargin=1.7cm,style=multiline,itemsep=3pt]\raggedright}%
     		{\end{description}\end{multicols}}%
     	\renewcommand*{\glossaryentryfield}[5]{%
-    		\item[{\normalfont\bfseries\glsentryitem{##1}\glstarget{##1}{##2}}]{##3\glspostdescription\space ##5}
+    		\item[{\normalfont\bfseries\glsentryitem{##1}\glstarget{##1}{##2}}]{##3\glspostdescription}  % \space ##5 after postdescription (page numbers) are removed
     		}%
     }
     
@@ -911,7 +962,7 @@
     		\begin{description}[font=\bfseries,leftmargin=2.7cm,style=multiline,itemsep=3pt]\raggedright}%
     		{\end{description}}%
     	\renewcommand*{\glossaryentryfield}[5]{%
-    		\item[{\normalfont\bfseries\glsentryitem{##1}\glstarget{##1}{##2}}]{##3\glspostdescription\space ##5}
+    		\item[{\normalfont\bfseries\glsentryitem{##1}\glstarget{##1}{##2}}]{##3\glspostdescription} % \space ##5 argument 5, page numbers, are removed
     		}%
     }
     
@@ -1049,8 +1100,8 @@
     %%%% END TIKZ STUFF
 
 
-\usepackage[pl,extras]{penlight}
-\usepackage{YAMLvars}
+\usepackage[pl,extrasglobals]{penlight}
+\usepackage{yamlvars}
 \usepackage{lutabulartools}
 \usepackage[noenumitem]{autopuncitems}
 

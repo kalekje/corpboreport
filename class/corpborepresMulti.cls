@@ -54,8 +54,8 @@
 \usepackage{\FormatDir TikZstuff}
 
 
-\usepackage[pl,extras]{penlight}
-\usepackage{YAMLvars}
+\usepackage[pl,extrasglobals]{penlight}
+\usepackage{yamlvars}
 \usepackage{lutabulartools}
 \usepackage[noenumitem]{autopuncitems}
 

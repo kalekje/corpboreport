@@ -67,6 +67,8 @@ memotoaddr:
 }
 
 
+\def\noSectionNumbers{\setcounter{secnumdepth}{-\maxdimen}}  % remove sec num}
+
 \iftoggle{useMemo}{
 
   \AtBeginDocument{
@@ -84,9 +86,8 @@ memotoaddr:
     \gdef\scr@section@afterskip{0.1pt}
     \gdef\scr@subsection@beforeskip{13.1pt \@plus 1.3pt}
     \gdef\scr@subsection@afterskip{0.1pt}
-
-
-    \setcounter{secnumdepth}{-\maxdimen}  % remove sec num
+  
+    
     \KOMAoptions{bibliography=totoc}  % uncomment if you want numbered reference section
     \floatsetup{objectset=raggedright}
     \captionsetup{labelformat=widecap}

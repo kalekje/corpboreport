@@ -20,7 +20,7 @@
 \providetoggle{SecOnNewPage} %% only need one toggle
 \toggletrue{SecOnNewPage}
 
-\providecommand{\cpb@secnumsize}{\smaller}
+\providecommand{\cbp@secnumsize}{\smaller}
 
 \providetoggle{showListOfFigsTabs}
 \providetoggle{samepgListOfFigsTabs}
@@ -50,15 +50,15 @@
 %https://tex.stackexchange.com/questions/381261/right-align-chapter-numbering-in-koma-script-toc?rq=1
 \newcommand\sectionentrynumberformat[1]{% define the new format for the chapter numbers in ToC
 	% \renewcommand\autodot{.}% dot after chapter
-	\hfill\cpb@secnumsize#1\enspace\hspace{1pt}% align chapter numbers right
+	\hfill\cbp@secnumsize#1\enspace\hspace{1pt}% align chapter numbers right
 }
 
 %
 %\renewcommand\sectionlinesformat[4]{%
-%	\makebox[0pt][r]{\cpb@secnumsize#3\hspace{2pt}}#4%
+%	\makebox[0pt][r]{\cbp@secnumsize#3\hspace{2pt}}#4%
 %}
 %\renewcommand\sectioncatchphraseformat[4]{% used by run-in headings with style=section
-%	\makebox[0pt][r]{\cpb@secnumsize#3\hspace{1pt}}#4%
+%	\makebox[0pt][r]{\cbp@secnumsize#3\hspace{1pt}}#4%
 %}
 
 
@@ -86,7 +86,7 @@ tocindent=0.5ex,
 tocbeforeskip=1pt,
 tocnumwidth=4.4ex,
 tocentryformat=\normalsize,
-tocentrynumberformat=\cpb@secnumsize,
+tocentrynumberformat=\cbp@secnumsize,
 ]{subsection}%
 %
 \RedeclareSectionCommand[beforeskip=13.7pt plus 1.37pt,
@@ -95,7 +95,7 @@ afterskip=0.01pt,
 tocindent=5.4ex,
 tocnumwidth=6.6ex,
 tocentryformat=\small,
-tocentrynumberformat=\cpb@secnumsize,
+tocentrynumberformat=\cbp@secnumsize,
 ]{subsubsection}
 
 \RedeclareSectionCommand[beforeskip=3.01pt,
@@ -109,7 +109,7 @@ linefill=\diamondleaders,
 indent=0pt,
 numwidth=4.4ex,
 entryformat=\normalsize,
-entrynumberformat=\cpb@secnumsize,
+entrynumberformat=\cbp@secnumsize,
 ]{tocline}{table}
 
 
@@ -118,7 +118,7 @@ linefill=\diamondleaders,
 indent=0pt,
 numwidth=4.4ex,
 entryformat=\normalsize,
-entrynumberformat=\cpb@secnumsize,
+entrynumberformat=\cbp@secnumsize,
 ]{tocline}{figure}
 
 
@@ -133,7 +133,7 @@ entrynumberformat=\cpb@secnumsize,
 
 
 \renewcommand\sectionlinesformat[4]{% used by free-standing headings with style=section
-	\makebox[0pt][r]{\cpb@secnumsize#3\hspace{3pt}}#4%  puts section number in margin
+	\makebox[0pt][r]{\cbp@secnumsize#3\hspace{3pt}}#4%  puts section number in margin
 }
 
 
@@ -144,8 +144,8 @@ entrynumberformat=\cpb@secnumsize,
 \addtokomafont{subsubsection}{\color{subsubsecCol}}
 
 
-\newdimen\cpb@sectprespacelengthnewpage
-\cpb@sectprespacelengthnewpage=-1.5cm  % make less negative to increase spacing on new section title (always starts new page)
+\newdimen\cbp@sectprespacelengthnewpage
+\cbp@sectprespacelengthnewpage=-1.5cm  % make less negative to increase spacing on new section title (always starts new page)
 % WAS 20pt
 
 \newcounter{sectionletter}%
@@ -155,7 +155,7 @@ entrynumberformat=\cpb@secnumsize,
 \RenewDocumentCommand{\section}{ s t+ t! o m }{%
     %   * (no number, no ToC),  + (add sec letter) ! (on new page)
     \IfBooleanT{#3}{\invtoggle{SecOnNewPage}}%
-    \iftoggle{SecOnNewPage}{\clearpage\vspace*{\cpb@sectprespacelengthnewpage}}{}%
+    \iftoggle{SecOnNewPage}{\clearpage\vspace*{\cbp@sectprespacelengthnewpage}}{}%
     \Needspace{\secneedspace}%
     \IfBooleanTF{#2}{%
         	\ifnum\value{sectionletter}>0% if we're into section lettering already
@@ -287,6 +287,8 @@ entrynumberformat=\cpb@secnumsize,
     \protect\contentsline{section}{\hspace{3.5ex}Appendix\hfill\ }{}{}}
   
   \pdfbookmark[0]{Appendix}{LabelAppendicesPDF}
+
+  \vspace*{4in}
 }{}{}
 
 
@@ -305,13 +307,13 @@ entrynumberformat=\cpb@secnumsize,
 %\if@twoside% if two-sided, put the section headings to right side and numbers in right margin
 %\renewcommand\sectionlinesformat[4]{%  for section numbers in right margin for a two sided document
 %	\ifthispageodd
-%	{\raggedleft#4\makebox[0pt][l]{\hspace{\marginparsep}\cpb@secnumsize#3}}
-%	{\raggedright\makebox[0pt][r]{\cpb@secnumsize#3\hspace{\marginparsep}}#4}%
+%	{\raggedleft#4\makebox[0pt][l]{\hspace{\marginparsep}\cbp@secnumsize#3}}
+%	{\raggedright\makebox[0pt][r]{\cbp@secnumsize#3\hspace{\marginparsep}}#4}%
 %}
 %%\newcommand\side{stuff for twoside} %to do reconsider if this is needed
 %\else% if not two sided, only apply to one sided
 %\renewcommand\sectionlinesformat[4]{% used by free-standing headings with style=section
-%	\makebox[0pt][r]{\cpb@secnumsize#3}#4%  puts section number in margin
+%	\makebox[0pt][r]{\cbp@secnumsize#3}#4%  puts section number in margin
 %}	%\newcommand\side{stuff for onside} %to do reconsider if this is needed
 %\fi%  finally do nothing
 %\makeatother

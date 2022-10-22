@@ -59,7 +59,7 @@
 \setlength{\fullheight}{22cm}
 
 
-\NewDocumentCommand{\cpb@setFloatCap}{m m}{%
+\NewDocumentCommand{\cbp@setFloatCap}{m m}{%
   \captionsetup{margin={0pt,0pt}}% restore margin for caption
   \IfBooleanTF{#2}{\captionsetup{justification=justified}}{\captionsetup{justification=raggedright}}%
   \IfBooleanTF{#1}{% if star use the wide format
@@ -73,31 +73,31 @@
 
 
 % Insert(Table|Figure) syntax
-%     1      2             3           4           5          6            7            8      9
-%  *wide,  +justify cap  [pos]     <pre-amble>  {content}  {caption} [short caption] {label}  [footnotes]
+%     1      2           3           4          5              6            7            8      9
+%  *wide,  [pos]     <pre-amble>  {content}   +justify cap  {caption} [short caption] {label}  [footnotes]
 
-\NewDocumentCommand{\InsertFigure}{s t+ O{htbp} D<>{} m +m O{#6} m o}{%
+\NewDocumentCommand{\InsertFigure}{s O{htbp} D<>{} m t+ +m O{#6} m o}{%
   \reseturef%
-  \cpb@setFloatCap{#1}{#2}%
-  \begin{figure}[#3]%
-    #4%
+  \cbp@setFloatCap{#1}{#5}%
+  \begin{figure}[#2]%
+    #3%
 %    \captop%
     \caption[#7]{#6}#8%
     \IfBooleanTF{#1}%
-      {\ffigbox{}{#5\IfValueT{#9}{\vspace{\TabNoteSpace}\floatfoot*{#9}}}}%  FBwidth doesn't work with sub-figure, hack for now
-      {\ffigbox[\FBwidth]{}{#5\IfValueT{#9}{\vspace{\TabNoteSpace}\floatfoot*{#9}}}}%
+      {\ffigbox{}{#4\IfValueT{#9}{\vspace{\TabNoteSpace}\floatfoot*{#9}}}}%  FBwidth doesn't work with sub-figure, hack for now
+      {\ffigbox[\FBwidth]{}{#4\IfValueT{#9}{\vspace{\TabNoteSpace}\floatfoot*{#9}}}}%
   \end{figure}%
 }%
 
 
-
-\NewDocumentCommand{\InsertTable}{ s t+ O{htbp} D<>{} m +m O{#6} m o }{%
+%                                  1  2   3    4    4 5  6
+\NewDocumentCommand{\InsertTable}{ s O{htbp} D<>{} m t+ +m O{#6} m o }{%
   \reseturef%
-  \cpb@setFloatCap{#1}{#2}%
-  \begin{table}[#3]% htbp! settings
-    #4% pre-amble
+  \cbp@setFloatCap{#1}{#5}%
+  \begin{table}[#2]% htbp! settings
+    #3% pre-amble
     \caption[#7]{#6}#8%
-    \ttabbox{}{#5\IfValueT{#9}{\vspace{\TabNoteSpace}\floatfoot*{#9}}}% if no star then use hanging
+    \ttabbox{}{#4\IfValueT{#9}{\vspace{\TabNoteSpace}\floatfoot*{#9}}}% if no star then use hanging
   \end{table}%
 }
 
@@ -129,7 +129,9 @@
 }
 
 \newcommand{\FloatNextPage}[1]{% if a float takes up the whole page
-  \afterpage{#1}
+  \afterpage{#1
+  \clearpage
+  }
 }
 
 
@@ -165,4 +167,22 @@
     end
     tex.write(pages)
   }%
+}
+
+
+%\def\floatlefthanglabel{%
+%  \setlength{\floatindentlength}{0ex}
+%  \gdef\figurename{fig.}
+%  \gdef\tablename{tab.}
+%  \DeclareCaptionLabelFormat{hangcap}{\llap{##1\,##2\enspace}}
+%}
+%\def\hideeqlabelOP{}
+
+
+\def\floatlefthanglabel{
+  \captionsetup{figurename=fig.,tablename=tab.,}
+  \renewcommand{\lstlistingname}{code}
+  \DeclareCaptionLabelFormat{hangcap}{\llap{\cbp@secnumsize##1\,##2\enspace}}
+  \DeclareCaptionLabelFormat{widecap}{\llap{\cbp@secnumsize##1\,##2\enspace}}
+  \global\setlength{\floatindentlength}{0ex}
 }

@@ -69,7 +69,7 @@
 
 %! language = yaml
 \begin{parseYAMLvars}
-Title: |-
+title: |-
   a template for a rather
   corp{\smaller\smaller\normalfont orate}
   bore{\smaller\smaller\normalfont ing}
@@ -78,6 +78,7 @@ Title: |-
 author:
   - Kale Ewasiuk \url{kalekje@gmail.com}
   - Another Example
+  - Third Contributer
 
 subtitle: |-
 		Some thought-provoking
@@ -280,6 +281,11 @@ for producing a good doc.
 \ToCrightmargin=0pt % pushes page numbers closer to ToC for easier reading
 \pullToCcloser=-12pt % pulls ToC closer to section heading for more room
 
+\floatlefthanglabel % hanging float labels and float flushed left.. experimental..
+
+\noSectionNumbers % completely disable section numbers (possibly for a memo)
+
+
 \toggletrue{showListOfFigsTabs} %< show figs/tables contents
 \togglefalse{samepgListOfFigsTabs} %< on the same page?
 \end{lstlisting}
@@ -298,6 +304,12 @@ The title of this document is redefined, and uses the KOMA commands:\\
 If you want to print the title (and have deliberate line breaks removed), or author, etc.,
 try \cmd{\thetitle} -> ``\thetitle'' and \cmd{\theauthor} -> ``\theauthor''
 
+This class offers a way to print authors in a comma list \cmd{\theauthors} -> \theauthors\\
+or individually \cmd{\theauthors[1]} -> \theauthors[1], \cmd{\theauthors[2]} -> \theauthors[2]\\
+
+\begin{itemize}
+  \listauthors
+\end{itemize}
 
 \subsection{Header and Footer}
 Since this document class uses KOMA Script, change the header with
@@ -409,6 +421,8 @@ NOTE: you can put a *  directly after
 InsertTable or InsertFigure,
 and it will make it a wide table/fig
 that is flush left, no star will indent the float a bit
+
+Put a + before the caption to justify it
 \end{lstlisting}
 
 
@@ -586,6 +600,10 @@ Some other stuff:
 \todoL{todo note on a new line}
 \end{lstlisting}
 
+\section{Symbols}
+
+if you \cmd{\toggletrue{dollarsignafter}}
+\dol{2}[M]
 
 \section{Hacks}
 
@@ -702,6 +720,32 @@ Used for report variables
 
 \llcmdlink{LuaTeX}{https://www.pragma-ade.com/general/manuals/luatex.pdf}The reference manual.
 
+
+\section{Math with LaTeX}
+
+Math on "pure" numbers:\\
+\llcmd{\fpeval}\cmd{\fpeval{1+2.5}}->\fpeval{1+2.5} (floating point math)\\
+\llcmd{\inteval}\cmd{\inteval{5/2}}->\inteval{5/2} (division is rounded)\\
+
+For a list of functions,
+see \url{https://ctan.math.washington.edu/tex-archive/macros/latex/contrib/l3packages/xfp.pdf}
+
+
+Math on dimensions/lengths:\\
+\llcmd{\dimeval}\cmd{\rule{\dimeval{1cm+1cm}}{1pt}}->\rule{\dimeval{1cm+1cm}}{1pt}\\%
+\llcmd{\skipeval}\cmd{a\hspace{\skipeval{1cm plus 1cm - (1cm plus 0.5cm)}}b}->a\hspace{\skipeval{1cm plus 0.9cm - (1cm plus 0.5cm)}}b\\
+
+\rule{\dimeval{ \linewidth plus 1cm minus 1cm - 1cm}}{1pt} a\\
+\rule{\skipeval{\linewidth plus 1cm minus 1cm - 1cm}}{1pt} a\\
+
+
+Note: if above does not work, you can try the old way:\\
+\cmd{\rule{\dimexpr(\linewidth-3in)\relax}{1pt}}\hfill\rule{\dimexpr(\linewidth-3in)\relax}{1pt}\\
+or use \cmd{\gluexpr()\relax} in place of \cmd{\skipeval}
+
+Note: glue/skip is stretchy, it has an X plus P minus M where it can stretch and shrink.
+\url{https://tex.stackexchange.com/questions/64756/what-is-glue-stretching}
+\url{https://tex.stackexchange.com/questions/64756/what-is-glue-stretching}
 
 \section{Hydro Stuff}
 

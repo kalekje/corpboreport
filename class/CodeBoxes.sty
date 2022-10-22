@@ -15,6 +15,7 @@
 \def\continuedtext{\ldots Listing continued from previous page}
 
 
+
 \usepackage[framemethod=tikz]{mdframed}  % for multi-page codeboxes
 \usepackage{listings}  %
 
@@ -52,6 +53,7 @@
 }
 
 
+\renewcommand{\lstlistlistingname}{Code Listings}
 
 
 % toodo should really clean this up
@@ -76,7 +78,7 @@
 	frame=tb,
 	rulecolor=\color{black},
 	numbers=left,
-	numberstyle=\ttfamily\footnotesize\color{codecomment},
+	numberstyle=\color{codecomment}\ttfamily\scriptsize,
 %	keywords={for},  %% todo clean up keywords, i dont like built-ins..
 	keywordstyle=\color{codekey},
 	commentstyle=\color{codecomment},

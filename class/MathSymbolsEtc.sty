@@ -11,13 +11,12 @@
 }
 
 \usepackage{xfrac}
-\usepackage{amsfonts,gensymb}  % math fonts and symbols
-
+\usepackage{amsfonts}  % math fonts and symbols
+%\usepackage{gensymb}
 
 \renewcommand{\theequation}{\arabic{section}.\arabic{equation}}
-\def\@cpb@mathline{\raisebox{0pt}[0pt][0pt]{\vline height 0.8em depth 0.6em width \arrayrulewidth}}
-\renewcommand\tagform@[1]{\maketag@@@{\ignorespaces\makebox[6ex][l]{\@cpb@mathline\;\cpb@secnumsize#1\unskip\@@italiccorr\hfill}\hspace*{5ex}}}
-
+\def\@cbp@mathline{\raisebox{0pt}[0pt][0pt]{\vline height 0.8em depth 0.6em width \arrayrulewidth}}
+\renewcommand\tagform@[1]{\maketag@@@{\ignorespaces\makebox[6ex][l]{\@cbp@mathline\;\cbp@secnumsize#1\unskip\@@italiccorr\hfill}\hspace*{5ex}}}
 
 
 \providecommand{\togunums}{}  % toggle to uppercase number shortcut

@@ -67,12 +67,30 @@
 \newlength{\TabNoteSpace}
 \newlength{\LongTabNoteSpace}
 \setlength\TabNoteSpace{-1.3ex}
-\setlength\LongTabNoteSpace{-5.5ex}
+\setlength\LongTabNoteSpace{-4.5ex}
 
 
 \newcommand{\LongTableNotes}[2][\linewidth]{% todo might wanna fix this so it's more automatic
     \vspace{\LongTabNoteSpace}% manually tested
     \parbox{#1}{\footnotesize #2}}
+
+
+\NewDocumentCommand{\LTcaption}{O{#2} m O{}}{{\WideFloatCaption\captionof{table}[#1]{#2}#3}}
+%% example longtable header
+%\NewDocumentCommand{\LTcontinues}{O{+}}{\MC[#1r]{\textsl{Table continues on next page\ldots}}}
+%\NewDocumentCommand{\LTcontinued}{O{+}}{\MC[#1l]{\textsl{\ldots Table continued from previous page}}\\}
+\def\LTcontinues{\MC[+r]{\Llap{\ \hfill\textsl{Table continues on next page\ldots}}}}
+\def\LTcontinued{\MC[+l]{\Rlap{\textsl{\ldots Table continued from previous page}}}\\}
+%\def\LTheader{\toprule {Section} & {Item} & {Comment}\\\midrule}
+%\setmidruleX{reset=true}
+%\begin{longtable}{@{}lp{3cm}X@{\midruleX}}
+%\WideFloatCaption%
+%\caption{TSIR review.}\label{t.tsir}\\[\smallskipamount]
+%\LTheader\endfirsthead        % first header
+%\LTcontinued\LTheader\endhead % headers after page break
+%\LTcontinues\endfoot          % footers before page break
+%\bottomrule\endlastfoot       % last footer
+%\resetmidruleX
 
 
 %%%%% todo should I move this into unirefs?  maybe make a lua version
@@ -91,3 +109,19 @@
 		{\tnote*{\uref{#2}}}%
 		{\tnote{\uref{#2}}}%
 }% use tnote{a} in the table, and \tfnote{a}Note here in the foot notes
+
+
+
+%\NewDocumentCommand{\LongTablePreamble}{ s m O{\bottomrule} }{%  *= dont resetmidruleX on header. {table's header} [table's footer]
+%	#2
+%\endfirsthead
+%%  \MC[3l]{\textsl{\ldots Table continued from previous page\vspace*{0.4ex}}}\\%
+%  #2%\IfBooleanTF{#1}{}{\noalign{\resetmidruleX}}
+%\endhead % all the lines above this will be repeated on every page
+%%  \\%
+%%  	\MC[3r]{\textsl{Table continues on next page\ldots}}
+%	\\%\IfBooleanTF{#1}{}{\noalign{\resetmidruleX}}
+%\endfoot
+%  #3
+%\endlastfoot
+%}

@@ -84,7 +84,7 @@ numbers=noenddot]{scrreprt}
 \usepackage{\FormatDir macros/UniRefs}  % macro to create unique labels, useful for tabular notes
 
 
-\usepackage[pl,extras]{penlight}
+\usepackage[pl,extrasglobals]{penlight}
 \usepackage{lutabulartools}
 \usepackage{autopuncitems}
 

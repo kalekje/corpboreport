@@ -16,7 +16,7 @@
     \DTMsetup{datesep={-}}
     
     \usepackage{calc}  % allows us to use expressions like {\linewidth-2ex} in commands
-    \usepackage{xfp}  % floating point math
+    \usepackage{xfp}  % floating point math, should remove as it is a part of new latex dist
     \usepackage{xspace}  % smartly looks at space after commands
     
     %\usepackage{tabto}% possibly usful for two column lists %http://tug.ctan.org/tex-archive/macros/latex/contrib/tabto/tabto-doc.pdf
@@ -265,19 +265,25 @@
     \def\togunums{\addfontfeature{Numbers=Lining}} %% from kpfonts.sty
     \def\toglnums{\addfontfeature{Numbers=OldStyle}}
     
-    \let\lnum\oldstylenums
-    \let\unum\liningnums
+    %\let\lnum\oldstylenums % {}
+    %\let\unum\liningnums   % {}
+    
+    % if [] provided, apply to grouped text only--if not apply toggle
+    \NewDocumentCommand{\lnum}{o}{\IfValueTF{#1}{\oldstylenums{#1}}{\toglnums}}
+    \NewDocumentCommand{\unum}{o}{\IfValueTF{#1}{\liningnums{#1}}{\togunums}}
+    
     \let\classicstylenums\liningnums
     
     \def\acs{\scshape\toglnums}  % acronym series
     \def\act#1{\textsc{\toglnums#1}}  % acronym text
     
+    
     \AtBeginEnvironment{tabular}{\togunums}
     \AtBeginEnvironment{tabular*}{\togunums}
     \AtBeginEnvironment{tikzpicture}{\togunums}
     
-    \def\cpb@secnumsize{\toglnums} % dont allow cpb to use smaller numbers in section
-    %\def\cpb@secnumsize{} % dont allow cpb to use smaller numbers in section
+    \def\cbp@secnumsize{\toglnums} % dont allow cpb to use smaller numbers in section
+    %\def\cbp@secnumsize{} % dont allow cpb to use smaller numbers in section
     \newcommand{\cbp@appendixletformat}[1]{\scshape\alph{#1}}
     \def\cbp@appendixsecformat{\scshape\MakeLowercase}
     
@@ -392,13 +398,12 @@
     }
     
     \usepackage{xfrac}
-    \usepackage{amsfonts,gensymb}  % math fonts and symbols
-    
+    \usepackage{amsfonts}  % math fonts and symbols
+    %\usepackage{gensymb}
     
     \renewcommand{\theequation}{\arabic{section}.\arabic{equation}}
-    \def\@cpb@mathline{\raisebox{0pt}[0pt][0pt]{\vline height 0.8em depth 0.6em width \arrayrulewidth}}
-    \renewcommand\tagform@[1]{\maketag@@@{\ignorespaces\makebox[6ex][l]{\@cpb@mathline\;\cpb@secnumsize#1\unskip\@@italiccorr\hfill}\hspace*{5ex}}}
-    
+    \def\@cbp@mathline{\raisebox{0pt}[0pt][0pt]{\vline height 0.8em depth 0.6em width \arrayrulewidth}}
+    \renewcommand\tagform@[1]{\maketag@@@{\ignorespaces\makebox[6ex][l]{\@cbp@mathline\;\cbp@secnumsize#1\unskip\@@italiccorr\hfill}\hspace*{5ex}}}
     
     
     \providecommand{\togunums}{}  % toggle to uppercase number shortcut
@@ -516,12 +521,30 @@
     \newlength{\TabNoteSpace}
     \newlength{\LongTabNoteSpace}
     \setlength\TabNoteSpace{-1.3ex}
-    \setlength\LongTabNoteSpace{-5.5ex}
+    \setlength\LongTabNoteSpace{-4.5ex}
     
     
     \newcommand{\LongTableNotes}[2][\linewidth]{% todo might wanna fix this so it's more automatic
         \vspace{\LongTabNoteSpace}% manually tested
         \parbox{#1}{\footnotesize #2}}
+    
+    
+    \NewDocumentCommand{\LTcaption}{O{#2} m O{}}{{\WideFloatCaption\captionof{table}[#1]{#2}#3}}
+    %% example longtable header
+    %\NewDocumentCommand{\LTcontinues}{O{+}}{\MC[#1r]{\textsl{Table continues on next page\ldots}}}
+    %\NewDocumentCommand{\LTcontinued}{O{+}}{\MC[#1l]{\textsl{\ldots Table continued from previous page}}\\}
+    \def\LTcontinues{\MC[+r]{\Llap{\ \hfill\textsl{Table continues on next page\ldots}}}}
+    \def\LTcontinued{\MC[+l]{\Rlap{\textsl{\ldots Table continued from previous page}}}\\}
+    %\def\LTheader{\toprule {Section} & {Item} & {Comment}\\\midrule}
+    %\setmidruleX{reset=true}
+    %\begin{longtable}{@{}lp{3cm}X@{\midruleX}}
+    %\WideFloatCaption%
+    %\caption{TSIR review.}\label{t.tsir}\\[\smallskipamount]
+    %\LTheader\endfirsthead        % first header
+    %\LTcontinued\LTheader\endhead % headers after page break
+    %\LTcontinues\endfoot          % footers before page break
+    %\bottomrule\endlastfoot       % last footer
+    %\resetmidruleX
     
     
     %%%%% todo should I move this into unirefs?  maybe make a lua version
@@ -540,7 +563,22 @@
     		{\tnote*{\uref{#2}}}%
     		{\tnote{\uref{#2}}}%
     }% use tnote{a} in the table, and \tfnote{a}Note here in the foot notes
-
+    
+    
+    
+    %\NewDocumentCommand{\LongTablePreamble}{ s m O{\bottomrule} }{%  *= dont resetmidruleX on header. {table's header} [table's footer]
+    %	#2
+    %\endfirsthead
+    %%  \MC[3l]{\textsl{\ldots Table continued from previous page\vspace*{0.4ex}}}\\%
+    %  #2%\IfBooleanTF{#1}{}{\noalign{\resetmidruleX}}
+    %\endhead % all the lines above this will be repeated on every page
+    %%  \\%
+    %%  	\MC[3r]{\textsl{Table continues on next page\ldots}}
+    %	\\%\IfBooleanTF{#1}{}{\noalign{\resetmidruleX}}
+    %\endfoot
+    %  #3
+    %\endlastfoot
+    %}
 
 %%%%%%%%%%%%  ColorsCustom.sty  %%%%%%%%%%%%
     % ##############################################
@@ -707,6 +745,7 @@
     \def\continuedtext{\ldots Listing continued from previous page}
     
     
+    
     \usepackage[framemethod=tikz]{mdframed}  % for multi-page codeboxes
     \usepackage{listings}  %
     
@@ -744,6 +783,7 @@
     }
     
     
+    \renewcommand{\lstlistlistingname}{Code Listings}
     
     
     % toodo should really clean this up
@@ -768,7 +808,7 @@
     	frame=tb,
     	rulecolor=\color{black},
     	numbers=left,
-    	numberstyle=\ttfamily\footnotesize\color{codecomment},
+    	numberstyle=\color{codecomment}\ttfamily\scriptsize,
     %	keywords={for},  %% todo clean up keywords, i dont like built-ins..
     	keywordstyle=\color{codekey},
     	commentstyle=\color{codecomment},
@@ -984,7 +1024,7 @@
     
     %%%% END TIKZ STUFF
 
-\usepackage[pl,extras]{penlight}
+\usepackage[pl,extrasglobals]{penlight}
 \usepackage{YAMLvars}
 \usepackage{lutabulartools}
 \usepackage{autopuncitems}

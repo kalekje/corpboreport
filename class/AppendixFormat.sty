@@ -29,10 +29,12 @@
 	\renewcommand\sectionlinesformat[4]{%
 		\ifstr{##1}{section}
 		{\clearpage\vspace*{\sectprespacelength}##3\\*##4}% appendix sections on new page
-		{\makebox[0pt][r]{\cpb@secnumsize##3}{##4}}% subsections etc.
+		{\makebox[0pt][r]{\cbp@secnumsize##3}{##4}}% subsections etc.
 	}%
 
 }
+
+%%%%%%%%%%% todo how will thesis react to appendix sections on new apge?/
 
 
 % DO THIS with \appendix

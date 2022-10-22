@@ -29,8 +29,21 @@
 
 %%% acrnonym and gloassaries stuff
 
-\usepackage[xindy,acronym,nonumberlist,toc]{glossaries-extra}
+\usepackage[xindy,acronym]{glossaries-extra}
+%,nonumberlist <<< dont use as custom styles are made
+% toc <<< dont use ToC option as manually entered
+
 \renewcommand{\glossarysection}[2][]{} % remove glossary section heading entirely, requires manual but more flexible
+
+
+\newglossary[ilg]{index}{ind}{idx}{\indexname}
+%\newglossary[ilg]{index}{ind}{idx}{\indexname}
+
+
+% https://tex.stackexchange.com/questions/269565/glossaries-how-to-customize-list-of-symbols-with-additional-column-for-units
+% todo make symbols glossary OR just print a simple table with an excel macro, might be easiest
+\newglossary[slg]{symbols}{syi}{syg}{Symbolslist} % create add. symbolslist
+
 
 
 \GlsXtrEnableEntryCounting % % https://tex.stackexchange.com/questions/477581/glossaries-introduce-short-name-only-if-used-more-than-once-within-section-chap
@@ -42,6 +55,10 @@
 %\glsenableentrycount % enable \cgls, \cglspl, \cGls, \cGlspl  supposed to not show accronym if only one
 \glsdisablehyper  % to disable hyperlinks
 \glstoctrue  % ToC
+
+
+
+
 
 \makeglossaries
 
@@ -56,7 +73,7 @@
 		\begin{description}[font=\bfseries,leftmargin=1.7cm,style=multiline,itemsep=3pt]\raggedright}%
 		{\end{description}\end{multicols}}%
 	\renewcommand*{\glossaryentryfield}[5]{%
-		\item[{\normalfont\bfseries\glsentryitem{##1}\glstarget{##1}{##2}}]{##3\glspostdescription\space ##5}
+		\item[{\normalfont\bfseries\glsentryitem{##1}\glstarget{##1}{##2}}]{##3\glspostdescription}  % \space ##5 after postdescription (page numbers) are removed
 		}%
 }
 
@@ -72,7 +89,7 @@
 		\begin{description}[font=\bfseries,leftmargin=2.7cm,style=multiline,itemsep=3pt]\raggedright}%
 		{\end{description}}%
 	\renewcommand*{\glossaryentryfield}[5]{%
-		\item[{\normalfont\bfseries\glsentryitem{##1}\glstarget{##1}{##2}}]{##3\glspostdescription\space ##5}
+		\item[{\normalfont\bfseries\glsentryitem{##1}\glstarget{##1}{##2}}]{##3\glspostdescription} % \space ##5 argument 5, page numbers, are removed
 		}%
 }
 

@@ -16,6 +16,7 @@
 \IfBooleanTF{#1}{\vspace*{2.5cm}}{\pagebreak\null\vfill}
 {\noindent\hspace*{\floatindentlength}\large\slshape End\ of\ #2.\hfill\vspace{5cm}}
 \IfBooleanF{#1}{\null\vfill}
+\bookmarksetup{startatroot}  % to reset "End" in pdf bookmark
 \pdfbookmark{End}{End}
 }
 

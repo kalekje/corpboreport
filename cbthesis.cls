@@ -109,7 +109,7 @@ numbers=noenddot]{scrreprt}
     \DTMsetup{datesep={-}}
     
     \usepackage{calc}  % allows us to use expressions like {\linewidth-2ex} in commands
-    \usepackage{xfp}  % floating point math
+    \usepackage{xfp}  % floating point math, should remove as it is a part of new latex dist
     \usepackage{xspace}  % smartly looks at space after commands
     
     %\usepackage{tabto}% possibly usful for two column lists %http://tug.ctan.org/tex-archive/macros/latex/contrib/tabto/tabto-doc.pdf
@@ -336,19 +336,25 @@ numbers=noenddot]{scrreprt}
     \def\togunums{\addfontfeature{Numbers=Lining}} %% from kpfonts.sty
     \def\toglnums{\addfontfeature{Numbers=OldStyle}}
     
-    \let\lnum\oldstylenums
-    \let\unum\liningnums
+    %\let\lnum\oldstylenums % {}
+    %\let\unum\liningnums   % {}
+    
+    % if [] provided, apply to grouped text only--if not apply toggle
+    \NewDocumentCommand{\lnum}{o}{\IfValueTF{#1}{\oldstylenums{#1}}{\toglnums}}
+    \NewDocumentCommand{\unum}{o}{\IfValueTF{#1}{\liningnums{#1}}{\togunums}}
+    
     \let\classicstylenums\liningnums
     
     \def\acs{\scshape\toglnums}  % acronym series
     \def\act#1{\textsc{\toglnums#1}}  % acronym text
     
+    
     \AtBeginEnvironment{tabular}{\togunums}
     \AtBeginEnvironment{tabular*}{\togunums}
     \AtBeginEnvironment{tikzpicture}{\togunums}
     
-    \def\cpb@secnumsize{\toglnums} % dont allow cpb to use smaller numbers in section
-    %\def\cpb@secnumsize{} % dont allow cpb to use smaller numbers in section
+    \def\cbp@secnumsize{\toglnums} % dont allow cpb to use smaller numbers in section
+    %\def\cbp@secnumsize{} % dont allow cpb to use smaller numbers in section
     \newcommand{\cbp@appendixletformat}[1]{\scshape\alph{#1}}
     \def\cbp@appendixsecformat{\scshape\MakeLowercase}
     
@@ -453,7 +459,7 @@ numbers=noenddot]{scrreprt}
     
     % normal font for page number (not lowercase nums)
     \renewcommand*{\pnumfont}{\normalfont\small} % https://www.dickimaw-books.com/latex/thesis/html/newpagestyle.html
-    %\renewcommand*{\pnumfont}{\normalfont\cpb@secnumsize} % https://www.dickimaw-books.com/latex/thesis/html/newpagestyle.html
+    %\renewcommand*{\pnumfont}{\normalfont\cbp@secnumsize} % https://www.dickimaw-books.com/latex/thesis/html/newpagestyle.html
     
     
     \newcommand{\PageRule}{\vline height 1em depth \lineFooterLen width \arrayrulewidth}
@@ -498,7 +504,7 @@ numbers=noenddot]{scrreprt}
     \providetoggle{SecOnNewPage} %% only need one toggle
     \toggletrue{SecOnNewPage}
     
-    \providecommand{\cpb@secnumsize}{\smaller}
+    \providecommand{\cbp@secnumsize}{\smaller}
     
     \providetoggle{showListOfFigsTabs}
     \providetoggle{samepgListOfFigsTabs}
@@ -528,15 +534,15 @@ numbers=noenddot]{scrreprt}
     %https://tex.stackexchange.com/questions/381261/right-align-chapter-numbering-in-koma-script-toc?rq=1
     \newcommand\sectionentrynumberformat[1]{% define the new format for the chapter numbers in ToC
     	% \renewcommand\autodot{.}% dot after chapter
-    	\hfill\cpb@secnumsize#1\enspace\hspace{1pt}% align chapter numbers right
+    	\hfill\cbp@secnumsize#1\enspace\hspace{1pt}% align chapter numbers right
     }
     
     %
     %\renewcommand\sectionlinesformat[4]{%
-    %	\makebox[0pt][r]{\cpb@secnumsize#3\hspace{2pt}}#4%
+    %	\makebox[0pt][r]{\cbp@secnumsize#3\hspace{2pt}}#4%
     %}
     %\renewcommand\sectioncatchphraseformat[4]{% used by run-in headings with style=section
-    %	\makebox[0pt][r]{\cpb@secnumsize#3\hspace{1pt}}#4%
+    %	\makebox[0pt][r]{\cbp@secnumsize#3\hspace{1pt}}#4%
     %}
     
     
@@ -564,7 +570,7 @@ numbers=noenddot]{scrreprt}
     tocbeforeskip=1pt,
     tocnumwidth=4.4ex,
     tocentryformat=\normalsize,
-    tocentrynumberformat=\cpb@secnumsize,
+    tocentrynumberformat=\cbp@secnumsize,
     ]{subsection}%
     %
     \RedeclareSectionCommand[beforeskip=13.7pt plus 1.37pt,
@@ -573,7 +579,7 @@ numbers=noenddot]{scrreprt}
     tocindent=5.4ex,
     tocnumwidth=6.6ex,
     tocentryformat=\small,
-    tocentrynumberformat=\cpb@secnumsize,
+    tocentrynumberformat=\cbp@secnumsize,
     ]{subsubsection}
     
     \RedeclareSectionCommand[beforeskip=3.01pt,
@@ -587,7 +593,7 @@ numbers=noenddot]{scrreprt}
     indent=0pt,
     numwidth=4.4ex,
     entryformat=\normalsize,
-    entrynumberformat=\cpb@secnumsize,
+    entrynumberformat=\cbp@secnumsize,
     ]{tocline}{table}
     
     
@@ -596,7 +602,7 @@ numbers=noenddot]{scrreprt}
     indent=0pt,
     numwidth=4.4ex,
     entryformat=\normalsize,
-    entrynumberformat=\cpb@secnumsize,
+    entrynumberformat=\cbp@secnumsize,
     ]{tocline}{figure}
     
     
@@ -611,7 +617,7 @@ numbers=noenddot]{scrreprt}
     
     
     \renewcommand\sectionlinesformat[4]{% used by free-standing headings with style=section
-    	\makebox[0pt][r]{\cpb@secnumsize#3\hspace{3pt}}#4%  puts section number in margin
+    	\makebox[0pt][r]{\cbp@secnumsize#3\hspace{3pt}}#4%  puts section number in margin
     }
     
     
@@ -622,8 +628,8 @@ numbers=noenddot]{scrreprt}
     \addtokomafont{subsubsection}{\color{subsubsecCol}}
     
     
-    \newdimen\cpb@sectprespacelengthnewpage
-    \cpb@sectprespacelengthnewpage=-1.5cm  % make less negative to increase spacing on new section title (always starts new page)
+    \newdimen\cbp@sectprespacelengthnewpage
+    \cbp@sectprespacelengthnewpage=-1.5cm  % make less negative to increase spacing on new section title (always starts new page)
     % WAS 20pt
     
     \newcounter{sectionletter}%
@@ -633,7 +639,7 @@ numbers=noenddot]{scrreprt}
     \RenewDocumentCommand{\section}{ s t+ t! o m }{%
         %   * (no number, no ToC),  + (add sec letter) ! (on new page)
         \IfBooleanT{#3}{\invtoggle{SecOnNewPage}}%
-        \iftoggle{SecOnNewPage}{\clearpage\vspace*{\cpb@sectprespacelengthnewpage}}{}%
+        \iftoggle{SecOnNewPage}{\clearpage\vspace*{\cbp@sectprespacelengthnewpage}}{}%
         \Needspace{\secneedspace}%
         \IfBooleanTF{#2}{%
             	\ifnum\value{sectionletter}>0% if we're into section lettering already
@@ -765,6 +771,8 @@ numbers=noenddot]{scrreprt}
         \protect\contentsline{section}{\hspace{3.5ex}Appendix\hfill\ }{}{}}
       
       \pdfbookmark[0]{Appendix}{LabelAppendicesPDF}
+    
+      \vspace*{4in}
     }{}{}
     
     
@@ -783,13 +791,13 @@ numbers=noenddot]{scrreprt}
     %\if@twoside% if two-sided, put the section headings to right side and numbers in right margin
     %\renewcommand\sectionlinesformat[4]{%  for section numbers in right margin for a two sided document
     %	\ifthispageodd
-    %	{\raggedleft#4\makebox[0pt][l]{\hspace{\marginparsep}\cpb@secnumsize#3}}
-    %	{\raggedright\makebox[0pt][r]{\cpb@secnumsize#3\hspace{\marginparsep}}#4}%
+    %	{\raggedleft#4\makebox[0pt][l]{\hspace{\marginparsep}\cbp@secnumsize#3}}
+    %	{\raggedright\makebox[0pt][r]{\cbp@secnumsize#3\hspace{\marginparsep}}#4}%
     %}
     %%\newcommand\side{stuff for twoside} %to do reconsider if this is needed
     %\else% if not two sided, only apply to one sided
     %\renewcommand\sectionlinesformat[4]{% used by free-standing headings with style=section
-    %	\makebox[0pt][r]{\cpb@secnumsize#3}#4%  puts section number in margin
+    %	\makebox[0pt][r]{\cbp@secnumsize#3}#4%  puts section number in margin
     %}	%\newcommand\side{stuff for onside} %to do reconsider if this is needed
     %\fi%  finally do nothing
     %\makeatother
@@ -797,7 +805,7 @@ numbers=noenddot]{scrreprt}
 
 %%%%%%%%%%%%  SecThesis.sty  %%%%%%%%%%%%
     %\clearpairofpagestyles
-    \providecommand{\cpb@secnumsize}{}
+    \providecommand{\cbp@secnumsize}{}
     
     
     
@@ -874,15 +882,15 @@ numbers=noenddot]{scrreprt}
     % Hanging section, % NUMBERS IN LEFT MARGIN
     %https://tex.stackexchange.com/questions/381261/right-align-chapter-numbering-in-koma-script-toc?rq=1
     \renewcommand\sectionlinesformat[4]{%
-    	\makebox[0pt][r]{\cpb@secnumsize#3\hspace{2pt}}#4%
+    	\makebox[0pt][r]{\cbp@secnumsize#3\hspace{2pt}}#4%
     }
     \renewcommand\sectioncatchphraseformat[4]{% used by run-in headings with style=section
-    	\makebox[0pt][r]{\cpb@secnumsize#3\hspace{1pt}}#4%
+    	\makebox[0pt][r]{\cbp@secnumsize#3\hspace{1pt}}#4%
     }
     
     %https://tex.stackexchange.com/questions/381261/right-align-chapter-numbering-in-koma-script-toc?rq=1
     \newcommand\sectionentrynumberformat[1]{% define the new format for the chapter numbers in ToC
-    	\hfill\cpb@secnumsize#1\enspace\hspace*{0.01pt}% align chapter numbers right
+    	\hfill\cbp@secnumsize#1\enspace\hspace*{0.01pt}% align chapter numbers right
     }
     
     
@@ -928,7 +936,7 @@ numbers=noenddot]{scrreprt}
     tocindent=0.5ex,
     tocnumwidth=6ex,
     toclinefill=\diamondleaders,
-    tocentrynumberformat=\cpb@secnumsize,
+    tocentrynumberformat=\cbp@secnumsize,
     tocentryformat=\large,
     %tocpagenumberformat=\tocmainfont,
     ]{section}
@@ -939,7 +947,7 @@ numbers=noenddot]{scrreprt}
     tocindent=6.5ex,
     tocnumwidth=6ex,
     toclinefill=\diamondleaders,
-    tocentrynumberformat=\cpb@secnumsize,
+    tocentrynumberformat=\cbp@secnumsize,
     tocentryformat=\normalsize,
     ]{subsection}
     
@@ -949,7 +957,7 @@ numbers=noenddot]{scrreprt}
     runin=false,  % text on same line
     tocindent=6ex,
     tocnumwidth=10ex,
-    tocentrynumberformat=\cpb@secnumsize,
+    tocentrynumberformat=\cbp@secnumsize,
     tocentryformat=\small,
     ]{subsubsection}
     
@@ -968,7 +976,7 @@ numbers=noenddot]{scrreprt}
     indent=-5ex,
     numwidth=5ex,
     entryformat=\normalsize,
-    entrynumberformat=\cpb@secnumsize,
+    entrynumberformat=\cbp@secnumsize,
     ]{tocline}{table}
     \renewcaptionname{english}{\listtablename}{Tables}
     
@@ -978,7 +986,7 @@ numbers=noenddot]{scrreprt}
     indent=-5ex,
     numwidth=5ex,
     entryformat=\normalsize,
-    entrynumberformat=\cpb@secnumsize,
+    entrynumberformat=\cbp@secnumsize,
     ]{tocline}{figure}
     \renewcaptionname{english}{\listfigurename}{Figures}
     
@@ -999,11 +1007,14 @@ numbers=noenddot]{scrreprt}
     \counterwithin{table}{chapter}
     
     
+    \def\cbp@largechapspace{\RedeclareSectionCommand[beforeskip=6.0\baselineskip plus 3pt minus 1pt]{chapter}}
+    \def\cbp@normalchapspace{\RedeclareSectionCommand[beforeskip=1.0\baselineskip plus 3pt minus 1pt]{chapter}}
+    
     % front matter chapter (acknowledgements or abstract)
-    \newcommand{\chapterF}[1]{\RedeclareSectionCommand[beforeskip=6.0\baselineskip plus 3pt minus 1pt]{chapter}
+    \newcommand{\chapterF}[1]{\cbp@largechapspace
     \pdfbookmark[0]{#1}{Label#1PDF}%
     \chapter*{#1}%
-    \RedeclareSectionCommand[beforeskip=1.0\baselineskip plus 3pt minus 1pt]{chapter}}
+    \cbp@normalchapspace}
     
     
     \NewDocumentCommand{\chapterM}{ t- m }{% chapter Matter (front or back), ToC and pdf bookmark but no number
@@ -1038,13 +1049,6 @@ numbers=noenddot]{scrreprt}
     
     \def\backmatter{\pdfbookmark[-1]{Back-Matter}{LabelBMPDF}}
     
-    \pretocmd{\appendix}{
-      \addtocontents{toc}{%
-        \vspace*{1.3ex}%
-        \protect\contentsline{chapter}{\hspace{3.5ex}Appendix\hfill\ }{}{}}
-      
-      \pdfbookmark[-1]{Appendix}{LabelAppendicesPDF}
-    }{}{}
     
     
     %% BACK MATTER
@@ -1116,10 +1120,12 @@ numbers=noenddot]{scrreprt}
     	\renewcommand\sectionlinesformat[4]{%
     		\ifstr{##1}{section}
     		{\clearpage\vspace*{\sectprespacelength}##3\\*##4}% appendix sections on new page
-    		{\makebox[0pt][r]{\cpb@secnumsize##3}{##4}}% subsections etc.
+    		{\makebox[0pt][r]{\cbp@secnumsize##3}{##4}}% subsections etc.
     	}%
     
     }
+    
+    %%%%%%%%%%% todo how will thesis react to appendix sections on new apge?/
     
     
     % DO THIS with \appendix
@@ -1163,15 +1169,24 @@ numbers=noenddot]{scrreprt}
     \let\originalappendix\appendix
     
     \renewcommand\appendix{%
+    	%
+      \addtocontents{toc}{%
+        \vspace*{1.3ex}%
+        \protect\contentsline{chapter}{\hspace{3.5ex}Appendix\hfill\ }{}{}}
+      %
+      \pdfbookmark[-1]{Appendix}{LabelAppendicesPDF}
+    	%
     	\originalappendix
-    	% NOTE you cannot use the alphabetized subsections anymore
+    	% NOTE you cannot use the alphabetized subsections anymore like you can with corpboreport, shouldn't be an issue
     	%
     	\def\thechapter{{\scshape\alph{chapter}}}
     	\def\theHchapter{{\scshape\alph{chapter}}}
     
     	\crefalias{chapter}{appsec}
-    
+    	%
+    	\cbp@largechapspace   % see SecThesis.sty
     	\chapter*{Appendix}
+    	\cbp@normalchapspace  % see SecThesis.sty
        \ \ \clearpage
     }
     
@@ -1278,13 +1293,12 @@ numbers=noenddot]{scrreprt}
     }
     
     \usepackage{xfrac}
-    \usepackage{amsfonts,gensymb}  % math fonts and symbols
-    
+    \usepackage{amsfonts}  % math fonts and symbols
+    %\usepackage{gensymb}
     
     \renewcommand{\theequation}{\arabic{section}.\arabic{equation}}
-    \def\@cpb@mathline{\raisebox{0pt}[0pt][0pt]{\vline height 0.8em depth 0.6em width \arrayrulewidth}}
-    \renewcommand\tagform@[1]{\maketag@@@{\ignorespaces\makebox[6ex][l]{\@cpb@mathline\;\cpb@secnumsize#1\unskip\@@italiccorr\hfill}\hspace*{5ex}}}
-    
+    \def\@cbp@mathline{\raisebox{0pt}[0pt][0pt]{\vline height 0.8em depth 0.6em width \arrayrulewidth}}
+    \renewcommand\tagform@[1]{\maketag@@@{\ignorespaces\makebox[6ex][l]{\@cbp@mathline\;\cbp@secnumsize#1\unskip\@@italiccorr\hfill}\hspace*{5ex}}}
     
     
     \providecommand{\togunums}{}  % toggle to uppercase number shortcut
@@ -1476,12 +1490,30 @@ numbers=noenddot]{scrreprt}
     \newlength{\TabNoteSpace}
     \newlength{\LongTabNoteSpace}
     \setlength\TabNoteSpace{-1.3ex}
-    \setlength\LongTabNoteSpace{-5.5ex}
+    \setlength\LongTabNoteSpace{-4.5ex}
     
     
     \newcommand{\LongTableNotes}[2][\linewidth]{% todo might wanna fix this so it's more automatic
         \vspace{\LongTabNoteSpace}% manually tested
         \parbox{#1}{\footnotesize #2}}
+    
+    
+    \NewDocumentCommand{\LTcaption}{O{#2} m O{}}{{\WideFloatCaption\captionof{table}[#1]{#2}#3}}
+    %% example longtable header
+    %\NewDocumentCommand{\LTcontinues}{O{+}}{\MC[#1r]{\textsl{Table continues on next page\ldots}}}
+    %\NewDocumentCommand{\LTcontinued}{O{+}}{\MC[#1l]{\textsl{\ldots Table continued from previous page}}\\}
+    \def\LTcontinues{\MC[+r]{\Llap{\ \hfill\textsl{Table continues on next page\ldots}}}}
+    \def\LTcontinued{\MC[+l]{\Rlap{\textsl{\ldots Table continued from previous page}}}\\}
+    %\def\LTheader{\toprule {Section} & {Item} & {Comment}\\\midrule}
+    %\setmidruleX{reset=true}
+    %\begin{longtable}{@{}lp{3cm}X@{\midruleX}}
+    %\WideFloatCaption%
+    %\caption{TSIR review.}\label{t.tsir}\\[\smallskipamount]
+    %\LTheader\endfirsthead        % first header
+    %\LTcontinued\LTheader\endhead % headers after page break
+    %\LTcontinues\endfoot          % footers before page break
+    %\bottomrule\endlastfoot       % last footer
+    %\resetmidruleX
     
     
     %%%%% todo should I move this into unirefs?  maybe make a lua version
@@ -1500,7 +1532,22 @@ numbers=noenddot]{scrreprt}
     		{\tnote*{\uref{#2}}}%
     		{\tnote{\uref{#2}}}%
     }% use tnote{a} in the table, and \tfnote{a}Note here in the foot notes
-
+    
+    
+    
+    %\NewDocumentCommand{\LongTablePreamble}{ s m O{\bottomrule} }{%  *= dont resetmidruleX on header. {table's header} [table's footer]
+    %	#2
+    %\endfirsthead
+    %%  \MC[3l]{\textsl{\ldots Table continued from previous page\vspace*{0.4ex}}}\\%
+    %  #2%\IfBooleanTF{#1}{}{\noalign{\resetmidruleX}}
+    %\endhead % all the lines above this will be repeated on every page
+    %%  \\%
+    %%  	\MC[3r]{\textsl{Table continues on next page\ldots}}
+    %	\\%\IfBooleanTF{#1}{}{\noalign{\resetmidruleX}}
+    %\endfoot
+    %  #3
+    %\endlastfoot
+    %}
 %\setlength\heavyrulewidth{0.7pt}
 
 
@@ -1566,7 +1613,7 @@ numbers=noenddot]{scrreprt}
     \setlength{\fullheight}{22cm}
     
     
-    \NewDocumentCommand{\cpb@setFloatCap}{m m}{%
+    \NewDocumentCommand{\cbp@setFloatCap}{m m}{%
       \captionsetup{margin={0pt,0pt}}% restore margin for caption
       \IfBooleanTF{#2}{\captionsetup{justification=justified}}{\captionsetup{justification=raggedright}}%
       \IfBooleanTF{#1}{% if star use the wide format
@@ -1580,31 +1627,31 @@ numbers=noenddot]{scrreprt}
     
     
     % Insert(Table|Figure) syntax
-    %     1      2             3           4           5          6            7            8      9
-    %  *wide,  +justify cap  [pos]     <pre-amble>  {content}  {caption} [short caption] {label}  [footnotes]
+    %     1      2           3           4          5              6            7            8      9
+    %  *wide,  [pos]     <pre-amble>  {content}   +justify cap  {caption} [short caption] {label}  [footnotes]
     
-    \NewDocumentCommand{\InsertFigure}{s t+ O{htbp} D<>{} m +m O{#6} m o}{%
+    \NewDocumentCommand{\InsertFigure}{s O{htbp} D<>{} m t+ +m O{#6} m o}{%
       \reseturef%
-      \cpb@setFloatCap{#1}{#2}%
-      \begin{figure}[#3]%
-        #4%
+      \cbp@setFloatCap{#1}{#5}%
+      \begin{figure}[#2]%
+        #3%
     %    \captop%
         \caption[#7]{#6}#8%
         \IfBooleanTF{#1}%
-          {\ffigbox{}{#5\IfValueT{#9}{\vspace{\TabNoteSpace}\floatfoot*{#9}}}}%  FBwidth doesn't work with sub-figure, hack for now
-          {\ffigbox[\FBwidth]{}{#5\IfValueT{#9}{\vspace{\TabNoteSpace}\floatfoot*{#9}}}}%
+          {\ffigbox{}{#4\IfValueT{#9}{\vspace{\TabNoteSpace}\floatfoot*{#9}}}}%  FBwidth doesn't work with sub-figure, hack for now
+          {\ffigbox[\FBwidth]{}{#4\IfValueT{#9}{\vspace{\TabNoteSpace}\floatfoot*{#9}}}}%
       \end{figure}%
     }%
     
     
-    
-    \NewDocumentCommand{\InsertTable}{ s t+ O{htbp} D<>{} m +m O{#6} m o }{%
+    %                                  1  2   3    4    4 5  6
+    \NewDocumentCommand{\InsertTable}{ s O{htbp} D<>{} m t+ +m O{#6} m o }{%
       \reseturef%
-      \cpb@setFloatCap{#1}{#2}%
-      \begin{table}[#3]% htbp! settings
-        #4% pre-amble
+      \cbp@setFloatCap{#1}{#5}%
+      \begin{table}[#2]% htbp! settings
+        #3% pre-amble
         \caption[#7]{#6}#8%
-        \ttabbox{}{#5\IfValueT{#9}{\vspace{\TabNoteSpace}\floatfoot*{#9}}}% if no star then use hanging
+        \ttabbox{}{#4\IfValueT{#9}{\vspace{\TabNoteSpace}\floatfoot*{#9}}}% if no star then use hanging
       \end{table}%
     }
     
@@ -1636,7 +1683,9 @@ numbers=noenddot]{scrreprt}
     }
     
     \newcommand{\FloatNextPage}[1]{% if a float takes up the whole page
-      \afterpage{#1}
+      \afterpage{#1
+      \clearpage
+      }
     }
     
     
@@ -1673,7 +1722,24 @@ numbers=noenddot]{scrreprt}
         tex.write(pages)
       }%
     }
-
+    
+    
+    %\def\floatlefthanglabel{%
+    %  \setlength{\floatindentlength}{0ex}
+    %  \gdef\figurename{fig.}
+    %  \gdef\tablename{tab.}
+    %  \DeclareCaptionLabelFormat{hangcap}{\llap{##1\,##2\enspace}}
+    %}
+    %\def\hideeqlabelOP{}
+    
+    
+    \def\floatlefthanglabel{
+      \captionsetup{figurename=fig.,tablename=tab.,}
+      \renewcommand{\lstlistingname}{code}
+      \DeclareCaptionLabelFormat{hangcap}{\llap{\cbp@secnumsize##1\,##2\enspace}}
+      \DeclareCaptionLabelFormat{widecap}{\llap{\cbp@secnumsize##1\,##2\enspace}}
+      \global\setlength{\floatindentlength}{0ex}
+    }
 
 
 
@@ -1693,6 +1759,7 @@ numbers=noenddot]{scrreprt}
     \def\continuingfont{\slshape} % put size here
     \def\continuingtext{Listing continues on next page\ldots}
     \def\continuedtext{\ldots Listing continued from previous page}
+    
     
     
     \usepackage[framemethod=tikz]{mdframed}  % for multi-page codeboxes
@@ -1732,6 +1799,7 @@ numbers=noenddot]{scrreprt}
     }
     
     
+    \renewcommand{\lstlistlistingname}{Code Listings}
     
     
     % toodo should really clean this up
@@ -1756,7 +1824,7 @@ numbers=noenddot]{scrreprt}
     	frame=tb,
     	rulecolor=\color{black},
     	numbers=left,
-    	numberstyle=\ttfamily\footnotesize\color{codecomment},
+    	numberstyle=\color{codecomment}\ttfamily\scriptsize,
     %	keywords={for},  %% todo clean up keywords, i dont like built-ins..
     	keywordstyle=\color{codekey},
     	commentstyle=\color{codecomment},
@@ -1971,8 +2039,21 @@ numbers=noenddot]{scrreprt}
     
     %%% acrnonym and gloassaries stuff
     
-    \usepackage[xindy,acronym,nonumberlist,toc]{glossaries-extra}
+    \usepackage[xindy,acronym]{glossaries-extra}
+    %,nonumberlist <<< dont use as custom styles are made
+    % toc <<< dont use ToC option as manually entered
+    
     \renewcommand{\glossarysection}[2][]{} % remove glossary section heading entirely, requires manual but more flexible
+    
+    
+    \newglossary[ilg]{index}{ind}{idx}{\indexname}
+    %\newglossary[ilg]{index}{ind}{idx}{\indexname}
+    
+    
+    % https://tex.stackexchange.com/questions/269565/glossaries-how-to-customize-list-of-symbols-with-additional-column-for-units
+    % todo make symbols glossary OR just print a simple table with an excel macro, might be easiest
+    \newglossary[slg]{symbols}{syi}{syg}{Symbolslist} % create add. symbolslist
+    
     
     
     \GlsXtrEnableEntryCounting % % https://tex.stackexchange.com/questions/477581/glossaries-introduce-short-name-only-if-used-more-than-once-within-section-chap
@@ -1984,6 +2065,10 @@ numbers=noenddot]{scrreprt}
     %\glsenableentrycount % enable \cgls, \cglspl, \cGls, \cGlspl  supposed to not show accronym if only one
     \glsdisablehyper  % to disable hyperlinks
     \glstoctrue  % ToC
+    
+    
+    
+    
     
     \makeglossaries
     
@@ -1998,7 +2083,7 @@ numbers=noenddot]{scrreprt}
     		\begin{description}[font=\bfseries,leftmargin=1.7cm,style=multiline,itemsep=3pt]\raggedright}%
     		{\end{description}\end{multicols}}%
     	\renewcommand*{\glossaryentryfield}[5]{%
-    		\item[{\normalfont\bfseries\glsentryitem{##1}\glstarget{##1}{##2}}]{##3\glspostdescription\space ##5}
+    		\item[{\normalfont\bfseries\glsentryitem{##1}\glstarget{##1}{##2}}]{##3\glspostdescription}  % \space ##5 after postdescription (page numbers) are removed
     		}%
     }
     
@@ -2014,7 +2099,7 @@ numbers=noenddot]{scrreprt}
     		\begin{description}[font=\bfseries,leftmargin=2.7cm,style=multiline,itemsep=3pt]\raggedright}%
     		{\end{description}}%
     	\renewcommand*{\glossaryentryfield}[5]{%
-    		\item[{\normalfont\bfseries\glsentryitem{##1}\glstarget{##1}{##2}}]{##3\glspostdescription\space ##5}
+    		\item[{\normalfont\bfseries\glsentryitem{##1}\glstarget{##1}{##2}}]{##3\glspostdescription} % \space ##5 argument 5, page numbers, are removed
     		}%
     }
     
@@ -2130,8 +2215,9 @@ numbers=noenddot]{scrreprt}
     \def\textit#1{<#1>}%
     }
     
-    \usepackage[a-3u]{pdfx}
+    %\usepackage[a-3u]{pdfx}
     
+    % possible issue
     
     \begin{luacode*}
         __PDFmetadata__ = {Language='en-ca'}
@@ -2154,7 +2240,14 @@ numbers=noenddot]{scrreprt}
     	pl.tex.defcmdAT('@author', \luastringN{#1})
     	pl.tex.updatePDFtable('Author', pl.tex.makePDFvarstr(\luastringN{#1}), false)
     	pl.tex.defcmd('theauthor', pl.tex.makeInTextstr(\luastringN{#1}))
-    }}
+    	}%
+    	\NewDocumentCommand{\theauthors}{ o }{%
+    		\IfValueTF{##1}%
+    		{\luadirect{tex.sprint(token.get_macro('@author'):split([[\string\and]])[tonumber(\luastringO{##1})]:strip())}}%
+    		{\splitToComma[o n]{\@author}{\and}}%
+    	}%
+    	\gdef\listauthors{\splitToItems[on]{\@author}{\and}}%
+    }
     
     \RenewDocumentCommand{\date}{m}{\luadirect{
     	pl.tex.defcmdAT('@date', \luastringN{#1})
@@ -2190,7 +2283,7 @@ numbers=noenddot]{scrreprt}
     
     %%% title pages
     
-    \gdef\cpb@tpOwn{
+    \gdef\cbp@tpOwn{
     \begin{titlepage} % Suppresses displaying the page number on the title page and the subsequent page counts as page 1
     	\toglnums
     	\raggedright % Right align the title page
@@ -2234,7 +2327,7 @@ numbers=noenddot]{scrreprt}
     
     
     
-    \gdef\cpb@tpSame{\thispagestyle{plain}
+    \gdef\cbp@tpSame{\thispagestyle{plain}
     		\gdef\And{\hspace*{3ex}}
     		\vspace*{-2.5cm}
     		{\RaggedRight                             % \pbox[t]{\linewidth}  %% todo top align logo with title
@@ -2252,7 +2345,7 @@ numbers=noenddot]{scrreprt}
     
     
     \def\maketitle{%
-    	\iftoggle{samepgTitle}{\cpb@tpSame}{\cpb@tpOwn}%
+    	\iftoggle{samepgTitle}{\cbp@tpSame}{\cbp@tpOwn}%
     }
     
     
@@ -2338,7 +2431,7 @@ numbers=noenddot]{scrreprt}
     %\newcommand{\reseturef}{\setcounter{unilabIN}{0}\stepcounter{unilabOUT}}
 
 
-\usepackage[pl,extras]{penlight}
+\usepackage[pl,extrasglobals]{penlight}
 \usepackage{lutabulartools}
 \usepackage{autopuncitems}
 
@@ -2346,7 +2439,7 @@ numbers=noenddot]{scrreprt}
 %%%%%%%%%%%%  YAMLvarsDec.sty  %%%%%%%%%%%%
     
     \newcommand{\cbpheaderbox}[1]{\parbox[b][2em][b]{0.4\linewidth}{\setstretch{0.8}#1}}
-    \usepackage{YAMLvars}
+    \usepackage{yamlvars}
     \begin{luacode*}
         YAMLvars.tabmidrule = 'gmidrule'
         function YAMLvars.xfm.headerbox(var, val)
@@ -2425,6 +2518,7 @@ numbers=noenddot]{scrreprt}
     \IfBooleanTF{#1}{\vspace*{2.5cm}}{\pagebreak\null\vfill}
     {\noindent\hspace*{\floatindentlength}\large\slshape End\ of\ #2.\hfill\vspace{5cm}}
     \IfBooleanF{#1}{\null\vfill}
+    \bookmarksetup{startatroot}  % to reset "End" in pdf bookmark
     \pdfbookmark{End}{End}
     }
     

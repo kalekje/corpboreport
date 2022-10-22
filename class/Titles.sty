@@ -10,7 +10,14 @@
 	pl.tex.defcmdAT('@author', \luastringN{#1})
 	pl.tex.updatePDFtable('Author', pl.tex.makePDFvarstr(\luastringN{#1}), false)
 	pl.tex.defcmd('theauthor', pl.tex.makeInTextstr(\luastringN{#1}))
-}}
+	}%
+	\NewDocumentCommand{\theauthors}{ o }{%
+		\IfValueTF{##1}%
+		{\luadirect{tex.sprint(token.get_macro('@author'):split([[\string\and]])[tonumber(\luastringO{##1})]:strip())}}%
+		{\splitToComma[o n]{\@author}{\and}}%
+	}%
+	\gdef\listauthors{\splitToItems[on]{\@author}{\and}}%
+}
 
 \RenewDocumentCommand{\date}{m}{\luadirect{
 	pl.tex.defcmdAT('@date', \luastringN{#1})
@@ -46,7 +53,7 @@
 
 %%% title pages
 
-\gdef\cpb@tpOwn{
+\gdef\cbp@tpOwn{
 \begin{titlepage} % Suppresses displaying the page number on the title page and the subsequent page counts as page 1
 	\toglnums
 	\raggedright % Right align the title page
@@ -90,7 +97,7 @@
 
 
 
-\gdef\cpb@tpSame{\thispagestyle{plain}
+\gdef\cbp@tpSame{\thispagestyle{plain}
 		\gdef\And{\hspace*{3ex}}
 		\vspace*{-2.5cm}
 		{\RaggedRight                             % \pbox[t]{\linewidth}  %% todo top align logo with title
@@ -108,7 +115,7 @@
 
 
 \def\maketitle{%
-	\iftoggle{samepgTitle}{\cpb@tpSame}{\cpb@tpOwn}%
+	\iftoggle{samepgTitle}{\cbp@tpSame}{\cbp@tpOwn}%
 }
 
 

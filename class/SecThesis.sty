@@ -1,5 +1,5 @@
 %\clearpairofpagestyles
-\providecommand{\cpb@secnumsize}{}
+\providecommand{\cbp@secnumsize}{}
 
 
 
@@ -76,15 +76,15 @@
 % Hanging section, % NUMBERS IN LEFT MARGIN
 %https://tex.stackexchange.com/questions/381261/right-align-chapter-numbering-in-koma-script-toc?rq=1
 \renewcommand\sectionlinesformat[4]{%
-	\makebox[0pt][r]{\cpb@secnumsize#3\hspace{2pt}}#4%
+	\makebox[0pt][r]{\cbp@secnumsize#3\hspace{2pt}}#4%
 }
 \renewcommand\sectioncatchphraseformat[4]{% used by run-in headings with style=section
-	\makebox[0pt][r]{\cpb@secnumsize#3\hspace{1pt}}#4%
+	\makebox[0pt][r]{\cbp@secnumsize#3\hspace{1pt}}#4%
 }
 
 %https://tex.stackexchange.com/questions/381261/right-align-chapter-numbering-in-koma-script-toc?rq=1
 \newcommand\sectionentrynumberformat[1]{% define the new format for the chapter numbers in ToC
-	\hfill\cpb@secnumsize#1\enspace\hspace*{0.01pt}% align chapter numbers right
+	\hfill\cbp@secnumsize#1\enspace\hspace*{0.01pt}% align chapter numbers right
 }
 
 
@@ -130,7 +130,7 @@ tocbeforeskip=2pt,
 tocindent=0.5ex,
 tocnumwidth=6ex,
 toclinefill=\diamondleaders,
-tocentrynumberformat=\cpb@secnumsize,
+tocentrynumberformat=\cbp@secnumsize,
 tocentryformat=\large,
 %tocpagenumberformat=\tocmainfont,
 ]{section}
@@ -141,7 +141,7 @@ afterskip=0.01mm,%\baselineskip,
 tocindent=6.5ex,
 tocnumwidth=6ex,
 toclinefill=\diamondleaders,
-tocentrynumberformat=\cpb@secnumsize,
+tocentrynumberformat=\cbp@secnumsize,
 tocentryformat=\normalsize,
 ]{subsection}
 
@@ -151,7 +151,7 @@ afterskip=0.01mm,
 runin=false,  % text on same line
 tocindent=6ex,
 tocnumwidth=10ex,
-tocentrynumberformat=\cpb@secnumsize,
+tocentrynumberformat=\cbp@secnumsize,
 tocentryformat=\small,
 ]{subsubsection}
 
@@ -170,7 +170,7 @@ linefill=\diamondleaders,
 indent=-5ex,
 numwidth=5ex,
 entryformat=\normalsize,
-entrynumberformat=\cpb@secnumsize,
+entrynumberformat=\cbp@secnumsize,
 ]{tocline}{table}
 \renewcaptionname{english}{\listtablename}{Tables}
 
@@ -180,7 +180,7 @@ linefill=\diamondleaders,
 indent=-5ex,
 numwidth=5ex,
 entryformat=\normalsize,
-entrynumberformat=\cpb@secnumsize,
+entrynumberformat=\cbp@secnumsize,
 ]{tocline}{figure}
 \renewcaptionname{english}{\listfigurename}{Figures}
 
@@ -201,11 +201,14 @@ entrynumberformat=\cpb@secnumsize,
 \counterwithin{table}{chapter}
 
 
+\def\cbp@largechapspace{\RedeclareSectionCommand[beforeskip=6.0\baselineskip plus 3pt minus 1pt]{chapter}}
+\def\cbp@normalchapspace{\RedeclareSectionCommand[beforeskip=1.0\baselineskip plus 3pt minus 1pt]{chapter}}
+
 % front matter chapter (acknowledgements or abstract)
-\newcommand{\chapterF}[1]{\RedeclareSectionCommand[beforeskip=6.0\baselineskip plus 3pt minus 1pt]{chapter}
+\newcommand{\chapterF}[1]{\cbp@largechapspace
 \pdfbookmark[0]{#1}{Label#1PDF}%
 \chapter*{#1}%
-\RedeclareSectionCommand[beforeskip=1.0\baselineskip plus 3pt minus 1pt]{chapter}}
+\cbp@normalchapspace}
 
 
 \NewDocumentCommand{\chapterM}{ t- m }{% chapter Matter (front or back), ToC and pdf bookmark but no number
@@ -240,13 +243,6 @@ entrynumberformat=\cpb@secnumsize,
 
 \def\backmatter{\pdfbookmark[-1]{Back-Matter}{LabelBMPDF}}
 
-\pretocmd{\appendix}{
-  \addtocontents{toc}{%
-    \vspace*{1.3ex}%
-    \protect\contentsline{chapter}{\hspace{3.5ex}Appendix\hfill\ }{}{}}
-  
-  \pdfbookmark[-1]{Appendix}{LabelAppendicesPDF}
-}{}{}
 
 
 %% BACK MATTER

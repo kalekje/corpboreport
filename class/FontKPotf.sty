@@ -14,19 +14,25 @@
 \def\togunums{\addfontfeature{Numbers=Lining}} %% from kpfonts.sty
 \def\toglnums{\addfontfeature{Numbers=OldStyle}}
 
-\let\lnum\oldstylenums
-\let\unum\liningnums
+%\let\lnum\oldstylenums % {}
+%\let\unum\liningnums   % {}
+
+% if [] provided, apply to grouped text only--if not apply toggle
+\NewDocumentCommand{\lnum}{o}{\IfValueTF{#1}{\oldstylenums{#1}}{\toglnums}}
+\NewDocumentCommand{\unum}{o}{\IfValueTF{#1}{\liningnums{#1}}{\togunums}}
+
 \let\classicstylenums\liningnums
 
 \def\acs{\scshape\toglnums}  % acronym series
 \def\act#1{\textsc{\toglnums#1}}  % acronym text
 
+
 \AtBeginEnvironment{tabular}{\togunums}
 \AtBeginEnvironment{tabular*}{\togunums}
 \AtBeginEnvironment{tikzpicture}{\togunums}
 
-\def\cpb@secnumsize{\toglnums} % dont allow cpb to use smaller numbers in section
-%\def\cpb@secnumsize{} % dont allow cpb to use smaller numbers in section
+\def\cbp@secnumsize{\toglnums} % dont allow cpb to use smaller numbers in section
+%\def\cbp@secnumsize{} % dont allow cpb to use smaller numbers in section
 \newcommand{\cbp@appendixletformat}[1]{\scshape\alph{#1}}
 \def\cbp@appendixsecformat{\scshape\MakeLowercase}
 
