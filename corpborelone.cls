@@ -6,6 +6,10 @@
 
 
 %%%%%%%%%%%%  Utilities.sty  %%%%%%%%%%%%
+    \usepackage{scrhack}
+    \usepackage{listings}  % re-loaded in code boxes, but needs to be loaded before changing ToC structure
+    
+    
     \usepackage{etoolbox} %
     
     \usepackage{xparse} % smart definition of commands
@@ -392,7 +396,7 @@
     % rename to MathSciSymbols
     
     
-    \usepackage[fleqn]{mathtools} % NOTE: amsmath loaded before kpfonts for fleqn issue should load amsmath
+    \usepackage[fleqn,leqno]{mathtools} % NOTE: amsmath loaded before kpfonts for fleqn issue should load amsmath
     \iftoggle{useSerif}{}{ % issue with kpfonts, I think it already loads it..
     	\usepackage{amssymb}   % only load if not serif
     }
@@ -402,8 +406,12 @@
     %\usepackage{gensymb}
     
     \renewcommand{\theequation}{\arabic{section}.\arabic{equation}}
+    %\def\@cbp@mathline{\raisebox{0pt}[0pt][0pt]{\vline height 0.8em depth 0.6em width \arrayrulewidth}}
+    %\renewcommand\tagform@[1]{\maketag@@@{\ignorespaces\makebox[6ex][l]{\@cbp@mathline\;\cbp@secnumsize#1\unskip\@@italiccorr\hfill}\hspace*{5ex}}}
+    
     \def\@cbp@mathline{\raisebox{0pt}[0pt][0pt]{\vline height 0.8em depth 0.6em width \arrayrulewidth}}
-    \renewcommand\tagform@[1]{\maketag@@@{\ignorespaces\makebox[6ex][l]{\@cbp@mathline\;\cbp@secnumsize#1\unskip\@@italiccorr\hfill}\hspace*{5ex}}}
+    \renewcommand\tagform@[1]{\maketag@@@{\ignorespaces\makebox[6ex][r]{\ \hfill\cbp@secnumsize#1\;\@cbp@mathline\unskip\@@italiccorr\hspace*{2ex}}}}
+    
     
     
     \providecommand{\togunums}{}  % toggle to uppercase number shortcut
@@ -443,11 +451,6 @@
     	\end{mathwhere*}
     \end{AutoPuncTabular}
     	}{}
-    
-    
-    
-    %	inter-unit-product=\,, % default
-    %\sisetup{range-phrase=--,
     
 
 
@@ -762,6 +765,8 @@
     	splitbottomskip=30.01pt,
     	skipabove    = \parskip,
     	skipbelow    = \parskip,
+    %	backgroundcolor=none,
+    	apptotikzsetting={\tikzset{mdfbackground/.append style={fill=red,fill opacity=0}}},
     	% innertopmargin = \parskip,
     	% afterbreak = {\vspace*{2cm} },
     	% beforebreak = {\vspace*{2cm}},
@@ -781,6 +786,9 @@
     		at (O |- P) {\continuedtext};
     	}
     }
+    
+    
+    
     
     
     \renewcommand{\lstlistlistingname}{Code Listings}
@@ -887,6 +895,12 @@
     %
     
     
+    %\renewcommand{\lstlistoflistings}{%
+    %	\clearpage
+    %  \begingroup
+    %  \@starttoc{lol}
+    %  \endgroup
+    %}
 
 
 %%%%%%%%%%%%  macros/unirefs.sty  %%%%%%%%%%%%

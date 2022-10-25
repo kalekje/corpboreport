@@ -104,22 +104,14 @@ afterskip=-4ex,
 
 
 %%% if using list of tables and figures
-\DeclareTOCStyleEntry[%
+\DeclareTOCStyleEntries[%
+level:=figure,
 linefill=\diamondleaders,
 indent=0pt,
 numwidth=4.4ex,
 entryformat=\normalsize,
 entrynumberformat=\cbp@secnumsize,
-]{tocline}{table}
-
-
-\DeclareTOCStyleEntry[%
-linefill=\diamondleaders,
-indent=0pt,
-numwidth=4.4ex,
-entryformat=\normalsize,
-entrynumberformat=\cbp@secnumsize,
-]{tocline}{figure}
+]{tocline}{figure,table,lstlisting}
 
 
 \setkomafont{disposition}{\normalfont\bfseries} % section preference
@@ -266,14 +258,20 @@ entrynumberformat=\cbp@secnumsize,
 \def\addcontentslists{
   \pdfbookmark[1]{Contents}{LabelContentsPDF}
   \addtocontents{toc}{\protect\enlargethispage{\ToCextrabottomroom}} % enlarge toc page if needed, todo add length for this
-  \tableofcontents
-  
+  \begin{addmargin}[0pt]{\ToCrightmargin}
+    \tableofcontents
+  \end{addmargin}
+
   \addtocentrydefault{section}{\phantom{.}}{Figures}\addtocontents{toc}{\vspace*{-1.3ex}}%
-  \listoffigures
-  
+  \begin{addmargin}[0pt]{\ToCrightmargin}
+    \listoffigures
+  \end{addmargin}
+
   \addtocentrydefault{section}{\phantom{.}}{Tables}%
-  \listoftables
-  
+  \begin{addmargin}[0pt]{\ToCrightmargin}
+    \listoftables
+  \end{addmargin}
+
   \mainmatter
 }
 

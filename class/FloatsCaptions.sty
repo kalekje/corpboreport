@@ -179,10 +179,17 @@
 %\def\hideeqlabelOP{}
 
 
+\def\eqprefixOG{eq.\,}
+\def\eqprefix{\eqprefixOG}
+\def\hideeqprefix{\gdef\eqprefix{}\afterpage{\gdef\eqprefix{\eqprefixOG}}}
+
+
 \def\floatlefthanglabel{
   \captionsetup{figurename=fig.,tablename=tab.,}
   \renewcommand{\lstlistingname}{code}
   \DeclareCaptionLabelFormat{hangcap}{\llap{\cbp@secnumsize##1\,##2\enspace}}
   \DeclareCaptionLabelFormat{widecap}{\llap{\cbp@secnumsize##1\,##2\enspace}}
   \global\setlength{\floatindentlength}{0ex}
+  \renewcommand\tagform@[1]{\maketag@@@{\Llap{\ignorespaces\makebox[6ex][r]{\ \hfill\cbp@secnumsize\bfseries \eqprefix##1\unskip\@@italiccorr\enspace}}}}
+
 }

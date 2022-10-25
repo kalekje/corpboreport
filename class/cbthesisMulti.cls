@@ -1,7 +1,6 @@
 %%% shortcut to use all format files of
 \let\footref\relax % if footref error appears
-
-\providecommand{\FormatDir}{class/}
+\providecommand{\FormatDir}{C:/Users/Kale/Projects/LaTeXpackages/corpboreport/class/}
 
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesClass{cbthesis}[2022-02-19]
@@ -16,6 +15,7 @@ bibliography=totoc,
 open=right,%
 chapterprefix=true,
 fleqn,
+leqno,
 %listof=totoc,% for list of figures, tables
 numbers=noenddot]{scrreprt}
 
@@ -52,11 +52,10 @@ numbers=noenddot]{scrreprt}
 \usepackage{\FormatDir HeaderFooterFootnotes} %%% HEADER AND FOOTER AND FOOTNOTES
 \usepackage{\FormatDir PageNumberInMargin} %%% PLACING PAGE NUMBER IN THE LOWER RIGHT MARGIN
 
-%\usepackage{\FormatDir SectionsToCCustom} %%% SECTION HEADINGS, TOC, AND FORMATTING
 \usepackage{\FormatDir SecThesis}
-\usepackage{\FormatDir TocExtra}
+\usepackage{\FormatDir ChapToC}
 
-%\usepackage{\FormatDir AppendixFormat} %%% APPENDIX FORMATTINGS (depends on some ToC)
+
 \usepackage{\FormatDir AppendixFormatThesis} %%% APPENDIX FORMATTINGS (depends on some ToC)
 
 \usepackage{\FormatDir ColorsCustom} %%% CUSTOM COLORS
@@ -67,9 +66,11 @@ numbers=noenddot]{scrreprt}
 %\setlength\heavyrulewidth{0.7pt}
 
 \usepackage{\FormatDir FloatsCaptions} %
+\setlength{\floatindentlength}{12ex}
 
 
 \usepackage{\FormatDir CodeBoxes}
+
 \usepackage{\FormatDir ToDoNote}
 \usepackage{\FormatDir DraftStuff}   %%% COMMANDS TO HELP WITH DRAFT
 

@@ -1,7 +1,6 @@
 %%% shortcut to use all format files of
 \let\footref\relax % if footref error appears
-
-\providecommand{\FormatDir}{class/}
+\providecommand{\FormatDir}{C:/Users/Kale/Projects/LaTeXpackages/corpboreport/class/}
 
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesClass{cbthesis}[2022-02-19]
@@ -16,6 +15,7 @@ bibliography=totoc,
 open=right,%
 chapterprefix=true,
 fleqn,
+leqno,
 %listof=totoc,% for list of figures, tables
 numbers=noenddot]{scrreprt}
 
@@ -99,6 +99,10 @@ numbers=noenddot]{scrreprt}
     %%%
 
 %%%%%%%%%%%%  Utilities.sty  %%%%%%%%%%%%
+    \usepackage{scrhack}
+    \usepackage{listings}  % re-loaded in code boxes, but needs to be loaded before changing ToC structure
+    
+    
     \usepackage{etoolbox} %
     
     \usepackage{xparse} % smart definition of commands
@@ -481,328 +485,6 @@ numbers=noenddot]{scrreprt}
 
 
 
-%%%%%%%%%%%%  SectionsToCCustom.sty  %%%%%%%%%%%%
-    % ##############################################
-    % Sections and ToC
-    % ##############################################
-    
-    
-    %%% EXTRA SPACE BEFORE SECTION AND START ON NEW PAGE
-    
-    \RequirePackage{needspace}
-    \newlength{\secneedspace}
-    \setlength{\secneedspace}{15\baselineskip}
-    \newlength{\subsecneedspace}
-    \setlength{\subsecneedspace}{8\baselineskip}
-    \newlength{\subsubsecneedspace}
-    \setlength{\subsubsecneedspace}{5\baselineskip}
-    
-    \RequirePackage{etoolbox}
-    
-    \RequirePackage{chngcntr}
-    
-    \providetoggle{SecOnNewPage} %% only need one toggle
-    \toggletrue{SecOnNewPage}
-    
-    \providecommand{\cbp@secnumsize}{\smaller}
-    
-    \providetoggle{showListOfFigsTabs}
-    \providetoggle{samepgListOfFigsTabs}
-    \toggletrue{samepgListOfFigsTabs}
-    
-    \newcommand{\secwiselabelnums}{
-      \counterwithin{figure}{section}
-      \counterwithin{table}{section}
-    %  \counterwithin{listing}{section} % todo fix this
-    }
-    
-    \newdimen\ToCsecskip  %%% todo rename this
-    \ToCsecskip=0.75em  % fit ToC as required
-    
-    \newdimen\ToCextrabottomroom
-    \ToCextrabottomroom=0em
-    
-    % diamond leaders.. staggered dots
-    \countdef\counter=255
-    \def\diamondleaders{\global\advance\counter by 1
-    	\ifodd\counter \kern-10pt \fi
-    	\leaders\hbox to 20pt{\ifodd\counter \kern13pt \else\kern3pt \fi
-    		.\hss}\hfil}
-    
-    
-    % Hanging section
-    %https://tex.stackexchange.com/questions/381261/right-align-chapter-numbering-in-koma-script-toc?rq=1
-    \newcommand\sectionentrynumberformat[1]{% define the new format for the chapter numbers in ToC
-    	% \renewcommand\autodot{.}% dot after chapter
-    	\hfill\cbp@secnumsize#1\enspace\hspace{1pt}% align chapter numbers right
-    }
-    
-    %
-    %\renewcommand\sectionlinesformat[4]{%
-    %	\makebox[0pt][r]{\cbp@secnumsize#3\hspace{2pt}}#4%
-    %}
-    %\renewcommand\sectioncatchphraseformat[4]{% used by run-in headings with style=section
-    %	\makebox[0pt][r]{\cbp@secnumsize#3\hspace{1pt}}#4%
-    %}
-    
-    
-    
-    
-    % SECTION SPACING ON PAPER AND ToC - should change if section lettering is used
-    % determine if you should use baselineskip or not...
-    
-    \RedeclareSectionCommand[beforeskip=21.pt plus 2.1pt,
-    toclinefill=\diamondleaders,
-    afterskip=0.01pt,
-    %tocnumsep=1.5ex,
-    %tocdynnumwidth=switch,
-    tocindent=-4.0ex,
-    tocnumwidth=4.0ex,
-    tocbeforeskip=\ToCsecskip,
-    tocentryformat=\large\bfseries,
-    tocentrynumberformat=\sectionentrynumberformat,
-    ]{section}%
-    %
-    \RedeclareSectionCommand[beforeskip=17.1pt plus 1.71pt,  % 1.25 * 13.7 (baseline)
-    toclinefill=\diamondleaders,
-    afterskip=0.01pt,
-    tocindent=0.5ex,
-    tocbeforeskip=1pt,
-    tocnumwidth=4.4ex,
-    tocentryformat=\normalsize,
-    tocentrynumberformat=\cbp@secnumsize,
-    ]{subsection}%
-    %
-    \RedeclareSectionCommand[beforeskip=13.7pt plus 1.37pt,
-    toclinefill=\diamondleaders,
-    afterskip=0.01pt,
-    tocindent=5.4ex,
-    tocnumwidth=6.6ex,
-    tocentryformat=\small,
-    tocentrynumberformat=\cbp@secnumsize,
-    ]{subsubsection}
-    
-    \RedeclareSectionCommand[beforeskip=3.01pt,
-    afterskip=-4ex,
-    ]{paragraph}
-    
-    
-    %%% if using list of tables and figures
-    \DeclareTOCStyleEntry[%
-    linefill=\diamondleaders,
-    indent=0pt,
-    numwidth=4.4ex,
-    entryformat=\normalsize,
-    entrynumberformat=\cbp@secnumsize,
-    ]{tocline}{table}
-    
-    
-    \DeclareTOCStyleEntry[%
-    linefill=\diamondleaders,
-    indent=0pt,
-    numwidth=4.4ex,
-    entryformat=\normalsize,
-    entrynumberformat=\cbp@secnumsize,
-    ]{tocline}{figure}
-    
-    
-    \setkomafont{disposition}{\normalfont\bfseries} % section preference
-    
-    
-    \if@twoside% if two-sided, put the section headings to right side and numbers in right margin
-    	\raggedbottom
-    \fi%  finally do nothing
-    	\raggedbottom
-    
-    
-    
-    \renewcommand\sectionlinesformat[4]{% used by free-standing headings with style=section
-    	\makebox[0pt][r]{\cbp@secnumsize#3\hspace{3pt}}#4%  puts section number in margin
-    }
-    
-    
-    %%% SECTION NUMBER AND HEADING COLOR CHANGE
-    %\addtokomafont{chapter}{\color{secCol}}
-    \addtokomafont{section}{\color{secCol}}
-    \addtokomafont{subsection}{\color{subsecCol}}
-    \addtokomafont{subsubsection}{\color{subsubsecCol}}
-    
-    
-    \newdimen\cbp@sectprespacelengthnewpage
-    \cbp@sectprespacelengthnewpage=-1.5cm  % make less negative to increase spacing on new section title (always starts new page)
-    % WAS 20pt
-    
-    \newcounter{sectionletter}%
-    \newcommand{\resetsectionletter}{\setcounter{sectionletter}{0}}
-    \let\oldsection\section
-    
-    \RenewDocumentCommand{\section}{ s t+ t! o m }{%
-        %   * (no number, no ToC),  + (add sec letter) ! (on new page)
-        \IfBooleanT{#3}{\invtoggle{SecOnNewPage}}%
-        \iftoggle{SecOnNewPage}{\clearpage\vspace*{\cbp@sectprespacelengthnewpage}}{}%
-        \Needspace{\secneedspace}%
-        \IfBooleanTF{#2}{%
-            	\ifnum\value{sectionletter}>0% if we're into section lettering already
-            	    \addtocounter{section}{-1}% decrement section so num stays the same
-            	\fi%
-            	\stepcounter{sectionletter}% increment section letter
-        }{\resetsectionletter}%
-        \expanded{%
-            \noexpand\oldsection%
-            \IfBooleanT{#1}{*}%
-            \IfValueT{#4}{\unexpanded{[#4]}}%
-            \unexpanded{{#5}}%
-        }%
-        \IfBooleanT{#3}{\invtoggle{SecOnNewPage}}%
-    }
-    \def\thesection{\arabic{section}\alph{sectionletter}}
-    \def\theHsection{\arabic{section}\alph{sectionletter}} % this is for hyperref (it does nothing if not loaded)
-    
-    %
-    
-    
-    
-    \newcounter{subsectionletter}%
-    \newcommand{\resetsubsectionletter}{\setcounter{subsectionletter}{0}}
-    \let\oldsubsection\subsection
-    
-    \RenewDocumentCommand{\subsection}{ s t+ t! o m }{%
-        %   * (no number, no ToC),  + (add sec letter)
-        \IfBooleanTF{#2}{%
-            	\ifnum\value{subsectionletter}>0% if we're into subsection lettering already
-            	    \addtocounter{subsection}{-1}% decrement subsection so num stays the same
-            	\fi%
-            	\stepcounter{subsectionletter}% increment subsection letter
-        }{\resetsubsectionletter}%
-        \Needspace{\subsecneedspace}%
-        \expanded{%
-            \noexpand\oldsubsection%
-            \IfBooleanT{#1}{*}%
-            \IfValueT{#4}{\unexpanded{[#4]}}%
-            \unexpanded{{#5}}%
-        }%
-    }
-    \def\thesubsection{\thesection.\arabic{subsection}\alph{subsectionletter}}
-    \def\theHsubsection{\thesection.\arabic{subsection}\alph{subsectionletter}}
-    
-    
-    
-    
-    \newcounter{subsubsectionletter}%
-    \newcommand{\resetsubsubsectionletter}{\setcounter{subsubsectionletter}{0}}
-    \let\oldsubsubsection\subsubsection
-    
-    \RenewDocumentCommand{\subsubsection}{ s t+ t! o m }{%
-        %   * (no number, no ToC),  + (add sec letter)
-        \IfBooleanTF{#2}{%
-            	\ifnum\value{subsubsectionletter}>0% if we're into subsubsection lettering already
-            	    \addtocounter{subsubsection}{-1}% decrement subsubsection so num stays the same
-            	\fi%
-            	\stepcounter{subsubsectionletter}% increment subsubsection letter
-        }{\resetsubsubsectionletter}%
-        \Needspace{\subsubsecneedspace}%
-        \expanded{%
-            \noexpand\oldsubsubsection%
-            \IfBooleanT{#1}{*}%
-            \IfValueT{#4}{\unexpanded{[#4]}}%
-            \unexpanded{{#5}}%
-        }%
-    }
-    \def\thesubsubsection{\thesubsection.\arabic{subsubsection}\alph{subsubsectionletter}}
-    % this is for hyperref (it does nothing if not loaded)
-    \def\theHsubsubsection{\thesubsection.\arabic{subsubsection}\alph{subsubsectionletter}}
-    
-    
-    
-    
-    
-    
-    \let\oldparagraph\paragraph
-    %
-    \RenewDocumentCommand\paragraph{ s t! o m }{% add ! option for paragraph to allow header on its own line
-        \edef\scr@paragraph@afterskip {%
-            \IfBooleanTF{#2}{0.1pt}{-4ex}%
-        }%
-        \expanded{%
-            \noexpand\oldparagraph
-                \IfBooleanT{#1}{*}%
-                \IfValueT{#3}{\unexpanded{[#3]}}%
-                \unexpanded{{#4}}%
-        }%
-    }
-    
-    
-    
-    
-    \NewDocumentCommand{\sectionM}{ t- m }{% section Matter (front or back matter). No number, goes to ToC, goes to pdf bookmark
-      \IfBooleanT{#1}{\addtocontents{toc}{\vspace*{-1.3ex}}}
-      \section*{#2}
-      \addtocentrydefault{section}{\phantom{.}}{#2}{}
-    }
-    
-    \NewDocumentCommand{\sectionF}{m}{\section*{#1}}
-    
-    \def\frontmatter{
-      \pdfbookmark[0]{Front-Matter}{LabelFMPDF}
-      \pdfbookmark[1]{Title}{LabelTitlePDF}
-    }
-    
-    \def\addcontentslists{
-      \pdfbookmark[1]{Contents}{LabelContentsPDF}
-      \addtocontents{toc}{\protect\enlargethispage{\ToCextrabottomroom}} % enlarge toc page if needed, todo add length for this
-      \tableofcontents
-      
-      \addtocentrydefault{section}{\phantom{.}}{Figures}\addtocontents{toc}{\vspace*{-1.3ex}}%
-      \listoffigures
-      
-      \addtocentrydefault{section}{\phantom{.}}{Tables}%
-      \listoftables
-      
-      \mainmatter
-    }
-    
-    \def\mainmatter{\bookmarksetup{startatroot}}
-    
-    \def\backmatter{\pdfbookmark[0]{Back-Matter}{LabelBMPDF}}
-    
-    \pretocmd{\appendix}{
-      \addtocontents{toc}{%
-        \vspace*{1.3ex}%
-        \protect\contentsline{section}{\hspace{3.5ex}Appendix\hfill\ }{}{}}
-      
-      \pdfbookmark[0]{Appendix}{LabelAppendicesPDF}
-    
-      \vspace*{4in}
-    }{}{}
-    
-    
-    
-    
-    
-    %%%%% graveyard
-    
-    
-    
-    %%% SECTION NUMBERS IN MARGIN OF PAGE, for two sided documents
-    % Check if two-sided https://tex.stackexchange.com/questions/360785/how-do-i-check-if-a-document-is-oneside-or-twoside  %
-    %%% for flipped sections heads, kind of ugly
-    %\makeatletter % https://tex.stackexchange.com/questions/470752/section-numbers-in-margins-in-double-sided-document
-    %%preamble
-    %\if@twoside% if two-sided, put the section headings to right side and numbers in right margin
-    %\renewcommand\sectionlinesformat[4]{%  for section numbers in right margin for a two sided document
-    %	\ifthispageodd
-    %	{\raggedleft#4\makebox[0pt][l]{\hspace{\marginparsep}\cbp@secnumsize#3}}
-    %	{\raggedright\makebox[0pt][r]{\cbp@secnumsize#3\hspace{\marginparsep}}#4}%
-    %}
-    %%\newcommand\side{stuff for twoside} %to do reconsider if this is needed
-    %\else% if not two sided, only apply to one sided
-    %\renewcommand\sectionlinesformat[4]{% used by free-standing headings with style=section
-    %	\makebox[0pt][r]{\cbp@secnumsize#3}#4%  puts section number in margin
-    %}	%\newcommand\side{stuff for onside} %to do reconsider if this is needed
-    %\fi%  finally do nothing
-    %\makeatother
-
-
 %%%%%%%%%%%%  SecThesis.sty  %%%%%%%%%%%%
     %\clearpairofpagestyles
     \providecommand{\cbp@secnumsize}{}
@@ -971,26 +653,28 @@ numbers=noenddot]{scrreprt}
     
     
     
-    \DeclareTOCStyleEntry[%
-    linefill=\diamondleaders,
-    indent=-5ex,
-    numwidth=5ex,
-    entryformat=\normalsize,
-    entrynumberformat=\cbp@secnumsize,
-    ]{tocline}{table}
+    
+    
     \renewcaptionname{english}{\listtablename}{Tables}
-    
-    
-    \DeclareTOCStyleEntry[%
-    linefill=\diamondleaders,
-    indent=-5ex,
-    numwidth=5ex,
-    entryformat=\normalsize,
-    entrynumberformat=\cbp@secnumsize,
-    ]{tocline}{figure}
     \renewcaptionname{english}{\listfigurename}{Figures}
     
-    % todo need something for code boxes?
+    \DeclareTOCStyleEntries[%
+    linefill=\diamondleaders,
+    level:=figure,
+    indent=-5ex,
+    numwidth=5ex,
+    entryformat=\normalsize,
+    entrynumberformat=\cbp@secnumsize,
+    ]{tocline}{figure,table,lstlisting}
+    
+    \DeclareTOCStyleEntries[%
+    linefill=\diamondleaders,
+    level:=table,
+    indent=-5ex,
+    numwidth=5ex,
+    entryformat=\normalsize,
+    entrynumberformat=\cbp@secnumsize,
+    ]{tocline}{lstlisting}
     
     %\setkomafont{tocentrypagenumber}{\toglnums}
     %\addtokomafont{chapterentrypagenumber}{\toglnums}
@@ -1029,20 +713,37 @@ numbers=noenddot]{scrreprt}
       \pdfbookmark[0]{Title}{LabelTitlePDF}
     }
     
+    \def\tighterToCchap{\addtocontents{toc}{\vspace*{-1.3ex}}}
     
+    \newlength{\ToCrightmargin}
+    \setlength{\ToCrightmargin}{0in}
     
-    \def\addcontentslists{
+    \NewDocumentCommand{\addcontentslists}{O{0in}}{
+      \global\setlength{\ToCrightmargin}{#1}
+      
       \pdfbookmark[0]{Contents}{LabelContentsPDF}
-      \tableofcontents
+      \begin{addmargin}[0pt]{\ToCrightmargin}
+        \tableofcontents
+      \end{addmargin}
       \chaptermark{Contents}
       
-      \addtocentrydefault{chapter}{\phantom{.}}{Figures}\addtocontents{toc}{\vspace*{-1.3ex}}%
-      \listoffigures
+      \addtocentrydefault{chapter}{\phantom{.}}{Figures}\tighterToCchap%
+      \begin{addmargin}[0pt]{\ToCrightmargin}
+        \listoffigures
+      \end{addmargin}
       \chaptermark{Figures}
-    %
-      \addtocentrydefault{chapter}{\phantom{.}}{Tables}%
-      \listoftables
+      
+      \addtocentrydefault{chapter}{\phantom{.}}{Tables}\tighterToCchap%
+      \begin{addmargin}[0pt]{\ToCrightmargin}
+        \listoftables
+      \end{addmargin}
       \chaptermark{Tables}
+    
+      \addtocentrydefault{chapter}{\phantom{.}}{Code Listings}%
+      \begin{addmargin}[0pt]{\ToCrightmargin}
+        \lstlistoflistings
+      \end{addmargin}
+      \chaptermark{Code Listings}
     }
     
     \def\mainmatter{\bookmarksetup{startatroot}}
@@ -1057,101 +758,31 @@ numbers=noenddot]{scrreprt}
     
 
 
-%%%%%%%%%%%%  TocExtra.sty  %%%%%%%%%%%%
-    % todo build list of listings and equations
-    
-    \newlength{\ToCrightmargin}
-    \setlength{\ToCrightmargin}{0in}
-    
-    
-    \let\old@tableofcontents\tableofcontents
-    \let\old@listoffigures\listoffigures
-    \let\old@listoftables\listoftables
-    
-    \def\tableofcontents{
-      \begin{addmargin}[0pt]{\ToCrightmargin}
-      \old@tableofcontents
-      \end{addmargin}
-    }
-    
-    \def\listoffigures{
-      \begin{addmargin}[0pt]{\ToCrightmargin}
-      \old@listoffigures
-      \end{addmargin}
-    }
-    
-    \def\listoftables{
-      \begin{addmargin}[0pt]{\ToCrightmargin}
-      \old@listoftables
-      \end{addmargin}
-    }
-
-
-
-%%%%%%%%%%%%  AppendixFormat.sty  %%%%%%%%%%%%
-    % ##############################################
-    % Appendix Formatting
-    % ##############################################
-    
-    %%% DEPENDENCIES
-    % KOMA-script class
-    % ToC.sty (for ToC skip)
-    
-    \providecommand*\appendixname{Appendix}
-    \let\originalappendix\appendix
-    
-    \providecommand{\cbp@appendixletformat}[1]{\Alph{#1}}
-    \providecommand{\cbp@appendixsecformat}{}
-    
-    \renewcommand\appendix{%
-    	\originalappendix
-    	% NOTE you cannot use the alphabetized subsections anymore
-    	%
-    	\def\thesection{\cbp@appendixletformat{section}}  % restore subsection behaviour (I change it with macro seclettering)
-    	\def\theHsection{\cbp@appendixletformat{section}}
-    	\def\thesubsection{\thesection.\arabic{subsection}}  % restore subsection behaviour (I change it with macro seclettering)
-    	\def\theHsubsection{\thesection.\arabic{subsection}}
-    	\def\thesubsubsection{\thesubsection.\arabic{subsubsection}}
-    	\def\theHsubsubsection{\thesubsection.\arabic{subsubsection}}
-    	%
-    	\crefalias{section}{appsec}
-    	%
-    	\renewcommand\sectionformat{{\cbp@appendixsecformat\appendixname~\thesection\autodot}}
-    	\renewcommand\sectionlinesformat[4]{%
-    		\ifstr{##1}{section}
-    		{\clearpage\vspace*{\sectprespacelength}##3\\*##4}% appendix sections on new page
-    		{\makebox[0pt][r]{\cbp@secnumsize##3}{##4}}% subsections etc.
-    	}%
-    
-    }
-    
-    %%%%%%%%%%% todo how will thesis react to appendix sections on new apge?/
-    
-    
-    % DO THIS with \appendix
-    %	\renewcommand\addsectiontocentry[2]{%
-    %		\addtocentrydefault{appendixsection}{##1}{##2}%
-    %	}%
-    
-    
-    %% this make an entry Appendix A in toc
-    %\DeclareTOCStyleEntry[
-    %level=\sectiontocdepth,
-    %indent=0pt,
-    %numwidth=2ex,  % does not matter
-    %dynnumwidth,
-    %numsep=1.4ex, % uses numsep, but regular entries use numwidth.. might need to adjust
-    %entrynumberformat=\entrywithprefix{\appendixname},
-    %entryformat=\large\bfseries,
-    %beforeskip=\tocsecskip,
-    %]{section}{appendixsection}
+%%%%%%%%%%%%  ChapToC.sty  %%%%%%%%%%%%
     %
-    %\newcommand\entrywithprefix[2]{#1~#2}
-    
-    
-    
-    % for lettering, could be used for assignment template, type this \def\thesubsection{\arabic{section} (\alph{subsection})}
-    
+    %\usepackage{scrwfile}
+    %
+    %\newif\ifusechaptertoc% Switch to tell \addtocentrydefault to not only make entries to the toc-file but also to the current section-toc-file
+    %\newcommand*{\chaptertoc}[1][\thechapter]{% new command to generate and show a chapter toc
+    %  \usechaptertoctrue% switch on chapter-toc-entries
+    %  \edef\ext@subtoc{toc#1}% extension of the section-toc-file, e.g., toc1
+    %  \DeclareNewTOC{\ext@subtoc}% declare a new toc file
+    %  \addsec*{Contents}% header of the chaptertoc
+    %  \begin{minipage}{.9\linewidth}
+    %    \value{tocdepth}=\subsectiontocdepth% we want entries down to subsection
+    %    \listoftoc*{\ext@subtoc}% show the toc without header
+    %  \end{minipage}\par
+    %  \bigskip\noindent\ignorespaces% add some vertical space after the toc and do not indent the following text
+    %}
+    %\xapptocmd\addtocentrydefault{% patch the KOMA-Script's generic toc entry generator
+    %  \ifusechaptertoc% if chapter toc entries should be generated
+    %    \expandafter\tocbasic@addxcontentsline\expandafter{\ext@subtoc}{#1}{#2}{#3}% do it
+    %  \fi
+    %}{}{}
+    %\xpretocmd\chapter{\usechaptertocfalse}{}{}% automatically switch of chapter toc entries at start of every \chapter
+    %
+
+
 
 
 %%%%%%%%%%%%  AppendixFormatThesis.sty  %%%%%%%%%%%%
@@ -1287,7 +918,7 @@ numbers=noenddot]{scrreprt}
     % rename to MathSciSymbols
     
     
-    \usepackage[fleqn]{mathtools} % NOTE: amsmath loaded before kpfonts for fleqn issue should load amsmath
+    \usepackage[fleqn,leqno]{mathtools} % NOTE: amsmath loaded before kpfonts for fleqn issue should load amsmath
     \iftoggle{useSerif}{}{ % issue with kpfonts, I think it already loads it..
     	\usepackage{amssymb}   % only load if not serif
     }
@@ -1297,8 +928,12 @@ numbers=noenddot]{scrreprt}
     %\usepackage{gensymb}
     
     \renewcommand{\theequation}{\arabic{section}.\arabic{equation}}
+    %\def\@cbp@mathline{\raisebox{0pt}[0pt][0pt]{\vline height 0.8em depth 0.6em width \arrayrulewidth}}
+    %\renewcommand\tagform@[1]{\maketag@@@{\ignorespaces\makebox[6ex][l]{\@cbp@mathline\;\cbp@secnumsize#1\unskip\@@italiccorr\hfill}\hspace*{5ex}}}
+    
     \def\@cbp@mathline{\raisebox{0pt}[0pt][0pt]{\vline height 0.8em depth 0.6em width \arrayrulewidth}}
-    \renewcommand\tagform@[1]{\maketag@@@{\ignorespaces\makebox[6ex][l]{\@cbp@mathline\;\cbp@secnumsize#1\unskip\@@italiccorr\hfill}\hspace*{5ex}}}
+    \renewcommand\tagform@[1]{\maketag@@@{\ignorespaces\makebox[6ex][r]{\ \hfill\cbp@secnumsize#1\;\@cbp@mathline\unskip\@@italiccorr\hspace*{2ex}}}}
+    
     
     
     \providecommand{\togunums}{}  % toggle to uppercase number shortcut
@@ -1338,11 +973,6 @@ numbers=noenddot]{scrreprt}
     	\end{mathwhere*}
     \end{AutoPuncTabular}
     	}{}
-    
-    
-    
-    %	inter-unit-product=\,, % default
-    %\sisetup{range-phrase=--,
     
 
 
@@ -1733,13 +1363,22 @@ numbers=noenddot]{scrreprt}
     %\def\hideeqlabelOP{}
     
     
+    \def\eqprefixOG{eq.\,}
+    \def\eqprefix{\eqprefixOG}
+    \def\hideeqprefix{\gdef\eqprefix{}\afterpage{\gdef\eqprefix{\eqprefixOG}}}
+    
+    
     \def\floatlefthanglabel{
       \captionsetup{figurename=fig.,tablename=tab.,}
       \renewcommand{\lstlistingname}{code}
       \DeclareCaptionLabelFormat{hangcap}{\llap{\cbp@secnumsize##1\,##2\enspace}}
       \DeclareCaptionLabelFormat{widecap}{\llap{\cbp@secnumsize##1\,##2\enspace}}
       \global\setlength{\floatindentlength}{0ex}
+      \renewcommand\tagform@[1]{\maketag@@@{\Llap{\ignorespaces\makebox[6ex][r]{\ \hfill\cbp@secnumsize\bfseries \eqprefix##1\unskip\@@italiccorr\enspace}}}}
+    
     }
+
+\setlength{\floatindentlength}{12ex}
 
 
 
@@ -1778,6 +1417,8 @@ numbers=noenddot]{scrreprt}
     	splitbottomskip=30.01pt,
     	skipabove    = \parskip,
     	skipbelow    = \parskip,
+    %	backgroundcolor=none,
+    	apptotikzsetting={\tikzset{mdfbackground/.append style={fill=red,fill opacity=0}}},
     	% innertopmargin = \parskip,
     	% afterbreak = {\vspace*{2cm} },
     	% beforebreak = {\vspace*{2cm}},
@@ -1797,6 +1438,9 @@ numbers=noenddot]{scrreprt}
     		at (O |- P) {\continuedtext};
     	}
     }
+    
+    
+    
     
     
     \renewcommand{\lstlistlistingname}{Code Listings}
@@ -1903,6 +1547,13 @@ numbers=noenddot]{scrreprt}
     %
     
     
+    %\renewcommand{\lstlistoflistings}{%
+    %	\clearpage
+    %  \begingroup
+    %  \@starttoc{lol}
+    %  \endgroup
+    %}
+
 
 
 %%%%%%%%%%%%  ToDoNote.sty  %%%%%%%%%%%%
@@ -2284,12 +1935,12 @@ numbers=noenddot]{scrreprt}
     %%% title pages
     
     \gdef\cbp@tpOwn{
-    \begin{titlepage} % Suppresses displaying the page number on the title page and the subsequent page counts as page 1
-    	\toglnums
-    	\raggedright % Right align the title page
     	\rule{\heavyrulewidth}{7.4in} % Vertical line
     	\hspace{0.5in} % Whitespace between the vertical line and title page text
     	\begin{minipage}[b][7.4in][s]{4.4in}
+    		\raggedright % Right align the title page
+    		\toglnums
+    		\thispagestyle{empty}
     	    \raggedright
     
     		\null\vfill\null\vfill
@@ -2321,7 +1972,6 @@ numbers=noenddot]{scrreprt}
     		\null\vfill\null\vfill
     		
     \end{minipage}
-    \end{titlepage}
     }
     
     

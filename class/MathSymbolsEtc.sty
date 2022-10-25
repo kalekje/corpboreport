@@ -5,7 +5,7 @@
 % rename to MathSciSymbols
 
 
-\usepackage[fleqn]{mathtools} % NOTE: amsmath loaded before kpfonts for fleqn issue should load amsmath
+\usepackage[fleqn,leqno]{mathtools} % NOTE: amsmath loaded before kpfonts for fleqn issue should load amsmath
 \iftoggle{useSerif}{}{ % issue with kpfonts, I think it already loads it..
 	\usepackage{amssymb}   % only load if not serif
 }
@@ -15,8 +15,12 @@
 %\usepackage{gensymb}
 
 \renewcommand{\theequation}{\arabic{section}.\arabic{equation}}
+%\def\@cbp@mathline{\raisebox{0pt}[0pt][0pt]{\vline height 0.8em depth 0.6em width \arrayrulewidth}}
+%\renewcommand\tagform@[1]{\maketag@@@{\ignorespaces\makebox[6ex][l]{\@cbp@mathline\;\cbp@secnumsize#1\unskip\@@italiccorr\hfill}\hspace*{5ex}}}
+
 \def\@cbp@mathline{\raisebox{0pt}[0pt][0pt]{\vline height 0.8em depth 0.6em width \arrayrulewidth}}
-\renewcommand\tagform@[1]{\maketag@@@{\ignorespaces\makebox[6ex][l]{\@cbp@mathline\;\cbp@secnumsize#1\unskip\@@italiccorr\hfill}\hspace*{5ex}}}
+\renewcommand\tagform@[1]{\maketag@@@{\ignorespaces\makebox[6ex][r]{\ \hfill\cbp@secnumsize#1\;\@cbp@mathline\unskip\@@italiccorr\hspace*{2ex}}}}
+
 
 
 \providecommand{\togunums}{}  % toggle to uppercase number shortcut
@@ -56,9 +60,4 @@ where:\\[0.3ex]
 	\end{mathwhere*}
 \end{AutoPuncTabular}
 	}{}
-
-
-
-%	inter-unit-product=\,, % default
-%\sisetup{range-phrase=--,
 

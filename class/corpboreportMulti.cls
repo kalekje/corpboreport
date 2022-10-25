@@ -19,6 +19,7 @@ parskip=full-,
 bibliography=numbered,
 numbers=noenddot,
 fleqn,
+leqno,
 %listof=totoc,% for list of figures, tables
 %draft=true,
 ]{scrartcl}
@@ -56,7 +57,7 @@ fleqn,
 
 \usepackage{\FormatDir TextAndParas} %%% MAIN FONT SETTINGS
 
-\usepackage[fleqn]{amsmath} % need to load before kpfonts-otf
+\usepackage[fleqn,leqno]{amsmath} % need to load before kpfonts-otf
 
 \iftoggle{useSerif}{
 
@@ -70,7 +71,6 @@ fleqn,
 
 \usepackage{\FormatDir HeaderFooterFootnotes} %%% HEADER AND FOOTER AND FOOTNOTES
 \usepackage{\FormatDir SectionsToCCustom} %%% SECTION HEADINGS, TOC, AND FORMATTING
-\usepackage{\FormatDir ToCextra} %%% SECTION HEADINGS, TOC, AND FORMATTING
 \usepackage{\FormatDir PageNumberInMargin} %%% PLACING PAGE NUMBER IN THE LOWER RIGHT MARGIN
 \usepackage{\FormatDir AppendixFormat} %%% APPENDIX FORMATTINGS (depends on some ToC)
 \usepackage{\FormatDir ColorsCustom} %%% CUSTOM COLORS

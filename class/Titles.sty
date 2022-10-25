@@ -54,12 +54,12 @@
 %%% title pages
 
 \gdef\cbp@tpOwn{
-\begin{titlepage} % Suppresses displaying the page number on the title page and the subsequent page counts as page 1
-	\toglnums
-	\raggedright % Right align the title page
 	\rule{\heavyrulewidth}{7.4in} % Vertical line
 	\hspace{0.5in} % Whitespace between the vertical line and title page text
 	\begin{minipage}[b][7.4in][s]{4.4in}
+		\raggedright % Right align the title page
+		\toglnums
+		\thispagestyle{empty}
 	    \raggedright
 
 		\null\vfill\null\vfill
@@ -91,7 +91,6 @@
 		\null\vfill\null\vfill
 		
 \end{minipage}
-\end{titlepage}
 }
 
 

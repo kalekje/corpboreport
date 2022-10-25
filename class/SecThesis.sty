@@ -165,26 +165,28 @@ afterskip=-1em]{subparagraph}
 
 
 
-\DeclareTOCStyleEntry[%
-linefill=\diamondleaders,
-indent=-5ex,
-numwidth=5ex,
-entryformat=\normalsize,
-entrynumberformat=\cbp@secnumsize,
-]{tocline}{table}
+
+
 \renewcaptionname{english}{\listtablename}{Tables}
-
-
-\DeclareTOCStyleEntry[%
-linefill=\diamondleaders,
-indent=-5ex,
-numwidth=5ex,
-entryformat=\normalsize,
-entrynumberformat=\cbp@secnumsize,
-]{tocline}{figure}
 \renewcaptionname{english}{\listfigurename}{Figures}
 
-% todo need something for code boxes?
+\DeclareTOCStyleEntries[%
+linefill=\diamondleaders,
+level:=figure,
+indent=-5ex,
+numwidth=5ex,
+entryformat=\normalsize,
+entrynumberformat=\cbp@secnumsize,
+]{tocline}{figure,table,lstlisting}
+
+\DeclareTOCStyleEntries[%
+linefill=\diamondleaders,
+level:=table,
+indent=-5ex,
+numwidth=5ex,
+entryformat=\normalsize,
+entrynumberformat=\cbp@secnumsize,
+]{tocline}{lstlisting}
 
 %\setkomafont{tocentrypagenumber}{\toglnums}
 %\addtokomafont{chapterentrypagenumber}{\toglnums}
@@ -223,20 +225,37 @@ entrynumberformat=\cbp@secnumsize,
   \pdfbookmark[0]{Title}{LabelTitlePDF}
 }
 
+\def\tighterToCchap{\addtocontents{toc}{\vspace*{-1.3ex}}}
 
+\newlength{\ToCrightmargin}
+\setlength{\ToCrightmargin}{0in}
 
-\def\addcontentslists{
+\NewDocumentCommand{\addcontentslists}{O{0in}}{
+  \global\setlength{\ToCrightmargin}{#1}
+  
   \pdfbookmark[0]{Contents}{LabelContentsPDF}
-  \tableofcontents
+  \begin{addmargin}[0pt]{\ToCrightmargin}
+    \tableofcontents
+  \end{addmargin}
   \chaptermark{Contents}
   
-  \addtocentrydefault{chapter}{\phantom{.}}{Figures}\addtocontents{toc}{\vspace*{-1.3ex}}%
-  \listoffigures
+  \addtocentrydefault{chapter}{\phantom{.}}{Figures}\tighterToCchap%
+  \begin{addmargin}[0pt]{\ToCrightmargin}
+    \listoffigures
+  \end{addmargin}
   \chaptermark{Figures}
-%
-  \addtocentrydefault{chapter}{\phantom{.}}{Tables}%
-  \listoftables
+  
+  \addtocentrydefault{chapter}{\phantom{.}}{Tables}\tighterToCchap%
+  \begin{addmargin}[0pt]{\ToCrightmargin}
+    \listoftables
+  \end{addmargin}
   \chaptermark{Tables}
+
+  \addtocentrydefault{chapter}{\phantom{.}}{Code Listings}%
+  \begin{addmargin}[0pt]{\ToCrightmargin}
+    \lstlistoflistings
+  \end{addmargin}
+  \chaptermark{Code Listings}
 }
 
 \def\mainmatter{\bookmarksetup{startatroot}}

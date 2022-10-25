@@ -19,6 +19,7 @@ parskip=full-,
 bibliography=numbered,
 numbers=noenddot,
 fleqn,
+leqno,
 %listof=totoc,% for list of figures, tables
 %draft=true,
 ]{scrartcl}
@@ -110,6 +111,10 @@ fleqn,
     %%%
 
 %%%%%%%%%%%%  Utilities.sty  %%%%%%%%%%%%
+    \usepackage{scrhack}
+    \usepackage{listings}  % re-loaded in code boxes, but needs to be loaded before changing ToC structure
+    
+    
     \usepackage{etoolbox} %
     
     \usepackage{xparse} % smart definition of commands
@@ -327,7 +332,7 @@ fleqn,
     
 
 
-\usepackage[fleqn]{amsmath} % need to load before kpfonts-otf
+\usepackage[fleqn,leqno]{amsmath} % need to load before kpfonts-otf
 
 \iftoggle{useSerif}{
 
@@ -652,22 +657,14 @@ fleqn,
     
     
     %%% if using list of tables and figures
-    \DeclareTOCStyleEntry[%
+    \DeclareTOCStyleEntries[%
+    level:=figure,
     linefill=\diamondleaders,
     indent=0pt,
     numwidth=4.4ex,
     entryformat=\normalsize,
     entrynumberformat=\cbp@secnumsize,
-    ]{tocline}{table}
-    
-    
-    \DeclareTOCStyleEntry[%
-    linefill=\diamondleaders,
-    indent=0pt,
-    numwidth=4.4ex,
-    entryformat=\normalsize,
-    entrynumberformat=\cbp@secnumsize,
-    ]{tocline}{figure}
+    ]{tocline}{figure,table,lstlisting}
     
     
     \setkomafont{disposition}{\normalfont\bfseries} % section preference
@@ -814,14 +811,20 @@ fleqn,
     \def\addcontentslists{
       \pdfbookmark[1]{Contents}{LabelContentsPDF}
       \addtocontents{toc}{\protect\enlargethispage{\ToCextrabottomroom}} % enlarge toc page if needed, todo add length for this
-      \tableofcontents
-      
+      \begin{addmargin}[0pt]{\ToCrightmargin}
+        \tableofcontents
+      \end{addmargin}
+    
       \addtocentrydefault{section}{\phantom{.}}{Figures}\addtocontents{toc}{\vspace*{-1.3ex}}%
-      \listoffigures
-      
+      \begin{addmargin}[0pt]{\ToCrightmargin}
+        \listoffigures
+      \end{addmargin}
+    
       \addtocentrydefault{section}{\phantom{.}}{Tables}%
-      \listoftables
-      
+      \begin{addmargin}[0pt]{\ToCrightmargin}
+        \listoftables
+      \end{addmargin}
+    
       \mainmatter
     }
     
@@ -865,36 +868,6 @@ fleqn,
     %}	%\newcommand\side{stuff for onside} %to do reconsider if this is needed
     %\fi%  finally do nothing
     %\makeatother
-
-
-%%%%%%%%%%%%  ToCextra.sty  %%%%%%%%%%%%
-    % todo build list of listings and equations
-    
-    \newlength{\ToCrightmargin}
-    \setlength{\ToCrightmargin}{0in}
-    
-    
-    \let\old@tableofcontents\tableofcontents
-    \let\old@listoffigures\listoffigures
-    \let\old@listoftables\listoftables
-    
-    \def\tableofcontents{
-      \begin{addmargin}[0pt]{\ToCrightmargin}
-      \old@tableofcontents
-      \end{addmargin}
-    }
-    
-    \def\listoffigures{
-      \begin{addmargin}[0pt]{\ToCrightmargin}
-      \old@listoffigures
-      \end{addmargin}
-    }
-    
-    \def\listoftables{
-      \begin{addmargin}[0pt]{\ToCrightmargin}
-      \old@listoftables
-      \end{addmargin}
-    }
 
 
 %%%%%%%%%%%%  PageNumberInMargin.sty  %%%%%%%%%%%%
@@ -1080,7 +1053,7 @@ fleqn,
     % rename to MathSciSymbols
     
     
-    \usepackage[fleqn]{mathtools} % NOTE: amsmath loaded before kpfonts for fleqn issue should load amsmath
+    \usepackage[fleqn,leqno]{mathtools} % NOTE: amsmath loaded before kpfonts for fleqn issue should load amsmath
     \iftoggle{useSerif}{}{ % issue with kpfonts, I think it already loads it..
     	\usepackage{amssymb}   % only load if not serif
     }
@@ -1090,8 +1063,12 @@ fleqn,
     %\usepackage{gensymb}
     
     \renewcommand{\theequation}{\arabic{section}.\arabic{equation}}
+    %\def\@cbp@mathline{\raisebox{0pt}[0pt][0pt]{\vline height 0.8em depth 0.6em width \arrayrulewidth}}
+    %\renewcommand\tagform@[1]{\maketag@@@{\ignorespaces\makebox[6ex][l]{\@cbp@mathline\;\cbp@secnumsize#1\unskip\@@italiccorr\hfill}\hspace*{5ex}}}
+    
     \def\@cbp@mathline{\raisebox{0pt}[0pt][0pt]{\vline height 0.8em depth 0.6em width \arrayrulewidth}}
-    \renewcommand\tagform@[1]{\maketag@@@{\ignorespaces\makebox[6ex][l]{\@cbp@mathline\;\cbp@secnumsize#1\unskip\@@italiccorr\hfill}\hspace*{5ex}}}
+    \renewcommand\tagform@[1]{\maketag@@@{\ignorespaces\makebox[6ex][r]{\ \hfill\cbp@secnumsize#1\;\@cbp@mathline\unskip\@@italiccorr\hspace*{2ex}}}}
+    
     
     
     \providecommand{\togunums}{}  % toggle to uppercase number shortcut
@@ -1131,11 +1108,6 @@ fleqn,
     	\end{mathwhere*}
     \end{AutoPuncTabular}
     	}{}
-    
-    
-    
-    %	inter-unit-product=\,, % default
-    %\sisetup{range-phrase=--,
     
 
 
@@ -1523,13 +1495,21 @@ fleqn,
     %\def\hideeqlabelOP{}
     
     
+    \def\eqprefixOG{eq.\,}
+    \def\eqprefix{\eqprefixOG}
+    \def\hideeqprefix{\gdef\eqprefix{}\afterpage{\gdef\eqprefix{\eqprefixOG}}}
+    
+    
     \def\floatlefthanglabel{
       \captionsetup{figurename=fig.,tablename=tab.,}
       \renewcommand{\lstlistingname}{code}
       \DeclareCaptionLabelFormat{hangcap}{\llap{\cbp@secnumsize##1\,##2\enspace}}
       \DeclareCaptionLabelFormat{widecap}{\llap{\cbp@secnumsize##1\,##2\enspace}}
       \global\setlength{\floatindentlength}{0ex}
+      \renewcommand\tagform@[1]{\maketag@@@{\Llap{\ignorespaces\makebox[6ex][r]{\ \hfill\cbp@secnumsize\bfseries \eqprefix##1\unskip\@@italiccorr\enspace}}}}
+    
     }
+
 
 %%%%%%%%%%%%  CodeBoxes.sty  %%%%%%%%%%%%
     % ##############################################
@@ -1566,6 +1546,8 @@ fleqn,
     	splitbottomskip=30.01pt,
     	skipabove    = \parskip,
     	skipbelow    = \parskip,
+    %	backgroundcolor=none,
+    	apptotikzsetting={\tikzset{mdfbackground/.append style={fill=red,fill opacity=0}}},
     	% innertopmargin = \parskip,
     	% afterbreak = {\vspace*{2cm} },
     	% beforebreak = {\vspace*{2cm}},
@@ -1585,6 +1567,9 @@ fleqn,
     		at (O |- P) {\continuedtext};
     	}
     }
+    
+    
+    
     
     
     \renewcommand{\lstlistlistingname}{Code Listings}
@@ -1691,6 +1676,12 @@ fleqn,
     %
     
     
+    %\renewcommand{\lstlistoflistings}{%
+    %	\clearpage
+    %  \begingroup
+    %  \@starttoc{lol}
+    %  \endgroup
+    %}
 
 
 %%%%%%%%%%%%  ToDoNote.sty  %%%%%%%%%%%%
@@ -2070,12 +2061,12 @@ fleqn,
     %%% title pages
     
     \gdef\cbp@tpOwn{
-    \begin{titlepage} % Suppresses displaying the page number on the title page and the subsequent page counts as page 1
-    	\toglnums
-    	\raggedright % Right align the title page
     	\rule{\heavyrulewidth}{7.4in} % Vertical line
     	\hspace{0.5in} % Whitespace between the vertical line and title page text
     	\begin{minipage}[b][7.4in][s]{4.4in}
+    		\raggedright % Right align the title page
+    		\toglnums
+    		\thispagestyle{empty}
     	    \raggedright
     
     		\null\vfill\null\vfill
@@ -2107,7 +2098,6 @@ fleqn,
     		\null\vfill\null\vfill
     		
     \end{minipage}
-    \end{titlepage}
     }
     
     
@@ -2386,13 +2376,14 @@ fleqn,
     \end{declareYAMLvars}
     \lowercasevarYVoff
     
-    \providecommand{\@memoto}{}
-    \providecommand{\@memofr}{}
-    \providecommand{\@memofraddr}{}
-    \providecommand{\@memotoaddr}{}
-    \providecommand\@memoheader{}
-    \providecommand\@attachments{}
-    \providecommand\@fileno{}
+    % variables do not req declaring...
+    %{\@memoto}
+    %{\@memofr}
+    %{\@memofraddr}
+    %{\@memotoaddr}
+    %\@memoheader
+    %\@attachments
+    %\@fileno
     
     \newcommand{\@HangingLabel}[1]{\leavevmode\llap{\scriptsize\uppercase{#1}:\enspace}}
     

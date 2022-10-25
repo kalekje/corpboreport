@@ -32,6 +32,8 @@
 	splitbottomskip=30.01pt,
 	skipabove    = \parskip,
 	skipbelow    = \parskip,
+%	backgroundcolor=none,
+	apptotikzsetting={\tikzset{mdfbackground/.append style={fill=red,fill opacity=0}}},
 	% innertopmargin = \parskip,
 	% afterbreak = {\vspace*{2cm} },
 	% beforebreak = {\vspace*{2cm}},
@@ -51,6 +53,9 @@
 		at (O |- P) {\continuedtext};
 	}
 }
+
+
+
 
 
 \renewcommand{\lstlistlistingname}{Code Listings}
@@ -157,3 +162,9 @@
 %
 
 
+%\renewcommand{\lstlistoflistings}{%
+%	\clearpage
+%  \begingroup
+%  \@starttoc{lol}
+%  \endgroup
+%}
