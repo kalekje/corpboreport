@@ -1,17 +1,7 @@
-% ##############################################
-% Custom Colors
-% ##############################################
-
 \usepackage{xcolor}
 
 % todo confirm with xckd colors
 % https://xkcd.com/color/rgb/
-
-% make a consistent color set with mpl "rich colors"
-% define shades of gray to mtach
-
-
-%\definecolor{lightgray}{RGB}{216, 220, 214}
 
 \definecolor{offwhite}{RGB}{255,253,237}
 
@@ -32,6 +22,13 @@
 \definecolor{mybeige}{HTML}{C3BDA5}
 
 
+% https://umanitoba.ca/sites/default/files/2019-12/UM_Brand-Guidelines.pdf
+\definecolor{umbrown}{RGB}{79, 44, 29}
+\definecolor{umdarkblue}{RGB}{56, 94, 157}
+\definecolor{umlightblue}{RGB}{0, 163, 224}
+\definecolor{umyellow}{RGB}{242, 169, 0}
+
+
 
 % for coding
 \colorlet{accCol}{indigo}  % accent color
@@ -39,21 +36,35 @@
 \colorlet{grayCol}{gray}   % gray color
 \colorlet{greCode}{green}   % gray color
 
-% for sections
-\colorlet{secCol}{indigo}
-\colorlet{subsecCol}{darkindigo}
-\colorlet{subsubsecCol}{verydarkindigo}
-
 \def\blacksectionheadings{
    \setaccentcolor{.} % . is current color, so if you invert it will change
 }
 
 
 \NewDocumentCommand{\setaccentcolor}{m}{
+    \colorlet{chapCol}{#1}
     \colorlet{secCol}{#1}
     \colorlet{subsecCol}{#1}
     \colorlet{subsubsecCol}{#1}
+    \colorlet{parCol}{#1}
 }
+
+\setaccentcolor{.}
+
+
+\NewDocumentCommand{\setcolortheme}{m}{
+    \ifstrequal{#1}{blues}{\cbp@colorthemeblues}{}
+    \ifstrequal{#1}{brown}{\setaccentcolor{umbrown}}{}
+}
+
+\NewDocumentCommand{\cbp@colorthemeblues}{}{
+    \colorlet{chapCol}{indigo}
+    \colorlet{secCol}{darkindigo}
+    \colorlet{subsecCol}{verydarkindigo}
+    \colorlet{subsubsecCol}{.}
+    \colorlet{parCol}{.}
+}
+
 
 
 \definecolor{pltblue}{HTML}{1000F0}

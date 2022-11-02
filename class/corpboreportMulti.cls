@@ -1,54 +1,53 @@
-%%% shortcut to use all format files of
 \let\footref\relax % if footref error appears
-
-\providecommand{\FormatDir}{class/}
+\providecommand{\FormatDir}{C:/Users/Kale/Projects/LaTeXpackages/corpboreport/class/} %%% shortcut to use all format files of
 
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{corpboreport}[2021-09-21]
+\ProvidesClass{corpboreport}[2022-10-28]
 
-%%% Document Class
-\LoadClass[11pt,
-%letterpaper,  %
-paper=letter,  % paper size
-pagesize,      % force given paper size in pdf
-twoside=false,
-%twoside,% for two sided doc
-%open=right,
-hidelinks,
-parskip=full-,
-bibliography=numbered,
-numbers=noenddot,
-fleqn,
-leqno,
-%listof=totoc,% for list of figures, tables
-%draft=true,
-]{scrartcl}
+\DeclareOption*{\PassOptionsToClass{\CurrentOption}{scrbook}} %% pass class options to scrbook
+\ProcessOptions\relax
 
+%\RequirePackage{luacode}
+%\begin{luacode*}
+%      texio.write_nl('>>>>>>>'..token.get_macro('@classoptionslist'))
+%\end{luacode*}
+
+\LoadClass[ %% Document Class
+      11pt,
+      letterpaper,
+      twoside=false,
+      hidelinks,
+      parskip=half,
+      bibliography=totoc,
+      open=right,%
+      chapterprefix=false,
+      fleqn,
+      leqno,
+      numbers=noenddot
+]{scrbook}
+%%%listof=totoc,% for list of figures, tables
+
+
+%%% additional class options: (memo|compact|thesis) &| serif
 \RequirePackage{etoolbox}
-\newtoggle{samepgTitle}
 \newtoggle{useMemo}
 \newtoggle{useSerif}
-\newtoggle{showListOfFigsTabs}
-\newtoggle{samepgListOfFigsTabs}
-
-\newtoggle{SectionOnNewPage}  % todo work this in to the template
-
-\newlength{\pullToCcloser}
-\setlength{\pullToCcloser}{-12pt}
-\newlength{\moreToCbottom}
-\setlength{\moreToCbottom}{2em}
-
-
 \gdef\TitleLogoPlaceDefault{tl}
 
-\DeclareOption{memo}{\toggletrue{useMemo}}
-\DeclareOption{compact}{\toggletrue{samepgTitle}\gdef\TitleLogoPlaceDefault{bl}\AtBeginDocument{\togglefalse{SecOnNewPage}}}
 \DeclareOption{serif}{\toggletrue{useSerif}}
+\DeclareOption{report}{}
+\DeclareOption{memo}{
+      \toggletrue{useMemo}
+      \AtBeginDocument{\global\toggletrue{samepgTitle}\global\toggletrue{ChapOnSamePage}\global\toggletrue{SimpleChaps}}}
+\DeclareOption{compact}{\gdef\TitleLogoPlaceDefault{bl}
+      \AtBeginDocument{\global\toggletrue{samepgTitle}\global\toggletrue{ChapOnSamePage}\global\toggletrue{SimpleChaps}}}
+\DeclareOption{thesis}{\toggletrue{useSerif}
+      \AtBeginDocument{\FancyChapters\global\togglefalse{SimpleChaps}\global\togglefalse{ChapOnSamePage}\global\toggletrue{AppendixPage}}}
 \ProcessOptions\relax
+\AtBeginDocument{\iftoggle{SimpleChaps}{\gdef\chapterpagestyle{scrheadings}}{}}
 
 %https://github.com/mrpiggi/svg/issues/18
 \providecommand*{\Ifstr}{\ifstr}  % little hack that supposed to fix ifstr warning, see https://komascript.de/faq_deprecatedif
-
 
 \usepackage{\FormatDir LuaStuff} %%% Lua Stuff
 
@@ -60,20 +59,15 @@ leqno,
 \usepackage[fleqn,leqno]{amsmath} % need to load before kpfonts-otf
 
 \iftoggle{useSerif}{
-
-    \usepackage{\FormatDir FontKPotf}
-
-}{
-
-        \usepackage{\FormatDir FontCMBotf}
-
+      \usepackage{\FormatDir FontKPotf}
+}{%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      \usepackage{\FormatDir FontCMBotf}
 }
 
 \usepackage{\FormatDir HeaderFooterFootnotes} %%% HEADER AND FOOTER AND FOOTNOTES
-\usepackage{\FormatDir SectionsToCCustom} %%% SECTION HEADINGS, TOC, AND FORMATTING
+\usepackage{\FormatDir SectionsToC} %%% SECTION HEADINGS, TOC, AND FORMATTING
 \usepackage{\FormatDir PageNumberInMargin} %%% PLACING PAGE NUMBER IN THE LOWER RIGHT MARGIN
-\usepackage{\FormatDir AppendixFormat} %%% APPENDIX FORMATTINGS (depends on some ToC)
-\usepackage{\FormatDir ColorsCustom} %%% CUSTOM COLORS
+\usepackage{\FormatDir Colors} %%% CUSTOM COLORS
 \usepackage{\FormatDir MathSymbolsEtc} %%% MATH RELATED PACKAGES
 \usepackage{\FormatDir Lists}
 \usepackage{\FormatDir Tables} %
@@ -98,9 +92,6 @@ leqno,
 \usepackage{lutabulartools}
 \usepackage{autopuncitems}
 \usepackage{\FormatDir YAMLvarsDec}
-
-
-
 
 
 \usepackage{\FormatDir MemoSty}

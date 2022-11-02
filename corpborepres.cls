@@ -18,7 +18,9 @@
 }
 
 
-%%%%%%%%%%%%  LuaStuff.sty  %%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%            LuaStuff            %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
     \usepackage{ifluatex}
     \ifluatex
@@ -35,7 +37,9 @@
 
 
 
-%%%%%%%%%%%%  TextandParas.sty  %%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%            TextandParas            %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
     % ##############################################
     % Text / Para Settings and utils
@@ -61,6 +65,8 @@
     \usepackage{setspace}  % enable onehalfspacing instyling
     \usepackage{relsize}  % relative sizing
     \usepackage{pbox}  % create box of max width http://ctan.mirror.colo-serv.net/macros/latex/contrib/pbox/pbox.pdf
+    
+    \newcommand{\vparspace}{\vspace{\parskip}}
     
     
     \let\oldcenter\center
@@ -99,20 +105,23 @@
     \vfuzz \hfuzz
     
     
-    \if@twoside% if two-sided, put the section headings to right side and numbers in right margin
-    	\raggedbottom
-    \fi%  finally do nothing
-    	\raggedbottom
+    %\if@twoside%
+    %	\raggedbottom
+    %\fi%  finally do nothing
+    %	\raggedbottom
     
     
     
 
 
-%%%%%%%%%%%%  FontCMBotf.sty  %%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%            FontCMBotf            %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %\usepackage{unicode-math}  ??
     \usepackage{fontspec}
     
     \usepackage[T1]{fontenc}
-    \usepackage{cmbright} %for math only, will be overwritten
+    \usepackage{cmbright} %for math only, will be overwritten. Had issues wit OTF for math?
     \gdef\bfdefault{sb}
     \gdef\sbdefault{bx} % swap sb with bf
     
@@ -147,11 +156,11 @@
       shrink=10
     ]{microtype}
     
-    % upper and lowercase number commands
+    % upper and lowercase number commands -- not applicable if using serif, I choose uppercase only for simplicity
     \def\togunums{}
     \def\toglnums{}
-    \def\lnum#1{#1}
-    \def\unum#1{#1}
+    \NewDocumentCommand{\lnum}{o}{}
+    \NewDocumentCommand{\unum}{o}{}
     
     \def\act{}
     \def\actext#1{#1}
@@ -191,7 +200,9 @@
     
 
 
-%%%%%%%%%%%%  MathSymbolsEtc.sty  %%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%            MathSymbolsEtc            %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % ##############################################
     % Math related packages and settings
     % ##############################################
@@ -204,9 +215,9 @@
     	\usepackage{amssymb}   % only load if not serif
     }
     
+    %	\usepackage{gensymb} % bug in this package currently
     \usepackage{xfrac}
     \usepackage{amsfonts}  % math fonts and symbols
-    %\usepackage{gensymb}
     
     \renewcommand{\theequation}{\arabic{section}.\arabic{equation}}
     %\def\@cbp@mathline{\raisebox{0pt}[0pt][0pt]{\vline height 0.8em depth 0.6em width \arrayrulewidth}}
@@ -257,7 +268,9 @@
     
 
 
-%%%%%%%%%%%%  Utilities.sty  %%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%            Utilities            %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     \usepackage{scrhack}
     \usepackage{listings}  % re-loaded in code boxes, but needs to be loaded before changing ToC structure
     
@@ -405,7 +418,9 @@
     %\itertext<b>{1,2}<a>[; ] --> b1a, b2a,
 
 
-%%%%%%%%%%%%  Tables.sty  %%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%            Tables            %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
     %%% TABLES
     \usepackage{array}
@@ -534,21 +549,13 @@
     %\endlastfoot
     %}
 
-%%%%%%%%%%%%  ColorsCustom.sty  %%%%%%%%%%%%
-    % ##############################################
-    % Custom Colors
-    % ##############################################
-    
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%            Colors            %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     \usepackage{xcolor}
     
     % todo confirm with xckd colors
     % https://xkcd.com/color/rgb/
-    
-    % make a consistent color set with mpl "rich colors"
-    % define shades of gray to mtach
-    
-    
-    %\definecolor{lightgray}{RGB}{216, 220, 214}
     
     \definecolor{offwhite}{RGB}{255,253,237}
     
@@ -569,6 +576,13 @@
     \definecolor{mybeige}{HTML}{C3BDA5}
     
     
+    % https://umanitoba.ca/sites/default/files/2019-12/UM_Brand-Guidelines.pdf
+    \definecolor{umbrown}{RGB}{79, 44, 29}
+    \definecolor{umdarkblue}{RGB}{56, 94, 157}
+    \definecolor{umlightblue}{RGB}{0, 163, 224}
+    \definecolor{umyellow}{RGB}{242, 169, 0}
+    
+    
     
     % for coding
     \colorlet{accCol}{indigo}  % accent color
@@ -576,21 +590,35 @@
     \colorlet{grayCol}{gray}   % gray color
     \colorlet{greCode}{green}   % gray color
     
-    % for sections
-    \colorlet{secCol}{indigo}
-    \colorlet{subsecCol}{darkindigo}
-    \colorlet{subsubsecCol}{verydarkindigo}
-    
     \def\blacksectionheadings{
        \setaccentcolor{.} % . is current color, so if you invert it will change
     }
     
     
     \NewDocumentCommand{\setaccentcolor}{m}{
+        \colorlet{chapCol}{#1}
         \colorlet{secCol}{#1}
         \colorlet{subsecCol}{#1}
         \colorlet{subsubsecCol}{#1}
+        \colorlet{parCol}{#1}
     }
+    
+    \setaccentcolor{.}
+    
+    
+    \NewDocumentCommand{\setcolortheme}{m}{
+        \ifstrequal{#1}{blues}{\cbp@colorthemeblues}{}
+        \ifstrequal{#1}{brown}{\setaccentcolor{umbrown}}{}
+    }
+    
+    \NewDocumentCommand{\cbp@colorthemeblues}{}{
+        \colorlet{chapCol}{indigo}
+        \colorlet{secCol}{darkindigo}
+        \colorlet{subsecCol}{verydarkindigo}
+        \colorlet{subsubsecCol}{.}
+        \colorlet{parCol}{.}
+    }
+    
     
     
     \definecolor{pltblue}{HTML}{1000F0}
@@ -626,7 +654,9 @@
 
 \providecommand{\cbp@listframe}{} % no frames for beamer
 
-%%%%%%%%%%%%  CodeBoxes.sty  %%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%            CodeBoxes            %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % ##############################################
     % Code Boxes
     % ##############################################
@@ -799,7 +829,9 @@
     %}
 
 
-%%%%%%%%%%%%  ToDoNote.sty  %%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%            ToDoNote            %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % ##############################################
     % Todo Notes (with Example)
     % ##############################################
@@ -824,7 +856,9 @@
     %\todototoc{ToC todo, just a random list}
     %\todoG{Check for stuff}
 
-%%%%%%%%%%%%  macros/unirefs.sty  %%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%            macros/unirefs            %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %%%% todo maybe move this to a lua-based function
     
     %%%% todo make a lua tables latex interface? That might be fun
@@ -884,7 +918,9 @@
     %
     %\newcommand{\reseturef}{\setcounter{unilabIN}{0}\stepcounter{unilabOUT}}
 
-%%%%%%%%%%%%  BibAndGloss.sty  %%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%            BibAndGloss            %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % requires enumitem for acronym styling
     \usepackage[sorting=none]{biblatex}
     
@@ -1040,7 +1076,9 @@
 
 
 
-%%%%%%%%%%%%  TikZstuff.sty  %%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%            TikZstuff            %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     \usepackage{tikz}
     \usetikzlibrary{positioning}
     \usetikzlibrary{calc}

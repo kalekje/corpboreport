@@ -24,7 +24,7 @@
 \usepackage{\FormatDir MathSymbolsEtc}
 \usepackage{\FormatDir Utilities} %%% GENERAL UTILITIES, FOR SHAPING, IMPORTING, ETC
 \usepackage{\FormatDir Tables} %
-\usepackage{\FormatDir ColorsCustom} %
+\usepackage{\FormatDir Colors} %
 
 %\colorlet{background}{gray}
 \colorlet{background}{offwhite}

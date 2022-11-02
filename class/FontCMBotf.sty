@@ -1,7 +1,8 @@
+%\usepackage{unicode-math}  ??
 \usepackage{fontspec}
 
 \usepackage[T1]{fontenc}
-\usepackage{cmbright} %for math only, will be overwritten
+\usepackage{cmbright} %for math only, will be overwritten. Had issues wit OTF for math?
 \gdef\bfdefault{sb}
 \gdef\sbdefault{bx} % swap sb with bf
 
@@ -36,11 +37,11 @@
   shrink=10
 ]{microtype}
 
-% upper and lowercase number commands
+% upper and lowercase number commands -- not applicable if using serif, I choose uppercase only for simplicity
 \def\togunums{}
 \def\toglnums{}
-\def\lnum#1{#1}
-\def\unum#1{#1}
+\NewDocumentCommand{\lnum}{o}{}
+\NewDocumentCommand{\unum}{o}{}
 
 \def\act{}
 \def\actext#1{#1}

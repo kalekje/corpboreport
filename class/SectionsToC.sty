@@ -1,0 +1,357 @@
+\RequirePackage{etoolbox}
+\RequirePackage{chngcntr}
+
+
+%%% Header %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\renewcommand{\chaptermark}[1]{%
+  \markboth{\chapapp\ \thechapter\autodot}{#1}}
+\renewcommand{\addchapmark}[1]{\markboth{#1}{#1}}
+
+
+%%% Section Related %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\providetoggle{ChapOnSamePage}
+\providetoggle{SimpleChaps}
+\providecommand{\cbp@secnumsize}{\smaller}
+
+
+\RequirePackage{needspace}
+\newlength{\chapneedspace}      \setlength{\chapneedspace}{12\baselineskip}
+\newlength{\secneedspace}       \setlength{\secneedspace}{8\baselineskip}
+\newlength{\subsecneedspace}    \setlength{\subsecneedspace}{6\baselineskip}
+\newlength{\subsubsecneedspace} \setlength{\subsubsecneedspace}{4\baselineskip}
+
+
+\setkomafont{disposition}{\normalfont\bfseries} % section preference
+
+\def\FancyChapters{
+  \addtokomafont{chapterprefix}{}
+  \renewcommand*{\chapterformat}{%
+  \mbox{\scalebox{3}{\raggedleft\color{chapCol}\toglnums\thechapter\autodot}}}
+  \renewcommand\chapterlinesformat[3]{%
+    \raggedleft\raisebox{0pt}[0pt][0pt]{##2\hspace{0.5in}}\hfill\\\smallskip \raggedright ##3%
+  }
+  \global\togglefalse{SimpleChaps}
+}%
+
+%\FancyChapters
+
+\def\SimpleChapters{
+  \gdef\chapterheadstartvskip{\vspace*{1em}}
+  \addtokomafont{chapterprefix}{\raggedright\cbp@secnumsize}
+  \renewcommand*{\chapterformat}{\mbox{\thechapter\autodot\enskip}}  % https://tex.stackexchange.com/questions/25030/chapter-number-and-chapter-title-in-one-line
+  \renewcommand\chapterlinesformat[3]{%
+    \makebox[0pt][r]{\cbp@secnumsize##2\hspace{2pt}}\nobreak##3%
+  }
+  \global\toggletrue{SimpleChaps}
+}
+
+\SimpleChapters
+
+%\newcommand{\ShowChapterPrefix}{
+%  \renewcommand*{\chapterformat}{%
+%  \color{brown}%
+%  \mbox{\raisebox{5ex}{\normalsize
+%  \chapappifchapterprefix
+%  {\nobreakspace}}%
+%  \scalebox{3}{\thechapter\autodot}\enskip}}
+%}%
+
+%\newcommand{\HideChapterPrefix}{
+%\renewcommand*{\chapterformat}{%
+%\color{brown}%
+%\mbox{\scalebox{3}{\thechapter\autodot}\enskip}}}%
+%\HideChapterPrefix
+
+
+% Hanging section, % NUMBERS IN LEFT MARGIN
+%https://tex.stackexchange.com/questions/381261/right-align-chapter-numbering-in-koma-script-toc?rq=1
+\renewcommand\sectionlinesformat[4]{%
+	\makebox[0pt][r]{\cbp@secnumsize#3\hspace{2pt}}#4%
+}
+\renewcommand\sectioncatchphraseformat[4]{% used by run-in headings with style=section
+	\makebox[0pt][r]{\cbp@secnumsize#3\hspace{1pt}}#4%
+}
+
+
+\addtokomafont{chapter}{\color{chapCol}\LARGE}
+\addtokomafont{section}{\color{secCol}\Large}
+\addtokomafont{subsection}{\color{subsecCol}\large}
+\addtokomafont{subsubsection}{\color{subsubsecCol}\normalsize}
+\addtokomafont{paragraph}{\color{parCol}}
+
+
+
+%%% ToC Related %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\setcounter{tocdepth}{1} %%% TOC Depth
+
+\newlength{\ToCsecskip}\setlength{\ToCsecskip}{0.75em}
+\newlength{\ToCextrabottomroom}\setlength{\ToCextrabottomroom}{0.0em}
+\newlength{\pullToCcloser}\setlength{\pullToCcloser}{-12pt}
+\newlength{\moreToCbottom}\setlength{\moreToCbottom}{2em}
+
+\def\tighterToCchap{\addtocontents{toc}{\vspace*{-1.3ex}}}
+\newlength{\ToCrightmargin}\setlength{\ToCrightmargin}{0in}
+
+\newcommand\tocmainfont[1]{{\cbp@secnumsize #1}}
+
+\providetoggle{showListOfFigsTabs}
+\providetoggle{samepgListOfFigsTabs}
+
+\renewcaptionname{english}{\listtablename}{Tables}
+\renewcaptionname{english}{\listfigurename}{Figures}
+
+
+\newcommand{\secwiselabelnums}{
+  \counterwithin{figure}{chapter}
+  \counterwithin{table}{chapter}
+%  \counterwithin{lstlisting}{section} % todo fix this
+}
+\secwiselabelnums
+
+\countdef\diamondcounter=255
+\def\diamondleaders{\global\advance\diamondcounter by 1
+	\ifodd\diamondcounter \kern-10pt \fi
+	\leaders\hbox to 20pt{\ifodd\diamondcounter \kern13pt \else\kern3pt \fi
+		.\hss}\hfil}
+
+
+\newcommand\cbp@chapterToCentryformat[1]{% define the new format for the chapter numbers in ToC
+	% \renewcommand\autodot{.}% dot after chapter
+	\hfill\cbp@secnumsize#1\enspace\hspace{1pt}% align chapter numbers right
+}
+
+
+\DeclareTOCStyleEntries[%
+linefill=\diamondleaders,
+level:=figure,
+indent=-5ex,
+numwidth=5ex,
+entryformat=\normalsize,
+entrynumberformat=\cbp@secnumsize,
+]{tocline}{figure,table,lstlisting}
+
+
+
+%%% Major section formatting %%%%%%%%%%%%%%%%%%%%
+
+
+\RedeclareSectionCommand[
+%beforeskip=1.2em plus 4pt minus 2pt,  % done below..
+afterskip=6pt,
+tocbeforeskip=1.2em plus 0.2em minus 1pt,
+tocindent=-4ex,
+tocnumwidth=4ex,
+tocbeforeskip=16pt,
+toclinefill=\diamondleaders,
+tocentryformat=\large\bfseries,
+tocentrynumberformat=\cbp@chapterToCentryformat,
+%tocpagenumberformat=\tocmainfont,
+]{chapter}
+
+\RedeclareSectionCommand[
+beforeskip=0.8em plus 3pt minus 1pt,  % negative will suppress first indent
+afterskip=3pt,
+tocbeforeskip=2pt,
+tocindent=0.5ex,
+tocnumwidth=6ex,
+toclinefill=\diamondleaders,
+tocentrynumberformat=\cbp@secnumsize,
+tocentryformat=\large,
+%tocpagenumberformat=\tocmainfont,
+]{section}
+
+\RedeclareSectionCommand[
+beforeskip=0.6em plus 2pt minus 2pt,
+afterskip=0.01mm,%\baselineskip,
+tocindent=6.5ex,
+tocnumwidth=6ex,
+toclinefill=\diamondleaders,
+tocentrynumberformat=\cbp@secnumsize,
+tocentryformat=\normalsize,
+]{subsection}
+
+\RedeclareSectionCommand[
+beforeskip=0.3em plus 2pt minus 2pt,
+afterskip=0.01mm,
+runin=false,  % text on same line
+tocindent=6ex,
+tocnumwidth=10ex,
+tocentrynumberformat=\cbp@secnumsize,
+tocentryformat=\small,
+]{subsubsection}
+
+\RedeclareSectionCommand[
+beforeskip=0pt,
+afterskip=-1em]{paragraph}
+
+\RedeclareSectionCommand[
+beforeskip=-.5\baselineskip,
+afterskip=-1em]{subparagraph}
+
+
+
+\NewDocumentCommand{\vspaceT}{m}{\vspace{-#1} \vspace*{#1}}
+
+\def\cbp@largechapspace{\RedeclareSectionCommand[beforeskip=2.4em plus 3pt minus 1pt]{chapter}}
+\def\cbp@normalchapspace{\RedeclareSectionCommand[beforeskip=1.6em plus 4pt minus 2pt]{chapter}}
+\def\cbp@zerochapspace{\RedeclareSectionCommand[beforeskip=0.0ex]{chapter}}
+%\NewDocumentCommand{\cbp@samepgchapspace}{}{{\vspace{2\baselineskip} \vspaceT{3\baselineskip}}} %% space on top / space in between
+\NewDocumentCommand{\cbp@samepgchapspace}{}{\vspace{1.2em}} %% space on top / space in between
+\cbp@normalchapspace
+
+
+
+% front matter chapter (acknowledgements or abstract), extra spacing, not in ToC
+\newcommand{\chapterF}[1]{\cbp@largechapspace
+  \pdfbookmark[0]{#1}{Label#1PDF}%
+  \chapter*{#1}%
+  \cbp@normalchapspace}
+
+
+\NewDocumentCommand{\chapterM}{ t- m }{% chapter Matter (front or back), ToC and pdf bookmark but no number
+  \IfBooleanT{#1}{\addtocontents{toc}{\vspace*{-1.3ex}}}
+  \chapter*{#2}
+  \addtocentrydefault{chapter}{\phantom{.}}{#2}{}
+  \chaptermark{#2}}
+
+\def\frontmatter{
+  \pdfbookmark[-1]{Front-Matter}{LabelFMPDF}
+  \pdfbookmark[0]{Title}{LabelTitlePDF}}
+
+
+\NewDocumentCommand{\addcontentslists}{O{0in}}{
+  \global\setlength{\ToCrightmargin}{#1}
+  
+  \pdfbookmark[0]{Contents}{LabelContentsPDF}
+%  \addtocontents{toc}{\protect\enlargethispage{\ToCextrabottomroom}} % enlarge toc page if needed
+  \begin{addmargin}[0pt]{\ToCrightmargin}
+%    \thispagestyle{\chapterpagestyle}
+    \tableofcontents
+%    \thispagestyle{\chapterpagestyle}
+  \end{addmargin}
+  \chaptermark{Contents}
+
+  
+  \addtocentrydefault{chapter}{\phantom{.}}{Figures}\tighterToCchap%
+  \begin{addmargin}[0pt]{\ToCrightmargin}
+    \listoffigures
+  \end{addmargin}
+  \chaptermark{Figures}
+
+%  \NextChapOnSamePage
+
+  \addtocentrydefault{chapter}{\phantom{.}}{Tables}\tighterToCchap%
+  \begin{addmargin}[0pt]{\ToCrightmargin}
+    \listoftables
+  \end{addmargin}
+  \chaptermark{Tables}
+
+  \addtocentrydefault{chapter}{\phantom{.}}{Code Listings}%
+  \begin{addmargin}[0pt]{\ToCrightmargin}
+    \lstlistoflistings
+  \end{addmargin}
+  \chaptermark{Code Listings}
+}
+
+\def\mainmatter{\bookmarksetup{startatroot}}
+
+\def\backmatter{\pdfbookmark[-1]{Back-Matter}{LabelBMPDF}}
+
+
+
+
+%%%% Appendix %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\providecommand*\appendixname{Appendix}
+\let\originalappendix\appendix
+
+\providetoggle{AppendixPage}
+
+\renewcommand\appendix{%
+	%
+  \addtocontents{toc}{%
+    \vspace*{1.3ex}%
+    \protect\contentsline{chapter}{\hspace{3.5ex}Appendix\hfill\ }{}{}}
+  %
+  \pdfbookmark[-1]{Appendix}{LabelAppendicesPDF}
+	%
+	\originalappendix
+	% NOTE you cannot use the alphabetized subsections anymore like you can with corpboreport, shouldn't be an issue
+	%
+  \iftoggle{useSerif}{
+	  \def\thechapter{{\scshape\alph{chapter}}}
+	  \def\theHchapter{{\scshape\alph{chapter}}}
+  }{
+%    \def\thesection{\Alph{section}}
+%    \def\theHsection{\Alph{section}}
+  }
+
+	\crefalias{chapter}{appsec}
+	
+  \iftoggle{AppendixPage}{
+      \cbp@largechapspace   %
+      \chapter*{Appendix}
+      \cbp@normalchapspace  %
+       \ \ \clearpage
+  }{}
+  
+  
+  \iftoggle{SimpleChaps}{
+	\renewcommand\chapterformat{{\appendixname~\thechapter\autodot}}
+   \renewcommand\chapterlinesformat[3]{%
+    ##2\\##3}%
+  % % todo need to fix
+  %	\renewcommand\sectionlinesformat[4]{%
+%		\ifstr{##1}{section}
+%		{\clearpage\vspace*{\sectprespacelength}##3\\*##4}% appendix sections on new page
+%		{\makebox[0pt][r]{\cbp@secnumsize##3}{##4}}% subsections etc.
+%	}%
+  }{}
+
+
+}
+
+
+\def\cbp@FirstPagePlain{\gdef\chapterpagestyle{plain}\thispagestyle{plain}\afterpage{\gdef\chapterpagestyle{scrheadings}}}
+
+
+
+
+
+%%% to allow same page chapters
+\patchcmd{\scr@startchapter}{\if@openright\cleardoublepage\else\clearpage\fi}{%
+  \iftoggle{ChapOnSamePage}{\cbp@samepgchapspace}{\if@openright\cleardoublepage\else\clearpage\fi}%
+}{}{}
+
+\def\NextChapOnSamePage{\toggletrue{ChapOnSamePage}\afterpage{\global\togglefalse{ChapOnSamePage}}}
+
+
+
+%\global\@nobreaktrue
+%\pretocmd{\chapter}{\iftoggle{ChapOnSamePage}{\cbp@zerochapspace}{}}{}{}
+%\apptocmd{\chapter}{\iftoggle{ChapOnSamePage}{\cbp@normalchapspace}{}}{}{}
+%\pretocmd{\chapter}{\cbp@samepgchapspace}{}{}
+
+
+%\NewCommandCopy\cbp@oldchapter\chapter
+%\RenewDocumentCommand{\chapter}{ s o m }{%
+%  \begingroup
+%  \iftoggle{ChapOnSamePage}{\def\clearpage{}\def\pagebreak{}\def\newpage{}\def\cleardoubleoddpage{}\def\cleardoublepage{}}{}% disable clearpage for this chapter call
+%    \expanded{%
+%        \noexpand\cbp@oldchapter%
+%          \IfBooleanT{#1}{*}%
+%          \IfValueT{#2}{\unexpanded{[#2]}}%
+%          \unexpanded{{#3}}%
+%    }%
+%  \endgroup
+%}
+
+
+% todo investifgate
+%
+%%  https://tex.stackexchange.com/questions/292397/how-to-use-patchcmd-to-insert-clearpage-before-chapter-to-avoid-breaking-page
+%   \RedeclareSectionCommand[
+%  style=section,
+%  indent=0pt
+%  ]{chapter}

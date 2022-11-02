@@ -24,6 +24,8 @@
 \usepackage{relsize}  % relative sizing
 \usepackage{pbox}  % create box of max width http://ctan.mirror.colo-serv.net/macros/latex/contrib/pbox/pbox.pdf
 
+\newcommand{\vparspace}{\vspace{\parskip}}
+
 
 \let\oldcenter\center
 \let\oldendcenter\endcenter
@@ -61,10 +63,10 @@
 \vfuzz \hfuzz
 
 
-\if@twoside% if two-sided, put the section headings to right side and numbers in right margin
-	\raggedbottom
-\fi%  finally do nothing
-	\raggedbottom
+%\if@twoside%
+%	\raggedbottom
+%\fi%  finally do nothing
+%	\raggedbottom
 
 
 

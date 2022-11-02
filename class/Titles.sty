@@ -1,14 +1,17 @@
-%%% document variables
+%%% document variables, title page, etc.
+% most doc vars update the pdf metedata by wriiting to main.xmpdata
+
+\def\overwritepdfwithdocvar{true}
 
 \RenewDocumentCommand{\title}{m}{\luadirect{
 	pl.tex.defcmdAT('@title', \luastringN{#1})
-	pl.tex.updatePDFtable('Title', pl.tex.makePDFvarstr(\luastringN{#1}), false)
+	pl.tex.updatePDFtable('Title', pl.tex.makePDFvarstr(\luastringN{#1}), \overwritepdfwithdocvar)
 	pl.tex.defcmd('thetitle', pl.tex.makeInTextstr(\luastringN{#1}))
 }}
 
 \RenewDocumentCommand{\author}{m}{\luadirect{
 	pl.tex.defcmdAT('@author', \luastringN{#1})
-	pl.tex.updatePDFtable('Author', pl.tex.makePDFvarstr(\luastringN{#1}), false)
+	pl.tex.updatePDFtable('Author', pl.tex.makePDFvarstr(\luastringN{#1}), \overwritepdfwithdocvar)
 	pl.tex.defcmd('theauthor', pl.tex.makeInTextstr(\luastringN{#1}))
 	}%
 	\NewDocumentCommand{\theauthors}{ o }{%
@@ -23,12 +26,12 @@
 	pl.tex.defcmdAT('@date', \luastringN{#1})
 	pl.tex.defcmd('thedate', pl.tex.makeInTextstr(\luastringN{#1}))
 }
-\luaexec{pl.tex.updatePDFtable('Date', os.date'\%Y-\%m-\%d', false)}
+\luaexec{pl.tex.updatePDFtable('Date', os.date'\%Y-\%m-\%d', true)}
 }
 
 \NewDocumentCommand{\company}{m}{\luadirect{
 	pl.tex.defcmdAT('@publishers', \luastringN{#1})
-	pl.tex.updatePDFtable('Publisher', pl.tex.makePDFvarstr(\luastringN{#1}), false)
+	pl.tex.updatePDFtable('Publisher', pl.tex.makePDFvarstr(\luastringN{#1}), \overwritepdfwithdocvar)
 	pl.tex.defcmd('thecompany', pl.tex.makeInTextstr(\luastringN{#1}))
 }}
 
@@ -51,9 +54,10 @@
 }
 
 
+\providetoggle{samepgTitle}
 %%% title pages
 
-\gdef\cbp@tpOwn{
+\gdef\cbp@tpPage{\thispagestyle{empty}
 	\rule{\heavyrulewidth}{7.4in} % Vertical line
 	\hspace{0.5in} % Whitespace between the vertical line and title page text
 	\begin{minipage}[b][7.4in][s]{4.4in}
@@ -89,14 +93,14 @@
 		}{}
 
 		\null\vfill\null\vfill
-		
 \end{minipage}
+\cleardoubleoddpage
 }
 
 
 
 
-\gdef\cbp@tpSame{\thispagestyle{plain}
+\gdef\cbp@tpMini{\cbp@FirstPagePlain
 		\gdef\And{\hspace*{3ex}}
 		\vspace*{-2.5cm}
 		{\RaggedRight                             % \pbox[t]{\linewidth}  %% todo top align logo with title
@@ -114,7 +118,7 @@
 
 
 \def\maketitle{%
-	\iftoggle{samepgTitle}{\cbp@tpSame}{\cbp@tpOwn}%
+	\iftoggle{samepgTitle}{\iftoggle{useMemo}{\cbp@tpMemo}{\cbp@tpMini}}{\cbp@tpPage}%
 }
 
 

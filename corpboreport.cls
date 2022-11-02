@@ -1,57 +1,58 @@
-%%% shortcut to use all format files of
 \let\footref\relax % if footref error appears
-
-\providecommand{\FormatDir}{class/}
+\providecommand{\FormatDir}{C:/Users/Kale/Projects/LaTeXpackages/corpboreport/class/} %%% shortcut to use all format files of
 
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{corpboreport}[2021-09-21]
+\ProvidesClass{corpboreport}[2022-10-28]
 
-%%% Document Class
-\LoadClass[11pt,
-%letterpaper,  %
-paper=letter,  % paper size
-pagesize,      % force given paper size in pdf
-twoside=false,
-%twoside,% for two sided doc
-%open=right,
-hidelinks,
-parskip=full-,
-bibliography=numbered,
-numbers=noenddot,
-fleqn,
-leqno,
-%listof=totoc,% for list of figures, tables
-%draft=true,
-]{scrartcl}
+\DeclareOption*{\PassOptionsToClass{\CurrentOption}{scrbook}} %% pass class options to scrbook
+\ProcessOptions\relax
 
+%\RequirePackage{luacode}
+%\begin{luacode*}
+%      texio.write_nl('>>>>>>>'..token.get_macro('@classoptionslist'))
+%\end{luacode*}
+
+\LoadClass[ %% Document Class
+      11pt,
+      letterpaper,
+      twoside=false,
+      hidelinks,
+      parskip=half,
+      bibliography=totoc,
+      open=right,%
+      chapterprefix=false,
+      fleqn,
+      leqno,
+      numbers=noenddot
+]{scrbook}
+%%%listof=totoc,% for list of figures, tables
+
+
+%%% additional class options: (memo|compact|thesis) &| serif
 \RequirePackage{etoolbox}
-\newtoggle{samepgTitle}
 \newtoggle{useMemo}
 \newtoggle{useSerif}
-\newtoggle{showListOfFigsTabs}
-\newtoggle{samepgListOfFigsTabs}
-
-\newtoggle{SectionOnNewPage}  % todo work this in to the template
-
-\newlength{\pullToCcloser}
-\setlength{\pullToCcloser}{-12pt}
-\newlength{\moreToCbottom}
-\setlength{\moreToCbottom}{2em}
-
-
 \gdef\TitleLogoPlaceDefault{tl}
 
-\DeclareOption{memo}{\toggletrue{useMemo}}
-\DeclareOption{compact}{\toggletrue{samepgTitle}\gdef\TitleLogoPlaceDefault{bl}\AtBeginDocument{\togglefalse{SecOnNewPage}}}
 \DeclareOption{serif}{\toggletrue{useSerif}}
+\DeclareOption{report}{}
+\DeclareOption{memo}{
+      \toggletrue{useMemo}
+      \AtBeginDocument{\global\toggletrue{samepgTitle}\global\toggletrue{ChapOnSamePage}\global\toggletrue{SimpleChaps}}}
+\DeclareOption{compact}{\gdef\TitleLogoPlaceDefault{bl}
+      \AtBeginDocument{\global\toggletrue{samepgTitle}\global\toggletrue{ChapOnSamePage}\global\toggletrue{SimpleChaps}}}
+\DeclareOption{thesis}{\toggletrue{useSerif}
+      \AtBeginDocument{\FancyChapters\global\togglefalse{SimpleChaps}\global\togglefalse{ChapOnSamePage}\global\toggletrue{AppendixPage}}}
 \ProcessOptions\relax
+\AtBeginDocument{\iftoggle{SimpleChaps}{\gdef\chapterpagestyle{scrheadings}}{}}
 
 %https://github.com/mrpiggi/svg/issues/18
 \providecommand*{\Ifstr}{\ifstr}  % little hack that supposed to fix ifstr warning, see https://komascript.de/faq_deprecatedif
 
 
-
-%%%%%%%%%%%%  LuaStuff.sty  %%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%            LuaStuff            %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
     \usepackage{ifluatex}
     \ifluatex
@@ -68,38 +69,35 @@ leqno,
 
 
 
-%%%%%%%%%%%%  GeometryCustom.sty  %%%%%%%%%%%%
-    % ##############################################
-    % Geometry
-    % ##############################################
-    
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%            GeometryCustom            %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Check if two-sided https://tex.stackexchange.com/questions/360785/how-do-i-check-if-a-document-is-oneside-or-twoside  %
      % https://tex.stackexchange.com/questions/470752/section-numbers-in-margins-in-double-sided-document
     %preamble
     \if@twoside% if two-sided, put the section headings to right side and numbers in right margin 
     	\usepackage[
     		letterpaper,
-    		top=1.25in,
-    		headheight=2em, % 17pt as per the warning by fancyhdr 17pt = about 0.6cm
-    		headsep=0.25in,  % about 1.25 * 13.7 (baseline skip),
+    		top=1.46in,
+    		headheight=2em,
+    		headsep=0.29in,
     		footskip=0.01pt,
-    		bottom=1.125in,
-    		bindingoffset=0.5in,
-    		left=1.25in,%1.125in,
-    		right=1.25in%,1.125in,
-    		%showframe=true,
+    		bottom=1.5in,
+    		bindingoffset=0.0in,
+    		left=1.30in,
+    		right=1.50in,
     	]{geometry} 
     \else%
     \usepackage[
     		letterpaper,
     		top=1.46in,
     		headheight=2em,
-    		headsep=0.29in,  % about 1.25 * 13.7 (baseline skip),
+    		headsep=0.29in,
     		footskip=0.01pt,
-    		bottom=1.5in, % 1.125
+    		bottom=1.5in,
     		bindingoffset=0.0in,
-    		left=1.50in,%1.25in,%1.125in,
-    		right=1.50in,%1.25in%,1.125in,
+    		left=1.50in,
+    		right=1.50in,
     		%showframe=true,
     	]{geometry}
     \fi%  finally do nothing
@@ -110,7 +108,9 @@ leqno,
     %%% I take the footer in the margin so that I can lengthen a page to squeeze in material where needed
     %%%
 
-%%%%%%%%%%%%  Utilities.sty  %%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%            Utilities            %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     \usepackage{scrhack}
     \usepackage{listings}  % re-loaded in code boxes, but needs to be loaded before changing ToC structure
     
@@ -259,7 +259,9 @@ leqno,
 
 
 
-%%%%%%%%%%%%  TextAndParas.sty  %%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%            TextAndParas            %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
     % ##############################################
     % Text / Para Settings and utils
@@ -285,6 +287,8 @@ leqno,
     \usepackage{setspace}  % enable onehalfspacing instyling
     \usepackage{relsize}  % relative sizing
     \usepackage{pbox}  % create box of max width http://ctan.mirror.colo-serv.net/macros/latex/contrib/pbox/pbox.pdf
+    
+    \newcommand{\vparspace}{\vspace{\parskip}}
     
     
     \let\oldcenter\center
@@ -323,10 +327,10 @@ leqno,
     \vfuzz \hfuzz
     
     
-    \if@twoside% if two-sided, put the section headings to right side and numbers in right margin
-    	\raggedbottom
-    \fi%  finally do nothing
-    	\raggedbottom
+    %\if@twoside%
+    %	\raggedbottom
+    %\fi%  finally do nothing
+    %	\raggedbottom
     
     
     
@@ -336,8 +340,9 @@ leqno,
 
 \iftoggle{useSerif}{
 
-
-%%%%%%%%%%%%  FontKPotf.sty  %%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%            FontKPotf            %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %\usepackage[onlyrm,light,oldstylenums]{kpfonts-otf} % the light is also decent, could consider
     \usepackage[onlyrm,light]{kpfonts-otf} % the light is also decent, could consider
     \setsansfont{CMU Bright} % monospace that looks nice with light kpfont
@@ -377,21 +382,20 @@ leqno,
     \def\cbp@appendixsecformat{\scshape\MakeLowercase}
     
     
-    
-    
     %% for non-light option
     %\def\togunums{\fontfamily{jkp}\selectfont} %% from kpfonts.sty
     %\def\toglnums{\fontfamily{jkpxosn}\selectfont} for non-light
 
+}{%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-}{
-
-
-%%%%%%%%%%%%  FontCMBotf.sty  %%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%            FontCMBotf            %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %\usepackage{unicode-math}  ??
     \usepackage{fontspec}
     
     \usepackage[T1]{fontenc}
-    \usepackage{cmbright} %for math only, will be overwritten
+    \usepackage{cmbright} %for math only, will be overwritten. Had issues wit OTF for math?
     \gdef\bfdefault{sb}
     \gdef\sbdefault{bx} % swap sb with bf
     
@@ -426,11 +430,11 @@ leqno,
       shrink=10
     ]{microtype}
     
-    % upper and lowercase number commands
+    % upper and lowercase number commands -- not applicable if using serif, I choose uppercase only for simplicity
     \def\togunums{}
     \def\toglnums{}
-    \def\lnum#1{#1}
-    \def\unum#1{#1}
+    \NewDocumentCommand{\lnum}{o}{}
+    \NewDocumentCommand{\unum}{o}{}
     
     \def\act{}
     \def\actext#1{#1}
@@ -469,11 +473,12 @@ leqno,
     \newcommand{\sbfCMB}[1]{\textbf{\textit{#1}}}
     
 
-
 }
 
 
-%%%%%%%%%%%%  HeaderFooterFootnotes.sty  %%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%            HeaderFooterFootnotes            %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % ##############################################
     % KOMA-Script Settings
     % ##############################################
@@ -550,327 +555,370 @@ leqno,
     % https://tex.stackexchange.com/questions/339506/right-align-one-and-two-digit-footnote-marks-with-koma
 
 
-%%%%%%%%%%%%  SectionsToCCustom.sty  %%%%%%%%%%%%
-    % ##############################################
-    % Sections and ToC
-    % ##############################################
-    
-    
-    %%% EXTRA SPACE BEFORE SECTION AND START ON NEW PAGE
-    
-    \RequirePackage{needspace}
-    \newlength{\secneedspace}
-    \setlength{\secneedspace}{15\baselineskip}
-    \newlength{\subsecneedspace}
-    \setlength{\subsecneedspace}{8\baselineskip}
-    \newlength{\subsubsecneedspace}
-    \setlength{\subsubsecneedspace}{5\baselineskip}
-    
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%            SectionsToC            %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     \RequirePackage{etoolbox}
-    
     \RequirePackage{chngcntr}
     
-    \providetoggle{SecOnNewPage} %% only need one toggle
-    \toggletrue{SecOnNewPage}
     
+    %%% Header %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \renewcommand{\chaptermark}[1]{%
+      \markboth{\chapapp\ \thechapter\autodot}{#1}}
+    \renewcommand{\addchapmark}[1]{\markboth{#1}{#1}}
+    
+    
+    %%% Section Related %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \providetoggle{ChapOnSamePage}
+    \providetoggle{SimpleChaps}
     \providecommand{\cbp@secnumsize}{\smaller}
+    
+    
+    \RequirePackage{needspace}
+    \newlength{\chapneedspace}      \setlength{\chapneedspace}{12\baselineskip}
+    \newlength{\secneedspace}       \setlength{\secneedspace}{8\baselineskip}
+    \newlength{\subsecneedspace}    \setlength{\subsecneedspace}{6\baselineskip}
+    \newlength{\subsubsecneedspace} \setlength{\subsubsecneedspace}{4\baselineskip}
+    
+    
+    \setkomafont{disposition}{\normalfont\bfseries} % section preference
+    
+    \def\FancyChapters{
+      \addtokomafont{chapterprefix}{}
+      \renewcommand*{\chapterformat}{%
+      \mbox{\scalebox{3}{\raggedleft\color{chapCol}\toglnums\thechapter\autodot}}}
+      \renewcommand\chapterlinesformat[3]{%
+        \raggedleft\raisebox{0pt}[0pt][0pt]{##2\hspace{0.5in}}\hfill\\\smallskip \raggedright ##3%
+      }
+      \global\togglefalse{SimpleChaps}
+    }%
+    
+    %\FancyChapters
+    
+    \def\SimpleChapters{
+      \gdef\chapterheadstartvskip{\vspace*{1em}}
+      \addtokomafont{chapterprefix}{\raggedright\cbp@secnumsize}
+      \renewcommand*{\chapterformat}{\mbox{\thechapter\autodot\enskip}}  % https://tex.stackexchange.com/questions/25030/chapter-number-and-chapter-title-in-one-line
+      \renewcommand\chapterlinesformat[3]{%
+        \makebox[0pt][r]{\cbp@secnumsize##2\hspace{2pt}}\nobreak##3%
+      }
+      \global\toggletrue{SimpleChaps}
+    }
+    
+    \SimpleChapters
+    
+    %\newcommand{\ShowChapterPrefix}{
+    %  \renewcommand*{\chapterformat}{%
+    %  \color{brown}%
+    %  \mbox{\raisebox{5ex}{\normalsize
+    %  \chapappifchapterprefix
+    %  {\nobreakspace}}%
+    %  \scalebox{3}{\thechapter\autodot}\enskip}}
+    %}%
+    
+    %\newcommand{\HideChapterPrefix}{
+    %\renewcommand*{\chapterformat}{%
+    %\color{brown}%
+    %\mbox{\scalebox{3}{\thechapter\autodot}\enskip}}}%
+    %\HideChapterPrefix
+    
+    
+    % Hanging section, % NUMBERS IN LEFT MARGIN
+    %https://tex.stackexchange.com/questions/381261/right-align-chapter-numbering-in-koma-script-toc?rq=1
+    \renewcommand\sectionlinesformat[4]{%
+    	\makebox[0pt][r]{\cbp@secnumsize#3\hspace{2pt}}#4%
+    }
+    \renewcommand\sectioncatchphraseformat[4]{% used by run-in headings with style=section
+    	\makebox[0pt][r]{\cbp@secnumsize#3\hspace{1pt}}#4%
+    }
+    
+    
+    \addtokomafont{chapter}{\color{chapCol}\LARGE}
+    \addtokomafont{section}{\color{secCol}\Large}
+    \addtokomafont{subsection}{\color{subsecCol}\large}
+    \addtokomafont{subsubsection}{\color{subsubsecCol}\normalsize}
+    \addtokomafont{paragraph}{\color{parCol}}
+    
+    
+    
+    %%% ToC Related %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \setcounter{tocdepth}{1} %%% TOC Depth
+    
+    \newlength{\ToCsecskip}\setlength{\ToCsecskip}{0.75em}
+    \newlength{\ToCextrabottomroom}\setlength{\ToCextrabottomroom}{0.0em}
+    \newlength{\pullToCcloser}\setlength{\pullToCcloser}{-12pt}
+    \newlength{\moreToCbottom}\setlength{\moreToCbottom}{2em}
+    
+    \def\tighterToCchap{\addtocontents{toc}{\vspace*{-1.3ex}}}
+    \newlength{\ToCrightmargin}\setlength{\ToCrightmargin}{0in}
+    
+    \newcommand\tocmainfont[1]{{\cbp@secnumsize #1}}
     
     \providetoggle{showListOfFigsTabs}
     \providetoggle{samepgListOfFigsTabs}
-    \toggletrue{samepgListOfFigsTabs}
+    
+    \renewcaptionname{english}{\listtablename}{Tables}
+    \renewcaptionname{english}{\listfigurename}{Figures}
+    
     
     \newcommand{\secwiselabelnums}{
-      \counterwithin{figure}{section}
-      \counterwithin{table}{section}
-    %  \counterwithin{listing}{section} % todo fix this
+      \counterwithin{figure}{chapter}
+      \counterwithin{table}{chapter}
+    %  \counterwithin{lstlisting}{section} % todo fix this
     }
+    \secwiselabelnums
     
-    \newdimen\ToCsecskip  %%% todo rename this
-    \ToCsecskip=0.75em  % fit ToC as required
-    
-    \newdimen\ToCextrabottomroom
-    \ToCextrabottomroom=0em
-    
-    % diamond leaders.. staggered dots
-    \countdef\counter=255
-    \def\diamondleaders{\global\advance\counter by 1
-    	\ifodd\counter \kern-10pt \fi
-    	\leaders\hbox to 20pt{\ifodd\counter \kern13pt \else\kern3pt \fi
+    \countdef\diamondcounter=255
+    \def\diamondleaders{\global\advance\diamondcounter by 1
+    	\ifodd\diamondcounter \kern-10pt \fi
+    	\leaders\hbox to 20pt{\ifodd\diamondcounter \kern13pt \else\kern3pt \fi
     		.\hss}\hfil}
     
     
-    % Hanging section
-    %https://tex.stackexchange.com/questions/381261/right-align-chapter-numbering-in-koma-script-toc?rq=1
-    \newcommand\sectionentrynumberformat[1]{% define the new format for the chapter numbers in ToC
+    \newcommand\cbp@chapterToCentryformat[1]{% define the new format for the chapter numbers in ToC
     	% \renewcommand\autodot{.}% dot after chapter
     	\hfill\cbp@secnumsize#1\enspace\hspace{1pt}% align chapter numbers right
     }
     
-    %
-    %\renewcommand\sectionlinesformat[4]{%
-    %	\makebox[0pt][r]{\cbp@secnumsize#3\hspace{2pt}}#4%
-    %}
-    %\renewcommand\sectioncatchphraseformat[4]{% used by run-in headings with style=section
-    %	\makebox[0pt][r]{\cbp@secnumsize#3\hspace{1pt}}#4%
-    %}
     
-    
-    
-    
-    % SECTION SPACING ON PAPER AND ToC - should change if section lettering is used
-    % determine if you should use baselineskip or not...
-    
-    \RedeclareSectionCommand[beforeskip=21.pt plus 2.1pt,
-    toclinefill=\diamondleaders,
-    afterskip=0.01pt,
-    %tocnumsep=1.5ex,
-    %tocdynnumwidth=switch,
-    tocindent=-4.0ex,
-    tocnumwidth=4.0ex,
-    tocbeforeskip=\ToCsecskip,
-    tocentryformat=\large\bfseries,
-    tocentrynumberformat=\sectionentrynumberformat,
-    ]{section}%
-    %
-    \RedeclareSectionCommand[beforeskip=17.1pt plus 1.71pt,  % 1.25 * 13.7 (baseline)
-    toclinefill=\diamondleaders,
-    afterskip=0.01pt,
-    tocindent=0.5ex,
-    tocbeforeskip=1pt,
-    tocnumwidth=4.4ex,
-    tocentryformat=\normalsize,
-    tocentrynumberformat=\cbp@secnumsize,
-    ]{subsection}%
-    %
-    \RedeclareSectionCommand[beforeskip=13.7pt plus 1.37pt,
-    toclinefill=\diamondleaders,
-    afterskip=0.01pt,
-    tocindent=5.4ex,
-    tocnumwidth=6.6ex,
-    tocentryformat=\small,
-    tocentrynumberformat=\cbp@secnumsize,
-    ]{subsubsection}
-    
-    \RedeclareSectionCommand[beforeskip=3.01pt,
-    afterskip=-4ex,
-    ]{paragraph}
-    
-    
-    %%% if using list of tables and figures
     \DeclareTOCStyleEntries[%
-    level:=figure,
     linefill=\diamondleaders,
-    indent=0pt,
-    numwidth=4.4ex,
+    level:=figure,
+    indent=-5ex,
+    numwidth=5ex,
     entryformat=\normalsize,
     entrynumberformat=\cbp@secnumsize,
     ]{tocline}{figure,table,lstlisting}
     
     
-    \setkomafont{disposition}{\normalfont\bfseries} % section preference
+    
+    %%% Major section formatting %%%%%%%%%%%%%%%%%%%%
     
     
-    \if@twoside% if two-sided, put the section headings to right side and numbers in right margin
-    	\raggedbottom
-    \fi%  finally do nothing
-    	\raggedbottom
+    \RedeclareSectionCommand[
+    %beforeskip=1.2em plus 4pt minus 2pt,  % done below..
+    afterskip=6pt,
+    tocbeforeskip=1.2em plus 0.2em minus 1pt,
+    tocindent=-4ex,
+    tocnumwidth=4ex,
+    tocbeforeskip=16pt,
+    toclinefill=\diamondleaders,
+    tocentryformat=\large\bfseries,
+    tocentrynumberformat=\cbp@chapterToCentryformat,
+    %tocpagenumberformat=\tocmainfont,
+    ]{chapter}
     
+    \RedeclareSectionCommand[
+    beforeskip=0.8em plus 3pt minus 1pt,  % negative will suppress first indent
+    afterskip=3pt,
+    tocbeforeskip=2pt,
+    tocindent=0.5ex,
+    tocnumwidth=6ex,
+    toclinefill=\diamondleaders,
+    tocentrynumberformat=\cbp@secnumsize,
+    tocentryformat=\large,
+    %tocpagenumberformat=\tocmainfont,
+    ]{section}
     
+    \RedeclareSectionCommand[
+    beforeskip=0.6em plus 2pt minus 2pt,
+    afterskip=0.01mm,%\baselineskip,
+    tocindent=6.5ex,
+    tocnumwidth=6ex,
+    toclinefill=\diamondleaders,
+    tocentrynumberformat=\cbp@secnumsize,
+    tocentryformat=\normalsize,
+    ]{subsection}
     
-    \renewcommand\sectionlinesformat[4]{% used by free-standing headings with style=section
-    	\makebox[0pt][r]{\cbp@secnumsize#3\hspace{3pt}}#4%  puts section number in margin
-    }
+    \RedeclareSectionCommand[
+    beforeskip=0.3em plus 2pt minus 2pt,
+    afterskip=0.01mm,
+    runin=false,  % text on same line
+    tocindent=6ex,
+    tocnumwidth=10ex,
+    tocentrynumberformat=\cbp@secnumsize,
+    tocentryformat=\small,
+    ]{subsubsection}
     
+    \RedeclareSectionCommand[
+    beforeskip=0pt,
+    afterskip=-1em]{paragraph}
     
-    %%% SECTION NUMBER AND HEADING COLOR CHANGE
-    %\addtokomafont{chapter}{\color{secCol}}
-    \addtokomafont{section}{\color{secCol}}
-    \addtokomafont{subsection}{\color{subsecCol}}
-    \addtokomafont{subsubsection}{\color{subsubsecCol}}
-    
-    
-    \newdimen\cbp@sectprespacelengthnewpage
-    \cbp@sectprespacelengthnewpage=-1.5cm  % make less negative to increase spacing on new section title (always starts new page)
-    % WAS 20pt
-    
-    \newcounter{sectionletter}%
-    \newcommand{\resetsectionletter}{\setcounter{sectionletter}{0}}
-    \let\oldsection\section
-    
-    \RenewDocumentCommand{\section}{ s t+ t! o m }{%
-        %   * (no number, no ToC),  + (add sec letter) ! (on new page)
-        \IfBooleanT{#3}{\invtoggle{SecOnNewPage}}%
-        \iftoggle{SecOnNewPage}{\clearpage\vspace*{\cbp@sectprespacelengthnewpage}}{}%
-        \Needspace{\secneedspace}%
-        \IfBooleanTF{#2}{%
-            	\ifnum\value{sectionletter}>0% if we're into section lettering already
-            	    \addtocounter{section}{-1}% decrement section so num stays the same
-            	\fi%
-            	\stepcounter{sectionletter}% increment section letter
-        }{\resetsectionletter}%
-        \expanded{%
-            \noexpand\oldsection%
-            \IfBooleanT{#1}{*}%
-            \IfValueT{#4}{\unexpanded{[#4]}}%
-            \unexpanded{{#5}}%
-        }%
-        \IfBooleanT{#3}{\invtoggle{SecOnNewPage}}%
-    }
-    \def\thesection{\arabic{section}\alph{sectionletter}}
-    \def\theHsection{\arabic{section}\alph{sectionletter}} % this is for hyperref (it does nothing if not loaded)
-    
-    %
-    
-    
-    
-    \newcounter{subsectionletter}%
-    \newcommand{\resetsubsectionletter}{\setcounter{subsectionletter}{0}}
-    \let\oldsubsection\subsection
-    
-    \RenewDocumentCommand{\subsection}{ s t+ t! o m }{%
-        %   * (no number, no ToC),  + (add sec letter)
-        \IfBooleanTF{#2}{%
-            	\ifnum\value{subsectionletter}>0% if we're into subsection lettering already
-            	    \addtocounter{subsection}{-1}% decrement subsection so num stays the same
-            	\fi%
-            	\stepcounter{subsectionletter}% increment subsection letter
-        }{\resetsubsectionletter}%
-        \Needspace{\subsecneedspace}%
-        \expanded{%
-            \noexpand\oldsubsection%
-            \IfBooleanT{#1}{*}%
-            \IfValueT{#4}{\unexpanded{[#4]}}%
-            \unexpanded{{#5}}%
-        }%
-    }
-    \def\thesubsection{\thesection.\arabic{subsection}\alph{subsectionletter}}
-    \def\theHsubsection{\thesection.\arabic{subsection}\alph{subsectionletter}}
+    \RedeclareSectionCommand[
+    beforeskip=-.5\baselineskip,
+    afterskip=-1em]{subparagraph}
     
     
     
+    \NewDocumentCommand{\vspaceT}{m}{\vspace{-#1} \vspace*{#1}}
     
-    \newcounter{subsubsectionletter}%
-    \newcommand{\resetsubsubsectionletter}{\setcounter{subsubsectionletter}{0}}
-    \let\oldsubsubsection\subsubsection
-    
-    \RenewDocumentCommand{\subsubsection}{ s t+ t! o m }{%
-        %   * (no number, no ToC),  + (add sec letter)
-        \IfBooleanTF{#2}{%
-            	\ifnum\value{subsubsectionletter}>0% if we're into subsubsection lettering already
-            	    \addtocounter{subsubsection}{-1}% decrement subsubsection so num stays the same
-            	\fi%
-            	\stepcounter{subsubsectionletter}% increment subsubsection letter
-        }{\resetsubsubsectionletter}%
-        \Needspace{\subsubsecneedspace}%
-        \expanded{%
-            \noexpand\oldsubsubsection%
-            \IfBooleanT{#1}{*}%
-            \IfValueT{#4}{\unexpanded{[#4]}}%
-            \unexpanded{{#5}}%
-        }%
-    }
-    \def\thesubsubsection{\thesubsection.\arabic{subsubsection}\alph{subsubsectionletter}}
-    % this is for hyperref (it does nothing if not loaded)
-    \def\theHsubsubsection{\thesubsection.\arabic{subsubsection}\alph{subsubsectionletter}}
+    \def\cbp@largechapspace{\RedeclareSectionCommand[beforeskip=2.4em plus 3pt minus 1pt]{chapter}}
+    \def\cbp@normalchapspace{\RedeclareSectionCommand[beforeskip=1.6em plus 4pt minus 2pt]{chapter}}
+    \def\cbp@zerochapspace{\RedeclareSectionCommand[beforeskip=0.0ex]{chapter}}
+    %\NewDocumentCommand{\cbp@samepgchapspace}{}{{\vspace{2\baselineskip} \vspaceT{3\baselineskip}}} %% space on top / space in between
+    \NewDocumentCommand{\cbp@samepgchapspace}{}{\vspace{1.2em}} %% space on top / space in between
+    \cbp@normalchapspace
     
     
     
+    % front matter chapter (acknowledgements or abstract), extra spacing, not in ToC
+    \newcommand{\chapterF}[1]{\cbp@largechapspace
+      \pdfbookmark[0]{#1}{Label#1PDF}%
+      \chapter*{#1}%
+      \cbp@normalchapspace}
     
     
-    
-    \let\oldparagraph\paragraph
-    %
-    \RenewDocumentCommand\paragraph{ s t! o m }{% add ! option for paragraph to allow header on its own line
-        \edef\scr@paragraph@afterskip {%
-            \IfBooleanTF{#2}{0.1pt}{-4ex}%
-        }%
-        \expanded{%
-            \noexpand\oldparagraph
-                \IfBooleanT{#1}{*}%
-                \IfValueT{#3}{\unexpanded{[#3]}}%
-                \unexpanded{{#4}}%
-        }%
-    }
-    
-    
-    
-    
-    \NewDocumentCommand{\sectionM}{ t- m }{% section Matter (front or back matter). No number, goes to ToC, goes to pdf bookmark
+    \NewDocumentCommand{\chapterM}{ t- m }{% chapter Matter (front or back), ToC and pdf bookmark but no number
       \IfBooleanT{#1}{\addtocontents{toc}{\vspace*{-1.3ex}}}
-      \section*{#2}
-      \addtocentrydefault{section}{\phantom{.}}{#2}{}
-    }
-    
-    \NewDocumentCommand{\sectionF}{m}{\section*{#1}}
+      \chapter*{#2}
+      \addtocentrydefault{chapter}{\phantom{.}}{#2}{}
+      \chaptermark{#2}}
     
     \def\frontmatter{
-      \pdfbookmark[0]{Front-Matter}{LabelFMPDF}
-      \pdfbookmark[1]{Title}{LabelTitlePDF}
-    }
+      \pdfbookmark[-1]{Front-Matter}{LabelFMPDF}
+      \pdfbookmark[0]{Title}{LabelTitlePDF}}
     
-    \def\addcontentslists{
-      \pdfbookmark[1]{Contents}{LabelContentsPDF}
-      \addtocontents{toc}{\protect\enlargethispage{\ToCextrabottomroom}} % enlarge toc page if needed, todo add length for this
+    
+    \NewDocumentCommand{\addcontentslists}{O{0in}}{
+      \global\setlength{\ToCrightmargin}{#1}
+      
+      \pdfbookmark[0]{Contents}{LabelContentsPDF}
+    %  \addtocontents{toc}{\protect\enlargethispage{\ToCextrabottomroom}} % enlarge toc page if needed
       \begin{addmargin}[0pt]{\ToCrightmargin}
+    %    \thispagestyle{\chapterpagestyle}
         \tableofcontents
+    %    \thispagestyle{\chapterpagestyle}
       \end{addmargin}
+      \chaptermark{Contents}
     
-      \addtocentrydefault{section}{\phantom{.}}{Figures}\addtocontents{toc}{\vspace*{-1.3ex}}%
+      
+      \addtocentrydefault{chapter}{\phantom{.}}{Figures}\tighterToCchap%
       \begin{addmargin}[0pt]{\ToCrightmargin}
         \listoffigures
       \end{addmargin}
+      \chaptermark{Figures}
     
-      \addtocentrydefault{section}{\phantom{.}}{Tables}%
+    %  \NextChapOnSamePage
+    
+      \addtocentrydefault{chapter}{\phantom{.}}{Tables}\tighterToCchap%
       \begin{addmargin}[0pt]{\ToCrightmargin}
         \listoftables
       \end{addmargin}
+      \chaptermark{Tables}
     
-      \mainmatter
+      \addtocentrydefault{chapter}{\phantom{.}}{Code Listings}%
+      \begin{addmargin}[0pt]{\ToCrightmargin}
+        \lstlistoflistings
+      \end{addmargin}
+      \chaptermark{Code Listings}
     }
     
     \def\mainmatter{\bookmarksetup{startatroot}}
     
-    \def\backmatter{\pdfbookmark[0]{Back-Matter}{LabelBMPDF}}
+    \def\backmatter{\pdfbookmark[-1]{Back-Matter}{LabelBMPDF}}
     
-    \pretocmd{\appendix}{
+    
+    
+    
+    %%%% Appendix %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    
+    
+    \providecommand*\appendixname{Appendix}
+    \let\originalappendix\appendix
+    
+    \providetoggle{AppendixPage}
+    
+    \renewcommand\appendix{%
+    	%
       \addtocontents{toc}{%
         \vspace*{1.3ex}%
-        \protect\contentsline{section}{\hspace{3.5ex}Appendix\hfill\ }{}{}}
-      
-      \pdfbookmark[0]{Appendix}{LabelAppendicesPDF}
+        \protect\contentsline{chapter}{\hspace{3.5ex}Appendix\hfill\ }{}{}}
+      %
+      \pdfbookmark[-1]{Appendix}{LabelAppendicesPDF}
+    	%
+    	\originalappendix
+    	% NOTE you cannot use the alphabetized subsections anymore like you can with corpboreport, shouldn't be an issue
+    	%
+      \iftoggle{useSerif}{
+    	  \def\thechapter{{\scshape\alph{chapter}}}
+    	  \def\theHchapter{{\scshape\alph{chapter}}}
+      }{
+    %    \def\thesection{\Alph{section}}
+    %    \def\theHsection{\Alph{section}}
+      }
     
-      \vspace*{4in}
+    	\crefalias{chapter}{appsec}
+    	
+      \iftoggle{AppendixPage}{
+          \cbp@largechapspace   %
+          \chapter*{Appendix}
+          \cbp@normalchapspace  %
+           \ \ \clearpage
+      }{}
+      
+      
+      \iftoggle{SimpleChaps}{
+    	\renewcommand\chapterformat{{\appendixname~\thechapter\autodot}}
+       \renewcommand\chapterlinesformat[3]{%
+        ##2\\##3}%
+      % % todo need to fix
+      %	\renewcommand\sectionlinesformat[4]{%
+    %		\ifstr{##1}{section}
+    %		{\clearpage\vspace*{\sectprespacelength}##3\\*##4}% appendix sections on new page
+    %		{\makebox[0pt][r]{\cbp@secnumsize##3}{##4}}% subsections etc.
+    %	}%
+      }{}
+    
+    
+    }
+    
+    
+    \def\cbp@FirstPagePlain{\gdef\chapterpagestyle{plain}\thispagestyle{plain}\afterpage{\gdef\chapterpagestyle{scrheadings}}}
+    
+    
+    
+    
+    
+    %%% to allow same page chapters
+    \patchcmd{\scr@startchapter}{\if@openright\cleardoublepage\else\clearpage\fi}{%
+      \iftoggle{ChapOnSamePage}{\cbp@samepgchapspace}{\if@openright\cleardoublepage\else\clearpage\fi}%
     }{}{}
     
+    \def\NextChapOnSamePage{\toggletrue{ChapOnSamePage}\afterpage{\global\togglefalse{ChapOnSamePage}}}
     
     
     
+    %\global\@nobreaktrue
+    %\pretocmd{\chapter}{\iftoggle{ChapOnSamePage}{\cbp@zerochapspace}{}}{}{}
+    %\apptocmd{\chapter}{\iftoggle{ChapOnSamePage}{\cbp@normalchapspace}{}}{}{}
+    %\pretocmd{\chapter}{\cbp@samepgchapspace}{}{}
     
-    %%%%% graveyard
     
-    
-    
-    %%% SECTION NUMBERS IN MARGIN OF PAGE, for two sided documents
-    % Check if two-sided https://tex.stackexchange.com/questions/360785/how-do-i-check-if-a-document-is-oneside-or-twoside  %
-    %%% for flipped sections heads, kind of ugly
-    %\makeatletter % https://tex.stackexchange.com/questions/470752/section-numbers-in-margins-in-double-sided-document
-    %%preamble
-    %\if@twoside% if two-sided, put the section headings to right side and numbers in right margin
-    %\renewcommand\sectionlinesformat[4]{%  for section numbers in right margin for a two sided document
-    %	\ifthispageodd
-    %	{\raggedleft#4\makebox[0pt][l]{\hspace{\marginparsep}\cbp@secnumsize#3}}
-    %	{\raggedright\makebox[0pt][r]{\cbp@secnumsize#3\hspace{\marginparsep}}#4}%
+    %\NewCommandCopy\cbp@oldchapter\chapter
+    %\RenewDocumentCommand{\chapter}{ s o m }{%
+    %  \begingroup
+    %  \iftoggle{ChapOnSamePage}{\def\clearpage{}\def\pagebreak{}\def\newpage{}\def\cleardoubleoddpage{}\def\cleardoublepage{}}{}% disable clearpage for this chapter call
+    %    \expanded{%
+    %        \noexpand\cbp@oldchapter%
+    %          \IfBooleanT{#1}{*}%
+    %          \IfValueT{#2}{\unexpanded{[#2]}}%
+    %          \unexpanded{{#3}}%
+    %    }%
+    %  \endgroup
     %}
-    %%\newcommand\side{stuff for twoside} %to do reconsider if this is needed
-    %\else% if not two sided, only apply to one sided
-    %\renewcommand\sectionlinesformat[4]{% used by free-standing headings with style=section
-    %	\makebox[0pt][r]{\cbp@secnumsize#3}#4%  puts section number in margin
-    %}	%\newcommand\side{stuff for onside} %to do reconsider if this is needed
-    %\fi%  finally do nothing
-    %\makeatother
+    
+    
+    % todo investifgate
+    %
+    %%  https://tex.stackexchange.com/questions/292397/how-to-use-patchcmd-to-insert-clearpage-before-chapter-to-avoid-breaking-page
+    %   \RedeclareSectionCommand[
+    %  style=section,
+    %  indent=0pt
+    %  ]{chapter}
 
-
-%%%%%%%%%%%%  PageNumberInMargin.sty  %%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%            PageNumberInMargin            %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %%% DEPENDENCIES
     % KOMA-Script class
     %%%
@@ -906,87 +954,13 @@ leqno,
     
 
 
-%%%%%%%%%%%%  AppendixFormat.sty  %%%%%%%%%%%%
-    % ##############################################
-    % Appendix Formatting
-    % ##############################################
-    
-    %%% DEPENDENCIES
-    % KOMA-script class
-    % ToC.sty (for ToC skip)
-    
-    \providecommand*\appendixname{Appendix}
-    \let\originalappendix\appendix
-    
-    \providecommand{\cbp@appendixletformat}[1]{\Alph{#1}}
-    \providecommand{\cbp@appendixsecformat}{}
-    
-    \renewcommand\appendix{%
-    	\originalappendix
-    	% NOTE you cannot use the alphabetized subsections anymore
-    	%
-    	\def\thesection{\cbp@appendixletformat{section}}  % restore subsection behaviour (I change it with macro seclettering)
-    	\def\theHsection{\cbp@appendixletformat{section}}
-    	\def\thesubsection{\thesection.\arabic{subsection}}  % restore subsection behaviour (I change it with macro seclettering)
-    	\def\theHsubsection{\thesection.\arabic{subsection}}
-    	\def\thesubsubsection{\thesubsection.\arabic{subsubsection}}
-    	\def\theHsubsubsection{\thesubsection.\arabic{subsubsection}}
-    	%
-    	\crefalias{section}{appsec}
-    	%
-    	\renewcommand\sectionformat{{\cbp@appendixsecformat\appendixname~\thesection\autodot}}
-    	\renewcommand\sectionlinesformat[4]{%
-    		\ifstr{##1}{section}
-    		{\clearpage\vspace*{\sectprespacelength}##3\\*##4}% appendix sections on new page
-    		{\makebox[0pt][r]{\cbp@secnumsize##3}{##4}}% subsections etc.
-    	}%
-    
-    }
-    
-    %%%%%%%%%%% todo how will thesis react to appendix sections on new apge?/
-    
-    
-    % DO THIS with \appendix
-    %	\renewcommand\addsectiontocentry[2]{%
-    %		\addtocentrydefault{appendixsection}{##1}{##2}%
-    %	}%
-    
-    
-    %% this make an entry Appendix A in toc
-    %\DeclareTOCStyleEntry[
-    %level=\sectiontocdepth,
-    %indent=0pt,
-    %numwidth=2ex,  % does not matter
-    %dynnumwidth,
-    %numsep=1.4ex, % uses numsep, but regular entries use numwidth.. might need to adjust
-    %entrynumberformat=\entrywithprefix{\appendixname},
-    %entryformat=\large\bfseries,
-    %beforeskip=\tocsecskip,
-    %]{section}{appendixsection}
-    %
-    %\newcommand\entrywithprefix[2]{#1~#2}
-    
-    
-    
-    % for lettering, could be used for assignment template, type this \def\thesubsection{\arabic{section} (\alph{subsection})}
-    
-
-
-%%%%%%%%%%%%  ColorsCustom.sty  %%%%%%%%%%%%
-    % ##############################################
-    % Custom Colors
-    % ##############################################
-    
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%            Colors            %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     \usepackage{xcolor}
     
     % todo confirm with xckd colors
     % https://xkcd.com/color/rgb/
-    
-    % make a consistent color set with mpl "rich colors"
-    % define shades of gray to mtach
-    
-    
-    %\definecolor{lightgray}{RGB}{216, 220, 214}
     
     \definecolor{offwhite}{RGB}{255,253,237}
     
@@ -1007,6 +981,13 @@ leqno,
     \definecolor{mybeige}{HTML}{C3BDA5}
     
     
+    % https://umanitoba.ca/sites/default/files/2019-12/UM_Brand-Guidelines.pdf
+    \definecolor{umbrown}{RGB}{79, 44, 29}
+    \definecolor{umdarkblue}{RGB}{56, 94, 157}
+    \definecolor{umlightblue}{RGB}{0, 163, 224}
+    \definecolor{umyellow}{RGB}{242, 169, 0}
+    
+    
     
     % for coding
     \colorlet{accCol}{indigo}  % accent color
@@ -1014,21 +995,35 @@ leqno,
     \colorlet{grayCol}{gray}   % gray color
     \colorlet{greCode}{green}   % gray color
     
-    % for sections
-    \colorlet{secCol}{indigo}
-    \colorlet{subsecCol}{darkindigo}
-    \colorlet{subsubsecCol}{verydarkindigo}
-    
     \def\blacksectionheadings{
        \setaccentcolor{.} % . is current color, so if you invert it will change
     }
     
     
     \NewDocumentCommand{\setaccentcolor}{m}{
+        \colorlet{chapCol}{#1}
         \colorlet{secCol}{#1}
         \colorlet{subsecCol}{#1}
         \colorlet{subsubsecCol}{#1}
+        \colorlet{parCol}{#1}
     }
+    
+    \setaccentcolor{.}
+    
+    
+    \NewDocumentCommand{\setcolortheme}{m}{
+        \ifstrequal{#1}{blues}{\cbp@colorthemeblues}{}
+        \ifstrequal{#1}{brown}{\setaccentcolor{umbrown}}{}
+    }
+    
+    \NewDocumentCommand{\cbp@colorthemeblues}{}{
+        \colorlet{chapCol}{indigo}
+        \colorlet{secCol}{darkindigo}
+        \colorlet{subsecCol}{verydarkindigo}
+        \colorlet{subsubsecCol}{.}
+        \colorlet{parCol}{.}
+    }
+    
     
     
     \definecolor{pltblue}{HTML}{1000F0}
@@ -1045,7 +1040,9 @@ leqno,
     }
 
 
-%%%%%%%%%%%%  MathSymbolsEtc.sty  %%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%            MathSymbolsEtc            %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % ##############################################
     % Math related packages and settings
     % ##############################################
@@ -1058,9 +1055,9 @@ leqno,
     	\usepackage{amssymb}   % only load if not serif
     }
     
+    %	\usepackage{gensymb} % bug in this package currently
     \usepackage{xfrac}
     \usepackage{amsfonts}  % math fonts and symbols
-    %\usepackage{gensymb}
     
     \renewcommand{\theequation}{\arabic{section}.\arabic{equation}}
     %\def\@cbp@mathline{\raisebox{0pt}[0pt][0pt]{\vline height 0.8em depth 0.6em width \arrayrulewidth}}
@@ -1111,7 +1108,9 @@ leqno,
     
 
 
-%%%%%%%%%%%%  Lists.sty  %%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%            Lists            %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
     \usepackage{enumitem} % https://muug.ca/mirror/ctan/macros/latex/contrib/enumitem/enumitem.pdf
     \usepackage{multicol}  % used for two column list
@@ -1184,7 +1183,9 @@ leqno,
       \setlist[description]{font={\normalfont\bfseries}}
     }{}
 
-%%%%%%%%%%%%  Tables.sty  %%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%            Tables            %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
     %%% TABLES
     \usepackage{array}
@@ -1313,7 +1314,9 @@ leqno,
     %\endlastfoot
     %}
 
-%%%%%%%%%%%%  FloatsCaptions.sty  %%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%            FloatsCaptions            %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % ##############################################
     % Floats and Captions
     % ##############################################
@@ -1329,7 +1332,7 @@ leqno,
     \graphicspath{{images/}}  % might want to use this and subfiles
     \usepackage{afterpage}
     \usepackage{graphbox}  %% allows smash command for easier graphics placement
-    \usepackage[skip=3pt,justification=raggedright,singlelinecheck=false,format=hang]{caption} %
+    \usepackage[skip=3pt,justification=raggedright,singlelinecheck=false,format=hang,textformat=period]{caption} %
     \usepackage{floatrow}% http://tug.ctan.org/tex-archive/macros/latex/contrib/floatrow/floatrow.pdf  (dont use float pack)
     \usepackage{subcaption} % http://mirrors.ibiblio.org/CTAN/macros/latex/contrib/caption/subcaption.pdf
     
@@ -1511,7 +1514,9 @@ leqno,
     }
 
 
-%%%%%%%%%%%%  CodeBoxes.sty  %%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%            CodeBoxes            %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % ##############################################
     % Code Boxes
     % ##############################################
@@ -1684,7 +1689,9 @@ leqno,
     %}
 
 
-%%%%%%%%%%%%  ToDoNote.sty  %%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%            ToDoNote            %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % ##############################################
     % Todo Notes (with Example)
     % ##############################################
@@ -1709,12 +1716,10 @@ leqno,
     %\todototoc{ToC todo, just a random list}
     %\todoG{Check for stuff}
 
-%%%%%%%%%%%%  DraftStuff.sty  %%%%%%%%%%%%
-    % ##############################################
-    % If Draft
-    % ##############################################
-    
-    %%% Draft toggles
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%            DraftStuff            %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%% Draft toggles to speed up compilation and help
     %\DarkModePDF
     %\DraftMark
     %\LowQuality
@@ -1785,7 +1790,9 @@ leqno,
     
 
 
-%%%%%%%%%%%%  BibAndGloss.sty  %%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%            BibAndGloss            %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % requires enumitem for acronym styling
     \usepackage[sorting=none]{biblatex}
     
@@ -1938,7 +1945,9 @@ leqno,
     %}%
 
 
-%%%%%%%%%%%%  Hyperlinks.sty  %%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%            Hyperlinks            %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % ##############################################
     % References / Hyperlinks
     % ##############################################
@@ -2004,18 +2013,23 @@ leqno,
     
 
 
-%%%%%%%%%%%%  Titles.sty  %%%%%%%%%%%%
-    %%% document variables
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%            Titles            %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%% document variables, title page, etc.
+    % most doc vars update the pdf metedata by wriiting to main.xmpdata
+    
+    \def\overwritepdfwithdocvar{true}
     
     \RenewDocumentCommand{\title}{m}{\luadirect{
     	pl.tex.defcmdAT('@title', \luastringN{#1})
-    	pl.tex.updatePDFtable('Title', pl.tex.makePDFvarstr(\luastringN{#1}), false)
+    	pl.tex.updatePDFtable('Title', pl.tex.makePDFvarstr(\luastringN{#1}), \overwritepdfwithdocvar)
     	pl.tex.defcmd('thetitle', pl.tex.makeInTextstr(\luastringN{#1}))
     }}
     
     \RenewDocumentCommand{\author}{m}{\luadirect{
     	pl.tex.defcmdAT('@author', \luastringN{#1})
-    	pl.tex.updatePDFtable('Author', pl.tex.makePDFvarstr(\luastringN{#1}), false)
+    	pl.tex.updatePDFtable('Author', pl.tex.makePDFvarstr(\luastringN{#1}), \overwritepdfwithdocvar)
     	pl.tex.defcmd('theauthor', pl.tex.makeInTextstr(\luastringN{#1}))
     	}%
     	\NewDocumentCommand{\theauthors}{ o }{%
@@ -2030,12 +2044,12 @@ leqno,
     	pl.tex.defcmdAT('@date', \luastringN{#1})
     	pl.tex.defcmd('thedate', pl.tex.makeInTextstr(\luastringN{#1}))
     }
-    \luaexec{pl.tex.updatePDFtable('Date', os.date'\%Y-\%m-\%d', false)}
+    \luaexec{pl.tex.updatePDFtable('Date', os.date'\%Y-\%m-\%d', true)}
     }
     
     \NewDocumentCommand{\company}{m}{\luadirect{
     	pl.tex.defcmdAT('@publishers', \luastringN{#1})
-    	pl.tex.updatePDFtable('Publisher', pl.tex.makePDFvarstr(\luastringN{#1}), false)
+    	pl.tex.updatePDFtable('Publisher', pl.tex.makePDFvarstr(\luastringN{#1}), \overwritepdfwithdocvar)
     	pl.tex.defcmd('thecompany', pl.tex.makeInTextstr(\luastringN{#1}))
     }}
     
@@ -2058,9 +2072,10 @@ leqno,
     }
     
     
+    \providetoggle{samepgTitle}
     %%% title pages
     
-    \gdef\cbp@tpOwn{
+    \gdef\cbp@tpPage{\thispagestyle{empty}
     	\rule{\heavyrulewidth}{7.4in} % Vertical line
     	\hspace{0.5in} % Whitespace between the vertical line and title page text
     	\begin{minipage}[b][7.4in][s]{4.4in}
@@ -2096,14 +2111,14 @@ leqno,
     		}{}
     
     		\null\vfill\null\vfill
-    		
     \end{minipage}
+    \cleardoubleoddpage
     }
     
     
     
     
-    \gdef\cbp@tpSame{\thispagestyle{plain}
+    \gdef\cbp@tpMini{\cbp@FirstPagePlain
     		\gdef\And{\hspace*{3ex}}
     		\vspace*{-2.5cm}
     		{\RaggedRight                             % \pbox[t]{\linewidth}  %% todo top align logo with title
@@ -2121,7 +2136,7 @@ leqno,
     
     
     \def\maketitle{%
-    	\iftoggle{samepgTitle}{\cbp@tpSame}{\cbp@tpOwn}%
+    	\iftoggle{samepgTitle}{\iftoggle{useMemo}{\cbp@tpMemo}{\cbp@tpMini}}{\cbp@tpPage}%
     }
     
     
@@ -2129,7 +2144,9 @@ leqno,
 
 %% packages in folder
 
-%%%%%%%%%%%%  MarginNotes.sty  %%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%            MarginNotes            %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
     % Custom command fpr the margin notes: \myMarginnote{Your Text}
     % Comment on the \lineskiplimit=-\maxdimen:
@@ -2146,7 +2163,9 @@ leqno,
 
 
 
-%%%%%%%%%%%%  macros/UniRefs.sty  %%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%            macros/UniRefs            %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %%%% todo maybe move this to a lua-based function
     
     %%%% todo make a lua tables latex interface? That might be fun
@@ -2206,7 +2225,9 @@ leqno,
     %
     %\newcommand{\reseturef}{\setcounter{unilabIN}{0}\stepcounter{unilabOUT}}
 
-%%%%%%%%%%%%  macros/symbolscbp.sty  %%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%            macros/symbolscbp            %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
     \newcommand{\Fst}{1\textsuperscript{st}\xspace}
     \newcommand{\Snd}{2\textsuperscript{nd}\xspace}
@@ -2245,7 +2266,9 @@ leqno,
 
 
 
-%%%%%%%%%%%%  EndOf.sty  %%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%            EndOf            %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %\providelength{\floatindentlength}{10ex}
     
     %%% Intentionally blank page command
@@ -2275,7 +2298,9 @@ leqno,
 \usepackage{lutabulartools}
 \usepackage{autopuncitems}
 
-%%%%%%%%%%%%  YAMLvarsDec.sty  %%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%            YAMLvarsDec            %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
     \newcommand{\cbpheaderbox}[1]{\parbox[b][2em][b]{0.4\linewidth}{\setstretch{0.8}#1}}
     \usepackage{yamlvars}
@@ -2339,10 +2364,9 @@ leqno,
 
 
 
-
-
-
-%%%%%%%%%%%%  MemoSty.sty  %%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%            MemoSty            %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %%%% memo variabls
     \lowercasevarYVon
     \begin{declareYAMLvars}
@@ -2376,20 +2400,19 @@ leqno,
     \end{declareYAMLvars}
     \lowercasevarYVoff
     
-    % variables do not req declaring...
-    %{\@memoto}
-    %{\@memofr}
-    %{\@memofraddr}
-    %{\@memotoaddr}
-    %\@memoheader
-    %\@attachments
-    %\@fileno
+    % variables do not req declaring beforehand, but here they are for troubleshooting...
+      %\@memoto
+      %\@memofr
+      %\@memofraddr
+      %\@memotoaddr
+      %\@memoheader
+      %\@attachments
+      %\@fileno
     
-    \newcommand{\@HangingLabel}[1]{\leavevmode\llap{\scriptsize\uppercase{#1}:\enspace}}
+    \newcommand{\@HangingLabel}[1]{\leavevmode\llap{\scriptsize\uppercase{#1}:\enspace\hspace{3pt}}}
     
     
-    \gdef\makeMemotitle{%
-        \thispagestyle{plain}
+    \gdef\cbp@tpMemo{%
         \vspace*{-4.5em}
         \ifdef{\@memoheader}{\vspace*{-2em}  \ \hfill {\large\bfseries \@memoheader } \hfill \  \\[1.2em]}{}
         \begin{tabularx}{\textwidth}{lXl}
@@ -2410,6 +2433,7 @@ leqno,
         	\ifdef{\@attachments}{\@HangingLabel{attached}\@attachments\\[8pt]}{}
         	\par
         }%
+        \cbp@FirstPagePlain
     }
     
     
@@ -2420,18 +2444,18 @@ leqno,
       \AtBeginDocument{
             \ifdef{\@memoto}{\lohead{\textit\@memoto}}{}
             \ifdef{\@date}{\rohead{\@date}}{}
-            \makeMemotitle
             }
         
-        \togglefalse{SecOnNewPage}         %%% PATCH sections
-        \addtokomafont{section}{\color{black}\large}
-        \addtokomafont{subsection}{\color{black}\normalsize}
-        \addtokomafont{subsubsection}{\color{black}}  % do not use in a memo
+        \toggletrue{ChapOnSamePage}         %%% PATCH sections
+        \addtokomafont{chapter}{\Large}
+        \addtokomafont{section}{\large}
+        \addtokomafont{subsection}{\normalsize}
+    %    \addtokomafont{subsubsection}{\color{black}}  % do not use in a memo
     
         \gdef\scr@section@beforeskip{17.1pt \@plus 1.7pt}
         \gdef\scr@section@afterskip{0.1pt}
         \gdef\scr@subsection@beforeskip{13.1pt \@plus 1.3pt}
-        \gdef\scr@subsection@afterskip{0.1pt}
+    %    \gdef\scr@subsection@afterskip{0.1pt}
       
         
         \KOMAoptions{bibliography=totoc}  % uncomment if you want numbered reference section
@@ -2440,7 +2464,6 @@ leqno,
     
       \renewcommand{\theequation}{\arabic{equation}}
       \renewcommand{\thetable}{\arabic{table}}
-      % todo etc
     }{}
     
 

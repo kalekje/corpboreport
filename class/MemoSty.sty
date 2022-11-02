@@ -31,20 +31,19 @@ memotoaddr:
 \end{declareYAMLvars}
 \lowercasevarYVoff
 
-% variables do not req declaring...
-%{\@memoto}
-%{\@memofr}
-%{\@memofraddr}
-%{\@memotoaddr}
-%\@memoheader
-%\@attachments
-%\@fileno
+% variables do not req declaring beforehand, but here they are for troubleshooting...
+  %\@memoto
+  %\@memofr
+  %\@memofraddr
+  %\@memotoaddr
+  %\@memoheader
+  %\@attachments
+  %\@fileno
 
-\newcommand{\@HangingLabel}[1]{\leavevmode\llap{\scriptsize\uppercase{#1}:\enspace}}
+\newcommand{\@HangingLabel}[1]{\leavevmode\llap{\scriptsize\uppercase{#1}:\enspace\hspace{3pt}}}
 
 
-\gdef\makeMemotitle{%
-    \thispagestyle{plain}
+\gdef\cbp@tpMemo{%
     \vspace*{-4.5em}
     \ifdef{\@memoheader}{\vspace*{-2em}  \ \hfill {\large\bfseries \@memoheader } \hfill \  \\[1.2em]}{}
     \begin{tabularx}{\textwidth}{lXl}
@@ -65,6 +64,7 @@ memotoaddr:
     	\ifdef{\@attachments}{\@HangingLabel{attached}\@attachments\\[8pt]}{}
     	\par
     }%
+    \cbp@FirstPagePlain
 }
 
 
@@ -75,18 +75,18 @@ memotoaddr:
   \AtBeginDocument{
         \ifdef{\@memoto}{\lohead{\textit\@memoto}}{}
         \ifdef{\@date}{\rohead{\@date}}{}
-        \makeMemotitle
         }
     
-    \togglefalse{SecOnNewPage}         %%% PATCH sections
-    \addtokomafont{section}{\color{black}\large}
-    \addtokomafont{subsection}{\color{black}\normalsize}
-    \addtokomafont{subsubsection}{\color{black}}  % do not use in a memo
+    \toggletrue{ChapOnSamePage}         %%% PATCH sections
+    \addtokomafont{chapter}{\Large}
+    \addtokomafont{section}{\large}
+    \addtokomafont{subsection}{\normalsize}
+%    \addtokomafont{subsubsection}{\color{black}}  % do not use in a memo
 
     \gdef\scr@section@beforeskip{17.1pt \@plus 1.7pt}
     \gdef\scr@section@afterskip{0.1pt}
     \gdef\scr@subsection@beforeskip{13.1pt \@plus 1.3pt}
-    \gdef\scr@subsection@afterskip{0.1pt}
+%    \gdef\scr@subsection@afterskip{0.1pt}
   
     
     \KOMAoptions{bibliography=totoc}  % uncomment if you want numbered reference section
@@ -95,6 +95,5 @@ memotoaddr:
 
   \renewcommand{\theequation}{\arabic{equation}}
   \renewcommand{\thetable}{\arabic{table}}
-  % todo etc
 }{}
 

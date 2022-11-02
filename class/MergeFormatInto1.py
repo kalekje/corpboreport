@@ -15,7 +15,9 @@ def make_file(multifile, newfile):
                 if styFileMatch:
                     mergedFile.write('\n')
                     styFilename = styFileMatch.group(1)+'.sty'
-                    mergedFile.write('%'*12 + '  ' + styFilename + '  ' + '%'*12 + '\n')
+                    mergedFile.write('%'*80 + '\n')
+                    mergedFile.write('%'*3 + ' '*12 + styFilename[:-4] + ' '*12 + '%'*3 + '\n')
+                    mergedFile.write('%'*80 + '\n')
                     with open(styFilename, 'r') as styFile:
                         for line2 in styFile:
                             mergedFile.write('    '+line2)
@@ -28,7 +30,7 @@ def make_file(multifile, newfile):
 make_file(r'corpboreportMulti.cls',  './../corpboreport.cls')
 make_file(r'corpborepresMulti.cls',  './../corpborepres.cls')
 make_file(r'corpboreloneMulti.cls',  './../corpborelone.cls')
-make_file(r'cbthesisMulti.cls',  './../cbthesis.cls')
+# make_file(r'cbthesisMulti.cls',  './../cbthesis.cls')  # not used anymore, use corpboreport with thesis option
 
 
 

@@ -1,34 +1,29 @@
-% ##############################################
-% Geometry
-% ##############################################
-
 % Check if two-sided https://tex.stackexchange.com/questions/360785/how-do-i-check-if-a-document-is-oneside-or-twoside  %
  % https://tex.stackexchange.com/questions/470752/section-numbers-in-margins-in-double-sided-document
 %preamble
 \if@twoside% if two-sided, put the section headings to right side and numbers in right margin 
 	\usepackage[
 		letterpaper,
-		top=1.25in,
-		headheight=2em, % 17pt as per the warning by fancyhdr 17pt = about 0.6cm
-		headsep=0.25in,  % about 1.25 * 13.7 (baseline skip),
+		top=1.46in,
+		headheight=2em,
+		headsep=0.29in,
 		footskip=0.01pt,
-		bottom=1.125in,
-		bindingoffset=0.5in,
-		left=1.25in,%1.125in,
-		right=1.25in%,1.125in,
-		%showframe=true,
+		bottom=1.5in,
+		bindingoffset=0.0in,
+		left=1.30in,
+		right=1.50in,
 	]{geometry} 
 \else%
 \usepackage[
 		letterpaper,
 		top=1.46in,
 		headheight=2em,
-		headsep=0.29in,  % about 1.25 * 13.7 (baseline skip),
+		headsep=0.29in,
 		footskip=0.01pt,
-		bottom=1.5in, % 1.125
+		bottom=1.5in,
 		bindingoffset=0.0in,
-		left=1.50in,%1.25in,%1.125in,
-		right=1.50in,%1.25in%,1.125in,
+		left=1.50in,
+		right=1.50in,
 		%showframe=true,
 	]{geometry}
 \fi%  finally do nothing

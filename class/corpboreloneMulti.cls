@@ -27,7 +27,7 @@
 
 \usepackage{\FormatDir MathSymbolsEtc}
 \usepackage{\FormatDir Tables} %
-\usepackage{\FormatDir ColorsCustom} %
+\usepackage{\FormatDir Colors} %
 \usepackage{\FormatDir Lists} %
 
 \usepackage{\FormatDir CodeBoxes}
