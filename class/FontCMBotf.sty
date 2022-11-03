@@ -1,27 +1,24 @@
-%\usepackage{unicode-math}  ??
+%%% adopted from: https://tex.stackexchange.com/a/358621/186406
+% https://texdoc.org/serve/cm-unicode/0
+% https://texdoc.org/serve/cmbright/0
+
 \usepackage{fontspec}
 
-\usepackage[T1]{fontenc}
-\usepackage{cmbright} %for math only, will be overwritten. Had issues wit OTF for math?
+\setsansfont{cmunb}[        %CMU Bright for text
+    Extension=.otf,
+    UprightFont=*mr,
+    ItalicFont=*mo,
+    BoldFont=*sr, % semibold  % swap bold with semibold
+    BoldItalicFont=*so, % semibold oblique
+    NFSSFamily=cmbr
+    ]
+
+\usepackage{cmbright}       %CMU Bright for math
 \gdef\bfdefault{sb}
-\gdef\sbdefault{bx} % swap sb with bf
+\gdef\sbdefault{bx}         % swap sb with bf
 
-\setmainfont[
-  Ligatures = TeX,
-%  Numbers = Uppercase,
-%  Numbers = Lowercase,
-%  Numbers = Oldstyle,
-  ItalicFont = CMU Bright Oblique,
-  BoldFont = CMU Bright SemiBold,
-  BoldItalicFont = CMU Bright SemiBold Oblique,
-]{CMU Bright}
-\setmonofont[Numbers=Lining]{CMU Typewriter Text Light}
-
-
-% https://tex.stackexchange.com/questions/204778/difficulty-finding-selecting-cm-bright-using-fontspec
-% https://tex.stackexchange.com/questions/358418/using-cmbright-in-xelatex-for-math-and-text
-% https://tex.stackexchange.com/questions/25293/replace-integral-sign-in-cmu-bright-with-iwona-while-keeping-proper-position-o
-% https://tex.stackexchange.com/questions/572015/using-the-cmbright-package-in-a-limited-range-of-my-document
+%\renewcommand{\ttdefault}{lmtt}  % has bold series, but the normal weight is a bit thicker
+\setmonofont{CMU Typewriter Text Light} % monospace  % does not have bold but matches main font better
 
 \DeclareSymbolFont{iwonalargesymbols}{OMX}{iwona}{m}{n}
 \DeclareMathSymbol{\intop}{\mathop}{iwonalargesymbols}{"52}
@@ -46,13 +43,9 @@
 \def\act{}
 \def\actext#1{#1}
 
-% why doesn't this work ???
-%\usepackage{unicode-math}
-%\setmathfont{CMU Bright}
-%    \setmathfont[range=\mathup]{CMU Bright Roman}
-%    \setmathfont[range=\mathbfup]{CMU Bright SemiBold}
-%    \setmathfont[range=\mathbfit]{CMU Bright SemiBold}
-%    \setmathfont[range=\mathit]{CMU Bright Oblique}
+
+
+
 
 
 
@@ -71,11 +64,9 @@
 \selectfont
 }
 \newcommand{\textc}[1]{{\sm@ller\uppercase{#1}}}
-
+\newcommand{\sbfCMB}[1]{\textbf{\textit{#1}}}
 
 
 %\def\sbfCMB#1{\ThisStyle{\setbox0=\hbox{$\SavedStyle#1$}%
 %		#1\kern.2pt\kern-\wd0%
 %		\raisebox{.1pt}{$\SavedStyle#1$}}}
-\newcommand{\sbfCMB}[1]{\textbf{\textit{#1}}}
-

@@ -1,6 +1,10 @@
+%%% References %%%%%
+% KOMA-Script: https://texdoc.org/serve/scrbook/0
+%
+%
+
 \RequirePackage{etoolbox}
 \RequirePackage{chngcntr}
-
 
 %%% Header %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \renewcommand{\chaptermark}[1]{%
@@ -14,6 +18,10 @@
 \providecommand{\cbp@secnumsize}{\smaller}
 
 
+\newlength{\cbp@chapTopSep}        \setlength{\cbp@chapTopSep}{0.2em}
+\newlength{\cbp@chapTopSepXtra}    \setlength{\cbp@chapTopSepXtra}{5em}
+\newlength{\cbp@chapBtwnSep}       \setlength{\cbp@chapBtwnSep}{2.5em}
+
 \RequirePackage{needspace}
 \newlength{\chapneedspace}      \setlength{\chapneedspace}{12\baselineskip}
 \newlength{\secneedspace}       \setlength{\secneedspace}{8\baselineskip}
@@ -24,6 +32,8 @@
 \setkomafont{disposition}{\normalfont\bfseries} % section preference
 
 \def\FancyChapters{
+  \global\setlength{\cbp@chapTopSep}{0.2em}
+  \RedeclareSectionCommand[afterskip=16pt]{chapter}
   \addtokomafont{chapterprefix}{}
   \renewcommand*{\chapterformat}{%
   \mbox{\scalebox{3}{\raggedleft\color{chapCol}\toglnums\thechapter\autodot}}}
@@ -36,7 +46,8 @@
 %\FancyChapters
 
 \def\SimpleChapters{
-  \gdef\chapterheadstartvskip{\vspace*{1em}}
+  \global\setlength{\cbp@chapTopSep}{0.2em}
+  \RedeclareSectionCommand[afterskip=8pt]{chapter}
   \addtokomafont{chapterprefix}{\raggedright\cbp@secnumsize}
   \renewcommand*{\chapterformat}{\mbox{\thechapter\autodot\enskip}}  % https://tex.stackexchange.com/questions/25030/chapter-number-and-chapter-title-in-one-line
   \renewcommand\chapterlinesformat[3]{%
@@ -47,20 +58,7 @@
 
 \SimpleChapters
 
-%\newcommand{\ShowChapterPrefix}{
-%  \renewcommand*{\chapterformat}{%
-%  \color{brown}%
-%  \mbox{\raisebox{5ex}{\normalsize
-%  \chapappifchapterprefix
-%  {\nobreakspace}}%
-%  \scalebox{3}{\thechapter\autodot}\enskip}}
-%}%
-
-%\newcommand{\HideChapterPrefix}{
-%\renewcommand*{\chapterformat}{%
-%\color{brown}%
-%\mbox{\scalebox{3}{\thechapter\autodot}\enskip}}}%
-%\HideChapterPrefix
+\gdef\chapterheadstartvskip{\vspace*{\cbp@chapTopSep}}
 
 
 % Hanging section, % NUMBERS IN LEFT MARGIN
@@ -79,10 +77,8 @@
 \addtokomafont{subsubsection}{\color{subsubsecCol}\normalsize}
 \addtokomafont{paragraph}{\color{parCol}}
 
-
-
 %%% ToC Related %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\setcounter{tocdepth}{1} %%% TOC Depth
+\setcounter{tocdepth}{1} %%% TOC Depth down to sections
 
 \newlength{\ToCsecskip}\setlength{\ToCsecskip}{0.75em}
 \newlength{\ToCextrabottomroom}\setlength{\ToCextrabottomroom}{0.0em}
@@ -92,7 +88,7 @@
 \def\tighterToCchap{\addtocontents{toc}{\vspace*{-1.3ex}}}
 \newlength{\ToCrightmargin}\setlength{\ToCrightmargin}{0in}
 
-\newcommand\tocmainfont[1]{{\cbp@secnumsize #1}}
+\newcommand\tocmainfont[1]{{\cbp@secnumsize{}#1}}
 
 \providetoggle{showListOfFigsTabs}
 \providetoggle{samepgListOfFigsTabs}
@@ -100,13 +96,21 @@
 \renewcaptionname{english}{\listtablename}{Tables}
 \renewcaptionname{english}{\listfigurename}{Figures}
 
-
 \newcommand{\secwiselabelnums}{
   \counterwithin{figure}{chapter}
   \counterwithin{table}{chapter}
-%  \counterwithin{lstlisting}{section} % todo fix this
+%  \counterwithin{lstlisting}{chapter} %%% done automatically
 }
-\secwiselabelnums
+
+\newcommand{\notsecwiselabelnums}{
+  \counterwithout{figure}{chapter}
+  \counterwithout{table}{chapter}
+%  \counterwithout{listing}{chapter}
+  \gdef\thefigure{\arabic{figure}}
+  \gdef\thetable{\arabic{table}}
+%  \gdef\thelsting{\arabic{listing}}
+}
+
 
 \countdef\diamondcounter=255
 \def\diamondleaders{\global\advance\diamondcounter by 1
@@ -127,7 +131,7 @@ level:=figure,
 indent=-5ex,
 numwidth=5ex,
 entryformat=\normalsize,
-entrynumberformat=\cbp@secnumsize,
+entrynumberformat=\cbp@chapterToCentryformat,
 ]{tocline}{figure,table,lstlisting}
 
 
@@ -136,8 +140,6 @@ entrynumberformat=\cbp@secnumsize,
 
 
 \RedeclareSectionCommand[
-%beforeskip=1.2em plus 4pt minus 2pt,  % done below..
-afterskip=6pt,
 tocbeforeskip=1.2em plus 0.2em minus 1pt,
 tocindent=-4ex,
 tocnumwidth=4ex,
@@ -188,46 +190,44 @@ afterskip=-1em]{paragraph}
 beforeskip=-.5\baselineskip,
 afterskip=-1em]{subparagraph}
 
+\setcounter{secnumdepth}{3} % a.b.c.d for subsubsection, then numbering stops. Try to avoid though
 
 
 \NewDocumentCommand{\vspaceT}{m}{\vspace{-#1} \vspace*{#1}}
 
-\def\cbp@largechapspace{\RedeclareSectionCommand[beforeskip=2.4em plus 3pt minus 1pt]{chapter}}
-\def\cbp@normalchapspace{\RedeclareSectionCommand[beforeskip=1.6em plus 4pt minus 2pt]{chapter}}
-\def\cbp@zerochapspace{\RedeclareSectionCommand[beforeskip=0.0ex]{chapter}}
-%\NewDocumentCommand{\cbp@samepgchapspace}{}{{\vspace{2\baselineskip} \vspaceT{3\baselineskip}}} %% space on top / space in between
-\NewDocumentCommand{\cbp@samepgchapspace}{}{\vspace{1.2em}} %% space on top / space in between
-\cbp@normalchapspace
-
 
 
 % front matter chapter (acknowledgements or abstract), extra spacing, not in ToC
-\newcommand{\chapterF}[1]{\cbp@largechapspace
+\NewDocumentCommand{\chapterF}{m}{
+  \gdef\chapterheadstartvskip{\vspace*{\cbp@chapTopSepXtra}}  % extra top sep of chapter
   \pdfbookmark[0]{#1}{Label#1PDF}%
   \chapter*{#1}%
-  \cbp@normalchapspace}
+  \gdef\chapterheadstartvskip{\vspace*{\cbp@chapTopSep}}  % restore top sep of chapter
+}
 
-
-\NewDocumentCommand{\chapterM}{ t- m }{% chapter Matter (front or back), ToC and pdf bookmark but no number
+\NewDocumentCommand{\chapterM}{ t- m }{% chapter Matter (front or back), ToC and pdf bookmark but no number. Use - to reduce ToC clearance
   \IfBooleanT{#1}{\addtocontents{toc}{\vspace*{-1.3ex}}}
   \chapter*{#2}
   \addtocentrydefault{chapter}{\phantom{.}}{#2}{}
-  \chaptermark{#2}}
+  \chaptermark{#2}
+}
+
 
 \def\frontmatter{
   \pdfbookmark[-1]{Front-Matter}{LabelFMPDF}
-  \pdfbookmark[0]{Title}{LabelTitlePDF}}
+  \pdfbookmark[0]{Title}{LabelTitlePDF}
+}
 
+\AfterTOCHead[lot]{\vspace*{-1.5em}} % hack to fix extra space under LoT.. investigate why..
 
 \NewDocumentCommand{\addcontentslists}{O{0in}}{
   \global\setlength{\ToCrightmargin}{#1}
+
+%  \addtocontents{toc}{\protect\enlargethispage{\ToCextrabottomroom}} % enlarge toc page if needed
   
   \pdfbookmark[0]{Contents}{LabelContentsPDF}
-%  \addtocontents{toc}{\protect\enlargethispage{\ToCextrabottomroom}} % enlarge toc page if needed
   \begin{addmargin}[0pt]{\ToCrightmargin}
-%    \thispagestyle{\chapterpagestyle}
     \tableofcontents
-%    \thispagestyle{\chapterpagestyle}
   \end{addmargin}
   \chaptermark{Contents}
 
@@ -277,8 +277,8 @@ afterskip=-1em]{subparagraph}
   \pdfbookmark[-1]{Appendix}{LabelAppendicesPDF}
 	%
 	\originalappendix
-	% NOTE you cannot use the alphabetized subsections anymore like you can with corpboreport, shouldn't be an issue
-	%
+  \crefalias{chapter}{appsec}
+  
   \iftoggle{useSerif}{
 	  \def\thechapter{{\scshape\alph{chapter}}}
 	  \def\theHchapter{{\scshape\alph{chapter}}}
@@ -286,45 +286,48 @@ afterskip=-1em]{subparagraph}
 %    \def\thesection{\Alph{section}}
 %    \def\theHsection{\Alph{section}}
   }
-
-	\crefalias{chapter}{appsec}
-	
   \iftoggle{AppendixPage}{
-      \cbp@largechapspace   %
-      \chapter*{Appendix}
-      \cbp@normalchapspace  %
-       \ \ \clearpage
+    \gdef\chapterheadstartvskip{\vspace*{\cbp@chapTopSepXtra}}  % extra top sep of chapter
+    \chapter*{Appendix}
+    \gdef\chapterheadstartvskip{\vspace*{\cbp@chapTopSep}}  % restore top sep of chapter
+    \ \ \clearpage
   }{}
-  
   
   \iftoggle{SimpleChaps}{
 	\renewcommand\chapterformat{{\appendixname~\thechapter\autodot}}
    \renewcommand\chapterlinesformat[3]{%
-    ##2\\##3}%
-  % % todo need to fix
+    \ifblank{##2}{}{##2\\}##3}% only if chapter has a number
+  % % todo need to fix?
   %	\renewcommand\sectionlinesformat[4]{%
 %		\ifstr{##1}{section}
 %		{\clearpage\vspace*{\sectprespacelength}##3\\*##4}% appendix sections on new page
 %		{\makebox[0pt][r]{\cbp@secnumsize##3}{##4}}% subsections etc.
 %	}%
   }{}
-
-
 }
 
 
 \def\cbp@FirstPagePlain{\gdef\chapterpagestyle{plain}\thispagestyle{plain}\afterpage{\gdef\chapterpagestyle{scrheadings}}}
 
 
-
-
-
 %%% to allow same page chapters
 \patchcmd{\scr@startchapter}{\if@openright\cleardoublepage\else\clearpage\fi}{%
-  \iftoggle{ChapOnSamePage}{\cbp@samepgchapspace}{\if@openright\cleardoublepage\else\clearpage\fi}%
+  \iftoggle{ChapOnSamePage}{\vspace{\cbp@chapBtwnSep}}{\if@openright\cleardoublepage\else\clearpage\fi}%
 }{}{}
 
 \def\NextChapOnSamePage{\toggletrue{ChapOnSamePage}\afterpage{\global\togglefalse{ChapOnSamePage}}}
+
+\def\noSectionNumbers{\setcounter{secnumdepth}{-\maxdimen}\notsecwiselabelnums}  % remove sec num}
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -355,3 +358,19 @@ afterskip=-1em]{subparagraph}
 %  style=section,
 %  indent=0pt
 %  ]{chapter}
+
+
+%\newcommand{\ShowChapterPrefix}{
+%  \renewcommand*{\chapterformat}{%
+%  \color{brown}%
+%  \mbox{\raisebox{5ex}{\normalsize
+%  \chapappifchapterprefix
+%  {\nobreakspace}}%
+%  \scalebox{3}{\thechapter\autodot}\enskip}}
+%}%
+
+%\newcommand{\HideChapterPrefix}{
+%\renewcommand*{\chapterformat}{%
+%\color{brown}%
+%\mbox{\scalebox{3}{\thechapter\autodot}\enskip}}}%
+%\HideChapterPrefix

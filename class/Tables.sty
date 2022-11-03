@@ -70,12 +70,17 @@
 \setlength\LongTabNoteSpace{-4.5ex}
 
 
-\newcommand{\LongTableNotes}[2][\linewidth]{% todo might wanna fix this so it's more automatic
+\newcommand{\LTnotes}[2][\linewidth]{% todo might wanna fix this so it's more automatic
     \vspace{\LongTabNoteSpace}% manually tested
     \parbox{#1}{\footnotesize #2}}
 
+\NewCommandCopy\LongTableNotes\LTnotes
 
 \NewDocumentCommand{\LTcaption}{O{#2} m O{}}{{\WideFloatCaption\captionof{table}[#1]{#2}#3}}
+
+\AfterEndEnvironment{longtable}{\addtocounter{table}{-1}} % hack to fix LTX/longtable numbering issue, seems to increment by 1
+
+
 %% example longtable header
 %\NewDocumentCommand{\LTcontinues}{O{+}}{\MC[#1r]{\textsl{Table continues on next page\ldots}}}
 %\NewDocumentCommand{\LTcontinued}{O{+}}{\MC[#1l]{\textsl{\ldots Table continued from previous page}}\\}

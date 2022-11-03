@@ -1,13 +1,12 @@
-%\usepackage[onlyrm,light,oldstylenums]{kpfonts-otf} % the light is also decent, could consider
-\usepackage[onlyrm,light]{kpfonts-otf} % the light is also decent, could consider
-\setsansfont{CMU Bright} % monospace that looks nice with light kpfont
+\usepackage[onlyrm,light]{kpfonts-otf}  % https://texdoc.org/serve/kpfonts-otf/0
+\setsansfont[Scale=MatchLowercase]{CMU Bright} % monospace that looks nice with light kpfont
 \setmonofont[Numbers=Lining]{CMU Typewriter Text Light} % monospace that looks nice with light kpfont
 
 \usepackage[activate=true,% this package makes the font look nicer
     final,%
     tracking=true,%
-%	kerning=true, % only works with pdftex
 ]{microtype}
+%	kerning=true, % only works with pdftex
 \SetTracking{encoding=*, shape=sc}{18}  % adjust small caps letter spacing
 
 
@@ -26,13 +25,11 @@
 \def\acs{\scshape\toglnums}  % acronym series
 \def\act#1{\textsc{\toglnums#1}}  % acronym text
 
-
 \AtBeginEnvironment{tabular}{\togunums}
 \AtBeginEnvironment{tabular*}{\togunums}
 \AtBeginEnvironment{tikzpicture}{\togunums}
 
 \def\cbp@secnumsize{\toglnums} % dont allow cpb to use smaller numbers in section
-%\def\cbp@secnumsize{} % dont allow cpb to use smaller numbers in section
 \newcommand{\cbp@appendixletformat}[1]{\scshape\alph{#1}}
 \def\cbp@appendixsecformat{\scshape\MakeLowercase}
 

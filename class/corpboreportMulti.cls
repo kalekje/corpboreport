@@ -4,15 +4,7 @@
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesClass{corpboreport}[2022-10-28]
 
-\DeclareOption*{\PassOptionsToClass{\CurrentOption}{scrbook}} %% pass class options to scrbook
-\ProcessOptions\relax
-
-%\RequirePackage{luacode}
-%\begin{luacode*}
-%      texio.write_nl('>>>>>>>'..token.get_macro('@classoptionslist'))
-%\end{luacode*}
-
-\LoadClass[ %% Document Class
+\PassOptionsToClass{%
       11pt,
       letterpaper,
       twoside=false,
@@ -24,12 +16,15 @@
       fleqn,
       leqno,
       numbers=noenddot
-]{scrbook}
-%%%listof=totoc,% for list of figures, tables
+}{scrbook}  % default options for basepass
 
+\DeclareOption*{\PassOptionsToClass{\CurrentOption}{scrbook}} %% pass cbp class options to scrbook
+\ProcessOptions\relax
+
+\LoadClass{scrbook} % load the base case  % https://texdoc.org/serve/scrbook/0
 
 %%% additional class options: (memo|compact|thesis) &| serif
-\RequirePackage{etoolbox}
+\RequirePackage{etoolbox}  % https://texdoc.org/serve/etoolbox/0
 \newtoggle{useMemo}
 \newtoggle{useSerif}
 \gdef\TitleLogoPlaceDefault{tl}

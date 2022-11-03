@@ -1,6 +1,7 @@
-% ##############################################
-% Floats and Captions
-% ##############################################
+%%% References %%%%%
+% afterpage: https://texdoc.org/serve/afterpage/0
+% floatrow:  https://texdoc.org/serve/floatrow/0
+% caption:   https://texdoc.org/serve/caption/0
 
 % todo clean this up as per MWE I created!!!, tweak the spacing!!
 
@@ -41,10 +42,8 @@
 	position=top,labelformat=hangcap,labelsep=enspace}  % formats \subcaptionbox
 \floatsetup{justification=raggedright,objectset=raggedright}
 \floatsetup[table]{captionskip=0.3ex} %	 http://tug.ctan.org/tex-archive/macros/latex/contrib/floatrow/floatrow.pdf
-
-% todo need an option for caption position for figure
-%\iftoggle{TopFigCap}{\floatsetup[figure]{captionskip=0.3ex}\let\captop\{}}  % todo incorporate this
 \floatsetup[figure]{captionskip=0.5ex} % for bottom caption
+%\iftoggle{TopFigCap}{\floatsetup[figure]{captionskip=0.3ex}\let\captop\{}}  % optional top caption for figure
 
 \newcommand{\WideFloatCaption}{\captionsetup{labelformat=widecap,format=plain}}
 
@@ -54,10 +53,8 @@
 \setlength{\floatsep}{24pt plus 2.0pt minus 2.0pt} % distance between two floats; add rubber here
 \setlength{\textfloatsep}{24pt plus 2.0pt minus 2.0pt} % distance between floats inserted inside the page text (using h) and the text proper, add rubber here
 
-
 \newlength{\fullheight}  % full height for pdfs/figures
 \setlength{\fullheight}{22cm}
-
 
 \NewDocumentCommand{\cbp@setFloatCap}{m m}{%
   \captionsetup{margin={0pt,0pt}}% restore margin for caption
@@ -118,8 +115,8 @@
 
 
 \NewDocumentCommand{\RotPDF}{t+ s}{\IfBooleanT{#1}{\pagebreak}%
-\IfBooleanTF{#2}{\global\pdfpageattr\expandafter{\the\pdfpageattr/Rotate 0}}%
-{\global\pdfpageattr\expandafter{\the\pdfpageattr/Rotate 90}}%
+  \IfBooleanTF{#2}{\global\pdfpageattr\expandafter{\the\pdfpageattr/Rotate 0}}%
+  {\global\pdfpageattr\expandafter{\the\pdfpageattr/Rotate 90}}%
 } %%% + will add a page break before, * will restore it back to normal
 
 

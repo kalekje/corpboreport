@@ -4,15 +4,8 @@
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesClass{corpboreport}[2022-10-28]
 
-\DeclareOption*{\PassOptionsToClass{\CurrentOption}{scrbook}} %% pass class options to scrbook
-\ProcessOptions\relax
 
-%\RequirePackage{luacode}
-%\begin{luacode*}
-%      texio.write_nl('>>>>>>>'..token.get_macro('@classoptionslist'))
-%\end{luacode*}
-
-\LoadClass[ %% Document Class
+\PassOptionsToClass{%
       11pt,
       letterpaper,
       twoside=false,
@@ -24,7 +17,31 @@
       fleqn,
       leqno,
       numbers=noenddot
-]{scrbook}
+}{scrbook}
+
+
+\DeclareOption*{\PassOptionsToClass{\CurrentOption}{scrbook}} %% pass class options to scrbook
+\ProcessOptions\relax
+
+\LoadClass{scrbook}
+
+%\RequirePackage{luacode}
+%\begin{luacode*}
+%      texio.write_nl('>>>>>>>'..token.get_macro('@classoptionslist'))
+%\end{luacode*}
+%\LoadClass[ %% Document Class
+%      11pt,
+%      letterpaper,
+%      twoside=false,
+%      hidelinks,
+%      parskip=half,
+%      bibliography=totoc,
+%      open=right,%
+%      chapterprefix=false,
+%      fleqn,
+%      leqno,
+%      numbers=noenddot
+%]{scrbook}
 %%%listof=totoc,% for list of figures, tables
 
 
@@ -642,7 +659,7 @@
     
     
     %%% ToC Related %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    \setcounter{tocdepth}{1} %%% TOC Depth
+    \setcounter{tocdepth}{1} %%% TOC Depth down to sections
     
     \newlength{\ToCsecskip}\setlength{\ToCsecskip}{0.75em}
     \newlength{\ToCextrabottomroom}\setlength{\ToCextrabottomroom}{0.0em}
@@ -748,6 +765,7 @@
     beforeskip=-.5\baselineskip,
     afterskip=-1em]{subparagraph}
     
+    \setcounter{secnumdepth}{3} % a.b.c.d for subsubsection, then numbering stops. Try to avoid though
     
     
     \NewDocumentCommand{\vspaceT}{m}{\vspace{-#1} \vspace*{#1}}

@@ -1,29 +1,28 @@
-% ##############################################
-% Math related packages and settings
-% ##############################################
-
-% rename to MathSciSymbols
-
+%%% References %%%%%
+% siunitx: https://texdoc.org/serve/siunitx/0
+% mathtools: https://texdoc.org/serve/mathtools/0
 
 \usepackage[fleqn,leqno]{mathtools} % NOTE: amsmath loaded before kpfonts for fleqn issue should load amsmath
-\iftoggle{useSerif}{}{ % issue with kpfonts, I think it already loads it..
-	\usepackage{amssymb}   % only load if not serif
-}
+\usepackage{bm}
 
-%	\usepackage{gensymb} % bug in this package currently
+%	\usepackage{gensymb} % bug in this package currently w/ kpfonts
 \usepackage{xfrac}
 \usepackage{amsfonts}  % math fonts and symbols
 
-\renewcommand{\theequation}{\arabic{section}.\arabic{equation}}
+\renewcommand{\theequation}{\arabic{chapter}.\arabic{equation}}
+
 %\def\@cbp@mathline{\raisebox{0pt}[0pt][0pt]{\vline height 0.8em depth 0.6em width \arrayrulewidth}}
 %\renewcommand\tagform@[1]{\maketag@@@{\ignorespaces\makebox[6ex][l]{\@cbp@mathline\;\cbp@secnumsize#1\unskip\@@italiccorr\hfill}\hspace*{5ex}}}
 
 \def\@cbp@mathline{\raisebox{0pt}[0pt][0pt]{\vline height 0.8em depth 0.6em width \arrayrulewidth}}
 \renewcommand\tagform@[1]{\maketag@@@{\ignorespaces\makebox[6ex][r]{\ \hfill\cbp@secnumsize#1\;\@cbp@mathline\unskip\@@italiccorr\hspace*{2ex}}}}
 
+%% for right side equation num
+%\renewcommand\tagform@[1]{\maketag@@@{\ignorespaces\makebox[6ex][l]{\@cpb@mathline\;\cpb@secnumsize#1\unskip\@@italiccorr\hfill}\hspace*{5ex}}}
 
 
 \providecommand{\togunums}{}  % toggle to uppercase number shortcut
+
 \usepackage[free-standing-units, % allow declared units usage outside of \qty and \unit
 	unit-optional-argument,  % allows declared units to have number after \kV[10]
 	detect-all=true, % allows italic/bold units
@@ -36,7 +35,11 @@
 	table-align-text-pre=false,
 ]{siunitx} % http://ctan.mirror.rafal.ca/macros/latex/contrib/siunitx/siunitx.pdf
 
-
+\iftoggle{useSerif}{}{
+	\usepackage{amssymb}   % only load if not serif, had issues with kpfont-otf
+%	\sisetup{math-micro=\text{µ},text-micro=µ}
+%	\sisetup{math-micro=\text{\mu},text-micro=$\text{\mu}$}  % as per https://tex.stackexchange.com/questions/33965/siunitx-%C2%B5-doesnt-work
+}
 
 
 
