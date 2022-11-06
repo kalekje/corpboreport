@@ -263,16 +263,15 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%            FontKPotf            %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    %\usepackage[onlyrm,light,oldstylenums]{kpfonts-otf} % the light is also decent, could consider
-    \usepackage[onlyrm,light]{kpfonts-otf} % the light is also decent, could consider
-    \setsansfont{CMU Bright} % monospace that looks nice with light kpfont
+    \usepackage[onlyrm,light]{kpfonts-otf}  % https://texdoc.org/serve/kpfonts-otf/0
+    \setsansfont[Scale=MatchLowercase]{CMU Bright} % monospace that looks nice with light kpfont
     \setmonofont[Numbers=Lining]{CMU Typewriter Text Light} % monospace that looks nice with light kpfont
     
     \usepackage[activate=true,% this package makes the font look nicer
         final,%
         tracking=true,%
-    %	kerning=true, % only works with pdftex
     ]{microtype}
+    %	kerning=true, % only works with pdftex
     \SetTracking{encoding=*, shape=sc}{18}  % adjust small caps letter spacing
     
     
@@ -291,13 +290,11 @@
     \def\acs{\scshape\toglnums}  % acronym series
     \def\act#1{\textsc{\toglnums#1}}  % acronym text
     
-    
     \AtBeginEnvironment{tabular}{\togunums}
     \AtBeginEnvironment{tabular*}{\togunums}
     \AtBeginEnvironment{tikzpicture}{\togunums}
     
     \def\cbp@secnumsize{\toglnums} % dont allow cpb to use smaller numbers in section
-    %\def\cbp@secnumsize{} % dont allow cpb to use smaller numbers in section
     \newcommand{\cbp@appendixletformat}[1]{\scshape\alph{#1}}
     \def\cbp@appendixsecformat{\scshape\MakeLowercase}
     
@@ -313,30 +310,27 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%            FontCMBotf            %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    %\usepackage{unicode-math}  ??
+    %%% adopted from: https://tex.stackexchange.com/a/358621/186406
+    % https://texdoc.org/serve/cm-unicode/0
+    % https://texdoc.org/serve/cmbright/0
+    
     \usepackage{fontspec}
     
-    \usepackage[T1]{fontenc}
-    \usepackage{cmbright} %for math only, will be overwritten. Had issues wit OTF for math?
+    \setsansfont{cmunb}[        %CMU Bright for text
+        Extension=.otf,
+        UprightFont=*mr,
+        ItalicFont=*mo,
+        BoldFont=*sr, % semibold  % swap bold with semibold
+        BoldItalicFont=*so, % semibold oblique
+        NFSSFamily=cmbr
+        ]
+    
+    \usepackage{cmbright}       %CMU Bright for math
     \gdef\bfdefault{sb}
-    \gdef\sbdefault{bx} % swap sb with bf
+    \gdef\sbdefault{bx}         % swap sb with bf
     
-    \setmainfont[
-      Ligatures = TeX,
-    %  Numbers = Uppercase,
-    %  Numbers = Lowercase,
-    %  Numbers = Oldstyle,
-      ItalicFont = CMU Bright Oblique,
-      BoldFont = CMU Bright SemiBold,
-      BoldItalicFont = CMU Bright SemiBold Oblique,
-    ]{CMU Bright}
-    \setmonofont[Numbers=Lining]{CMU Typewriter Text Light}
-    
-    
-    % https://tex.stackexchange.com/questions/204778/difficulty-finding-selecting-cm-bright-using-fontspec
-    % https://tex.stackexchange.com/questions/358418/using-cmbright-in-xelatex-for-math-and-text
-    % https://tex.stackexchange.com/questions/25293/replace-integral-sign-in-cmu-bright-with-iwona-while-keeping-proper-position-o
-    % https://tex.stackexchange.com/questions/572015/using-the-cmbright-package-in-a-limited-range-of-my-document
+    %\renewcommand{\ttdefault}{lmtt}  % has bold series, but the normal weight is a bit thicker
+    \setmonofont{CMU Typewriter Text Light} % monospace  % does not have bold but matches main font better
     
     \DeclareSymbolFont{iwonalargesymbols}{OMX}{iwona}{m}{n}
     \DeclareMathSymbol{\intop}{\mathop}{iwonalargesymbols}{"52}
@@ -361,13 +355,9 @@
     \def\act{}
     \def\actext#1{#1}
     
-    % why doesn't this work ???
-    %\usepackage{unicode-math}
-    %\setmathfont{CMU Bright}
-    %    \setmathfont[range=\mathup]{CMU Bright Roman}
-    %    \setmathfont[range=\mathbfup]{CMU Bright SemiBold}
-    %    \setmathfont[range=\mathbfit]{CMU Bright SemiBold}
-    %    \setmathfont[range=\mathit]{CMU Bright Oblique}
+    
+    
+    
     
     
     
@@ -386,15 +376,12 @@
     \selectfont
     }
     \newcommand{\textc}[1]{{\sm@ller\uppercase{#1}}}
-    
+    \newcommand{\sbfCMB}[1]{\textbf{\textit{#1}}}
     
     
     %\def\sbfCMB#1{\ThisStyle{\setbox0=\hbox{$\SavedStyle#1$}%
     %		#1\kern.2pt\kern-\wd0%
     %		\raisebox{.1pt}{$\SavedStyle#1$}}}
-    \newcommand{\sbfCMB}[1]{\textbf{\textit{#1}}}
-    
-
 
 }
 
@@ -402,32 +389,31 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%            MathSymbolsEtc            %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    % ##############################################
-    % Math related packages and settings
-    % ##############################################
-    
-    % rename to MathSciSymbols
-    
+    %%% References %%%%%
+    % siunitx: https://texdoc.org/serve/siunitx/0
+    % mathtools: https://texdoc.org/serve/mathtools/0
     
     \usepackage[fleqn,leqno]{mathtools} % NOTE: amsmath loaded before kpfonts for fleqn issue should load amsmath
-    \iftoggle{useSerif}{}{ % issue with kpfonts, I think it already loads it..
-    	\usepackage{amssymb}   % only load if not serif
-    }
+    \usepackage{bm}
     
-    %	\usepackage{gensymb} % bug in this package currently
+    %	\usepackage{gensymb} % bug in this package currently w/ kpfonts
     \usepackage{xfrac}
     \usepackage{amsfonts}  % math fonts and symbols
     
-    \renewcommand{\theequation}{\arabic{section}.\arabic{equation}}
+    \renewcommand{\theequation}{\arabic{chapter}.\arabic{equation}}
+    
     %\def\@cbp@mathline{\raisebox{0pt}[0pt][0pt]{\vline height 0.8em depth 0.6em width \arrayrulewidth}}
     %\renewcommand\tagform@[1]{\maketag@@@{\ignorespaces\makebox[6ex][l]{\@cbp@mathline\;\cbp@secnumsize#1\unskip\@@italiccorr\hfill}\hspace*{5ex}}}
     
     \def\@cbp@mathline{\raisebox{0pt}[0pt][0pt]{\vline height 0.8em depth 0.6em width \arrayrulewidth}}
     \renewcommand\tagform@[1]{\maketag@@@{\ignorespaces\makebox[6ex][r]{\ \hfill\cbp@secnumsize#1\;\@cbp@mathline\unskip\@@italiccorr\hspace*{2ex}}}}
     
+    %% for right side equation num
+    %\renewcommand\tagform@[1]{\maketag@@@{\ignorespaces\makebox[6ex][l]{\@cpb@mathline\;\cpb@secnumsize#1\unskip\@@italiccorr\hfill}\hspace*{5ex}}}
     
     
     \providecommand{\togunums}{}  % toggle to uppercase number shortcut
+    
     \usepackage[free-standing-units, % allow declared units usage outside of \qty and \unit
     	unit-optional-argument,  % allows declared units to have number after \kV[10]
     	detect-all=true, % allows italic/bold units
@@ -440,7 +426,11 @@
     	table-align-text-pre=false,
     ]{siunitx} % http://ctan.mirror.rafal.ca/macros/latex/contrib/siunitx/siunitx.pdf
     
-    
+    \iftoggle{useSerif}{}{
+    	\usepackage{amssymb}   % only load if not serif, had issues with kpfont-otf
+    %	\sisetup{math-micro=\text{µ},text-micro=µ}
+    %	\sisetup{math-micro=\text{\mu},text-micro=$\text{\mu}$}  % as per https://tex.stackexchange.com/questions/33965/siunitx-%C2%B5-doesnt-work
+    }
     
     
     
@@ -542,12 +532,17 @@
     \setlength\LongTabNoteSpace{-4.5ex}
     
     
-    \newcommand{\LongTableNotes}[2][\linewidth]{% todo might wanna fix this so it's more automatic
+    \newcommand{\LTnotes}[2][\linewidth]{% todo might wanna fix this so it's more automatic
         \vspace{\LongTabNoteSpace}% manually tested
         \parbox{#1}{\footnotesize #2}}
     
+    \NewCommandCopy\LongTableNotes\LTnotes
     
     \NewDocumentCommand{\LTcaption}{O{#2} m O{}}{{\WideFloatCaption\captionof{table}[#1]{#2}#3}}
+    
+    \AfterEndEnvironment{longtable}{\addtocounter{table}{-1}} % hack to fix LTX/longtable numbering issue, seems to increment by 1
+    
+    
     %% example longtable header
     %\NewDocumentCommand{\LTcontinues}{O{+}}{\MC[#1r]{\textsl{Table continues on next page\ldots}}}
     %\NewDocumentCommand{\LTcontinued}{O{+}}{\MC[#1l]{\textsl{\ldots Table continued from previous page}}\\}

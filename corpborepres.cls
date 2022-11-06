@@ -117,30 +117,27 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%            FontCMBotf            %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    %\usepackage{unicode-math}  ??
+    %%% adopted from: https://tex.stackexchange.com/a/358621/186406
+    % https://texdoc.org/serve/cm-unicode/0
+    % https://texdoc.org/serve/cmbright/0
+    
     \usepackage{fontspec}
     
-    \usepackage[T1]{fontenc}
-    \usepackage{cmbright} %for math only, will be overwritten. Had issues wit OTF for math?
+    \setsansfont{cmunb}[        %CMU Bright for text
+        Extension=.otf,
+        UprightFont=*mr,
+        ItalicFont=*mo,
+        BoldFont=*sr, % semibold  % swap bold with semibold
+        BoldItalicFont=*so, % semibold oblique
+        NFSSFamily=cmbr
+        ]
+    
+    \usepackage{cmbright}       %CMU Bright for math
     \gdef\bfdefault{sb}
-    \gdef\sbdefault{bx} % swap sb with bf
+    \gdef\sbdefault{bx}         % swap sb with bf
     
-    \setmainfont[
-      Ligatures = TeX,
-    %  Numbers = Uppercase,
-    %  Numbers = Lowercase,
-    %  Numbers = Oldstyle,
-      ItalicFont = CMU Bright Oblique,
-      BoldFont = CMU Bright SemiBold,
-      BoldItalicFont = CMU Bright SemiBold Oblique,
-    ]{CMU Bright}
-    \setmonofont[Numbers=Lining]{CMU Typewriter Text Light}
-    
-    
-    % https://tex.stackexchange.com/questions/204778/difficulty-finding-selecting-cm-bright-using-fontspec
-    % https://tex.stackexchange.com/questions/358418/using-cmbright-in-xelatex-for-math-and-text
-    % https://tex.stackexchange.com/questions/25293/replace-integral-sign-in-cmu-bright-with-iwona-while-keeping-proper-position-o
-    % https://tex.stackexchange.com/questions/572015/using-the-cmbright-package-in-a-limited-range-of-my-document
+    %\renewcommand{\ttdefault}{lmtt}  % has bold series, but the normal weight is a bit thicker
+    \setmonofont{CMU Typewriter Text Light} % monospace  % does not have bold but matches main font better
     
     \DeclareSymbolFont{iwonalargesymbols}{OMX}{iwona}{m}{n}
     \DeclareMathSymbol{\intop}{\mathop}{iwonalargesymbols}{"52}
@@ -165,13 +162,9 @@
     \def\act{}
     \def\actext#1{#1}
     
-    % why doesn't this work ???
-    %\usepackage{unicode-math}
-    %\setmathfont{CMU Bright}
-    %    \setmathfont[range=\mathup]{CMU Bright Roman}
-    %    \setmathfont[range=\mathbfup]{CMU Bright SemiBold}
-    %    \setmathfont[range=\mathbfit]{CMU Bright SemiBold}
-    %    \setmathfont[range=\mathit]{CMU Bright Oblique}
+    
+    
+    
     
     
     
@@ -190,45 +183,41 @@
     \selectfont
     }
     \newcommand{\textc}[1]{{\sm@ller\uppercase{#1}}}
-    
+    \newcommand{\sbfCMB}[1]{\textbf{\textit{#1}}}
     
     
     %\def\sbfCMB#1{\ThisStyle{\setbox0=\hbox{$\SavedStyle#1$}%
     %		#1\kern.2pt\kern-\wd0%
     %		\raisebox{.1pt}{$\SavedStyle#1$}}}
-    \newcommand{\sbfCMB}[1]{\textbf{\textit{#1}}}
-    
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%            MathSymbolsEtc            %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    % ##############################################
-    % Math related packages and settings
-    % ##############################################
-    
-    % rename to MathSciSymbols
-    
+    %%% References %%%%%
+    % siunitx: https://texdoc.org/serve/siunitx/0
+    % mathtools: https://texdoc.org/serve/mathtools/0
     
     \usepackage[fleqn,leqno]{mathtools} % NOTE: amsmath loaded before kpfonts for fleqn issue should load amsmath
-    \iftoggle{useSerif}{}{ % issue with kpfonts, I think it already loads it..
-    	\usepackage{amssymb}   % only load if not serif
-    }
+    \usepackage{bm}
     
-    %	\usepackage{gensymb} % bug in this package currently
+    %	\usepackage{gensymb} % bug in this package currently w/ kpfonts
     \usepackage{xfrac}
     \usepackage{amsfonts}  % math fonts and symbols
     
-    \renewcommand{\theequation}{\arabic{section}.\arabic{equation}}
+    \renewcommand{\theequation}{\arabic{chapter}.\arabic{equation}}
+    
     %\def\@cbp@mathline{\raisebox{0pt}[0pt][0pt]{\vline height 0.8em depth 0.6em width \arrayrulewidth}}
     %\renewcommand\tagform@[1]{\maketag@@@{\ignorespaces\makebox[6ex][l]{\@cbp@mathline\;\cbp@secnumsize#1\unskip\@@italiccorr\hfill}\hspace*{5ex}}}
     
     \def\@cbp@mathline{\raisebox{0pt}[0pt][0pt]{\vline height 0.8em depth 0.6em width \arrayrulewidth}}
     \renewcommand\tagform@[1]{\maketag@@@{\ignorespaces\makebox[6ex][r]{\ \hfill\cbp@secnumsize#1\;\@cbp@mathline\unskip\@@italiccorr\hspace*{2ex}}}}
     
+    %% for right side equation num
+    %\renewcommand\tagform@[1]{\maketag@@@{\ignorespaces\makebox[6ex][l]{\@cpb@mathline\;\cpb@secnumsize#1\unskip\@@italiccorr\hfill}\hspace*{5ex}}}
     
     
     \providecommand{\togunums}{}  % toggle to uppercase number shortcut
+    
     \usepackage[free-standing-units, % allow declared units usage outside of \qty and \unit
     	unit-optional-argument,  % allows declared units to have number after \kV[10]
     	detect-all=true, % allows italic/bold units
@@ -241,7 +230,11 @@
     	table-align-text-pre=false,
     ]{siunitx} % http://ctan.mirror.rafal.ca/macros/latex/contrib/siunitx/siunitx.pdf
     
-    
+    \iftoggle{useSerif}{}{
+    	\usepackage{amssymb}   % only load if not serif, had issues with kpfont-otf
+    %	\sisetup{math-micro=\text{µ},text-micro=µ}
+    %	\sisetup{math-micro=\text{\mu},text-micro=$\text{\mu}$}  % as per https://tex.stackexchange.com/questions/33965/siunitx-%C2%B5-doesnt-work
+    }
     
     
     
@@ -493,12 +486,17 @@
     \setlength\LongTabNoteSpace{-4.5ex}
     
     
-    \newcommand{\LongTableNotes}[2][\linewidth]{% todo might wanna fix this so it's more automatic
+    \newcommand{\LTnotes}[2][\linewidth]{% todo might wanna fix this so it's more automatic
         \vspace{\LongTabNoteSpace}% manually tested
         \parbox{#1}{\footnotesize #2}}
     
+    \NewCommandCopy\LongTableNotes\LTnotes
     
     \NewDocumentCommand{\LTcaption}{O{#2} m O{}}{{\WideFloatCaption\captionof{table}[#1]{#2}#3}}
+    
+    \AfterEndEnvironment{longtable}{\addtocounter{table}{-1}} % hack to fix LTX/longtable numbering issue, seems to increment by 1
+    
+    
     %% example longtable header
     %\NewDocumentCommand{\LTcontinues}{O{+}}{\MC[#1r]{\textsl{Table continues on next page\ldots}}}
     %\NewDocumentCommand{\LTcontinued}{O{+}}{\MC[#1l]{\textsl{\ldots Table continued from previous page}}\\}
@@ -950,22 +948,25 @@
     
     
     
-    %%% acrnonym and gloassaries stuff
+    %%% Glossaries / index / symbol %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
-    \usepackage[xindy,acronym]{glossaries-extra}
+    \usepackage[xindy,acronym,index,symbols,
+    nohypertypes={acronym,index,symbols},
+    ]{glossaries-extra}
     %,nonumberlist <<< dont use as custom styles are made
     % toc <<< dont use ToC option as manually entered
     
     \renewcommand{\glossarysection}[2][]{} % remove glossary section heading entirely, requires manual but more flexible
     
     
-    \newglossary[ilg]{index}{ind}{idx}{\indexname}
-    %\newglossary[ilg]{index}{ind}{idx}{\indexname}
-    
-    
     % https://tex.stackexchange.com/questions/269565/glossaries-how-to-customize-list-of-symbols-with-additional-column-for-units
-    % todo make symbols glossary OR just print a simple table with an excel macro, might be easiest
-    \newglossary[slg]{symbols}{syi}{syg}{Symbolslist} % create add. symbolslist
+    %%% todo make symbols glossary OR just print a simple table with an excel macro, might be easiest
+    %\newglossary[slg]{symbols}{syi}{syg}{Symbolslist} % create add. symbolslist
+    
+    %\newglossary[ilg]{index}{ind}{idx}{\indexname}
+    % make a command
+    % \gls, \ac,  \idx
+    
     
     
     
@@ -976,10 +977,9 @@
     \setabbreviationstyle[acronym]{long-short}
     
     %\glsenableentrycount % enable \cgls, \cglspl, \cGls, \cGlspl  supposed to not show accronym if only one
-    \glsdisablehyper  % to disable hyperlinks
+    %\glsdisablehyper  % to disable hyperlinks
+    
     \glstoctrue  % ToC
-    
-    
     
     
     
@@ -989,13 +989,13 @@
     \newglossarystyle{AcronymsTwoCol}{%
     	\renewcommand*{\glossaryheader}{}%
     	\renewcommand*{\glsgroupheading}[1]{}%
-    	\renewcommand*{\glossarysubentryfield}[6]{glssubentryitem{##2}{\strut\glstarget{##2}##4\glspostdescription\space ##6}}%
+    	\newcommand*{\glossarysubentryfield}[6]{glssubentryitem{##2}{\strut\glstarget{##2}##4\glspostdescription\space ##6}}% caused error on update 2022 11 03
     	\renewcommand*{\glsgroupskip}{\vspace{7pt}}% space between alphabetized groups
     	\renewenvironment{theglossary}%
     		{\vspace*{1ex}\setlength{\columnsep}{30pt}\begin{multicols}{2}%
     		\begin{description}[font=\bfseries,leftmargin=1.7cm,style=multiline,itemsep=3pt]\raggedright}%
     		{\end{description}\end{multicols}}%
-    	\renewcommand*{\glossaryentryfield}[5]{%
+    	\newcommand*{\glossaryentryfield}[5]{%
     		\item[{\normalfont\bfseries\glsentryitem{##1}\glstarget{##1}{##2}}]{##3\glspostdescription}  % \space ##5 after postdescription (page numbers) are removed
     		}%
     }
@@ -1005,13 +1005,13 @@
     \newglossarystyle{GlossList}{%
     	\renewcommand*{\glossaryheader}{}%
     	\renewcommand*{\glsgroupheading}[1]{}%
-    	\renewcommand*{\glossarysubentryfield}[6]{glssubentryitem{##2}{\strut\glstarget{##2}##4\glspostdescription\space ##6}}%
+    	\newcommand*{\glossarysubentryfield}[6]{glssubentryitem{##2}{\strut\glstarget{##2}##4\glspostdescription\space ##6}}% caused error on update 2022 11 03
     	\renewcommand*{\glsgroupskip}{\vspace{7pt}}% space between alphabetized groups
     	\renewenvironment{theglossary}%
     		{\vspace*{1ex}%
     		\begin{description}[font=\bfseries,leftmargin=2.7cm,style=multiline,itemsep=3pt]\raggedright}%
     		{\end{description}}%
-    	\renewcommand*{\glossaryentryfield}[5]{%
+    	\newcommand*{\glossaryentryfield}[5]{%
     		\item[{\normalfont\bfseries\glsentryitem{##1}\glstarget{##1}{##2}}]{##3\glspostdescription} % \space ##5 argument 5, page numbers, are removed
     		}%
     }
@@ -1044,6 +1044,11 @@
     %				{\textsc{\MakeLowercase{\gls*{#1}}}}
         }%
     }%
+    
+    % todo :    add prefix on acronym ac.cnn, on index like idx.cnn, and on symbols like sym.X
+    % then use a \ac \idx \sym that calls \ac = \gls{ac.#1}  \Idx = \Gls{idx.#1}  etc. etc.
+    %
+    %
     
     
     %add tool tip to acronyms

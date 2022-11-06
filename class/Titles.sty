@@ -57,7 +57,8 @@
 \providetoggle{samepgTitle}
 %%% title pages
 
-\gdef\cbp@tpPage{\thispagestyle{empty}
+\gdef\cbp@tpPage{
+\begin{titlepage}\thispagestyle{empty}
 	\rule{\heavyrulewidth}{7.4in} % Vertical line
 	\hspace{0.5in} % Whitespace between the vertical line and title page text
 	\begin{minipage}[b][7.4in][s]{4.4in}
@@ -94,7 +95,8 @@
 
 		\null\vfill\null\vfill
 \end{minipage}
-\cleardoubleoddpage
+\end{titlepage}
+ \if@twoside\cleardoublepage \else \clearpage \fi
 }
 
 

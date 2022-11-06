@@ -27,22 +27,25 @@
 
 
 
-%%% acrnonym and gloassaries stuff
+%%% Glossaries / index / symbol %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\usepackage[xindy,acronym]{glossaries-extra}
+\usepackage[xindy,acronym,index,symbols,
+nohypertypes={acronym,index,symbols},
+]{glossaries-extra}
 %,nonumberlist <<< dont use as custom styles are made
 % toc <<< dont use ToC option as manually entered
 
 \renewcommand{\glossarysection}[2][]{} % remove glossary section heading entirely, requires manual but more flexible
 
 
-\newglossary[ilg]{index}{ind}{idx}{\indexname}
-%\newglossary[ilg]{index}{ind}{idx}{\indexname}
-
-
 % https://tex.stackexchange.com/questions/269565/glossaries-how-to-customize-list-of-symbols-with-additional-column-for-units
-% todo make symbols glossary OR just print a simple table with an excel macro, might be easiest
-\newglossary[slg]{symbols}{syi}{syg}{Symbolslist} % create add. symbolslist
+%%% todo make symbols glossary OR just print a simple table with an excel macro, might be easiest
+%\newglossary[slg]{symbols}{syi}{syg}{Symbolslist} % create add. symbolslist
+
+%\newglossary[ilg]{index}{ind}{idx}{\indexname}
+% make a command
+% \gls, \ac,  \idx
+
 
 
 
@@ -53,10 +56,9 @@
 \setabbreviationstyle[acronym]{long-short}
 
 %\glsenableentrycount % enable \cgls, \cglspl, \cGls, \cGlspl  supposed to not show accronym if only one
-\glsdisablehyper  % to disable hyperlinks
+%\glsdisablehyper  % to disable hyperlinks
+
 \glstoctrue  % ToC
-
-
 
 
 
@@ -66,13 +68,13 @@
 \newglossarystyle{AcronymsTwoCol}{%
 	\renewcommand*{\glossaryheader}{}%
 	\renewcommand*{\glsgroupheading}[1]{}%
-	\renewcommand*{\glossarysubentryfield}[6]{glssubentryitem{##2}{\strut\glstarget{##2}##4\glspostdescription\space ##6}}%
+	\newcommand*{\glossarysubentryfield}[6]{glssubentryitem{##2}{\strut\glstarget{##2}##4\glspostdescription\space ##6}}% caused error on update 2022 11 03
 	\renewcommand*{\glsgroupskip}{\vspace{7pt}}% space between alphabetized groups
 	\renewenvironment{theglossary}%
 		{\vspace*{1ex}\setlength{\columnsep}{30pt}\begin{multicols}{2}%
 		\begin{description}[font=\bfseries,leftmargin=1.7cm,style=multiline,itemsep=3pt]\raggedright}%
 		{\end{description}\end{multicols}}%
-	\renewcommand*{\glossaryentryfield}[5]{%
+	\newcommand*{\glossaryentryfield}[5]{%
 		\item[{\normalfont\bfseries\glsentryitem{##1}\glstarget{##1}{##2}}]{##3\glspostdescription}  % \space ##5 after postdescription (page numbers) are removed
 		}%
 }
@@ -82,13 +84,13 @@
 \newglossarystyle{GlossList}{%
 	\renewcommand*{\glossaryheader}{}%
 	\renewcommand*{\glsgroupheading}[1]{}%
-	\renewcommand*{\glossarysubentryfield}[6]{glssubentryitem{##2}{\strut\glstarget{##2}##4\glspostdescription\space ##6}}%
+	\newcommand*{\glossarysubentryfield}[6]{glssubentryitem{##2}{\strut\glstarget{##2}##4\glspostdescription\space ##6}}% caused error on update 2022 11 03
 	\renewcommand*{\glsgroupskip}{\vspace{7pt}}% space between alphabetized groups
 	\renewenvironment{theglossary}%
 		{\vspace*{1ex}%
 		\begin{description}[font=\bfseries,leftmargin=2.7cm,style=multiline,itemsep=3pt]\raggedright}%
 		{\end{description}}%
-	\renewcommand*{\glossaryentryfield}[5]{%
+	\newcommand*{\glossaryentryfield}[5]{%
 		\item[{\normalfont\bfseries\glsentryitem{##1}\glstarget{##1}{##2}}]{##3\glspostdescription} % \space ##5 argument 5, page numbers, are removed
 		}%
 }
@@ -121,6 +123,11 @@
 %				{\textsc{\MakeLowercase{\gls*{#1}}}}
     }%
 }%
+
+% todo :    add prefix on acronym ac.cnn, on index like idx.cnn, and on symbols like sym.X
+% then use a \ac \idx \sym that calls \ac = \gls{ac.#1}  \Idx = \Gls{idx.#1}  etc. etc.
+%
+%
 
 
 %add tool tip to acronyms

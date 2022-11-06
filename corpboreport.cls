@@ -4,7 +4,6 @@
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesClass{corpboreport}[2022-10-28]
 
-
 \PassOptionsToClass{%
       11pt,
       letterpaper,
@@ -17,36 +16,16 @@
       fleqn,
       leqno,
       numbers=noenddot
-}{scrbook}
+      titlepage=firstiscover,
+}{scrbook}  % default options for basepass
 
-
-\DeclareOption*{\PassOptionsToClass{\CurrentOption}{scrbook}} %% pass class options to scrbook
+\DeclareOption*{\PassOptionsToClass{\CurrentOption}{scrbook}} %% pass cbp class options to scrbook
 \ProcessOptions\relax
 
-\LoadClass{scrbook}
-
-%\RequirePackage{luacode}
-%\begin{luacode*}
-%      texio.write_nl('>>>>>>>'..token.get_macro('@classoptionslist'))
-%\end{luacode*}
-%\LoadClass[ %% Document Class
-%      11pt,
-%      letterpaper,
-%      twoside=false,
-%      hidelinks,
-%      parskip=half,
-%      bibliography=totoc,
-%      open=right,%
-%      chapterprefix=false,
-%      fleqn,
-%      leqno,
-%      numbers=noenddot
-%]{scrbook}
-%%%listof=totoc,% for list of figures, tables
-
+\LoadClass{scrbook} % load the base case  % https://texdoc.org/serve/scrbook/0
 
 %%% additional class options: (memo|compact|thesis) &| serif
-\RequirePackage{etoolbox}
+\RequirePackage{etoolbox}  % https://texdoc.org/serve/etoolbox/0
 \newtoggle{useMemo}
 \newtoggle{useSerif}
 \gdef\TitleLogoPlaceDefault{tl}
@@ -360,16 +339,15 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%            FontKPotf            %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    %\usepackage[onlyrm,light,oldstylenums]{kpfonts-otf} % the light is also decent, could consider
-    \usepackage[onlyrm,light]{kpfonts-otf} % the light is also decent, could consider
-    \setsansfont{CMU Bright} % monospace that looks nice with light kpfont
+    \usepackage[onlyrm,light]{kpfonts-otf}  % https://texdoc.org/serve/kpfonts-otf/0
+    \setsansfont[Scale=MatchLowercase]{CMU Bright} % monospace that looks nice with light kpfont
     \setmonofont[Numbers=Lining]{CMU Typewriter Text Light} % monospace that looks nice with light kpfont
     
     \usepackage[activate=true,% this package makes the font look nicer
         final,%
         tracking=true,%
-    %	kerning=true, % only works with pdftex
     ]{microtype}
+    %	kerning=true, % only works with pdftex
     \SetTracking{encoding=*, shape=sc}{18}  % adjust small caps letter spacing
     
     
@@ -388,13 +366,11 @@
     \def\acs{\scshape\toglnums}  % acronym series
     \def\act#1{\textsc{\toglnums#1}}  % acronym text
     
-    
     \AtBeginEnvironment{tabular}{\togunums}
     \AtBeginEnvironment{tabular*}{\togunums}
     \AtBeginEnvironment{tikzpicture}{\togunums}
     
     \def\cbp@secnumsize{\toglnums} % dont allow cpb to use smaller numbers in section
-    %\def\cbp@secnumsize{} % dont allow cpb to use smaller numbers in section
     \newcommand{\cbp@appendixletformat}[1]{\scshape\alph{#1}}
     \def\cbp@appendixsecformat{\scshape\MakeLowercase}
     
@@ -408,30 +384,27 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%            FontCMBotf            %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    %\usepackage{unicode-math}  ??
+    %%% adopted from: https://tex.stackexchange.com/a/358621/186406
+    % https://texdoc.org/serve/cm-unicode/0
+    % https://texdoc.org/serve/cmbright/0
+    
     \usepackage{fontspec}
     
-    \usepackage[T1]{fontenc}
-    \usepackage{cmbright} %for math only, will be overwritten. Had issues wit OTF for math?
+    \setsansfont{cmunb}[        %CMU Bright for text
+        Extension=.otf,
+        UprightFont=*mr,
+        ItalicFont=*mo,
+        BoldFont=*sr, % semibold  % swap bold with semibold
+        BoldItalicFont=*so, % semibold oblique
+        NFSSFamily=cmbr
+        ]
+    
+    \usepackage{cmbright}       %CMU Bright for math
     \gdef\bfdefault{sb}
-    \gdef\sbdefault{bx} % swap sb with bf
+    \gdef\sbdefault{bx}         % swap sb with bf
     
-    \setmainfont[
-      Ligatures = TeX,
-    %  Numbers = Uppercase,
-    %  Numbers = Lowercase,
-    %  Numbers = Oldstyle,
-      ItalicFont = CMU Bright Oblique,
-      BoldFont = CMU Bright SemiBold,
-      BoldItalicFont = CMU Bright SemiBold Oblique,
-    ]{CMU Bright}
-    \setmonofont[Numbers=Lining]{CMU Typewriter Text Light}
-    
-    
-    % https://tex.stackexchange.com/questions/204778/difficulty-finding-selecting-cm-bright-using-fontspec
-    % https://tex.stackexchange.com/questions/358418/using-cmbright-in-xelatex-for-math-and-text
-    % https://tex.stackexchange.com/questions/25293/replace-integral-sign-in-cmu-bright-with-iwona-while-keeping-proper-position-o
-    % https://tex.stackexchange.com/questions/572015/using-the-cmbright-package-in-a-limited-range-of-my-document
+    %\renewcommand{\ttdefault}{lmtt}  % has bold series, but the normal weight is a bit thicker
+    \setmonofont{CMU Typewriter Text Light} % monospace  % does not have bold but matches main font better
     
     \DeclareSymbolFont{iwonalargesymbols}{OMX}{iwona}{m}{n}
     \DeclareMathSymbol{\intop}{\mathop}{iwonalargesymbols}{"52}
@@ -456,13 +429,9 @@
     \def\act{}
     \def\actext#1{#1}
     
-    % why doesn't this work ???
-    %\usepackage{unicode-math}
-    %\setmathfont{CMU Bright}
-    %    \setmathfont[range=\mathup]{CMU Bright Roman}
-    %    \setmathfont[range=\mathbfup]{CMU Bright SemiBold}
-    %    \setmathfont[range=\mathbfit]{CMU Bright SemiBold}
-    %    \setmathfont[range=\mathit]{CMU Bright Oblique}
+    
+    
+    
     
     
     
@@ -481,15 +450,12 @@
     \selectfont
     }
     \newcommand{\textc}[1]{{\sm@ller\uppercase{#1}}}
-    
+    \newcommand{\sbfCMB}[1]{\textbf{\textit{#1}}}
     
     
     %\def\sbfCMB#1{\ThisStyle{\setbox0=\hbox{$\SavedStyle#1$}%
     %		#1\kern.2pt\kern-\wd0%
     %		\raisebox{.1pt}{$\SavedStyle#1$}}}
-    \newcommand{\sbfCMB}[1]{\textbf{\textit{#1}}}
-    
-
 }
 
 
@@ -575,8 +541,11 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%            SectionsToC            %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    \RequirePackage{etoolbox}
+    %%% References %%%%%
+    % KOMA-Script: https://texdoc.org/serve/scrbook/0
+    \RequirePackage{etoolbox} % https://texdoc.org/serve/etoolbox/0
     \RequirePackage{chngcntr}
+    \RequirePackage{needspace} % https://texdoc.org/serve/needspace/0
     
     
     %%% Header %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -591,16 +560,22 @@
     \providecommand{\cbp@secnumsize}{\smaller}
     
     
-    \RequirePackage{needspace}
-    \newlength{\chapneedspace}      \setlength{\chapneedspace}{12\baselineskip}
-    \newlength{\secneedspace}       \setlength{\secneedspace}{8\baselineskip}
-    \newlength{\subsecneedspace}    \setlength{\subsecneedspace}{6\baselineskip}
-    \newlength{\subsubsecneedspace} \setlength{\subsubsecneedspace}{4\baselineskip}
+    \newlength{\cbp@chapTopSep}        \setlength{\cbp@chapTopSep}{0.2em}
+    \newlength{\cbp@chapTopSepXtra}    \setlength{\cbp@chapTopSepXtra}{5em}
+    \newlength{\cbp@chapBtwnSep}       \setlength{\cbp@chapBtwnSep}{2.5em}
+    
+    
+    \pretocmd{\section}{\needspace{2em}}{}{}
+    \pretocmd{\subsection}{\needspace{1em}}{}{}
+    \pretocmd{\subsubsection}{\needspace{0.5em}}{}{}
+    \pretocmd{\paragraph}{\needspace{0.5em}}{}{}
     
     
     \setkomafont{disposition}{\normalfont\bfseries} % section preference
     
     \def\FancyChapters{
+      \global\setlength{\cbp@chapTopSep}{0.2em}
+      \RedeclareSectionCommand[afterskip=16pt]{chapter}
       \addtokomafont{chapterprefix}{}
       \renewcommand*{\chapterformat}{%
       \mbox{\scalebox{3}{\raggedleft\color{chapCol}\toglnums\thechapter\autodot}}}
@@ -613,7 +588,8 @@
     %\FancyChapters
     
     \def\SimpleChapters{
-      \gdef\chapterheadstartvskip{\vspace*{1em}}
+      \global\setlength{\cbp@chapTopSep}{0.2em}
+      \RedeclareSectionCommand[afterskip=8pt]{chapter}
       \addtokomafont{chapterprefix}{\raggedright\cbp@secnumsize}
       \renewcommand*{\chapterformat}{\mbox{\thechapter\autodot\enskip}}  % https://tex.stackexchange.com/questions/25030/chapter-number-and-chapter-title-in-one-line
       \renewcommand\chapterlinesformat[3]{%
@@ -624,20 +600,7 @@
     
     \SimpleChapters
     
-    %\newcommand{\ShowChapterPrefix}{
-    %  \renewcommand*{\chapterformat}{%
-    %  \color{brown}%
-    %  \mbox{\raisebox{5ex}{\normalsize
-    %  \chapappifchapterprefix
-    %  {\nobreakspace}}%
-    %  \scalebox{3}{\thechapter\autodot}\enskip}}
-    %}%
-    
-    %\newcommand{\HideChapterPrefix}{
-    %\renewcommand*{\chapterformat}{%
-    %\color{brown}%
-    %\mbox{\scalebox{3}{\thechapter\autodot}\enskip}}}%
-    %\HideChapterPrefix
+    \gdef\chapterheadstartvskip{\vspace*{\cbp@chapTopSep}}
     
     
     % Hanging section, % NUMBERS IN LEFT MARGIN
@@ -649,27 +612,16 @@
     	\makebox[0pt][r]{\cbp@secnumsize#3\hspace{1pt}}#4%
     }
     
-    
     \addtokomafont{chapter}{\color{chapCol}\LARGE}
     \addtokomafont{section}{\color{secCol}\Large}
     \addtokomafont{subsection}{\color{subsecCol}\large}
     \addtokomafont{subsubsection}{\color{subsubsecCol}\normalsize}
     \addtokomafont{paragraph}{\color{parCol}}
     
-    
-    
     %%% ToC Related %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     \setcounter{tocdepth}{1} %%% TOC Depth down to sections
     
-    \newlength{\ToCsecskip}\setlength{\ToCsecskip}{0.75em}
-    \newlength{\ToCextrabottomroom}\setlength{\ToCextrabottomroom}{0.0em}
-    \newlength{\pullToCcloser}\setlength{\pullToCcloser}{-12pt}
-    \newlength{\moreToCbottom}\setlength{\moreToCbottom}{2em}
-    
-    \def\tighterToCchap{\addtocontents{toc}{\vspace*{-1.3ex}}}
-    \newlength{\ToCrightmargin}\setlength{\ToCrightmargin}{0in}
-    
-    \newcommand\tocmainfont[1]{{\cbp@secnumsize #1}}
+    \newcommand\tocmainfont[1]{{\cbp@secnumsize{}#1}}
     
     \providetoggle{showListOfFigsTabs}
     \providetoggle{samepgListOfFigsTabs}
@@ -677,13 +629,22 @@
     \renewcaptionname{english}{\listtablename}{Tables}
     \renewcaptionname{english}{\listfigurename}{Figures}
     
-    
     \newcommand{\secwiselabelnums}{
       \counterwithin{figure}{chapter}
       \counterwithin{table}{chapter}
-    %  \counterwithin{lstlisting}{section} % todo fix this
+    %  \counterwithin{lstlisting}{chapter} %%% done automatically
     }
-    \secwiselabelnums
+    
+    \newcommand{\notsecwiselabelnums}{
+      \counterwithout{figure}{chapter}
+      \counterwithout{table}{chapter}
+    %  \counterwithout{listing}{chapter}
+      \gdef\thefigure{\arabic{figure}}
+      \gdef\thetable{\arabic{table}}
+      \gdef\autodot{}  %% for some reason this gets reset when above is used, force-hide autodot cause I don't like em
+    %  \gdef\thelsting{\arabic{listing}}
+    }
+    
     
     \countdef\diamondcounter=255
     \def\diamondleaders{\global\advance\diamondcounter by 1
@@ -704,21 +665,20 @@
     indent=-5ex,
     numwidth=5ex,
     entryformat=\normalsize,
-    entrynumberformat=\cbp@secnumsize,
+    entrynumberformat=\cbp@chapterToCentryformat,
     ]{tocline}{figure,table,lstlisting}
     
     
     
     %%% Major section formatting %%%%%%%%%%%%%%%%%%%%
     
+    \newlength{\ToCchapskip}\setlength{\ToCchapskip}{1em}  % allow user to change in document easily
     
     \RedeclareSectionCommand[
-    %beforeskip=1.2em plus 4pt minus 2pt,  % done below..
-    afterskip=6pt,
     tocbeforeskip=1.2em plus 0.2em minus 1pt,
     tocindent=-4ex,
     tocnumwidth=4ex,
-    tocbeforeskip=16pt,
+    tocbeforeskip=\ToCchapskip,
     toclinefill=\diamondleaders,
     tocentryformat=\large\bfseries,
     tocentrynumberformat=\cbp@chapterToCentryformat,
@@ -726,7 +686,7 @@
     ]{chapter}
     
     \RedeclareSectionCommand[
-    beforeskip=0.8em plus 3pt minus 1pt,  % negative will suppress first indent
+    beforeskip=1.1em plus 3pt minus 1pt,  % negative will suppress first indent
     afterskip=3pt,
     tocbeforeskip=2pt,
     tocindent=0.5ex,
@@ -738,7 +698,7 @@
     ]{section}
     
     \RedeclareSectionCommand[
-    beforeskip=0.6em plus 2pt minus 2pt,
+    beforeskip=0.8em plus 2pt minus 2pt,
     afterskip=0.01mm,%\baselineskip,
     tocindent=6.5ex,
     tocnumwidth=6ex,
@@ -748,7 +708,7 @@
     ]{subsection}
     
     \RedeclareSectionCommand[
-    beforeskip=0.3em plus 2pt minus 2pt,
+    beforeskip=0.4em plus 2pt minus 2pt,
     afterskip=0.01mm,
     runin=false,  % text on same line
     tocindent=6ex,
@@ -770,42 +730,54 @@
     
     \NewDocumentCommand{\vspaceT}{m}{\vspace{-#1} \vspace*{#1}}
     
-    \def\cbp@largechapspace{\RedeclareSectionCommand[beforeskip=2.4em plus 3pt minus 1pt]{chapter}}
-    \def\cbp@normalchapspace{\RedeclareSectionCommand[beforeskip=1.6em plus 4pt minus 2pt]{chapter}}
-    \def\cbp@zerochapspace{\RedeclareSectionCommand[beforeskip=0.0ex]{chapter}}
-    %\NewDocumentCommand{\cbp@samepgchapspace}{}{{\vspace{2\baselineskip} \vspaceT{3\baselineskip}}} %% space on top / space in between
-    \NewDocumentCommand{\cbp@samepgchapspace}{}{\vspace{1.2em}} %% space on top / space in between
-    \cbp@normalchapspace
-    
     
     
     % front matter chapter (acknowledgements or abstract), extra spacing, not in ToC
-    \newcommand{\chapterF}[1]{\cbp@largechapspace
+    \NewDocumentCommand{\chapterF}{m}{
+      \gdef\chapterheadstartvskip{\vspace*{\cbp@chapTopSepXtra}}  % extra top sep of chapter
       \pdfbookmark[0]{#1}{Label#1PDF}%
       \chapter*{#1}%
-      \cbp@normalchapspace}
+      \gdef\chapterheadstartvskip{\vspace*{\cbp@chapTopSep}}  % restore top sep of chapter
+    }
     
-    
-    \NewDocumentCommand{\chapterM}{ t- m }{% chapter Matter (front or back), ToC and pdf bookmark but no number
+    \NewDocumentCommand{\chapterM}{ t- m }{% chapter Matter (front or back), ToC and pdf bookmark but no number. Use - to reduce ToC clearance
       \IfBooleanT{#1}{\addtocontents{toc}{\vspace*{-1.3ex}}}
       \chapter*{#2}
       \addtocentrydefault{chapter}{\phantom{.}}{#2}{}
-      \chaptermark{#2}}
+      \chaptermark{#2}
+    }
+    
     
     \def\frontmatter{
       \pdfbookmark[-1]{Front-Matter}{LabelFMPDF}
-      \pdfbookmark[0]{Title}{LabelTitlePDF}}
+      \pdfbookmark[0]{Title}{LabelTitlePDF}
+    }
     
+    
+    %%% ToC tweaking / high level command
+    \newlength{\ToCextrabottomroom}\setlength{\ToCextrabottomroom}{0.0em}
+    \newlength{\pullToCcloser}\setlength{\pullToCcloser}{0pt}
+    \newlength{\ToCrightmargin}\setlength{\ToCrightmargin}{0in}
+    \def\tighterToCchap{\addtocontents{toc}{\vspace*{-1.3ex}}}
+    
+    \AfterTOCHead[lot]{\vspace*{-1.5em}} % hack to fix extra space under LoT.. investigate why..
     
     \NewDocumentCommand{\addcontentslists}{O{0in}}{
+      %  todo make a kv interface
+      % lists= cf*t*l   < star allows on same page
+      % depth= 1
+      % rightmarg= 1in
+      % bottom= 1in   < extra room on bottom
+      %  chapsep = 0.75 em   < extra room between
       \global\setlength{\ToCrightmargin}{#1}
+    
+    %  \addtocontents{toc}{\protect\enlargethispage{\ToCextrabottomroom}} % enlarge toc page if needed
       
       \pdfbookmark[0]{Contents}{LabelContentsPDF}
-    %  \addtocontents{toc}{\protect\enlargethispage{\ToCextrabottomroom}} % enlarge toc page if needed
-      \begin{addmargin}[0pt]{\ToCrightmargin}
-    %    \thispagestyle{\chapterpagestyle}
+      \begin{addmargin}[0pt]{\ToCrightmargin}  % todo add space if defined.. but not yet
+    %    \ifdimcomp{|\ToCextrabottomroom|}{>}{0.1pt}{\addtocontents{toc}{\protect\enlargethispage{\ToCextrabottomroom}}}{} % enlarge toc page if needed
         \tableofcontents
-    %    \thispagestyle{\chapterpagestyle}
+    %    \ifdimcomp{|\pullToCcloser|}{>}{0.1pt}{\addtocontents{toc}{\protect\enlargethispage{addtocontents{toc}{\vspace*{\pullToCcloser}}}{}% pull ToC closer to Contents section head if needed
       \end{addmargin}
       \chaptermark{Contents}
     
@@ -855,8 +827,8 @@
       \pdfbookmark[-1]{Appendix}{LabelAppendicesPDF}
     	%
     	\originalappendix
-    	% NOTE you cannot use the alphabetized subsections anymore like you can with corpboreport, shouldn't be an issue
-    	%
+      \crefalias{chapter}{appsec}
+      
       \iftoggle{useSerif}{
     	  \def\thechapter{{\scshape\alph{chapter}}}
     	  \def\theHchapter{{\scshape\alph{chapter}}}
@@ -864,45 +836,50 @@
     %    \def\thesection{\Alph{section}}
     %    \def\theHsection{\Alph{section}}
       }
-    
-    	\crefalias{chapter}{appsec}
-    	
       \iftoggle{AppendixPage}{
-          \cbp@largechapspace   %
-          \chapter*{Appendix}
-          \cbp@normalchapspace  %
-           \ \ \clearpage
+        \gdef\chapterheadstartvskip{\vspace*{\cbp@chapTopSepXtra}}  % extra top sep of chapter
+        \chapter*{Appendix}
+        \gdef\chapterheadstartvskip{\vspace*{\cbp@chapTopSep}}  % restore top sep of chapter
+        \ \ \clearpage
       }{}
-      
       
       \iftoggle{SimpleChaps}{
     	\renewcommand\chapterformat{{\appendixname~\thechapter\autodot}}
        \renewcommand\chapterlinesformat[3]{%
-        ##2\\##3}%
-      % % todo need to fix
+        \ifblank{##2}{}{##2\\}##3}% only if chapter has a number
+      % % todo need to fix?
       %	\renewcommand\sectionlinesformat[4]{%
     %		\ifstr{##1}{section}
     %		{\clearpage\vspace*{\sectprespacelength}##3\\*##4}% appendix sections on new page
     %		{\makebox[0pt][r]{\cbp@secnumsize##3}{##4}}% subsections etc.
     %	}%
       }{}
-    
-    
     }
-    
-    
-    \def\cbp@FirstPagePlain{\gdef\chapterpagestyle{plain}\thispagestyle{plain}\afterpage{\gdef\chapterpagestyle{scrheadings}}}
-    
-    
-    
     
     
     %%% to allow same page chapters
     \patchcmd{\scr@startchapter}{\if@openright\cleardoublepage\else\clearpage\fi}{%
-      \iftoggle{ChapOnSamePage}{\cbp@samepgchapspace}{\if@openright\cleardoublepage\else\clearpage\fi}%
+      \iftoggle{ChapOnSamePage}{\needspace{4em}\vspace{\cbp@chapBtwnSep}}{\if@openright\cleardoublepage\else\clearpage\fi}%
     }{}{}
     
     \def\NextChapOnSamePage{\toggletrue{ChapOnSamePage}\afterpage{\global\togglefalse{ChapOnSamePage}}}
+    
+    % a command used for memo / compact style
+    \def\cbp@FirstPagePlain{\gdef\chapterpagestyle{plain}\thispagestyle{plain}\afterpage{\gdef\chapterpagestyle{scrheadings}}}
+    
+    \def\noSectionNumbers{%
+      \setcounter{secnumdepth}{-\maxdimen}\notsecwiselabelnums
+      \RedeclareSectionCommand[tocindent=0ex,tocnumwidth=0ex]{chapter}
+    }  % remove sec num
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     
     
@@ -933,6 +910,23 @@
     %  style=section,
     %  indent=0pt
     %  ]{chapter}
+    
+    
+    %\newcommand{\ShowChapterPrefix}{
+    %  \renewcommand*{\chapterformat}{%
+    %  \color{brown}%
+    %  \mbox{\raisebox{5ex}{\normalsize
+    %  \chapappifchapterprefix
+    %  {\nobreakspace}}%
+    %  \scalebox{3}{\thechapter\autodot}\enskip}}
+    %}%
+    
+    %\newcommand{\HideChapterPrefix}{
+    %\renewcommand*{\chapterformat}{%
+    %\color{brown}%
+    %\mbox{\scalebox{3}{\thechapter\autodot}\enskip}}}%
+    %\HideChapterPrefix
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%            PageNumberInMargin            %%%
@@ -1061,32 +1055,31 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%            MathSymbolsEtc            %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    % ##############################################
-    % Math related packages and settings
-    % ##############################################
-    
-    % rename to MathSciSymbols
-    
+    %%% References %%%%%
+    % siunitx: https://texdoc.org/serve/siunitx/0
+    % mathtools: https://texdoc.org/serve/mathtools/0
     
     \usepackage[fleqn,leqno]{mathtools} % NOTE: amsmath loaded before kpfonts for fleqn issue should load amsmath
-    \iftoggle{useSerif}{}{ % issue with kpfonts, I think it already loads it..
-    	\usepackage{amssymb}   % only load if not serif
-    }
+    \usepackage{bm}
     
-    %	\usepackage{gensymb} % bug in this package currently
+    %	\usepackage{gensymb} % bug in this package currently w/ kpfonts
     \usepackage{xfrac}
     \usepackage{amsfonts}  % math fonts and symbols
     
-    \renewcommand{\theequation}{\arabic{section}.\arabic{equation}}
+    \renewcommand{\theequation}{\arabic{chapter}.\arabic{equation}}
+    
     %\def\@cbp@mathline{\raisebox{0pt}[0pt][0pt]{\vline height 0.8em depth 0.6em width \arrayrulewidth}}
     %\renewcommand\tagform@[1]{\maketag@@@{\ignorespaces\makebox[6ex][l]{\@cbp@mathline\;\cbp@secnumsize#1\unskip\@@italiccorr\hfill}\hspace*{5ex}}}
     
     \def\@cbp@mathline{\raisebox{0pt}[0pt][0pt]{\vline height 0.8em depth 0.6em width \arrayrulewidth}}
     \renewcommand\tagform@[1]{\maketag@@@{\ignorespaces\makebox[6ex][r]{\ \hfill\cbp@secnumsize#1\;\@cbp@mathline\unskip\@@italiccorr\hspace*{2ex}}}}
     
+    %% for right side equation num
+    %\renewcommand\tagform@[1]{\maketag@@@{\ignorespaces\makebox[6ex][l]{\@cpb@mathline\;\cpb@secnumsize#1\unskip\@@italiccorr\hfill}\hspace*{5ex}}}
     
     
     \providecommand{\togunums}{}  % toggle to uppercase number shortcut
+    
     \usepackage[free-standing-units, % allow declared units usage outside of \qty and \unit
     	unit-optional-argument,  % allows declared units to have number after \kV[10]
     	detect-all=true, % allows italic/bold units
@@ -1099,7 +1092,11 @@
     	table-align-text-pre=false,
     ]{siunitx} % http://ctan.mirror.rafal.ca/macros/latex/contrib/siunitx/siunitx.pdf
     
-    
+    \iftoggle{useSerif}{}{
+    	\usepackage{amssymb}   % only load if not serif, had issues with kpfont-otf
+    %	\sisetup{math-micro=\text{µ},text-micro=µ}
+    %	\sisetup{math-micro=\text{\mu},text-micro=$\text{\mu}$}  % as per https://tex.stackexchange.com/questions/33965/siunitx-%C2%B5-doesnt-work
+    }
     
     
     
@@ -1276,12 +1273,17 @@
     \setlength\LongTabNoteSpace{-4.5ex}
     
     
-    \newcommand{\LongTableNotes}[2][\linewidth]{% todo might wanna fix this so it's more automatic
+    \newcommand{\LTnotes}[2][\linewidth]{% todo might wanna fix this so it's more automatic
         \vspace{\LongTabNoteSpace}% manually tested
         \parbox{#1}{\footnotesize #2}}
     
+    \NewCommandCopy\LongTableNotes\LTnotes
     
     \NewDocumentCommand{\LTcaption}{O{#2} m O{}}{{\WideFloatCaption\captionof{table}[#1]{#2}#3}}
+    
+    \AfterEndEnvironment{longtable}{\addtocounter{table}{-1}} % hack to fix LTX/longtable numbering issue, seems to increment by 1
+    
+    
     %% example longtable header
     %\NewDocumentCommand{\LTcontinues}{O{+}}{\MC[#1r]{\textsl{Table continues on next page\ldots}}}
     %\NewDocumentCommand{\LTcontinued}{O{+}}{\MC[#1l]{\textsl{\ldots Table continued from previous page}}\\}
@@ -1335,9 +1337,10 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%            FloatsCaptions            %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    % ##############################################
-    % Floats and Captions
-    % ##############################################
+    %%% References %%%%%
+    % afterpage: https://texdoc.org/serve/afterpage/0
+    % floatrow:  https://texdoc.org/serve/floatrow/0
+    % caption:   https://texdoc.org/serve/caption/0
     
     % todo clean this up as per MWE I created!!!, tweak the spacing!!
     
@@ -1378,10 +1381,8 @@
     	position=top,labelformat=hangcap,labelsep=enspace}  % formats \subcaptionbox
     \floatsetup{justification=raggedright,objectset=raggedright}
     \floatsetup[table]{captionskip=0.3ex} %	 http://tug.ctan.org/tex-archive/macros/latex/contrib/floatrow/floatrow.pdf
-    
-    % todo need an option for caption position for figure
-    %\iftoggle{TopFigCap}{\floatsetup[figure]{captionskip=0.3ex}\let\captop\{}}  % todo incorporate this
     \floatsetup[figure]{captionskip=0.5ex} % for bottom caption
+    %\iftoggle{TopFigCap}{\floatsetup[figure]{captionskip=0.3ex}\let\captop\{}}  % optional top caption for figure
     
     \newcommand{\WideFloatCaption}{\captionsetup{labelformat=widecap,format=plain}}
     
@@ -1391,10 +1392,8 @@
     \setlength{\floatsep}{24pt plus 2.0pt minus 2.0pt} % distance between two floats; add rubber here
     \setlength{\textfloatsep}{24pt plus 2.0pt minus 2.0pt} % distance between floats inserted inside the page text (using h) and the text proper, add rubber here
     
-    
     \newlength{\fullheight}  % full height for pdfs/figures
     \setlength{\fullheight}{22cm}
-    
     
     \NewDocumentCommand{\cbp@setFloatCap}{m m}{%
       \captionsetup{margin={0pt,0pt}}% restore margin for caption
@@ -1455,8 +1454,8 @@
     
     
     \NewDocumentCommand{\RotPDF}{t+ s}{\IfBooleanT{#1}{\pagebreak}%
-    \IfBooleanTF{#2}{\global\pdfpageattr\expandafter{\the\pdfpageattr/Rotate 0}}%
-    {\global\pdfpageattr\expandafter{\the\pdfpageattr/Rotate 90}}%
+      \IfBooleanTF{#2}{\global\pdfpageattr\expandafter{\the\pdfpageattr/Rotate 0}}%
+      {\global\pdfpageattr\expandafter{\the\pdfpageattr/Rotate 90}}%
     } %%% + will add a page break before, * will restore it back to normal
     
     
@@ -1840,22 +1839,25 @@
     
     
     
-    %%% acrnonym and gloassaries stuff
+    %%% Glossaries / index / symbol %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
-    \usepackage[xindy,acronym]{glossaries-extra}
+    \usepackage[xindy,acronym,index,symbols,
+    nohypertypes={acronym,index,symbols},
+    ]{glossaries-extra}
     %,nonumberlist <<< dont use as custom styles are made
     % toc <<< dont use ToC option as manually entered
     
     \renewcommand{\glossarysection}[2][]{} % remove glossary section heading entirely, requires manual but more flexible
     
     
-    \newglossary[ilg]{index}{ind}{idx}{\indexname}
-    %\newglossary[ilg]{index}{ind}{idx}{\indexname}
-    
-    
     % https://tex.stackexchange.com/questions/269565/glossaries-how-to-customize-list-of-symbols-with-additional-column-for-units
-    % todo make symbols glossary OR just print a simple table with an excel macro, might be easiest
-    \newglossary[slg]{symbols}{syi}{syg}{Symbolslist} % create add. symbolslist
+    %%% todo make symbols glossary OR just print a simple table with an excel macro, might be easiest
+    %\newglossary[slg]{symbols}{syi}{syg}{Symbolslist} % create add. symbolslist
+    
+    %\newglossary[ilg]{index}{ind}{idx}{\indexname}
+    % make a command
+    % \gls, \ac,  \idx
+    
     
     
     
@@ -1866,10 +1868,9 @@
     \setabbreviationstyle[acronym]{long-short}
     
     %\glsenableentrycount % enable \cgls, \cglspl, \cGls, \cGlspl  supposed to not show accronym if only one
-    \glsdisablehyper  % to disable hyperlinks
+    %\glsdisablehyper  % to disable hyperlinks
+    
     \glstoctrue  % ToC
-    
-    
     
     
     
@@ -1879,13 +1880,13 @@
     \newglossarystyle{AcronymsTwoCol}{%
     	\renewcommand*{\glossaryheader}{}%
     	\renewcommand*{\glsgroupheading}[1]{}%
-    	\renewcommand*{\glossarysubentryfield}[6]{glssubentryitem{##2}{\strut\glstarget{##2}##4\glspostdescription\space ##6}}%
+    	\newcommand*{\glossarysubentryfield}[6]{glssubentryitem{##2}{\strut\glstarget{##2}##4\glspostdescription\space ##6}}% caused error on update 2022 11 03
     	\renewcommand*{\glsgroupskip}{\vspace{7pt}}% space between alphabetized groups
     	\renewenvironment{theglossary}%
     		{\vspace*{1ex}\setlength{\columnsep}{30pt}\begin{multicols}{2}%
     		\begin{description}[font=\bfseries,leftmargin=1.7cm,style=multiline,itemsep=3pt]\raggedright}%
     		{\end{description}\end{multicols}}%
-    	\renewcommand*{\glossaryentryfield}[5]{%
+    	\newcommand*{\glossaryentryfield}[5]{%
     		\item[{\normalfont\bfseries\glsentryitem{##1}\glstarget{##1}{##2}}]{##3\glspostdescription}  % \space ##5 after postdescription (page numbers) are removed
     		}%
     }
@@ -1895,13 +1896,13 @@
     \newglossarystyle{GlossList}{%
     	\renewcommand*{\glossaryheader}{}%
     	\renewcommand*{\glsgroupheading}[1]{}%
-    	\renewcommand*{\glossarysubentryfield}[6]{glssubentryitem{##2}{\strut\glstarget{##2}##4\glspostdescription\space ##6}}%
+    	\newcommand*{\glossarysubentryfield}[6]{glssubentryitem{##2}{\strut\glstarget{##2}##4\glspostdescription\space ##6}}% caused error on update 2022 11 03
     	\renewcommand*{\glsgroupskip}{\vspace{7pt}}% space between alphabetized groups
     	\renewenvironment{theglossary}%
     		{\vspace*{1ex}%
     		\begin{description}[font=\bfseries,leftmargin=2.7cm,style=multiline,itemsep=3pt]\raggedright}%
     		{\end{description}}%
-    	\renewcommand*{\glossaryentryfield}[5]{%
+    	\newcommand*{\glossaryentryfield}[5]{%
     		\item[{\normalfont\bfseries\glsentryitem{##1}\glstarget{##1}{##2}}]{##3\glspostdescription} % \space ##5 argument 5, page numbers, are removed
     		}%
     }
@@ -1935,6 +1936,11 @@
         }%
     }%
     
+    % todo :    add prefix on acronym ac.cnn, on index like idx.cnn, and on symbols like sym.X
+    % then use a \ac \idx \sym that calls \ac = \gls{ac.#1}  \Idx = \Gls{idx.#1}  etc. etc.
+    %
+    %
+    
     
     %add tool tip to acronyms
     
@@ -1966,9 +1972,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%            Hyperlinks            %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    % ##############################################
-    % References / Hyperlinks
-    % ##############################################
+    
     \usepackage{bookmark}
     \usepackage{hyperref}
     \hypersetup{
@@ -1978,9 +1982,13 @@
     bookmarksopen=true,%         
     bookmarksopenlevel=1,                  
     pdfstartview=Fit,%           
-    pdfpagemode=UseOutlines,% 
+    pdfpagemode=UseOutlines,%
+    pdfpagelayout=TwoPageRight
     }
     
+    \if@twoside
+        \hypersetup{pdfpagelayout=TwoPageRight}
+    \else \fi
     
     \usepackage[nameinlink,noabbrev]{cleveref}  % cref
     
@@ -2019,9 +2027,7 @@
     \def\textit#1{<#1>}%
     }
     
-    %\usepackage[a-3u]{pdfx}
-    
-    % possible issue
+    \usepackage[a-3u]{pdfx}
     
     \begin{luacode*}
         __PDFmetadata__ = {Language='en-ca'}
@@ -2093,7 +2099,8 @@
     \providetoggle{samepgTitle}
     %%% title pages
     
-    \gdef\cbp@tpPage{\thispagestyle{empty}
+    \gdef\cbp@tpPage{
+    \begin{titlepage}\thispagestyle{empty}
     	\rule{\heavyrulewidth}{7.4in} % Vertical line
     	\hspace{0.5in} % Whitespace between the vertical line and title page text
     	\begin{minipage}[b][7.4in][s]{4.4in}
@@ -2130,7 +2137,8 @@
     
     		\null\vfill\null\vfill
     \end{minipage}
-    \cleardoubleoddpage
+    \end{titlepage}
+     \if@twoside\cleardoublepage \else \clearpage \fi
     }
     
     
@@ -2455,7 +2463,6 @@
     }
     
     
-    \def\noSectionNumbers{\setcounter{secnumdepth}{-\maxdimen}}  % remove sec num}
     
     \iftoggle{useMemo}{
     

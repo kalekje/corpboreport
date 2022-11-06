@@ -16,6 +16,7 @@
       fleqn,
       leqno,
       numbers=noenddot
+      titlepage=firstiscover,
 }{scrbook}  % default options for basepass
 
 \DeclareOption*{\PassOptionsToClass{\CurrentOption}{scrbook}} %% pass cbp class options to scrbook

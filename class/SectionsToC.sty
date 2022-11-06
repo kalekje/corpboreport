@@ -1,10 +1,9 @@
 %%% References %%%%%
 % KOMA-Script: https://texdoc.org/serve/scrbook/0
-%
-%
-
-\RequirePackage{etoolbox}
+\RequirePackage{etoolbox} % https://texdoc.org/serve/etoolbox/0
 \RequirePackage{chngcntr}
+\RequirePackage{needspace} % https://texdoc.org/serve/needspace/0
+
 
 %%% Header %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \renewcommand{\chaptermark}[1]{%
@@ -22,11 +21,11 @@
 \newlength{\cbp@chapTopSepXtra}    \setlength{\cbp@chapTopSepXtra}{5em}
 \newlength{\cbp@chapBtwnSep}       \setlength{\cbp@chapBtwnSep}{2.5em}
 
-\RequirePackage{needspace}
-\newlength{\chapneedspace}      \setlength{\chapneedspace}{12\baselineskip}
-\newlength{\secneedspace}       \setlength{\secneedspace}{8\baselineskip}
-\newlength{\subsecneedspace}    \setlength{\subsecneedspace}{6\baselineskip}
-\newlength{\subsubsecneedspace} \setlength{\subsubsecneedspace}{4\baselineskip}
+
+\pretocmd{\section}{\needspace{2em}}{}{}
+\pretocmd{\subsection}{\needspace{1em}}{}{}
+\pretocmd{\subsubsection}{\needspace{0.5em}}{}{}
+\pretocmd{\paragraph}{\needspace{0.5em}}{}{}
 
 
 \setkomafont{disposition}{\normalfont\bfseries} % section preference
@@ -70,7 +69,6 @@
 	\makebox[0pt][r]{\cbp@secnumsize#3\hspace{1pt}}#4%
 }
 
-
 \addtokomafont{chapter}{\color{chapCol}\LARGE}
 \addtokomafont{section}{\color{secCol}\Large}
 \addtokomafont{subsection}{\color{subsecCol}\large}
@@ -79,14 +77,6 @@
 
 %%% ToC Related %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \setcounter{tocdepth}{1} %%% TOC Depth down to sections
-
-\newlength{\ToCsecskip}\setlength{\ToCsecskip}{0.75em}
-\newlength{\ToCextrabottomroom}\setlength{\ToCextrabottomroom}{0.0em}
-\newlength{\pullToCcloser}\setlength{\pullToCcloser}{-12pt}
-\newlength{\moreToCbottom}\setlength{\moreToCbottom}{2em}
-
-\def\tighterToCchap{\addtocontents{toc}{\vspace*{-1.3ex}}}
-\newlength{\ToCrightmargin}\setlength{\ToCrightmargin}{0in}
 
 \newcommand\tocmainfont[1]{{\cbp@secnumsize{}#1}}
 
@@ -108,6 +98,7 @@
 %  \counterwithout{listing}{chapter}
   \gdef\thefigure{\arabic{figure}}
   \gdef\thetable{\arabic{table}}
+  \gdef\autodot{}  %% for some reason this gets reset when above is used, force-hide autodot cause I don't like em
 %  \gdef\thelsting{\arabic{listing}}
 }
 
@@ -138,12 +129,13 @@ entrynumberformat=\cbp@chapterToCentryformat,
 
 %%% Major section formatting %%%%%%%%%%%%%%%%%%%%
 
+\newlength{\ToCchapskip}\setlength{\ToCchapskip}{1em}  % allow user to change in document easily
 
 \RedeclareSectionCommand[
 tocbeforeskip=1.2em plus 0.2em minus 1pt,
 tocindent=-4ex,
 tocnumwidth=4ex,
-tocbeforeskip=16pt,
+tocbeforeskip=\ToCchapskip,
 toclinefill=\diamondleaders,
 tocentryformat=\large\bfseries,
 tocentrynumberformat=\cbp@chapterToCentryformat,
@@ -151,7 +143,7 @@ tocentrynumberformat=\cbp@chapterToCentryformat,
 ]{chapter}
 
 \RedeclareSectionCommand[
-beforeskip=0.8em plus 3pt minus 1pt,  % negative will suppress first indent
+beforeskip=1.1em plus 3pt minus 1pt,  % negative will suppress first indent
 afterskip=3pt,
 tocbeforeskip=2pt,
 tocindent=0.5ex,
@@ -163,7 +155,7 @@ tocentryformat=\large,
 ]{section}
 
 \RedeclareSectionCommand[
-beforeskip=0.6em plus 2pt minus 2pt,
+beforeskip=0.8em plus 2pt minus 2pt,
 afterskip=0.01mm,%\baselineskip,
 tocindent=6.5ex,
 tocnumwidth=6ex,
@@ -173,7 +165,7 @@ tocentryformat=\normalsize,
 ]{subsection}
 
 \RedeclareSectionCommand[
-beforeskip=0.3em plus 2pt minus 2pt,
+beforeskip=0.4em plus 2pt minus 2pt,
 afterskip=0.01mm,
 runin=false,  % text on same line
 tocindent=6ex,
@@ -218,16 +210,31 @@ afterskip=-1em]{subparagraph}
   \pdfbookmark[0]{Title}{LabelTitlePDF}
 }
 
+
+%%% ToC tweaking / high level command
+\newlength{\ToCextrabottomroom}\setlength{\ToCextrabottomroom}{0.0em}
+\newlength{\pullToCcloser}\setlength{\pullToCcloser}{0pt}
+\newlength{\ToCrightmargin}\setlength{\ToCrightmargin}{0in}
+\def\tighterToCchap{\addtocontents{toc}{\vspace*{-1.3ex}}}
+
 \AfterTOCHead[lot]{\vspace*{-1.5em}} % hack to fix extra space under LoT.. investigate why..
 
 \NewDocumentCommand{\addcontentslists}{O{0in}}{
+  %  todo make a kv interface
+  % lists= cf*t*l   < star allows on same page
+  % depth= 1
+  % rightmarg= 1in
+  % bottom= 1in   < extra room on bottom
+  %  chapsep = 0.75 em   < extra room between
   \global\setlength{\ToCrightmargin}{#1}
 
 %  \addtocontents{toc}{\protect\enlargethispage{\ToCextrabottomroom}} % enlarge toc page if needed
   
   \pdfbookmark[0]{Contents}{LabelContentsPDF}
-  \begin{addmargin}[0pt]{\ToCrightmargin}
+  \begin{addmargin}[0pt]{\ToCrightmargin}  % todo add space if defined.. but not yet
+%    \ifdimcomp{|\ToCextrabottomroom|}{>}{0.1pt}{\addtocontents{toc}{\protect\enlargethispage{\ToCextrabottomroom}}}{} % enlarge toc page if needed
     \tableofcontents
+%    \ifdimcomp{|\pullToCcloser|}{>}{0.1pt}{\addtocontents{toc}{\protect\enlargethispage{addtocontents{toc}{\vspace*{\pullToCcloser}}}{}% pull ToC closer to Contents section head if needed
   \end{addmargin}
   \chaptermark{Contents}
 
@@ -307,18 +314,20 @@ afterskip=-1em]{subparagraph}
 }
 
 
-\def\cbp@FirstPagePlain{\gdef\chapterpagestyle{plain}\thispagestyle{plain}\afterpage{\gdef\chapterpagestyle{scrheadings}}}
-
-
 %%% to allow same page chapters
 \patchcmd{\scr@startchapter}{\if@openright\cleardoublepage\else\clearpage\fi}{%
-  \iftoggle{ChapOnSamePage}{\vspace{\cbp@chapBtwnSep}}{\if@openright\cleardoublepage\else\clearpage\fi}%
+  \iftoggle{ChapOnSamePage}{\needspace{4em}\vspace{\cbp@chapBtwnSep}}{\if@openright\cleardoublepage\else\clearpage\fi}%
 }{}{}
 
 \def\NextChapOnSamePage{\toggletrue{ChapOnSamePage}\afterpage{\global\togglefalse{ChapOnSamePage}}}
 
-\def\noSectionNumbers{\setcounter{secnumdepth}{-\maxdimen}\notsecwiselabelnums}  % remove sec num}
+% a command used for memo / compact style
+\def\cbp@FirstPagePlain{\gdef\chapterpagestyle{plain}\thispagestyle{plain}\afterpage{\gdef\chapterpagestyle{scrheadings}}}
 
+\def\noSectionNumbers{%
+  \setcounter{secnumdepth}{-\maxdimen}\notsecwiselabelnums
+  \RedeclareSectionCommand[tocindent=0ex,tocnumwidth=0ex]{chapter}
+}  % remove sec num
 
 
 
