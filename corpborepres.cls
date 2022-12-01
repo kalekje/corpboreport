@@ -230,6 +230,7 @@
     	table-align-text-pre=false,
     ]{siunitx} % http://ctan.mirror.rafal.ca/macros/latex/contrib/siunitx/siunitx.pdf
     
+    \providetoggle{useSerif}
     \iftoggle{useSerif}{}{
     	\usepackage{amssymb}   % only load if not serif, had issues with kpfont-otf
     %	\sisetup{math-micro=\text{µ},text-micro=µ}
@@ -858,183 +859,42 @@
     %\todoG{Check for stuff}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%            macros/unirefs            %%%
+%%%            macros/symbolscbp            %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    %%% table footnote tracker interface
-    \begin{luacode*}
-    uref_func = pl.char -- (a) | pl.Char (A) | tonumber (1)
-    function uref_reset() uref_list = pl.List() end
-    function uref_add(key)
-      if not uref_list:contains(key) then
-        uref_list:append(key)
-      end
-      tex.print(tostring(uref_func(uref_list:index(key))))
-    end
-    \end{luacode*}
-    \NewDocumentCommand{\reseturef}{}{\luadirect{uref_reset()}}\reseturef
-    \NewDocumentCommand{\uref}{m}{\luadirect{uref_add(\luastring{#1})}}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%            BibAndGloss            %%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    % requires enumitem for acronym styling
-    \usepackage[sorting=none]{biblatex}
     
-    \renewrobustcmd*{\bibinitdelim}{\,}
-    \renewcommand*{\multicitedelim}{\addcomma\,}  % tighten [1,2,3] multi citations
+    \newcommand{\Fst}{1\textsuperscript{st}\xspace}
+    \newcommand{\Snd}{2\textsuperscript{nd}\xspace}
+    \newcommand{\Trd}{3\textsuperscript{rd}\xspace}
     
-    \defbibenvironment{bibliography}
-    {\begin{enumerate}[leftmargin=0pt,labelsep=1.5ex,itemsep=0.8ex,label={\unum{\arabic*}.}]}%
-    {\end{enumerate}}
-    {\item}
+    \newcommand{\degC}{\degree C\xspace}
     
-    \renewcommand*{\citesetup}{%
-    \togunums\biburlsetup}
+    \newcommand{\rpm}{\raisebox{.2ex}{$\scriptstyle\pm$}} % raised plus/minus
+    \newcommand{\rplus}{\raisebox{.2ex}{$+$}} % raised plutm looks better in text
     
+    \newcommand{\pluspct}[1]{\mbox{\rplus\,\SI{#1}{\percent}\xspace}}
+    \newcommand{\minuspct}[1]{\mbox{$-$\,\SI{#1}{\percent}\xspace}}
     
-    \newcommand{\citeT}[1]{\citetitle{#1}~\cite{#1}}
-    \NewDocumentCommand{\citenumber}{m}{\citefield{#1}[]{number}}
-    
-    %% citing without pushing to bibliography
-    \NewDocumentCommand{\fullcitenobib}{m}{\begin{refsection}\fullcite{#1}\end{refsection}}
-    
-    \NewDocumentCommand{\citestd}{m}{\begin{refsection}\citeauthor{#1} \citefield{#1}[]{number} -- \citefield{#1}[]{year}: \citetitle{#1}\end{refsection}}
-    
-    
-    %% todo: possibly rebuild the cite commands but add a '-' decorator to supress referencing
-    
-    
-    
-    
-    %%% Glossaries / index / symbol %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    
-    \usepackage[xindy,acronym,index,symbols,
-    nohypertypes={acronym,index,symbols},
-    ]{glossaries-extra}
-    %,nonumberlist <<< dont use as custom styles are made
-    % toc <<< dont use ToC option as manually entered
-    
-    \renewcommand{\glossarysection}[2][]{} % remove glossary section heading entirely, requires manual but more flexible
-    
-    
-    % https://tex.stackexchange.com/questions/269565/glossaries-how-to-customize-list-of-symbols-with-additional-column-for-units
-    %%% todo make symbols glossary OR just print a simple table with an excel macro, might be easiest
-    %\newglossary[slg]{symbols}{syi}{syg}{Symbolslist} % create add. symbolslist
-    
-    %\newglossary[ilg]{index}{ind}{idx}{\indexname}
-    % make a command
-    % \gls, \ac,  \idx
-    
-    
-    
-    
-    \GlsXtrEnableEntryCounting % % https://tex.stackexchange.com/questions/477581/glossaries-introduce-short-name-only-if-used-more-than-once-within-section-chap
-     	{acronym}% list of categories to use entry counting
-     	{1}% trigger value
-    
-    \setabbreviationstyle[acronym]{long-short}
-    
-    %\glsenableentrycount % enable \cgls, \cglspl, \cGls, \cGlspl  supposed to not show accronym if only one
-    %\glsdisablehyper  % to disable hyperlinks
-    
-    \glstoctrue  % ToC
-    
-    
-    
-    \makeglossaries
-    
-    
-    \newglossarystyle{AcronymsTwoCol}{%
-    	\renewcommand*{\glossaryheader}{}%
-    	\renewcommand*{\glsgroupheading}[1]{}%
-    	\newcommand*{\glossarysubentryfield}[6]{glssubentryitem{##2}{\strut\glstarget{##2}##4\glspostdescription\space ##6}}% caused error on update 2022 11 03
-    	\renewcommand*{\glsgroupskip}{\vspace{7pt}}% space between alphabetized groups
-    	\renewenvironment{theglossary}%
-    		{\vspace*{1ex}\setlength{\columnsep}{30pt}\begin{multicols}{2}%
-    		\begin{description}[font=\bfseries,leftmargin=1.7cm,style=multiline,itemsep=3pt]\raggedright}%
-    		{\end{description}\end{multicols}}%
-    	\newcommand*{\glossaryentryfield}[5]{%
-    		\item[{\normalfont\bfseries\glsentryitem{##1}\glstarget{##1}{##2}}]{##3\glspostdescription}  % \space ##5 after postdescription (page numbers) are removed
-    		}%
-    }
-    
-    
-    
-    \newglossarystyle{GlossList}{%
-    	\renewcommand*{\glossaryheader}{}%
-    	\renewcommand*{\glsgroupheading}[1]{}%
-    	\newcommand*{\glossarysubentryfield}[6]{glssubentryitem{##2}{\strut\glstarget{##2}##4\glspostdescription\space ##6}}% caused error on update 2022 11 03
-    	\renewcommand*{\glsgroupskip}{\vspace{7pt}}% space between alphabetized groups
-    	\renewenvironment{theglossary}%
-    		{\vspace*{1ex}%
-    		\begin{description}[font=\bfseries,leftmargin=2.7cm,style=multiline,itemsep=3pt]\raggedright}%
-    		{\end{description}}%
-    	\newcommand*{\glossaryentryfield}[5]{%
-    		\item[{\normalfont\bfseries\glsentryitem{##1}\glstarget{##1}{##2}}]{##3\glspostdescription} % \space ##5 argument 5, page numbers, are removed
-    		}%
-    }
-    
-    
-    
-    
-    
-    
-    
-    \usepackage{pdfcomment}
-    
-    \newcommand{\getTheToolTipText}[1]{%
-      \ifcsname#1ToolTipText\endcsname%
-        \csname#1ToolTipText\endcsname%
-      \else%
-        \glsentrylong{#1}%
-      \fi%
-    }
-    
-    
-    \newcommand{\ac}[1]{%
-          \ifglsused{#1}{%
-    %         \pdftooltip{\gls*{#1}}{\getTheToolTipText{#1}}\xspace%
-    				 {\scshape\pdftooltip{\gls*{#1}}{\getTheToolTipText{#1}}}%
-    %         \pdftooltip{\textsc{\MakeLowercase{\gls*{#1}}}}{\getTheToolTipText{#1}}\xspace% todo consider small caps for serfif
-        }{%
-    %        \gls*{#1}\xspace%
-    				{\scshape\gls*{#1}}% todo get to root, make sure acronyms specifically are small caps!
-    %				{\textsc{\MakeLowercase{\gls*{#1}}}}
-        }%
+    \NewDocumentCommand{\pmpct}{s m}{
+    	\mbox{%
+    	\IfBooleanT{#1}{(}%
+    	\rpm\,\SI{#2}{\percent}\xspace%
+    	\IfBooleanT{#1}{)}%
+    	}%
     }%
     
-    % todo :    add prefix on acronym ac.cnn, on index like idx.cnn, and on symbols like sym.X
-    % then use a \ac \idx \sym that calls \ac = \gls{ac.#1}  \Idx = \Gls{idx.#1}  etc. etc.
-    %
-    %
     
+    % todo how should dollars be shown?
     
-    %add tool tip to acronyms
+    % todo option for CAD and USD
+    \providetoggle{dollarsignpre}
+    \AtBeginDocument{
+    	\iftoggle{dollarsignpre}%
+    	{\NewDocumentCommand{\@dol}{m O{M}}{\$\,\num{#1}\IfValueT{#2}{\,#2}\xspace}\global\let\dol\@dol}%  $ 2 M
+    	{\NewDocumentCommand{\@dol}{m O{M}}{\num{#1}\IfValueT{#2}{\,#2}\,\$\xspace}\global\let\dol\@dol}% 2 M$
+    }
     
-    % todo do this for \Gls and \GLS, maybe * + to gls
-    
-    %\let\oldgls\gls
-    %\RenewDocumentCommand{\gls}{ O{} m O{} }{%
-    %    \ifglsused{#2}{%
-    %    	\pdftooltip{\oldgls[#1]{#2}[#3]}{\glsentrylong{#2}}%
-    %	}{%
-    %		\oldgls{#2}%
-    %	}%
-    %}%
-    %\let\oldglspl\glspl
-    %
-    %
     %
     
-    
-    %\RenewDocumentCommand{\glspl}{ O{} m O{} }{%
-    %    \ifglsused{#2}{%
-    %	    \pdftooltip{\oldglspl[#1]{#2}[#3]}{\glsentrylong{#2}}%
-    %	}{%
-    %		\oldglspl{#2}%
-    %	}%
-    %}%
 
 \usepackage{graphbox}
 
@@ -1124,6 +984,28 @@
 \begin{luacode*}
 	YAMLvars.tabmidrule = 'gmidrule'
 \end{luacode*}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%            macros/unirefs            %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%% table footnote tracker interface
+    \begin{luacode*}
+    _uref = {}
+    _uref.func = pl.char -- (a) | pl.Char (A) | tonumber (1)
+    function _uref.reset()
+      _uref.list = pl.List({})
+    end
+    function _uref.add(key)
+      if not _uref.list:contains(key) then
+        _uref.list:append(key)
+      end
+      tex.print(tostring(_uref.func(_uref.list:index(key))))
+    end
+    \end{luacode*}
+    \NewDocumentCommand{\reseturef}{}{\luadirect{_uref.reset()}}\reseturef
+    \NewDocumentCommand{\uref}{m}{\luadirect{_uref.add(\luastring{#1})}}
+
 
 
 

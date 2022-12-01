@@ -45,9 +45,8 @@
 
 \providecommand{\cbp@listframe}{} % no frames for beamer
 \usepackage{\FormatDir CodeBoxes}  % todo really should make colors work independently
-%\use package{\FormatDir ToDoNote}
-\usepackage{\FormatDir macros/unirefs}
-%\use package{\FormatDir BibAndGloss}
+\usepackage{\FormatDir ToDoNote}
+\usepackage{\FormatDir macros/symbolscbp}
 \usepackage{graphbox}
 
 
@@ -62,6 +61,8 @@
 \begin{luacode*}
 	YAMLvars.tabmidrule = 'gmidrule'
 \end{luacode*}
+
+\usepackage{\FormatDir macros/unirefs}
 
 
 

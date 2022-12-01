@@ -438,6 +438,7 @@
     	table-align-text-pre=false,
     ]{siunitx} % http://ctan.mirror.rafal.ca/macros/latex/contrib/siunitx/siunitx.pdf
     
+    \providetoggle{useSerif}
     \iftoggle{useSerif}{}{
     	\usepackage{amssymb}   % only load if not serif, had issues with kpfont-otf
     %	\sisetup{math-micro=\text{µ},text-micro=µ}
@@ -938,17 +939,20 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %%% table footnote tracker interface
     \begin{luacode*}
-    uref_func = pl.char -- (a) | pl.Char (A) | tonumber (1)
-    function uref_reset() uref_list = pl.List() end
-    function uref_add(key)
-      if not uref_list:contains(key) then
-        uref_list:append(key)
+    _uref = {}
+    _uref.func = pl.char -- (a) | pl.Char (A) | tonumber (1)
+    function _uref.reset()
+      _uref.list = pl.List({})
+    end
+    function _uref.add(key)
+      if not _uref.list:contains(key) then
+        _uref.list:append(key)
       end
-      tex.print(tostring(uref_func(uref_list:index(key))))
+      tex.print(tostring(_uref.func(_uref.list:index(key))))
     end
     \end{luacode*}
-    \NewDocumentCommand{\reseturef}{}{\luadirect{uref_reset()}}\reseturef
-    \NewDocumentCommand{\uref}{m}{\luadirect{uref_add(\luastring{#1})}}
+    \NewDocumentCommand{\reseturef}{}{\luadirect{_uref.reset()}}\reseturef
+    \NewDocumentCommand{\uref}{m}{\luadirect{_uref.add(\luastring{#1})}}
 
 \usepackage{graphbox}
 
