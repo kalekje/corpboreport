@@ -40,18 +40,17 @@
 % use @publishers to match KOMA, Publisher for PDFvar
 % for beamer, company = institute
 
-\def\@logoset{} % additional logo settings
+\def\@logoset{width=4cm} % additional logo settings
 \NewDocumentCommand\logoset{m}{\gdef\@logoset{#1}}
+
 
 \NewDocumentCommand{\logo}{ s >{\ExpArgOnceProc}O{\@logoset} m }{%
 % star to overwrite custom settings for image, otherwise, try to let the class place it
 	\IfBooleanTF{#1}%
 	{\gdef\@logo{#3}}%
-	{\iftoggle{samepgTitle}%
-		{\gdef\@logo{\Llap{\raisebox{\dimexpr(-\height+16pt)\relax}[0pt][0pt]{\includegraphics[width=4cm,#2]{#3}}}}}%
-		{\gdef\@logo{\includegraphics[width=4cm,smash=tl,#2]{#3}}}
-	}%
+	{\gdef\@logo{\includegraphics[#2]{#3}}}
 }
+
 
 
 \providetoggle{samepgTitle}
@@ -90,7 +89,7 @@
 		\ifdef{\@logo}{
 			\null\vfill
 			\null\vfill\par
-			\null\hfill\@logo\par
+			\null\hfill\overlayBR{\@logo}\par
 		}{}
 
 		\null\vfill\null\vfill
@@ -100,22 +99,20 @@
 }
 
 
-
-
-\gdef\cbp@tpMini{\cbp@FirstPagePlain
+\gdef\cbp@tpMini{\global\toggletrue{samepgTitle}\cbp@FirstPagePlain
 		\gdef\And{\hspace*{3ex}}
 		\vspace*{-2.5cm}
-		{\RaggedRight                             % \pbox[t]{\linewidth}  %% todo top align logo with title
-		\hspace*{-10mm}\pbox[t]{0.8\linewidth}{\LARGE\bfseries \@title} \hfill	 \ifdef{\@logo}{\@logo}{}\par
+		{\RaggedRight
+		\hspace*{-10mm}\pbox[t]{\dimeval{0.99\linewidth+9mm}}{\LARGE\bfseries \@title} \hfill {\ifdef{\@logo}{\overlayTR{\LARGE\@logo}}{}} \medskip
 		
 		\ifdef{\@subtitle}{{\itshape\@subtitle}\medskip}{}
 		\ifdef{\@publishers}{{\def\and{\, }\large\@publishers}\smallskip}{}
-		\ifdef{\@author}{{\def\and{\, }\large\bfseries\@author}}{}
-		\ifdef{\@date}{{\large\@date}}{}
-		\\\smallskip
+		\ifdef{\@author}{{\def\and{\, }\large\bfseries\@author}}{}    \ifdef{\@date}{{\large\@date}}{}   \\\smallskip
 		\ \hfill\llap{\rule{\dimexpr(\linewidth+1.0cm)\relax}{\heavyrulewidth}}\\[-2ex]%
-		\ \hfill\llap{\rule{\dimexpr(\linewidth-0.0pt)\relax}{\lightrulewidth}}%
-}}
+		\ \hfill\llap{\rule{\dimexpr(\linewidth-0.0pt)\relax}{\lightrulewidth}}\\%
+}
+\vspace*{-0.4cm}
+}
 
 
 

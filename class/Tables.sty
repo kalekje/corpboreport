@@ -63,11 +63,13 @@
 
 \newcolumntype{~}{@{\hspace{\tabcolsep}}}
 
+
 % table note stuff
-\newlength{\TabNoteSpace}
-\newlength{\LongTabNoteSpace}
-\setlength\TabNoteSpace{-1.3ex}
-\setlength\LongTabNoteSpace{-4.5ex}
+\newlength{\TabNoteSpace} \setlength\TabNoteSpace{-1.3ex}
+
+
+% long table stuff
+\newlength{\LongTabNoteSpace} \setlength\LongTabNoteSpace{-4.5ex}
 
 
 \newcommand{\LTnotes}[2][\linewidth]{% todo might wanna fix this so it's more automatic
@@ -76,57 +78,45 @@
 
 \NewCommandCopy\LongTableNotes\LTnotes
 
-\NewDocumentCommand{\LTcaption}{O{#2} m O{}}{{\WideFloatCaption\captionof{table}[#1]{#2}#3}}
+\NewDocumentCommand{\LTcaption}{O{#2} m O{}}{{\WideFloatCaption\captionof{table}[#1]{#2}#3}}  % #3 is for \label{}
 
 \AfterEndEnvironment{longtable}{\addtocounter{table}{-1}} % hack to fix LTX/longtable numbering issue, seems to increment by 1
 
-
-%% example longtable header
-%\NewDocumentCommand{\LTcontinues}{O{+}}{\MC[#1r]{\textsl{Table continues on next page\ldots}}}
-%\NewDocumentCommand{\LTcontinued}{O{+}}{\MC[#1l]{\textsl{\ldots Table continued from previous page}}\\}
 \def\LTcontinues{\MC[+r]{\Llap{\ \hfill\textsl{Table continues on next page\ldots}}}}
 \def\LTcontinued{\MC[+l]{\Rlap{\textsl{\ldots Table continued from previous page}}}\\}
+
+%% example longtable header
+
 %\def\LTheader{\toprule {Section} & {Item} & {Comment}\\\midrule}
 %\setmidruleX{reset=true}
+%\LTcaption{}
 %\begin{longtable}{@{}lp{3cm}X@{\midruleX}}
-%\WideFloatCaption%
-%\caption{TSIR review.}\label{t.tsir}\\[\smallskipamount]
-%\LTheader\endfirsthead        % first header
-%\LTcontinued\LTheader\endhead % headers after page break
-%\LTcontinues\endfoot          % footers before page break
-%\bottomrule\endlastfoot       % last footer
-%\resetmidruleX
+	%\LTheader\endfirsthead        % first header
+	%\LTcontinued\LTheader\endhead % headers after page break
+	%\LTcontinues\endfoot          % footers before page break
+	%\bottomrule\endlastfoot       % last footer
+	%\resetmidruleX
+	% ...
 
 
-%%%%% todo should I move this into unirefs?  maybe make a lua version
-\newcommand{\tfnote}[1]{\leavevmode\llap{#1.\enspace}} % use tnote{a} in the table, and \tfnote{a}Note here in the foot notes
-\NewDocumentCommand{\tnote}{s m}{%
+
+
+% table foot notes: use tnote{a} in the table for superscript marker, and \tfnote{a}Note here in the footnotes of table
+\NewDocumentCommand{\tabfnote}{m}{\Llap{#1.\enspace}}
+\NewDocumentCommand{\tabnote}{s m}{%
 	\IfBooleanTF{#1}%
 		{\textsuperscript{#2}}%
 		{\rlap{\textsuperscript{#2}}}% without star, footnote label to take no space
-}% use tnote{a} in the table, and \tfnote{a}Note here in the foot notes
+}%
 
-\newcommand{\atfnote}[1]{\tfnote{\uref{#1}}} % automatic table footnote
-
-%\newcommand{\atnote}[1]{\tnote{\uref{#1}}} % automatic table footnote
-\NewDocumentCommand{\atnote}{s m}{%
+\NewDocumentCommand{\tfnote}{m}{\tabfnote{\uref{#1}}} % automatic table footnotes--semantic footnote labelling instead of abc
+\NewDocumentCommand{\tnote}{s m}{%
 	\IfBooleanTF{#1}%
-		{\tnote*{\uref{#2}}}%
-		{\tnote{\uref{#2}}}%
+		{\tabnote*{\uref{#2}}}%
+		{\tabnote{\uref{#2}}}%
 }% use tnote{a} in the table, and \tfnote{a}Note here in the foot notes
 
 
-
-%\NewDocumentCommand{\LongTablePreamble}{ s m O{\bottomrule} }{%  *= dont resetmidruleX on header. {table's header} [table's footer]
-%	#2
-%\endfirsthead
-%%  \MC[3l]{\textsl{\ldots Table continued from previous page\vspace*{0.4ex}}}\\%
-%  #2%\IfBooleanTF{#1}{}{\noalign{\resetmidruleX}}
-%\endhead % all the lines above this will be repeated on every page
-%%  \\%
-%%  	\MC[3r]{\textsl{Table continues on next page\ldots}}
-%	\\%\IfBooleanTF{#1}{}{\noalign{\resetmidruleX}}
-%\endfoot
-%  #3
-%\endlastfoot
-%}
+% adding on to MC
+\NewExpandableDocumentCommand{\MCh}{ O{2c_}   D(){rl} m }{\MC[#1#2]{#3}} % a 'hierarchical' cell, usually spans two, has underline
+\NewExpandableDocumentCommand{\MCb}{ O{,-2b}  D(){}  m }{\MC[#1#2]{#3}}  % a 'bottom' header cell of height 2, usually beside MCh on row after

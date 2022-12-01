@@ -78,16 +78,14 @@
 %% packages in folder
 \usepackage{\FormatDir MarginNotes} % better looking margin notes
 
-\usepackage{\FormatDir macros/UniRefs}  % macro to create unique labels, useful for tabular notes
-\usepackage{\FormatDir macros/symbolscbp}  % macros for symbols
-
 \usepackage{\FormatDir EndOf}
-
 
 \usepackage[pl,extrasglobals]{penlight}
 \usepackage{lutabulartools}
 \usepackage{autopuncitems}
 \usepackage{\FormatDir YAMLvarsDec}
 
+\usepackage{\FormatDir macros/UniRefs}  % macro to create unique labels, useful for tabular notes
+\usepackage{\FormatDir macros/symbolscbp}  % macros for symbols
 
 \usepackage{\FormatDir MemoSty}

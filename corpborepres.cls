@@ -284,6 +284,7 @@
     %\usepackage{tabto}% possibly usful for two column lists %http://tug.ctan.org/tex-archive/macros/latex/contrib/tabto/tabto-doc.pdf
     %%%
     
+    \usepackage{import}
     \usepackage{catchfile} % catches a .tex file as a command
     
     %%% pdf stuff
@@ -409,6 +410,17 @@
     
     %% todo better syntax
     %\itertext<b>{1,2}<a>[; ] --> b1a, b2a,
+    
+    
+    
+    % overlay boxes
+    \NewDocumentCommand{\overlayTR}{m}{%
+      \Llap{\raisebox{\dimeval{(-\height+1.6ex)}}[0pt][0pt]{#1}}%
+    }
+    \NewDocumentCommand{\overlayBR}{m}{%
+      \Llap{\raisebox{0pt}[0pt][0pt]{#1}}%
+    }
+    
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -479,11 +491,13 @@
     
     \newcolumntype{~}{@{\hspace{\tabcolsep}}}
     
+    
     % table note stuff
-    \newlength{\TabNoteSpace}
-    \newlength{\LongTabNoteSpace}
-    \setlength\TabNoteSpace{-1.3ex}
-    \setlength\LongTabNoteSpace{-4.5ex}
+    \newlength{\TabNoteSpace} \setlength\TabNoteSpace{-1.3ex}
+    
+    
+    % long table stuff
+    \newlength{\LongTabNoteSpace} \setlength\LongTabNoteSpace{-4.5ex}
     
     
     \newcommand{\LTnotes}[2][\linewidth]{% todo might wanna fix this so it's more automatic
@@ -492,60 +506,49 @@
     
     \NewCommandCopy\LongTableNotes\LTnotes
     
-    \NewDocumentCommand{\LTcaption}{O{#2} m O{}}{{\WideFloatCaption\captionof{table}[#1]{#2}#3}}
+    \NewDocumentCommand{\LTcaption}{O{#2} m O{}}{{\WideFloatCaption\captionof{table}[#1]{#2}#3}}  % #3 is for \label{}
     
     \AfterEndEnvironment{longtable}{\addtocounter{table}{-1}} % hack to fix LTX/longtable numbering issue, seems to increment by 1
     
-    
-    %% example longtable header
-    %\NewDocumentCommand{\LTcontinues}{O{+}}{\MC[#1r]{\textsl{Table continues on next page\ldots}}}
-    %\NewDocumentCommand{\LTcontinued}{O{+}}{\MC[#1l]{\textsl{\ldots Table continued from previous page}}\\}
     \def\LTcontinues{\MC[+r]{\Llap{\ \hfill\textsl{Table continues on next page\ldots}}}}
     \def\LTcontinued{\MC[+l]{\Rlap{\textsl{\ldots Table continued from previous page}}}\\}
+    
+    %% example longtable header
+    
     %\def\LTheader{\toprule {Section} & {Item} & {Comment}\\\midrule}
     %\setmidruleX{reset=true}
+    %\LTcaption{}
     %\begin{longtable}{@{}lp{3cm}X@{\midruleX}}
-    %\WideFloatCaption%
-    %\caption{TSIR review.}\label{t.tsir}\\[\smallskipamount]
-    %\LTheader\endfirsthead        % first header
-    %\LTcontinued\LTheader\endhead % headers after page break
-    %\LTcontinues\endfoot          % footers before page break
-    %\bottomrule\endlastfoot       % last footer
-    %\resetmidruleX
+    	%\LTheader\endfirsthead        % first header
+    	%\LTcontinued\LTheader\endhead % headers after page break
+    	%\LTcontinues\endfoot          % footers before page break
+    	%\bottomrule\endlastfoot       % last footer
+    	%\resetmidruleX
+    	% ...
     
     
-    %%%%% todo should I move this into unirefs?  maybe make a lua version
-    \newcommand{\tfnote}[1]{\leavevmode\llap{#1.\enspace}} % use tnote{a} in the table, and \tfnote{a}Note here in the foot notes
-    \NewDocumentCommand{\tnote}{s m}{%
+    
+    
+    % table foot notes: use tnote{a} in the table for superscript marker, and \tfnote{a}Note here in the footnotes of table
+    \NewDocumentCommand{\tabfnote}{m}{\Llap{#1.\enspace}}
+    \NewDocumentCommand{\tabnote}{s m}{%
     	\IfBooleanTF{#1}%
     		{\textsuperscript{#2}}%
     		{\rlap{\textsuperscript{#2}}}% without star, footnote label to take no space
-    }% use tnote{a} in the table, and \tfnote{a}Note here in the foot notes
+    }%
     
-    \newcommand{\atfnote}[1]{\tfnote{\uref{#1}}} % automatic table footnote
-    
-    %\newcommand{\atnote}[1]{\tnote{\uref{#1}}} % automatic table footnote
-    \NewDocumentCommand{\atnote}{s m}{%
+    \NewDocumentCommand{\tfnote}{m}{\tabfnote{\uref{#1}}} % automatic table footnotes--semantic footnote labelling instead of abc
+    \NewDocumentCommand{\tnote}{s m}{%
     	\IfBooleanTF{#1}%
-    		{\tnote*{\uref{#2}}}%
-    		{\tnote{\uref{#2}}}%
+    		{\tabnote*{\uref{#2}}}%
+    		{\tabnote{\uref{#2}}}%
     }% use tnote{a} in the table, and \tfnote{a}Note here in the foot notes
     
     
-    
-    %\NewDocumentCommand{\LongTablePreamble}{ s m O{\bottomrule} }{%  *= dont resetmidruleX on header. {table's header} [table's footer]
-    %	#2
-    %\endfirsthead
-    %%  \MC[3l]{\textsl{\ldots Table continued from previous page\vspace*{0.4ex}}}\\%
-    %  #2%\IfBooleanTF{#1}{}{\noalign{\resetmidruleX}}
-    %\endhead % all the lines above this will be repeated on every page
-    %%  \\%
-    %%  	\MC[3r]{\textsl{Table continues on next page\ldots}}
-    %	\\%\IfBooleanTF{#1}{}{\noalign{\resetmidruleX}}
-    %\endfoot
-    %  #3
-    %\endlastfoot
-    %}
+    % adding on to MC
+    \NewExpandableDocumentCommand{\MCh}{ O{2c_}   D(){rl} m }{\MC[#1#2]{#3}} % a 'hierarchical' cell, usually spans two, has underline
+    \NewExpandableDocumentCommand{\MCb}{ O{,-2b}  D(){}  m }{\MC[#1#2]{#3}}  % a 'bottom' header cell of height 2, usually beside MCh on row after
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%            Colors            %%%
@@ -857,64 +860,20 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%            macros/unirefs            %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    %%%% todo maybe move this to a lua-based function
-    
-    %%%% todo make a lua tables latex interface? That might be fun
-    
-    \newcounter{unilabIN}% my referene counter withIN each new instance
-    \newcounter{unilabOUT}% creates a new set of counters if incremented
-    
-    \setcounter{unilabIN}{1}
-    \setcounter{unilabOUT}{1}  % start at 1 -> a
-    
-    
-    \newcommand\uref[1]{% my command "unique" referencer
-      \@ifundefined{uni\alph{unilabOUT}lab@#1}{%if reference doesnt exist, ie. hasn't been used
-        \global\advance\value{unilabIN}1% global advance to work with ttabbox (can replace 1 with \@ne, use this instead of \stepcounter{unilabIN})
-        \expandafter\xdef\csname uni\alph{unilabOUT}lab@#1\endcsname{\alph{unilabIN}}% create a label for reference
-        % defines a command : uni&lab$  where & is group letter, and $ is the label name
-      }{}%
-      \csname uni\alph{unilabOUT}lab@#1\endcsname% call the label
-    }
-    
-    
-    \newcommand{\reseturef}{\setcounter{unilabIN}{0}\stepcounter{unilabOUT}}% must use this outside of ttabbox
-    
-    
-    %Example usage:
-    %
-    %\reseturef  % resets counters for new labels
-    %
-    %
-    %\begin{tabular}{lr}
-    %  \hline
-    %    Things & Applicable Things \\\hline
-    %    Aardvark & \uref{lookslikerat}, \uref{fourlegs} \\
-    %    Bat & \uref{lookslikerat} \\
-    %    Cheetah & \uref{fourlegs} \\\hline
-    %\end{tabular}
-    
-    
-    %% single layer
-    
-    %\newcounter{unilabIN}% my referene counter withIN each new instance
-    %\newcounter{unilabOUT}% creates a new set of counters if incremented
-    %
-    %\setcounter{unilabIN}{0}
-    %\setcounter{unilabOUT}{1}  % start at 1 -> a
-    %
-    %\makeatletter
-    %\newcommand\uref[1]{% my command "unique" referencer
-    %  \@ifundefined{unilab@#1}{%if reference doesnt exist, ie. hasn't been used
-    %    \stepcounter{unilabIN}\theunilabIN\expandafter\xdef\csname unilab@#1\endcsname{\theunilabIN}% create a label for reference
-    %    % defines a command : uni&lab$  where & is group letter, and $ is the label name
-    %  }{%
-    %  \csname unilab@#1\endcsname% call the label
-    %  }%
-    %}
-    %\makeatother
-    %
-    %\newcommand{\reseturef}{\setcounter{unilabIN}{0}\stepcounter{unilabOUT}}
+    %%% table footnote tracker interface
+    \begin{luacode*}
+    uref_func = pl.char -- (a) | pl.Char (A) | tonumber (1)
+    function uref_reset() uref_list = pl.List() end
+    function uref_add(key)
+      if not uref_list:contains(key) then
+        uref_list:append(key)
+      end
+      tex.print(tostring(uref_func(uref_list:index(key))))
+    end
+    \end{luacode*}
+    \NewDocumentCommand{\reseturef}{}{\luadirect{uref_reset()}}\reseturef
+    \NewDocumentCommand{\uref}{m}{\luadirect{uref_add(\luastring{#1})}}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%            BibAndGloss            %%%

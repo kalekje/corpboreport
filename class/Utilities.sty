@@ -18,6 +18,7 @@
 %\usepackage{tabto}% possibly usful for two column lists %http://tug.ctan.org/tex-archive/macros/latex/contrib/tabto/tabto-doc.pdf
 %%%
 
+\usepackage{import}
 \usepackage{catchfile} % catches a .tex file as a command
 
 %%% pdf stuff
@@ -143,3 +144,14 @@ Useful for pdftitles, other things
 
 %% todo better syntax
 %\itertext<b>{1,2}<a>[; ] --> b1a, b2a,
+
+
+
+% overlay boxes
+\NewDocumentCommand{\overlayTR}{m}{%
+  \Llap{\raisebox{\dimeval{(-\height+1.6ex)}}[0pt][0pt]{#1}}%
+}
+\NewDocumentCommand{\overlayBR}{m}{%
+  \Llap{\raisebox{0pt}[0pt][0pt]{#1}}%
+}
+

@@ -1,0 +1,34 @@
+
+\newcommand{\Fst}{1\textsuperscript{st}\xspace}
+\newcommand{\Snd}{2\textsuperscript{nd}\xspace}
+\newcommand{\Trd}{3\textsuperscript{rd}\xspace}
+
+\newcommand{\degC}{\degree C\xspace}
+
+\newcommand{\rpm}{\raisebox{.2ex}{$\scriptstyle\pm$}} % raised plus/minus
+\newcommand{\rplus}{\raisebox{.2ex}{$+$}} % raised plutm looks better in text
+
+\newcommand{\pluspct}[1]{\mbox{\rplus\,\SI{#1}{\percent}\xspace}}
+\newcommand{\minuspct}[1]{\mbox{$-$\,\SI{#1}{\percent}\xspace}}
+
+\NewDocumentCommand{\pmpct}{s m}{
+	\mbox{%
+	\IfBooleanT{#1}{(}%
+	\rpm\,\SI{#2}{\percent}\xspace%
+	\IfBooleanT{#1}{)}%
+	}%
+}%
+
+
+% todo how should dollars be shown?
+
+% todo option for CAD and USD
+\providetoggle{dollarsignpre}
+\AtBeginDocument{
+	\iftoggle{dollarsignpre}%
+	{\NewDocumentCommand{\@dol}{m O{M}}{\$\,\num{#1}\IfValueT{#2}{\,#2}\xspace}\global\let\dol\@dol}%  $ 2 M
+	{\NewDocumentCommand{\@dol}{m O{M}}{\num{#1}\IfValueT{#2}{\,#2}\,\$\xspace}\global\let\dol\@dol}% 2 M$
+}
+
+%
+
