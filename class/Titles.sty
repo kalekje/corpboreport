@@ -99,11 +99,12 @@
 }
 
 
+
 \gdef\cbp@tpMini{\global\toggletrue{samepgTitle}\cbp@FirstPagePlain
 		\gdef\And{\hspace*{3ex}}
 		\vspace*{-2.5cm}
 		{\RaggedRight
-		\hspace*{-10mm}\pbox[t]{\dimeval{0.99\linewidth+9mm}}{\LARGE\bfseries \@title} \hfill {\ifdef{\@logo}{\overlayTR{\LARGE\@logo}}{}} \medskip
+		\hspace*{-10mm}\parbox[t]{\dimeval{0.99\linewidth+9mm}}{\LARGE\bfseries \@title} \hfill {\ifdef{\@logo}{\overlayTR{\LARGE\@logo}}{}} \medskip
 		
 		\ifdef{\@subtitle}{{\itshape\@subtitle}\medskip}{}
 		\ifdef{\@publishers}{{\def\and{\, }\large\@publishers}\smallskip}{}

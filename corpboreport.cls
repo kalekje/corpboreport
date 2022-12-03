@@ -2145,11 +2145,12 @@
     }
     
     
+    
     \gdef\cbp@tpMini{\global\toggletrue{samepgTitle}\cbp@FirstPagePlain
     		\gdef\And{\hspace*{3ex}}
     		\vspace*{-2.5cm}
     		{\RaggedRight
-    		\hspace*{-10mm}\pbox[t]{\dimeval{0.99\linewidth+9mm}}{\LARGE\bfseries \@title} \hfill {\ifdef{\@logo}{\overlayTR{\LARGE\@logo}}{}} \medskip
+    		\hspace*{-10mm}\parbox[t]{\dimeval{0.99\linewidth+9mm}}{\LARGE\bfseries \@title} \hfill {\ifdef{\@logo}{\overlayTR{\LARGE\@logo}}{}} \medskip
     		
     		\ifdef{\@subtitle}{{\itshape\@subtitle}\medskip}{}
     		\ifdef{\@publishers}{{\def\and{\, }\large\@publishers}\smallskip}{}
@@ -2219,6 +2220,7 @@
 
 \usepackage[pl,extrasglobals]{penlight}
 \usepackage{lutabulartools}
+\settabular{tbrule,nopad}
 \usepackage{autopuncitems}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -2436,15 +2438,13 @@
         \cbp@FirstPagePlain
     }
     
-    
+    \def\namedatememoheader{%
+      \ifdef{\@memoto}{\lohead{\textit\@memoto}}{}%
+      \ifdef{\@date}{\rohead{\@date}}{}%
+    }
     
     \iftoggle{useMemo}{
     
-      \AtBeginDocument{
-            \ifdef{\@memoto}{\lohead{\textit\@memoto}}{}
-            \ifdef{\@date}{\rohead{\@date}}{}
-            }
-        
         \toggletrue{ChapOnSamePage}         %%% PATCH sections
         \addtokomafont{chapter}{\Large}
         \addtokomafont{section}{\large}

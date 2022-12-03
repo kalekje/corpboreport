@@ -67,15 +67,13 @@ memotoaddr:
     \cbp@FirstPagePlain
 }
 
-
+\def\namedatememoheader{%
+  \ifdef{\@memoto}{\lohead{\textit\@memoto}}{}%
+  \ifdef{\@date}{\rohead{\@date}}{}%
+}
 
 \iftoggle{useMemo}{
 
-  \AtBeginDocument{
-        \ifdef{\@memoto}{\lohead{\textit\@memoto}}{}
-        \ifdef{\@date}{\rohead{\@date}}{}
-        }
-    
     \toggletrue{ChapOnSamePage}         %%% PATCH sections
     \addtokomafont{chapter}{\Large}
     \addtokomafont{section}{\large}

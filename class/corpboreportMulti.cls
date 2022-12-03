@@ -82,6 +82,7 @@
 
 \usepackage[pl,extrasglobals]{penlight}
 \usepackage{lutabulartools}
+\settabular{tbrule,nopad}
 \usepackage{autopuncitems}
 \usepackage{\FormatDir YAMLvarsDec}
 
