@@ -198,6 +198,8 @@
     % Text / Para Settings and utils
     % ##############################################
     
+    \usepackage[utf8]{luainputenc}
+    
     \ifluatex
         \usepackage{polyglossia} % helps with hyphenation
         \setdefaultlanguage[variant=canadian]{english}
@@ -206,7 +208,7 @@
     \fi
     
     
-    \usepackage{csquotes} % helps with hyphenation
+    \usepackage{csquotes} % helps with hyphenation and ""
     
     %%% GENERAL FORMATTING
     \usepackage{ragged2e}
@@ -220,6 +222,9 @@
     \usepackage{pbox}  % create box of max width http://ctan.mirror.colo-serv.net/macros/latex/contrib/pbox/pbox.pdf
     
     \newcommand{\vparspace}{\vspace{\parskip}}
+    
+    \def\tspc{\nobreak\hspace{.08em plus .04em}} % tiny space
+    \def\tspcs{\tspc{}s} % tiny space
     
     
     \let\oldcenter\center
@@ -236,6 +241,42 @@
     \newcommand{\Clap}[1]{\leavevmode\clap{#1}}
     \newcommand{\Hfill}{\null\hfill}  % hfill if first thing
     \newcommand{\Vfill}{\null\vfill}  % hfill if first thing
+    
+    
+    \newcommand\ensurecomma{%
+    \@ifnextchar,{}{\@latex@error{Don’t forget the comma!}{}}}
+    \newcommand\ex{e.g.\ensurecomma}
+    \newcommand\ie{i.e.\ensurecomma}
+    \newcommand\ensuresingleperiod{\@ifnextchar.{}{.\@}}
+    \newcommand\etc{etc\ensuresingleperiod}
+    \newcommand\etal{et~al\ensuresingleperiod}
+    
+    
+    \DeclareRobustCommand\mdash{%
+        \unskip\nobreak\thinspace\textemdash\thinspace\ignorespaces}
+    \DeclareRobustCommand\ndash{%
+        \unskip\nobreak\thinspace\textendash\thinspace\ignorespaces}
+    \DeclareUnicodeCharacter{2014}{\dash}
+    \AtBeginDocument{\pdfstringdefDisableCommands{\renewcommand{\dash}{ - }}}
+    
+    \DeclareRobustCommand\dash{%
+      \unskip\nobreak\thinspace\textemdash\allowbreak\thinspace\ignorespaces}
+    
+    \directlua{
+    function autodashes(s)
+    s = string.gsub(s,'[-][-][-]', '\string\\mdash ')
+    %s = string.gsub(s,'[-][-]',    '\string\\ndash ')
+    return s
+    end}
+    
+    \def\autodashON{\directlua{%
+    luatexbase.add_to_callback("process_input_buffer", autodashes,"auto spaced dashes")%
+    }}
+    
+    \def\autodashOFF{\directlua{%
+    luatexbase.remove_from_callback("process_input_buffer","auto spaced dashes")%
+    }}
+    
     
     
     % ##############################################
@@ -276,6 +317,7 @@
 %%%            FontKPotf            %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     \usepackage[onlyrm,light]{kpfonts-otf}  % https://texdoc.org/serve/kpfonts-otf/0
+    
     \setsansfont[Scale=MatchLowercase]{CMU Bright} % monospace that looks nice with light kpfont
     \setmonofont[Numbers=Lining]{CMU Typewriter Text Light} % monospace that looks nice with light kpfont
     
@@ -294,13 +336,18 @@
     %\let\unum\liningnums   % {}
     
     % if [] provided, apply to grouped text only--if not apply toggle
-    \NewDocumentCommand{\lnum}{o}{\IfValueTF{#1}{\oldstylenums{#1}}{\toglnums}}
-    \NewDocumentCommand{\unum}{o}{\IfValueTF{#1}{\liningnums{#1}}{\togunums}}
+    %\NewDocumentCommand{\lnum}{o}{\IfValueTF{#1}{\oldstylenums{#1}}{\toglnums}}
+    %\NewDocumentCommand{\unum}{o}{\IfValueTF{#1}{\liningnums{#1}}{\togunums}}
+    \NewDocumentCommand{\lnum}{m}{\ifstrequal{#1}{*}{\toglnums}{\oldstylenums{#1}}}
+    \NewDocumentCommand{\unum}{m}{\ifstrequal{#1}{*}{\togunums}{\liningnums{#1}}}
+    
     
     \let\classicstylenums\liningnums
     
-    \def\acs{\scshape\toglnums}  % acronym series
-    \def\act#1{\textsc{\toglnums#1}}  % acronym text
+    %\NewDocumentCommand{\act}{o}{\IfValueTF{#1}{\textsc{\lnum#1}}{\scshape\toglnums}}  % acronym text style
+    \NewDocumentCommand{\act}{m}{\ifstrequal{#1}{*}{\scshape\toglnums}{\textsc{\lnum{#1}}}}  % acronym text style
+    %% see BibAndGloss for other ac* commands
+    
     
     \AtBeginEnvironment{tabular}{\togunums}
     \AtBeginEnvironment{tabular*}{\togunums}
@@ -309,6 +356,15 @@
     \def\cbp@secnumsize{\toglnums} % dont allow cpb to use smaller numbers in section
     \newcommand{\cbp@appendixletformat}[1]{\scshape\alph{#1}}
     \def\cbp@appendixsecformat{\scshape\MakeLowercase}
+    
+    
+    
+    % Rules for number casing:
+    %   Uppercase: quantities, page numbers, citations
+    %   Lowercase: section numbers, dates, itemized lists
+    % Rules for small capitals
+    %   Only applied for 'label-like' items. Eg. doi: 123 or gpa: or date [yyyy-mm-dd]
+    %   Acronyms to appear in uppercase
     
     
     %% for non-light option
@@ -347,6 +403,9 @@
     \DeclareSymbolFont{iwonalargesymbols}{OMX}{iwona}{m}{n}
     \DeclareMathSymbol{\intop}{\mathop}{iwonalargesymbols}{"52}
     
+    % todo try https://tex.stackexchange.com/questions/204778/difficulty-finding-selecting-cm-bright-using-fontspec
+    
+    
     \usepackage[%
       protrusion=true,
       expansion,
@@ -361,8 +420,8 @@
     % upper and lowercase number commands -- not applicable if using serif, I choose uppercase only for simplicity
     \def\togunums{}
     \def\toglnums{}
-    \NewDocumentCommand{\lnum}{o}{}
-    \NewDocumentCommand{\unum}{o}{}
+    \NewDocumentCommand{\lnum}{m}{}
+    \NewDocumentCommand{\unum}{m}{}
     
     \def\act{}
     \def\actext#1{#1}
@@ -394,6 +453,11 @@
     %\def\sbfCMB#1{\ThisStyle{\setbox0=\hbox{$\SavedStyle#1$}%
     %		#1\kern.2pt\kern-\wd0%
     %		\raisebox{.1pt}{$\SavedStyle#1$}}}
+    
+    
+    %%% patching
+    
+    \newcommand{\mathup}[1]{\text{\textup{#1}}}  % patching needed for mathup
 
 }
 
@@ -468,6 +532,14 @@
     \end{AutoPuncTabular}
     	}{}
     
+    
+    \DeclareInstance{xfrac}{KpLight}{text}
+    {slash-symbol-font = ptm,
+    scaling = false,
+    denominator-bot-sep = 10 pt,
+    numerator-bot-sep = 10 pt,
+    }
+    %\UseCollection{xfrac}{KpLight}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1032,7 +1104,7 @@
     
     %%%% END TIKZ STUFF
 
-\usepackage[pl,extrasglobals]{penlight}
+\usepackage[pl,globals]{penlightplus}
 \usepackage{YAMLvars}
 \usepackage{lutabulartools}
 \usepackage{autopuncitems}

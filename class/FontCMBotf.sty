@@ -23,6 +23,9 @@
 \DeclareSymbolFont{iwonalargesymbols}{OMX}{iwona}{m}{n}
 \DeclareMathSymbol{\intop}{\mathop}{iwonalargesymbols}{"52}
 
+% todo try https://tex.stackexchange.com/questions/204778/difficulty-finding-selecting-cm-bright-using-fontspec
+
+
 \usepackage[%
   protrusion=true,
   expansion,
@@ -37,8 +40,8 @@
 % upper and lowercase number commands -- not applicable if using serif, I choose uppercase only for simplicity
 \def\togunums{}
 \def\toglnums{}
-\NewDocumentCommand{\lnum}{o}{}
-\NewDocumentCommand{\unum}{o}{}
+\NewDocumentCommand{\lnum}{m}{}
+\NewDocumentCommand{\unum}{m}{}
 
 \def\act{}
 \def\actext#1{#1}
@@ -70,3 +73,8 @@
 %\def\sbfCMB#1{\ThisStyle{\setbox0=\hbox{$\SavedStyle#1$}%
 %		#1\kern.2pt\kern-\wd0%
 %		\raisebox{.1pt}{$\SavedStyle#1$}}}
+
+
+%%% patching
+
+\newcommand{\mathup}[1]{\text{\textup{#1}}}  % patching needed for mathup

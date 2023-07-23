@@ -12,9 +12,11 @@ pdfpagemode=UseOutlines,%
 pdfpagelayout=TwoPageRight
 }
 
+\AtBeginDocument{
 \if@twoside
     \hypersetup{pdfpagelayout=TwoPageRight}
 \else \fi
+}
 
 \usepackage[nameinlink,noabbrev]{cleveref}  % cref
 

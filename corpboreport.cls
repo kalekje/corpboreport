@@ -275,6 +275,8 @@
     % Text / Para Settings and utils
     % ##############################################
     
+    \usepackage[utf8]{luainputenc}
+    
     \ifluatex
         \usepackage{polyglossia} % helps with hyphenation
         \setdefaultlanguage[variant=canadian]{english}
@@ -283,7 +285,7 @@
     \fi
     
     
-    \usepackage{csquotes} % helps with hyphenation
+    \usepackage{csquotes} % helps with hyphenation and ""
     
     %%% GENERAL FORMATTING
     \usepackage{ragged2e}
@@ -297,6 +299,9 @@
     \usepackage{pbox}  % create box of max width http://ctan.mirror.colo-serv.net/macros/latex/contrib/pbox/pbox.pdf
     
     \newcommand{\vparspace}{\vspace{\parskip}}
+    
+    \def\tspc{\nobreak\hspace{.08em plus .04em}} % tiny space
+    \def\tspcs{\tspc{}s} % tiny space
     
     
     \let\oldcenter\center
@@ -313,6 +318,42 @@
     \newcommand{\Clap}[1]{\leavevmode\clap{#1}}
     \newcommand{\Hfill}{\null\hfill}  % hfill if first thing
     \newcommand{\Vfill}{\null\vfill}  % hfill if first thing
+    
+    
+    \newcommand\ensurecomma{%
+    \@ifnextchar,{}{\@latex@error{Don’t forget the comma!}{}}}
+    \newcommand\ex{e.g.\ensurecomma}
+    \newcommand\ie{i.e.\ensurecomma}
+    \newcommand\ensuresingleperiod{\@ifnextchar.{}{.\@}}
+    \newcommand\etc{etc\ensuresingleperiod}
+    \newcommand\etal{et~al\ensuresingleperiod}
+    
+    
+    \DeclareRobustCommand\mdash{%
+        \unskip\nobreak\thinspace\textemdash\thinspace\ignorespaces}
+    \DeclareRobustCommand\ndash{%
+        \unskip\nobreak\thinspace\textendash\thinspace\ignorespaces}
+    \DeclareUnicodeCharacter{2014}{\dash}
+    \AtBeginDocument{\pdfstringdefDisableCommands{\renewcommand{\dash}{ - }}}
+    
+    \DeclareRobustCommand\dash{%
+      \unskip\nobreak\thinspace\textemdash\allowbreak\thinspace\ignorespaces}
+    
+    \directlua{
+    function autodashes(s)
+    s = string.gsub(s,'[-][-][-]', '\string\\mdash ')
+    %s = string.gsub(s,'[-][-]',    '\string\\ndash ')
+    return s
+    end}
+    
+    \def\autodashON{\directlua{%
+    luatexbase.add_to_callback("process_input_buffer", autodashes,"auto spaced dashes")%
+    }}
+    
+    \def\autodashOFF{\directlua{%
+    luatexbase.remove_from_callback("process_input_buffer","auto spaced dashes")%
+    }}
+    
     
     
     % ##############################################
@@ -352,6 +393,7 @@
 %%%            FontKPotf            %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     \usepackage[onlyrm,light]{kpfonts-otf}  % https://texdoc.org/serve/kpfonts-otf/0
+    
     \setsansfont[Scale=MatchLowercase]{CMU Bright} % monospace that looks nice with light kpfont
     \setmonofont[Numbers=Lining]{CMU Typewriter Text Light} % monospace that looks nice with light kpfont
     
@@ -370,13 +412,18 @@
     %\let\unum\liningnums   % {}
     
     % if [] provided, apply to grouped text only--if not apply toggle
-    \NewDocumentCommand{\lnum}{o}{\IfValueTF{#1}{\oldstylenums{#1}}{\toglnums}}
-    \NewDocumentCommand{\unum}{o}{\IfValueTF{#1}{\liningnums{#1}}{\togunums}}
+    %\NewDocumentCommand{\lnum}{o}{\IfValueTF{#1}{\oldstylenums{#1}}{\toglnums}}
+    %\NewDocumentCommand{\unum}{o}{\IfValueTF{#1}{\liningnums{#1}}{\togunums}}
+    \NewDocumentCommand{\lnum}{m}{\ifstrequal{#1}{*}{\toglnums}{\oldstylenums{#1}}}
+    \NewDocumentCommand{\unum}{m}{\ifstrequal{#1}{*}{\togunums}{\liningnums{#1}}}
+    
     
     \let\classicstylenums\liningnums
     
-    \def\acs{\scshape\toglnums}  % acronym series
-    \def\act#1{\textsc{\toglnums#1}}  % acronym text
+    %\NewDocumentCommand{\act}{o}{\IfValueTF{#1}{\textsc{\lnum#1}}{\scshape\toglnums}}  % acronym text style
+    \NewDocumentCommand{\act}{m}{\ifstrequal{#1}{*}{\scshape\toglnums}{\textsc{\lnum{#1}}}}  % acronym text style
+    %% see BibAndGloss for other ac* commands
+    
     
     \AtBeginEnvironment{tabular}{\togunums}
     \AtBeginEnvironment{tabular*}{\togunums}
@@ -385,6 +432,15 @@
     \def\cbp@secnumsize{\toglnums} % dont allow cpb to use smaller numbers in section
     \newcommand{\cbp@appendixletformat}[1]{\scshape\alph{#1}}
     \def\cbp@appendixsecformat{\scshape\MakeLowercase}
+    
+    
+    
+    % Rules for number casing:
+    %   Uppercase: quantities, page numbers, citations
+    %   Lowercase: section numbers, dates, itemized lists
+    % Rules for small capitals
+    %   Only applied for 'label-like' items. Eg. doi: 123 or gpa: or date [yyyy-mm-dd]
+    %   Acronyms to appear in uppercase
     
     
     %% for non-light option
@@ -421,6 +477,9 @@
     \DeclareSymbolFont{iwonalargesymbols}{OMX}{iwona}{m}{n}
     \DeclareMathSymbol{\intop}{\mathop}{iwonalargesymbols}{"52}
     
+    % todo try https://tex.stackexchange.com/questions/204778/difficulty-finding-selecting-cm-bright-using-fontspec
+    
+    
     \usepackage[%
       protrusion=true,
       expansion,
@@ -435,8 +494,8 @@
     % upper and lowercase number commands -- not applicable if using serif, I choose uppercase only for simplicity
     \def\togunums{}
     \def\toglnums{}
-    \NewDocumentCommand{\lnum}{o}{}
-    \NewDocumentCommand{\unum}{o}{}
+    \NewDocumentCommand{\lnum}{m}{}
+    \NewDocumentCommand{\unum}{m}{}
     
     \def\act{}
     \def\actext#1{#1}
@@ -468,6 +527,11 @@
     %\def\sbfCMB#1{\ThisStyle{\setbox0=\hbox{$\SavedStyle#1$}%
     %		#1\kern.2pt\kern-\wd0%
     %		\raisebox{.1pt}{$\SavedStyle#1$}}}
+    
+    
+    %%% patching
+    
+    \newcommand{\mathup}[1]{\text{\textup{#1}}}  % patching needed for mathup
 }
 
 
@@ -1134,6 +1198,14 @@
     \end{AutoPuncTabular}
     	}{}
     
+    
+    \DeclareInstance{xfrac}{KpLight}{text}
+    {slash-symbol-font = ptm,
+    scaling = false,
+    denominator-bot-sep = 10 pt,
+    numerator-bot-sep = 10 pt,
+    }
+    %\UseCollection{xfrac}{KpLight}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1375,11 +1447,16 @@
     \DeclareCaptionLabelSeparator{enspace}{\enspace}
     \captionsetup{labelfont=bf,labelformat=hangcap,labelsep=enspace}
     \iftoggle{useSerif}{
-    %  \DeclareCaptionLabelFormat{lc}{\MakeLowercase{#1}~#2}
-      \DeclareCaptionLabelFormat{hangcap}{\llap{\MakeLowercase{#1}~#2\enspace}}
-      \DeclareCaptionLabelFormat{widecap}{\MakeLowercase{#1}~#2}
-      \DeclareCaptionFont{bfscln}{\bfseries\scshape\toglnums}
-      \captionsetup{labelfont=bfscln,labelformat=hangcap,labelsep=enspace}
+      %%%% for small caps
+    %  \DeclareCaptionLabelFormat{hangcap}{\llap{\MakeLowercase{#1}~#2\enspace}}
+    %  \DeclareCaptionLabelFormat{widecap}{\MakeLowercase{#1}~#2}
+    %  \DeclareCaptionFont{bfscln}{\bfseries\scshape\toglnums}
+    %  \captionsetup{labelfont=bfscln,labelformat=hangcap,labelsep=enspace}
+      %%%% for not small caps
+      \DeclareCaptionLabelFormat{hangcap}{\llap{#1~#2\enspace}}
+      \DeclareCaptionLabelFormat{widecap}{#1~#2}
+      \DeclareCaptionFont{bfln}{\bfseries\toglnums}
+      \captionsetup{labelfont=bfln,labelformat=hangcap,labelsep=enspace}
     }{}
     \captionsetup[sub]{skip=8pt, aboveskip=5pt, font=small, labelfont={small,bf,sc},
     	position=top,labelformat=hangcap,labelsep=enspace}  % formats \subcaptionbox
@@ -1440,6 +1517,11 @@
         \ttabbox{}{#4\IfValueT{#9}{\vspace{\TabNoteSpace}\floatfoot*{#9}}}% if no star then use hanging
       \end{table}%
     }
+    
+    
+    \define@key{Gin}{halfwidth}[0.5\linewidth]{\def\Gin@ewidth{#1}}
+    
+    \define@key{Gin}{fullwidth}[\linewidth]{\def\Gin@ewidth{#1}}
     
     
     % create an empty box that's the same size as of an image
@@ -1815,7 +1897,7 @@
 %%%            BibAndGloss            %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % requires enumitem for acronym styling
-    \usepackage[sorting=none]{biblatex}
+    \usepackage[sorting=none,style=ieee]{biblatex}
     
     \renewrobustcmd*{\bibinitdelim}{\,}
     \renewcommand*{\multicitedelim}{\addcomma\,}  % tighten [1,2,3] multi citations
@@ -1842,11 +1924,13 @@
     
     
     
-    
+    %%%%%%%%%
     %%% Glossaries / index / symbol %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%%%%%%%
     
-    \usepackage[xindy,acronym,index,symbols,
-    nohypertypes={acronym,index,symbols},
+    
+    \usepackage[xindy,sanitizesort,acronym,index,symbols,
+    	nohypertypes={acronym,index,symbols},
     ]{glossaries-extra}
     %,nonumberlist <<< dont use as custom styles are made
     % toc <<< dont use ToC option as manually entered
@@ -1863,20 +1947,11 @@
     % \gls, \ac,  \idx
     
     
-    
-    
     \GlsXtrEnableEntryCounting % % https://tex.stackexchange.com/questions/477581/glossaries-introduce-short-name-only-if-used-more-than-once-within-section-chap
      	{acronym}% list of categories to use entry counting
      	{1}% trigger value
     
-    \setabbreviationstyle[acronym]{long-short}
-    
-    %\glsenableentrycount % enable \cgls, \cglspl, \cGls, \cGlspl  supposed to not show accronym if only one
-    %\glsdisablehyper  % to disable hyperlinks
-    
     \glstoctrue  % ToC
-    
-    
     
     \makeglossaries
     
@@ -1884,16 +1959,31 @@
     \newglossarystyle{AcronymsTwoCol}{%
     	\renewcommand*{\glossaryheader}{}%
     	\renewcommand*{\glsgroupheading}[1]{}%
-    	\newcommand*{\glossarysubentryfield}[6]{glssubentryitem{##2}{\strut\glstarget{##2}##4\glspostdescription\space ##6}}% caused error on update 2022 11 03
     	\renewcommand*{\glsgroupskip}{\vspace{7pt}}% space between alphabetized groups
+    	\renewcommand{\glossentry}[2]{
+    		\item[\glsentryshort{##1}]{\glsentrylong{##1}\glspostdescription}
+    	}
     	\renewenvironment{theglossary}%
     		{\vspace*{1ex}\setlength{\columnsep}{30pt}\begin{multicols}{2}%
-    		\begin{description}[font=\bfseries,leftmargin=1.7cm,style=multiline,itemsep=3pt]\raggedright}%
-    		{\end{description}\end{multicols}}%
-    	\newcommand*{\glossaryentryfield}[5]{%
-    		\item[{\normalfont\bfseries\glsentryitem{##1}\glstarget{##1}{##2}}]{##3\glspostdescription}  % \space ##5 after postdescription (page numbers) are removed
-    		}%
+    			\begin{description}[font=\iftoggle{useSerif}{\rmfamily}{}\bfseries,leftmargin=1.7cm,style=multiline,itemsep=3pt]\raggedright
+    		}{%
+    			\end{description}\end{multicols}
+    	}%
+    % todo try below in item, try ifsymbol make a symbol else use glossary name, same style for symbols and acronyms
+    %\renewcommand*{\glossentry}[2]{%
+    %\item % bullet point
+    %\glstarget{##1}{\glossentryname{##1}}% the entry name
+    %\space (\glossentrysymbol{##1})% the symbol in brackets
+    %\space \glossentrydesc{##1}% the description
+    %\space [##2]% the number list in square brackets
+    %}%
     }
+    
+    
+    
+    %\setabbreviationstyle[acronym]{long-sc-short}
+    %\glsenableentrycount % enable \cgls, \cglspl, \cGls, \cGlspl  supposed to not show accronym if only one
+    %\glsdisablehyper  % to disable hyperlinks
     
     
     
@@ -1913,8 +2003,63 @@
     
     
     
+    \newglossarystyle{mylist}{%
+    % put the glossary in the itemize environment:
+    \renewenvironment{theglossary}%
+    {\begin{itemize}}{\end{itemize}}%
+    % no header after \begin{theglossary}
+    \renewcommand*{\glossaryheader}{}%
+    % no visual distinction between glossary groups:
+    \renewcommand*{\glsgroupheading}[1]{}%
+    \renewcommand*{\glsgroupskip}{}%
+    % set how each entry should appear:
+    \renewcommand*{\glossentry}[2]{%
+    \item % bullet point
+    \glstarget{##1}{\glossentryname{##1}}% the entry name
+    \space (\glossentrysymbol{##1})% the symbol in brackets
+    \space \glossentrydesc{##1}% the description
+    \space [##2]% the number list in square brackets
+    }%
+    % set how sub-entries appear:
+    \renewcommand*{\subglossentry}[3]{%
+    \glossentry{##2}{##3}}%
+    }
     
     
+    
+    \newglossarystyle{TwoCol}{%
+    	\renewcommand*{\glossaryheader}{}%
+    	\renewcommand*{\glsgroupheading}[1]{}%
+    	\renewcommand*{\glsgroupskip}{\vspace{7pt}}% space between alphabetized groups
+    	\renewcommand{\glossentry}[2]{
+    		\item[\glsentryshort{##1}]{\glsentrylong{##1}\glspostdescription}  % #2 would be page numbers
+    	}
+    	\renewenvironment{theglossary}%
+    		{\vspace*{1ex}\setlength{\columnsep}{30pt}\begin{multicols}{2}%
+    			\begin{description}[font=\iftoggle{useSerif}{\rmfamily}{}\bfseries,leftmargin=1.7cm,style=multiline,itemsep=3pt]\raggedright
+    		}{%
+    			\end{description}\end{multicols}
+    	}%
+    }
+    
+    
+    	\setabbreviationstyle[acronym]{long-short}
+    
+    \iftoggle{useSerif}{
+    %		\setabbreviationstyle[acronym]{long-short}
+    %		\global\renewcommand{\acronymfont}[1]{\textsc{#1}}  % up for debate...i should define proper case]
+    %		\setabbreviationstyle[acronym]{long-sc-short}
+    	}{
+    		\setabbreviationstyle[acronym]{long-short}
+    }
+    
+    %\global\renewcommand{\acronymfont}[1]{{\scshape#1}}  % up for debate...i should define proper case]
+    
+    
+    %\setabbreviationstyle[acronym]{long-em-short-em}
+    %\renewcommand*{\glslongemfont}[1]{#1}% change the emphasize font to null for long-em-short-em style
+    %\renewcommand*{\glsabbrvemfont}[1]{\textsc{#1}}% change abbreviation emphasis to small-caps
+    %\glssetcategoryattribute{acronym}{glossnamefont}{textsc}
     
     
     \usepackage{pdfcomment}
@@ -1931,14 +2076,18 @@
     \newcommand{\ac}[1]{%
           \ifglsused{#1}{%
     %         \pdftooltip{\gls*{#1}}{\getTheToolTipText{#1}}\xspace%
-    				 {\scshape\pdftooltip{\gls*{#1}}{\getTheToolTipText{#1}}}%
+    				 {\pdftooltip{\gls*{#1}}{\getTheToolTipText{#1}}}%
     %         \pdftooltip{\textsc{\MakeLowercase{\gls*{#1}}}}{\getTheToolTipText{#1}}\xspace% todo consider small caps for serfif
         }{%
     %        \gls*{#1}\xspace%
-    				{\scshape\gls*{#1}}% todo get to root, make sure acronyms specifically are small caps!
+    				{\gls*{#1}}% todo get to root, make sure acronyms specifically are small caps!
     %				{\textsc{\MakeLowercase{\gls*{#1}}}}
         }%
     }%
+    
+    \let\acs\glsxtrshort  %  short and long acronym shortcuts
+    \let\acl\glsxtrlong   %
+    
     
     % todo :    add prefix on acronym ac.cnn, on index like idx.cnn, and on symbols like sym.X
     % then use a \ac \idx \sym that calls \ac = \gls{ac.#1}  \Idx = \Gls{idx.#1}  etc. etc.
@@ -1990,9 +2139,11 @@
     pdfpagelayout=TwoPageRight
     }
     
+    \AtBeginDocument{
     \if@twoside
         \hypersetup{pdfpagelayout=TwoPageRight}
     \else \fi
+    }
     
     \usepackage[nameinlink,noabbrev]{cleveref}  % cref
     
@@ -2098,15 +2249,18 @@
     }
     
     
+    \newlength\cbp@titleheight
+    \setlength\cbp@titleheight{8.0in} % additional logo settings
+    
     
     \providetoggle{samepgTitle}
     %%% title pages
     
     \gdef\cbp@tpPage{
     \begin{titlepage}\thispagestyle{empty}
-    	\rule{\heavyrulewidth}{7.4in} % Vertical line
+    	\rule{\heavyrulewidth}{\cbp@titleheight} % Vertical line
     	\hspace{0.5in} % Whitespace between the vertical line and title page text
-    	\begin{minipage}[b][7.4in][s]{4.4in}
+    	\begin{minipage}[b][\cbp@titleheight][s]{4.4in}
     		\raggedright % Right align the title page
     		\toglnums
     		\thispagestyle{empty}
@@ -2114,15 +2268,15 @@
     
     		\null\vfill\null\vfill
     
-    		\parbox[t]{\linewidth}{\Huge\bfseries\@title}% Title  \bfseries
+    		\parbox[t]{\linewidth}{\LARGE\bfseries\@title}% Title  \bfseries
     
     		\ifdef{\@subtitle}{
     		\null\vfill\par
-    			\parbox[t]{\linewidth}{\large\itshape\@subtitle} % Subtitle or further description
+    			\parbox[t]{\linewidth}{\normalsize\itshape\@subtitle} % Subtitle or further description
     		}{}
     		\ifdef{\@publishers}{\def\and{\\}
     			\null\vfill\par
-    			\parbox[t]{\linewidth}{\Large\@publishers} % or company
+    			\parbox[t]{\linewidth}{\large\@publishers} % or company
     		}{}
     		\ifdef{\@author}{\def\and{\\}
     			\null\vfill\par
@@ -2130,7 +2284,7 @@
     		}{}
     		\ifdef{\@date}{
     			\null\vfill\par
-    			\parbox[t]{\linewidth}{\Large\@date}
+    			\parbox[t]{\linewidth}{\large\@date}
     		}{}
     		\ifdef{\@logo}{
     			\null\vfill
@@ -2218,7 +2372,7 @@
     
 
 
-\usepackage[pl,extrasglobals]{penlight}
+\usepackage[pl,globals]{penlightplus}
 \usepackage{lutabulartools}
 \settabular{tbrule,nopad}
 \usepackage{autopuncitems}
@@ -2360,6 +2514,8 @@
     	{\NewDocumentCommand{\@dol}{m O{M}}{\$\,\num{#1}\IfValueT{#2}{\,#2}\xspace}\global\let\dol\@dol}%  $ 2 M
     	{\NewDocumentCommand{\@dol}{m O{M}}{\num{#1}\IfValueT{#2}{\,#2}\,\$\xspace}\global\let\dol\@dol}% 2 M$
     }
+    
+    \newcommand{\ppm}{\,ppm\xspace} % parts per million
     
     %
     

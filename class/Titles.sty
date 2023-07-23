@@ -52,15 +52,18 @@
 }
 
 
+\newlength\cbp@titleheight
+\setlength\cbp@titleheight{8.0in} % additional logo settings
+
 
 \providetoggle{samepgTitle}
 %%% title pages
 
 \gdef\cbp@tpPage{
 \begin{titlepage}\thispagestyle{empty}
-	\rule{\heavyrulewidth}{7.4in} % Vertical line
+	\rule{\heavyrulewidth}{\cbp@titleheight} % Vertical line
 	\hspace{0.5in} % Whitespace between the vertical line and title page text
-	\begin{minipage}[b][7.4in][s]{4.4in}
+	\begin{minipage}[b][\cbp@titleheight][s]{4.4in}
 		\raggedright % Right align the title page
 		\toglnums
 		\thispagestyle{empty}
@@ -68,15 +71,15 @@
 
 		\null\vfill\null\vfill
 
-		\parbox[t]{\linewidth}{\Huge\bfseries\@title}% Title  \bfseries
+		\parbox[t]{\linewidth}{\LARGE\bfseries\@title}% Title  \bfseries
 
 		\ifdef{\@subtitle}{
 		\null\vfill\par
-			\parbox[t]{\linewidth}{\large\itshape\@subtitle} % Subtitle or further description
+			\parbox[t]{\linewidth}{\normalsize\itshape\@subtitle} % Subtitle or further description
 		}{}
 		\ifdef{\@publishers}{\def\and{\\}
 			\null\vfill\par
-			\parbox[t]{\linewidth}{\Large\@publishers} % or company
+			\parbox[t]{\linewidth}{\large\@publishers} % or company
 		}{}
 		\ifdef{\@author}{\def\and{\\}
 			\null\vfill\par
@@ -84,7 +87,7 @@
 		}{}
 		\ifdef{\@date}{
 			\null\vfill\par
-			\parbox[t]{\linewidth}{\Large\@date}
+			\parbox[t]{\linewidth}{\large\@date}
 		}{}
 		\ifdef{\@logo}{
 			\null\vfill

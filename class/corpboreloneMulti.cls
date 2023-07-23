@@ -36,7 +36,7 @@
 
 \usepackage{\FormatDir TikZstuff}
 
-\usepackage[pl,extrasglobals]{penlight}
+\usepackage[pl,globals]{penlightplus}
 \usepackage{YAMLvars}
 \usepackage{lutabulartools}
 \usepackage{autopuncitems}

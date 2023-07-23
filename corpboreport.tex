@@ -1,6 +1,6 @@
 % Kale Ewasiuk (kalekje@gmail.com)
 % +REVDATE+
-% Copyright (C) 2021 Kale Ewasiuk
+% Copyright (C) 2021-2023 Kale Ewasiuk
 %
 % Permission is hereby granted, free of charge, to any person obtaining a copy
 % of this software and associated documentation files (the "Software"), to deal
@@ -27,7 +27,8 @@
 \def\FormatDir{../class/}
 %\documentclass[memo,serif]{\FormatDir corpboreportMulti}
 %\documentclass[serif]{\FormatDir corpboreportMulti}
-\documentclass{\FormatDir corpboreportMulti}
+%\documentclass{\FormatDir corpboreportMulti}
+\documentclass{corpboreport}
 %\setlength{\parindent}{0ex}
 
 
@@ -113,8 +114,7 @@ pdf:
 
 \begin{document}
 
-α ≈ ∞ ¼ Δ Ω
-$α ≈ ∞$ µs
+
 
 %
 %todo use /And command for authors? how to handle multiple? maybe use \{\} [] [] for multi authors?
@@ -145,6 +145,8 @@ $α ≈ ∞$ µs
 
 \IntentionallyBlankPage
 
+α ≈ ∞ ¼ Δ Ω
+$α ≈ ∞$ µs
 
 \section{Quick Start}
 \begin{itemize}
@@ -665,8 +667,8 @@ This will all
 be one sentence.
 
 \ \ \ \ New paragraph from blank line.
-Supercali%<<see percent/comment
-fragilstitic%<<<
+Supercali% <<see percent/comment
+fragilstitic% <<<
 expilaidocuious  % << no space
 
 \ \ \ \ It is useful to break ideas

@@ -45,6 +45,8 @@
     % Text / Para Settings and utils
     % ##############################################
     
+    \usepackage[utf8]{luainputenc}
+    
     \ifluatex
         \usepackage{polyglossia} % helps with hyphenation
         \setdefaultlanguage[variant=canadian]{english}
@@ -53,7 +55,7 @@
     \fi
     
     
-    \usepackage{csquotes} % helps with hyphenation
+    \usepackage{csquotes} % helps with hyphenation and ""
     
     %%% GENERAL FORMATTING
     \usepackage{ragged2e}
@@ -67,6 +69,9 @@
     \usepackage{pbox}  % create box of max width http://ctan.mirror.colo-serv.net/macros/latex/contrib/pbox/pbox.pdf
     
     \newcommand{\vparspace}{\vspace{\parskip}}
+    
+    \def\tspc{\nobreak\hspace{.08em plus .04em}} % tiny space
+    \def\tspcs{\tspc{}s} % tiny space
     
     
     \let\oldcenter\center
@@ -83,6 +88,42 @@
     \newcommand{\Clap}[1]{\leavevmode\clap{#1}}
     \newcommand{\Hfill}{\null\hfill}  % hfill if first thing
     \newcommand{\Vfill}{\null\vfill}  % hfill if first thing
+    
+    
+    \newcommand\ensurecomma{%
+    \@ifnextchar,{}{\@latex@error{Don’t forget the comma!}{}}}
+    \newcommand\ex{e.g.\ensurecomma}
+    \newcommand\ie{i.e.\ensurecomma}
+    \newcommand\ensuresingleperiod{\@ifnextchar.{}{.\@}}
+    \newcommand\etc{etc\ensuresingleperiod}
+    \newcommand\etal{et~al\ensuresingleperiod}
+    
+    
+    \DeclareRobustCommand\mdash{%
+        \unskip\nobreak\thinspace\textemdash\thinspace\ignorespaces}
+    \DeclareRobustCommand\ndash{%
+        \unskip\nobreak\thinspace\textendash\thinspace\ignorespaces}
+    \DeclareUnicodeCharacter{2014}{\dash}
+    \AtBeginDocument{\pdfstringdefDisableCommands{\renewcommand{\dash}{ - }}}
+    
+    \DeclareRobustCommand\dash{%
+      \unskip\nobreak\thinspace\textemdash\allowbreak\thinspace\ignorespaces}
+    
+    \directlua{
+    function autodashes(s)
+    s = string.gsub(s,'[-][-][-]', '\string\\mdash ')
+    %s = string.gsub(s,'[-][-]',    '\string\\ndash ')
+    return s
+    end}
+    
+    \def\autodashON{\directlua{%
+    luatexbase.add_to_callback("process_input_buffer", autodashes,"auto spaced dashes")%
+    }}
+    
+    \def\autodashOFF{\directlua{%
+    luatexbase.remove_from_callback("process_input_buffer","auto spaced dashes")%
+    }}
+    
     
     
     % ##############################################
@@ -142,6 +183,9 @@
     \DeclareSymbolFont{iwonalargesymbols}{OMX}{iwona}{m}{n}
     \DeclareMathSymbol{\intop}{\mathop}{iwonalargesymbols}{"52}
     
+    % todo try https://tex.stackexchange.com/questions/204778/difficulty-finding-selecting-cm-bright-using-fontspec
+    
+    
     \usepackage[%
       protrusion=true,
       expansion,
@@ -156,8 +200,8 @@
     % upper and lowercase number commands -- not applicable if using serif, I choose uppercase only for simplicity
     \def\togunums{}
     \def\toglnums{}
-    \NewDocumentCommand{\lnum}{o}{}
-    \NewDocumentCommand{\unum}{o}{}
+    \NewDocumentCommand{\lnum}{m}{}
+    \NewDocumentCommand{\unum}{m}{}
     
     \def\act{}
     \def\actext#1{#1}
@@ -189,6 +233,11 @@
     %\def\sbfCMB#1{\ThisStyle{\setbox0=\hbox{$\SavedStyle#1$}%
     %		#1\kern.2pt\kern-\wd0%
     %		\raisebox{.1pt}{$\SavedStyle#1$}}}
+    
+    
+    %%% patching
+    
+    \newcommand{\mathup}[1]{\text{\textup{#1}}}  % patching needed for mathup
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%            MathSymbolsEtc            %%%
@@ -260,6 +309,14 @@
     \end{AutoPuncTabular}
     	}{}
     
+    
+    \DeclareInstance{xfrac}{KpLight}{text}
+    {slash-symbol-font = ptm,
+    scaling = false,
+    denominator-bot-sep = 10 pt,
+    numerator-bot-sep = 10 pt,
+    }
+    %\UseCollection{xfrac}{KpLight}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -893,6 +950,8 @@
     	{\NewDocumentCommand{\@dol}{m O{M}}{\num{#1}\IfValueT{#2}{\,#2}\,\$\xspace}\global\let\dol\@dol}% 2 M$
     }
     
+    \newcommand{\ppm}{\,ppm\xspace} % parts per million
+    
     %
     
 
@@ -976,7 +1035,7 @@
     %%%% END TIKZ STUFF
 
 
-\usepackage[pl,extrasglobals]{penlight}
+\usepackage[pl,globals]{penlightplus}
 \usepackage{yamlvars}
 \usepackage{lutabulartools}
 \usepackage[noenumitem]{autopuncitems}

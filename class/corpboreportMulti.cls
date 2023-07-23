@@ -80,7 +80,7 @@
 
 \usepackage{\FormatDir EndOf}
 
-\usepackage[pl,extrasglobals]{penlight}
+\usepackage[pl,globals]{penlightplus}
 \usepackage{lutabulartools}
 \settabular{tbrule,nopad}
 \usepackage{autopuncitems}

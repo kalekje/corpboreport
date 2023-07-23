@@ -1,4 +1,5 @@
 \usepackage[onlyrm,light]{kpfonts-otf}  % https://texdoc.org/serve/kpfonts-otf/0
+
 \setsansfont[Scale=MatchLowercase]{CMU Bright} % monospace that looks nice with light kpfont
 \setmonofont[Numbers=Lining]{CMU Typewriter Text Light} % monospace that looks nice with light kpfont
 
@@ -17,13 +18,18 @@
 %\let\unum\liningnums   % {}
 
 % if [] provided, apply to grouped text only--if not apply toggle
-\NewDocumentCommand{\lnum}{o}{\IfValueTF{#1}{\oldstylenums{#1}}{\toglnums}}
-\NewDocumentCommand{\unum}{o}{\IfValueTF{#1}{\liningnums{#1}}{\togunums}}
+%\NewDocumentCommand{\lnum}{o}{\IfValueTF{#1}{\oldstylenums{#1}}{\toglnums}}
+%\NewDocumentCommand{\unum}{o}{\IfValueTF{#1}{\liningnums{#1}}{\togunums}}
+\NewDocumentCommand{\lnum}{m}{\ifstrequal{#1}{*}{\toglnums}{\oldstylenums{#1}}}
+\NewDocumentCommand{\unum}{m}{\ifstrequal{#1}{*}{\togunums}{\liningnums{#1}}}
+
 
 \let\classicstylenums\liningnums
 
-\def\acs{\scshape\toglnums}  % acronym series
-\def\act#1{\textsc{\toglnums#1}}  % acronym text
+%\NewDocumentCommand{\act}{o}{\IfValueTF{#1}{\textsc{\lnum#1}}{\scshape\toglnums}}  % acronym text style
+\NewDocumentCommand{\act}{m}{\ifstrequal{#1}{*}{\scshape\toglnums}{\textsc{\lnum{#1}}}}  % acronym text style
+%% see BibAndGloss for other ac* commands
+
 
 \AtBeginEnvironment{tabular}{\togunums}
 \AtBeginEnvironment{tabular*}{\togunums}
@@ -32,6 +38,15 @@
 \def\cbp@secnumsize{\toglnums} % dont allow cpb to use smaller numbers in section
 \newcommand{\cbp@appendixletformat}[1]{\scshape\alph{#1}}
 \def\cbp@appendixsecformat{\scshape\MakeLowercase}
+
+
+
+% Rules for number casing:
+%   Uppercase: quantities, page numbers, citations
+%   Lowercase: section numbers, dates, itemized lists
+% Rules for small capitals
+%   Only applied for 'label-like' items. Eg. doi: 123 or gpa: or date [yyyy-mm-dd]
+%   Acronyms to appear in uppercase
 
 
 %% for non-light option

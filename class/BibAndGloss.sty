@@ -1,5 +1,5 @@
 % requires enumitem for acronym styling
-\usepackage[sorting=none]{biblatex}
+\usepackage[sorting=none,style=ieee]{biblatex}
 
 \renewrobustcmd*{\bibinitdelim}{\,}
 \renewcommand*{\multicitedelim}{\addcomma\,}  % tighten [1,2,3] multi citations
@@ -26,11 +26,13 @@
 
 
 
-
+%%%%%%%%%
 %%% Glossaries / index / symbol %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%
 
-\usepackage[xindy,acronym,index,symbols,
-nohypertypes={acronym,index,symbols},
+
+\usepackage[xindy,sanitizesort,acronym,index,symbols,
+	nohypertypes={acronym,index,symbols},
 ]{glossaries-extra}
 %,nonumberlist <<< dont use as custom styles are made
 % toc <<< dont use ToC option as manually entered
@@ -47,20 +49,11 @@ nohypertypes={acronym,index,symbols},
 % \gls, \ac,  \idx
 
 
-
-
 \GlsXtrEnableEntryCounting % % https://tex.stackexchange.com/questions/477581/glossaries-introduce-short-name-only-if-used-more-than-once-within-section-chap
  	{acronym}% list of categories to use entry counting
  	{1}% trigger value
 
-\setabbreviationstyle[acronym]{long-short}
-
-%\glsenableentrycount % enable \cgls, \cglspl, \cGls, \cGlspl  supposed to not show accronym if only one
-%\glsdisablehyper  % to disable hyperlinks
-
 \glstoctrue  % ToC
-
-
 
 \makeglossaries
 
@@ -68,16 +61,31 @@ nohypertypes={acronym,index,symbols},
 \newglossarystyle{AcronymsTwoCol}{%
 	\renewcommand*{\glossaryheader}{}%
 	\renewcommand*{\glsgroupheading}[1]{}%
-	\newcommand*{\glossarysubentryfield}[6]{glssubentryitem{##2}{\strut\glstarget{##2}##4\glspostdescription\space ##6}}% caused error on update 2022 11 03
 	\renewcommand*{\glsgroupskip}{\vspace{7pt}}% space between alphabetized groups
+	\renewcommand{\glossentry}[2]{
+		\item[\glsentryshort{##1}]{\glsentrylong{##1}\glspostdescription}
+	}
 	\renewenvironment{theglossary}%
 		{\vspace*{1ex}\setlength{\columnsep}{30pt}\begin{multicols}{2}%
-		\begin{description}[font=\bfseries,leftmargin=1.7cm,style=multiline,itemsep=3pt]\raggedright}%
-		{\end{description}\end{multicols}}%
-	\newcommand*{\glossaryentryfield}[5]{%
-		\item[{\normalfont\bfseries\glsentryitem{##1}\glstarget{##1}{##2}}]{##3\glspostdescription}  % \space ##5 after postdescription (page numbers) are removed
-		}%
+			\begin{description}[font=\iftoggle{useSerif}{\rmfamily}{}\bfseries,leftmargin=1.7cm,style=multiline,itemsep=3pt]\raggedright
+		}{%
+			\end{description}\end{multicols}
+	}%
+% todo try below in item, try ifsymbol make a symbol else use glossary name, same style for symbols and acronyms
+%\renewcommand*{\glossentry}[2]{%
+%\item % bullet point
+%\glstarget{##1}{\glossentryname{##1}}% the entry name
+%\space (\glossentrysymbol{##1})% the symbol in brackets
+%\space \glossentrydesc{##1}% the description
+%\space [##2]% the number list in square brackets
+%}%
 }
+
+
+
+%\setabbreviationstyle[acronym]{long-sc-short}
+%\glsenableentrycount % enable \cgls, \cglspl, \cGls, \cGlspl  supposed to not show accronym if only one
+%\glsdisablehyper  % to disable hyperlinks
 
 
 
@@ -97,8 +105,63 @@ nohypertypes={acronym,index,symbols},
 
 
 
+\newglossarystyle{mylist}{%
+% put the glossary in the itemize environment:
+\renewenvironment{theglossary}%
+{\begin{itemize}}{\end{itemize}}%
+% no header after \begin{theglossary}
+\renewcommand*{\glossaryheader}{}%
+% no visual distinction between glossary groups:
+\renewcommand*{\glsgroupheading}[1]{}%
+\renewcommand*{\glsgroupskip}{}%
+% set how each entry should appear:
+\renewcommand*{\glossentry}[2]{%
+\item % bullet point
+\glstarget{##1}{\glossentryname{##1}}% the entry name
+\space (\glossentrysymbol{##1})% the symbol in brackets
+\space \glossentrydesc{##1}% the description
+\space [##2]% the number list in square brackets
+}%
+% set how sub-entries appear:
+\renewcommand*{\subglossentry}[3]{%
+\glossentry{##2}{##3}}%
+}
 
 
+
+\newglossarystyle{TwoCol}{%
+	\renewcommand*{\glossaryheader}{}%
+	\renewcommand*{\glsgroupheading}[1]{}%
+	\renewcommand*{\glsgroupskip}{\vspace{7pt}}% space between alphabetized groups
+	\renewcommand{\glossentry}[2]{
+		\item[\glsentryshort{##1}]{\glsentrylong{##1}\glspostdescription}  % #2 would be page numbers
+	}
+	\renewenvironment{theglossary}%
+		{\vspace*{1ex}\setlength{\columnsep}{30pt}\begin{multicols}{2}%
+			\begin{description}[font=\iftoggle{useSerif}{\rmfamily}{}\bfseries,leftmargin=1.7cm,style=multiline,itemsep=3pt]\raggedright
+		}{%
+			\end{description}\end{multicols}
+	}%
+}
+
+
+	\setabbreviationstyle[acronym]{long-short}
+
+\iftoggle{useSerif}{
+%		\setabbreviationstyle[acronym]{long-short}
+%		\global\renewcommand{\acronymfont}[1]{\textsc{#1}}  % up for debate...i should define proper case]
+%		\setabbreviationstyle[acronym]{long-sc-short}
+	}{
+		\setabbreviationstyle[acronym]{long-short}
+}
+
+%\global\renewcommand{\acronymfont}[1]{{\scshape#1}}  % up for debate...i should define proper case]
+
+
+%\setabbreviationstyle[acronym]{long-em-short-em}
+%\renewcommand*{\glslongemfont}[1]{#1}% change the emphasize font to null for long-em-short-em style
+%\renewcommand*{\glsabbrvemfont}[1]{\textsc{#1}}% change abbreviation emphasis to small-caps
+%\glssetcategoryattribute{acronym}{glossnamefont}{textsc}
 
 
 \usepackage{pdfcomment}
@@ -115,14 +178,18 @@ nohypertypes={acronym,index,symbols},
 \newcommand{\ac}[1]{%
       \ifglsused{#1}{%
 %         \pdftooltip{\gls*{#1}}{\getTheToolTipText{#1}}\xspace%
-				 {\scshape\pdftooltip{\gls*{#1}}{\getTheToolTipText{#1}}}%
+				 {\pdftooltip{\gls*{#1}}{\getTheToolTipText{#1}}}%
 %         \pdftooltip{\textsc{\MakeLowercase{\gls*{#1}}}}{\getTheToolTipText{#1}}\xspace% todo consider small caps for serfif
     }{%
 %        \gls*{#1}\xspace%
-				{\scshape\gls*{#1}}% todo get to root, make sure acronyms specifically are small caps!
+				{\gls*{#1}}% todo get to root, make sure acronyms specifically are small caps!
 %				{\textsc{\MakeLowercase{\gls*{#1}}}}
     }%
 }%
+
+\let\acs\glsxtrshort  %  short and long acronym shortcuts
+\let\acl\glsxtrlong   %
+
 
 % todo :    add prefix on acronym ac.cnn, on index like idx.cnn, and on symbols like sym.X
 % then use a \ac \idx \sym that calls \ac = \gls{ac.#1}  \Idx = \Gls{idx.#1}  etc. etc.

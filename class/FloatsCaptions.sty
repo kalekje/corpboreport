@@ -32,11 +32,16 @@
 \DeclareCaptionLabelSeparator{enspace}{\enspace}
 \captionsetup{labelfont=bf,labelformat=hangcap,labelsep=enspace}
 \iftoggle{useSerif}{
-%  \DeclareCaptionLabelFormat{lc}{\MakeLowercase{#1}~#2}
-  \DeclareCaptionLabelFormat{hangcap}{\llap{\MakeLowercase{#1}~#2\enspace}}
-  \DeclareCaptionLabelFormat{widecap}{\MakeLowercase{#1}~#2}
-  \DeclareCaptionFont{bfscln}{\bfseries\scshape\toglnums}
-  \captionsetup{labelfont=bfscln,labelformat=hangcap,labelsep=enspace}
+  %%%% for small caps
+%  \DeclareCaptionLabelFormat{hangcap}{\llap{\MakeLowercase{#1}~#2\enspace}}
+%  \DeclareCaptionLabelFormat{widecap}{\MakeLowercase{#1}~#2}
+%  \DeclareCaptionFont{bfscln}{\bfseries\scshape\toglnums}
+%  \captionsetup{labelfont=bfscln,labelformat=hangcap,labelsep=enspace}
+  %%%% for not small caps
+  \DeclareCaptionLabelFormat{hangcap}{\llap{#1~#2\enspace}}
+  \DeclareCaptionLabelFormat{widecap}{#1~#2}
+  \DeclareCaptionFont{bfln}{\bfseries\toglnums}
+  \captionsetup{labelfont=bfln,labelformat=hangcap,labelsep=enspace}
 }{}
 \captionsetup[sub]{skip=8pt, aboveskip=5pt, font=small, labelfont={small,bf,sc},
 	position=top,labelformat=hangcap,labelsep=enspace}  % formats \subcaptionbox
@@ -97,6 +102,11 @@
     \ttabbox{}{#4\IfValueT{#9}{\vspace{\TabNoteSpace}\floatfoot*{#9}}}% if no star then use hanging
   \end{table}%
 }
+
+
+\define@key{Gin}{halfwidth}[0.5\linewidth]{\def\Gin@ewidth{#1}}
+
+\define@key{Gin}{fullwidth}[\linewidth]{\def\Gin@ewidth{#1}}
 
 
 % create an empty box that's the same size as of an image

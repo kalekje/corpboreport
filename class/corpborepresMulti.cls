@@ -53,7 +53,7 @@
 \usepackage{\FormatDir TikZstuff}
 
 
-\usepackage[pl,extrasglobals]{penlight}
+\usepackage[pl,globals]{penlightplus}
 \usepackage{yamlvars}
 \usepackage{lutabulartools}
 \usepackage[noenumitem]{autopuncitems}

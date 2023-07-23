@@ -1,4 +1,3 @@
-
 import os, shutil, re
 from stat import S_IREAD, S_IRGRP, S_IROTH, S_IWUSR
 
@@ -30,7 +29,6 @@ def make_file(multifile, newfile):
 make_file(r'corpborepresMulti.cls',  './../corpborepres.cls')
 make_file(r'corpboreloneMulti.cls',  './../corpborelone.cls')
 make_file(r'corpboreportMulti.cls',  './../corpboreport.cls')
-# make_file(r'cbthesisMulti.cls',  './../cbthesis.cls')  # not used anymore, use corpboreport with thesis option
 
 
 
