@@ -1,5 +1,4 @@
 \let\footref\relax % if footref error appears
-\providecommand{\FormatDir}{C:/Users/Kale/Projects/LaTeXpackages/corpboreport/class/} %%% shortcut to use all format files of
 
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesClass{corpboreport}[2022-10-28]
@@ -11,7 +10,7 @@
       hidelinks,
       parskip=half,
       bibliography=totoc,
-      open=right,%
+      open=right,
       chapterprefix=false,
       fleqn,
       leqno,
@@ -21,6 +20,8 @@
 
 \DeclareOption*{\PassOptionsToClass{\CurrentOption}{scrbook}} %% pass cbp class options to scrbook
 \ProcessOptions\relax
+
+\RequirePackage{iftex} \RequireLuaTeX
 
 \LoadClass{scrbook} % load the base case  % https://texdoc.org/serve/scrbook/0
 
@@ -47,7 +48,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%            LuaStuff            %%%
+%%%            LuaStuff+            %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
     \usepackage{ifluatex}
@@ -66,7 +67,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%            GeometryCustom            %%%
+%%%            GeometryCustom+            %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Check if two-sided https://tex.stackexchange.com/questions/360785/how-do-i-check-if-a-document-is-oneside-or-twoside  %
      % https://tex.stackexchange.com/questions/470752/section-numbers-in-margins-in-double-sided-document
@@ -105,7 +106,7 @@
     %%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%            Utilities            %%%
+%%%            Utilities+            %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     \usepackage{scrhack}
     \usepackage{listings}  % re-loaded in code boxes, but needs to be loaded before changing ToC structure
@@ -268,7 +269,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%            TextAndParas            %%%
+%%%            TextAndParas+            %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
     % ##############################################
@@ -390,7 +391,7 @@
 \iftoggle{useSerif}{
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%            FontKPotf            %%%
+%%%            FontKPotf+            %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     \usepackage[onlyrm,light]{kpfonts-otf}  % https://texdoc.org/serve/kpfonts-otf/0
     
@@ -450,7 +451,7 @@
 }{%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%            FontCMBotf            %%%
+%%%            FontCMBotf+            %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %%% adopted from: https://tex.stackexchange.com/a/358621/186406
     % https://texdoc.org/serve/cm-unicode/0
@@ -536,7 +537,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%            HeaderFooterFootnotes            %%%
+%%%            HeaderFooterFootnotes+            %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % ##############################################
     % KOMA-Script Settings
@@ -615,7 +616,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%            SectionsToC            %%%
+%%%            SectionsToC+            %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %%% References %%%%%
     % KOMA-Script: https://texdoc.org/serve/scrbook/0
@@ -1005,7 +1006,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%            PageNumberInMargin            %%%
+%%%            PageNumberInMargin+            %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %%% DEPENDENCIES
     % KOMA-Script class
@@ -1043,7 +1044,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%            Colors            %%%
+%%%            Colors+            %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     \usepackage{xcolor}
     
@@ -1129,7 +1130,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%            MathSymbolsEtc            %%%
+%%%            MathSymbolsEtc+            %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %%% References %%%%%
     % siunitx: https://texdoc.org/serve/siunitx/0
@@ -1209,7 +1210,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%            Lists            %%%
+%%%            Lists+            %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
     \usepackage{enumitem} % https://muug.ca/mirror/ctan/macros/latex/contrib/enumitem/enumitem.pdf
@@ -1284,7 +1285,7 @@
     }{}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%            Tables            %%%
+%%%            Tables+            %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
     %%% TABLES
@@ -1411,7 +1412,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%            FloatsCaptions            %%%
+%%%            FloatsCaptions+            %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %%% References %%%%%
     % afterpage: https://texdoc.org/serve/afterpage/0
@@ -1426,7 +1427,6 @@
     
     
     \usepackage{graphicx}
-    \graphicspath{{images/}}  % might want to use this and subfiles
     \usepackage{afterpage}
     \usepackage{graphbox}  %% allows smash command for easier graphics placement
     \usepackage[skip=3pt,justification=raggedright,singlelinecheck=false,format=hang,textformat=period]{caption} %
@@ -1618,7 +1618,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%            CodeBoxes            %%%
+%%%            CodeBoxes+            %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % ##############################################
     % Code Boxes
@@ -1793,7 +1793,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%            ToDoNote            %%%
+%%%            ToDoNote+            %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % ##############################################
     % Todo Notes (with Example)
@@ -1820,7 +1820,7 @@
     %\todoG{Check for stuff}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%            DraftStuff            %%%
+%%%            DraftStuff+            %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %%% Draft toggles to speed up compilation and help
     %\DarkModePDF
@@ -1894,7 +1894,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%            BibAndGloss            %%%
+%%%            BibAndGloss+            %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % requires enumitem for acronym styling
     \usepackage[sorting=none,style=ieee]{biblatex}
@@ -2123,8 +2123,14 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%            Hyperlinks            %%%
+%%%            Hyperlinks+            %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \AtBeginDocument{
+        \if@twoside
+            \hypersetup{pdfpagelayout=TwoPageRight}
+        \else \fi
+    }
+    
     
     \usepackage{bookmark}
     \usepackage{hyperref}
@@ -2136,14 +2142,8 @@
     bookmarksopenlevel=1,                  
     pdfstartview=Fit,%           
     pdfpagemode=UseOutlines,%
-    pdfpagelayout=TwoPageRight
     }
     
-    \AtBeginDocument{
-    \if@twoside
-        \hypersetup{pdfpagelayout=TwoPageRight}
-    \else \fi
-    }
     
     \usepackage[nameinlink,noabbrev]{cleveref}  % cref
     
@@ -2193,7 +2193,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%            Titles            %%%
+%%%            Titles+            %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %%% document variables, title page, etc.
     % most doc vars update the pdf metedata by wriiting to main.xmpdata
@@ -2327,7 +2327,7 @@
 %% packages in folder
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%            MarginNotes            %%%
+%%%            MarginNotes+            %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
     % Custom command fpr the margin notes: \myMarginnote{Your Text}
@@ -2346,7 +2346,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%            EndOf            %%%
+%%%            EndOf+            %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %\providelength{\floatindentlength}{10ex}
     
@@ -2378,7 +2378,7 @@
 \usepackage{autopuncitems}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%            YAMLvarsDec            %%%
+%%%            YAMLvarsDec+            %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
     \newcommand{\cbpheaderbox}[1]{\parbox[b][2em][b]{0.4\linewidth}{\setstretch{0.8}#1}}
@@ -2460,7 +2460,279 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%            macros/UniRefs            %%%
+%%%            TikZstuff+            %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \usepackage{tikz}
+    \usetikzlibrary{positioning}
+    \usetikzlibrary{calc}
+    \usetikzlibrary{arrows}
+    \usetikzlibrary{decorations.markings}
+    \usetikzlibrary{shapes.misc}
+    \usetikzlibrary{matrix,shapes,arrows,fit,tikzmark}
+    
+    %%% TIKZ STUFF for marking over text
+    %\tikzstyle{every picture}+=[remember picture]
+    %\tikzstyle{mybox} =[draw=black, very thick, rectangle, inner sep=10pt, inner ysep=20pt]
+    %\tikzstyle{fancytitle} =[draw=black,fill=red, text=white]
+    
+    %https://tex.stackexchange.com/questions/55806/mindmap-tikzpicture-in-beamer-reveal-step-by-step#55849
+    %https://tex.stackexchange.com/questions/146908/beamer-overlay-specifications-for-a-tikzpicture
+    \tikzset{
+        invisible/.style={opacity=0,text opacity=0},
+        visible on/.style={alt={#1{}{invisible}}},
+        alt/.code args={<#1>#2#3}{%
+          \alt<#1>{\pgfkeysalso{#2}}{\pgfkeysalso{#3}} % \pgfkeysalso doesn't change the path
+        },
+      }
+    
+    \tikzset{
+    %        every picture/.style={remember picture,baseline},
+    %        every node/.style={anchor=base,align=center,outer sep=1.5pt},
+    %        every path/.style={thick},
+            OL/.style={overlay,remember picture,baseline},
+            nopad/.style={inner sep=0pt},
+            }
+    
+    %% todo consider using the tikzmark package:
+    % https://ctan.mirror.rafal.ca/graphics/pgf/contrib/tikzmark/tikzmark.pdf
+    \usetikzlibrary{tikzmark}
+    \usetikzmarklibrary{listings}
+    %% useful for tikz node, otherwise my implementation is a bit better for me
+    \let\tmrkN\tikzmarknode
+    
+    
+    % marker =tikz coord
+    \def\cbp@tikzmarker@t{1.3ex}
+    \def\cbp@tikzmarker@m{0.7ex}
+    \def\cbp@tikzmarker@b{0ex}
+    
+    \NewDocumentCommand{\tmrk}{ s O{b} d() m }{% place a tikz marker on the baseline, middle, or top of ine. Or coord (x,y) relative to baseline
+    %    for additional padding, use \tmrkr* %
+        \IfBooleanTF{#1}{\gdef\cbp@insep{0.3ex}}{\gdef\cbp@insep{0pt}}%
+        \IfValueTF{#3}{%
+            \tikz[OL] \node[inner sep=\cbp@insep,minimum size=0pt] (tm-#4) at (#3) {};%
+        }{%
+            \tikz[OL] \node[inner sep=\cbp@insep,minimum size=0pt] (tm-#4) at (0em, \csname cbp@tikzmarker@#2\endcsname) {};%
+        }%
+    }%
+    
+    \newcommand{\drawOverlayBoxTLBR}[2]{% requires 2 tikzmarkers be used. Pass the label that matches the tikzmarker
+    \tikz[OL,inner sep=0.7ex]
+    		\node[draw=red,thick,rounded corners,fit=(tm-#1.north west) (tm-#2.south east)] {};%
+    }%
+    
+    \NewDocumentCommand{\drawHelpingGrid}{s}{%
+            \begin{tikzpicture}[OL]
+                \draw[step=1cm,gray,opacity=0.5] (-10.4,-10.4) grid (10.4,10.4);
+                \draw[step=1cm,gray!50,opacity=0.5,shift={(0.5,0.5)}] (-10.4,-10.4) grid (10.4,10.4);
+                \IfBooleanTF{#1}{\draw[step=0.2cm,blue!30,opacity=0.5] (-10.4,-10.4) grid (10.4,10.4);}{}
+                \fill[red] (0,0) circle (2.5pt);
+            \end{tikzpicture}%
+    }
+    
+    %% https://texample.net/tikz/examples/feature/overlays/
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    %%%%%%%%%%%% Additions to tikz anchors
+    %%%% https://tex.stackexchange.com/questions/14769/add-more-anchors-to-standard-tikz-nodes
+    
+    \def\pgfaddtoshape#1#2{%
+      \begingroup
+      \def\pgf@sm@shape@name{#1}%
+      \let\anchor\pgf@sh@anchor
+      #2%
+      \endgroup
+    }
+    
+    
+    \def\useanchor#1#2{\csname pgf@anchor@#1@#2\endcsname}
+    
+    \def\@shiftback#1#2#3#4#5#6{%
+        \advance\pgf@x by -#5\relax
+        \advance\pgf@y by -#6\relax
+    }
+    
+    \pgfaddtoshape{rectangle}{%
+      \anchor{west south west}{%
+        \pgf@process{\northeast}%
+        \pgf@ya=.5\pgf@y%
+        \pgf@process{\southwest}%
+        \pgf@y=1.5\pgf@y%
+        \advance\pgf@y by \pgf@ya%
+        \pgf@y=.5\pgf@y%
+      }%
+      \anchor{west north west}{%
+        \pgf@process{\northeast}%
+        \pgf@ya=1.5\pgf@y%
+        \pgf@process{\southwest}%
+        \pgf@y=.5\pgf@y%
+        \advance\pgf@y by \pgf@ya%
+        \pgf@y=.5\pgf@y%
+      }%
+      \anchor{east north east}{%
+        \pgf@process{\southwest}%
+        \pgf@ya=.5\pgf@y%
+        \pgf@process{\northeast}%
+        \pgf@y=1.5\pgf@y%
+        \advance\pgf@y by \pgf@ya%
+        \pgf@y=.5\pgf@y%
+      }%
+      \anchor{east south east}{%
+        \pgf@process{\southwest}%
+        \pgf@ya=1.5\pgf@y%
+        \pgf@process{\northeast}%
+        \pgf@y=.5\pgf@y%
+        \advance\pgf@y by \pgf@ya%
+        \pgf@y=.5\pgf@y%
+      }%
+      \anchor{north north west}{%
+        \pgf@process{\southwest}%
+        \pgf@xa=1.5\pgf@x%
+        \pgf@process{\northeast}%
+        \pgf@x=.5\pgf@x%
+        \advance\pgf@x by \pgf@xa%
+        \pgf@x=.5\pgf@x%
+      }%
+      \anchor{north north east}{%
+        \pgf@process{\southwest}%
+        \pgf@xa=.5\pgf@x%
+        \pgf@process{\northeast}%
+        \pgf@x=1.5\pgf@x%
+        \advance\pgf@x by \pgf@xa%
+        \pgf@x=.5\pgf@x%
+      }%
+      \anchor{south south west}{%
+        \pgf@process{\northeast}%
+        \pgf@xa=.5\pgf@x%
+        \pgf@process{\southwest}%
+        \pgf@x=1.5\pgf@x%
+        \advance\pgf@x by \pgf@xa%
+        \pgf@x=.5\pgf@x%
+      }%
+      \anchor{south south east}{%
+        \pgf@process{\northeast}%
+        \pgf@xa=1.5\pgf@x%
+        \pgf@process{\southwest}%
+        \pgf@x=.5\pgf@x%
+        \advance\pgf@x by \pgf@xa%
+        \pgf@x=.5\pgf@x%
+      }%
+      \anchor{width}{%
+        \useanchor{rectangle}{west}%
+        \pgf@xc=\pgf@x
+        \useanchor{rectangle}{east}%
+        \advance\pgf@x by -\pgf@xc
+        \pgf@y=\z@
+        \edef\pgf@temp{\csname pgf@sh@nt@\pgfreferencednodename\endcsname}%
+        \expandafter\@shiftback\pgf@temp
+      }
+      \anchor{height}{%
+        \useanchor{rectangle}{south}%
+        \pgf@yc=\pgf@y
+        \useanchor{rectangle}{north}%
+        \advance\pgf@y by -\pgf@yc
+        \pgf@x=\z@
+        \edef\pgf@temp{\csname pgf@sh@nt@\pgfreferencednodename\endcsname}%
+        \expandafter\@shiftback\pgf@temp
+      }
+      \anchor{size}{%
+        \useanchor{rectangle}{south west}%
+        \pgf@xc=\pgf@x
+        \pgf@yc=\pgf@y
+        \useanchor{rectangle}{north east}%
+        \advance\pgf@x by -\pgf@xc
+        \advance\pgf@y by -\pgf@yc
+        \edef\pgf@temp{\csname pgf@sh@nt@\pgfreferencednodename\endcsname}%
+        \expandafter\@shiftback\pgf@temp
+      }
+    }
+    
+    
+    \newcommand{\anchorlet}[2]{%
+        \global\expandafter
+        \let\csname pgf@anchor@\pgf@sm@shape@name @#1\expandafter\endcsname
+        \csname pgf@anchor@\pgf@sm@shape@name @#2\endcsname
+    }
+    
+    \newcommand{\anchoralias}[2]{%
+        \expandafter
+        \gdef\csname pgf@anchor@\pgf@sm@shape@name @#1\expandafter\endcsname
+        \expandafter{\csname pgf@anchor@\pgf@sm@shape@name @#2\endcsname}%
+    }
+    
+    \pgfaddtoshape{rectangle}{%
+      \anchorlet{c}{center}%
+      \anchorlet{n}{north}%
+      \anchorlet{e}{east}%
+      \anchorlet{s}{south}%
+      \anchorlet{w}{west}%
+      \anchorlet{se}{south east}%
+      \anchorlet{sw}{south west}%
+      \anchorlet{ne}{north east}%
+      \anchorlet{nw}{north west}%
+      \anchorlet{wsw}{west south west}%
+      \anchorlet{wnw}{west north west}%
+      \anchorlet{ene}{east north east}%
+      \anchorlet{ese}{east south east}%
+      \anchorlet{nnw}{north north west}%
+      \anchorlet{nne}{north north east}%
+      \anchorlet{ssw}{south south west}%
+      \anchorlet{sse}{south south east}%
+    }
+    
+    
+    
+    %%%%%%%%%%%%%%%%%%%%%%%%
+    
+    
+    
+    
+    %%%%%%%%%%%%  tikz page overlays
+    
+    \NewDocumentCommand{\tikzpgol}{m m}{%
+      \tblfrkv{tikzpgol}{#1}[defaults={x=0,y=0,pg=nw,nd=nw}]
+      \deftbl{tikzpgol}{x}{tkzpgolx}    \deftbl{tikzpgol}{y}{tkzpgoly}
+      \begin{tikzpicture}[overlay,remember picture,baseline]
+          \node[anchor=\gettbl{tikzpgol}{nd},inner sep=0pt] (tkpgol) at ($(current page.\gettbl{tikzpgol}{pg}) + (\tkzpgolx, \tkzpgoly)$)
+                  {#2};
+      \end{tikzpicture}%
+    }% \tikzpgol{nd=se,pg=se,x=0,y=1}{floating node here}  % example usage
+    
+    
+    \NewDocumentCommand{\tikzpgolg}{m O{} m}{\tikzpgol{#1}{\includegraphics[#2]{#3}}} % tikz page overlay graphics
+    
+    \NewDocumentCommand{\tikzpgolt}{m O{} m}{%
+      \tblfrkv{tikzpgolpar}{#2}[defaults={}]% todo should make a quick way to position pbox or pbox
+      \tikzpgol{#1}{\pbox[#2]{}{#3}}
+    } % tikz page overlay textvox
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    %%%% END TIKZ STUFF
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%            macros/UniRefs+            %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %%% table footnote tracker interface
     \begin{luacode*}
@@ -2481,7 +2753,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%            macros/symbolscbp            %%%
+%%%            macros/symbolscbp+            %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
     \newcommand{\Fst}{1\textsuperscript{st}\xspace}
@@ -2523,7 +2795,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%            MemoSty            %%%
+%%%            MemoSty+            %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %%%% memo variabls
     \lowercasevarYVon

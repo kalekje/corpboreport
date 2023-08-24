@@ -19,7 +19,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%            LuaStuff            %%%
+%%%            LuaStuff+            %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
     \usepackage{ifluatex}
@@ -38,7 +38,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%            TextandParas            %%%
+%%%            TextandParas+            %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
     % ##############################################
@@ -156,7 +156,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%            FontCMBotf            %%%
+%%%            FontCMBotf+            %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %%% adopted from: https://tex.stackexchange.com/a/358621/186406
     % https://texdoc.org/serve/cm-unicode/0
@@ -240,7 +240,7 @@
     \newcommand{\mathup}[1]{\text{\textup{#1}}}  % patching needed for mathup
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%            MathSymbolsEtc            %%%
+%%%            MathSymbolsEtc+            %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %%% References %%%%%
     % siunitx: https://texdoc.org/serve/siunitx/0
@@ -320,7 +320,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%            Utilities            %%%
+%%%            Utilities+            %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     \usepackage{scrhack}
     \usepackage{listings}  % re-loaded in code boxes, but needs to be loaded before changing ToC structure
@@ -482,7 +482,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%            Tables            %%%
+%%%            Tables+            %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
     %%% TABLES
@@ -609,7 +609,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%            Colors            %%%
+%%%            Colors+            %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     \usepackage{xcolor}
     
@@ -714,7 +714,7 @@
 \providecommand{\cbp@listframe}{} % no frames for beamer
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%            CodeBoxes            %%%
+%%%            CodeBoxes+            %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % ##############################################
     % Code Boxes
@@ -889,7 +889,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%            ToDoNote            %%%
+%%%            ToDoNote+            %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % ##############################################
     % Todo Notes (with Example)
@@ -916,7 +916,7 @@
     %\todoG{Check for stuff}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%            macros/symbolscbp            %%%
+%%%            macros/symbolscbp+            %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
     \newcommand{\Fst}{1\textsuperscript{st}\xspace}
@@ -960,7 +960,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%            TikZstuff            %%%
+%%%            TikZstuff+            %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     \usepackage{tikz}
     \usetikzlibrary{positioning}
@@ -1032,6 +1032,202 @@
     
     %% https://texample.net/tikz/examples/feature/overlays/
     
+    
+    
+    
+    
+    
+    
+    
+    
+    %%%%%%%%%%%% Additions to tikz anchors
+    %%%% https://tex.stackexchange.com/questions/14769/add-more-anchors-to-standard-tikz-nodes
+    
+    \def\pgfaddtoshape#1#2{%
+      \begingroup
+      \def\pgf@sm@shape@name{#1}%
+      \let\anchor\pgf@sh@anchor
+      #2%
+      \endgroup
+    }
+    
+    
+    \def\useanchor#1#2{\csname pgf@anchor@#1@#2\endcsname}
+    
+    \def\@shiftback#1#2#3#4#5#6{%
+        \advance\pgf@x by -#5\relax
+        \advance\pgf@y by -#6\relax
+    }
+    
+    \pgfaddtoshape{rectangle}{%
+      \anchor{west south west}{%
+        \pgf@process{\northeast}%
+        \pgf@ya=.5\pgf@y%
+        \pgf@process{\southwest}%
+        \pgf@y=1.5\pgf@y%
+        \advance\pgf@y by \pgf@ya%
+        \pgf@y=.5\pgf@y%
+      }%
+      \anchor{west north west}{%
+        \pgf@process{\northeast}%
+        \pgf@ya=1.5\pgf@y%
+        \pgf@process{\southwest}%
+        \pgf@y=.5\pgf@y%
+        \advance\pgf@y by \pgf@ya%
+        \pgf@y=.5\pgf@y%
+      }%
+      \anchor{east north east}{%
+        \pgf@process{\southwest}%
+        \pgf@ya=.5\pgf@y%
+        \pgf@process{\northeast}%
+        \pgf@y=1.5\pgf@y%
+        \advance\pgf@y by \pgf@ya%
+        \pgf@y=.5\pgf@y%
+      }%
+      \anchor{east south east}{%
+        \pgf@process{\southwest}%
+        \pgf@ya=1.5\pgf@y%
+        \pgf@process{\northeast}%
+        \pgf@y=.5\pgf@y%
+        \advance\pgf@y by \pgf@ya%
+        \pgf@y=.5\pgf@y%
+      }%
+      \anchor{north north west}{%
+        \pgf@process{\southwest}%
+        \pgf@xa=1.5\pgf@x%
+        \pgf@process{\northeast}%
+        \pgf@x=.5\pgf@x%
+        \advance\pgf@x by \pgf@xa%
+        \pgf@x=.5\pgf@x%
+      }%
+      \anchor{north north east}{%
+        \pgf@process{\southwest}%
+        \pgf@xa=.5\pgf@x%
+        \pgf@process{\northeast}%
+        \pgf@x=1.5\pgf@x%
+        \advance\pgf@x by \pgf@xa%
+        \pgf@x=.5\pgf@x%
+      }%
+      \anchor{south south west}{%
+        \pgf@process{\northeast}%
+        \pgf@xa=.5\pgf@x%
+        \pgf@process{\southwest}%
+        \pgf@x=1.5\pgf@x%
+        \advance\pgf@x by \pgf@xa%
+        \pgf@x=.5\pgf@x%
+      }%
+      \anchor{south south east}{%
+        \pgf@process{\northeast}%
+        \pgf@xa=1.5\pgf@x%
+        \pgf@process{\southwest}%
+        \pgf@x=.5\pgf@x%
+        \advance\pgf@x by \pgf@xa%
+        \pgf@x=.5\pgf@x%
+      }%
+      \anchor{width}{%
+        \useanchor{rectangle}{west}%
+        \pgf@xc=\pgf@x
+        \useanchor{rectangle}{east}%
+        \advance\pgf@x by -\pgf@xc
+        \pgf@y=\z@
+        \edef\pgf@temp{\csname pgf@sh@nt@\pgfreferencednodename\endcsname}%
+        \expandafter\@shiftback\pgf@temp
+      }
+      \anchor{height}{%
+        \useanchor{rectangle}{south}%
+        \pgf@yc=\pgf@y
+        \useanchor{rectangle}{north}%
+        \advance\pgf@y by -\pgf@yc
+        \pgf@x=\z@
+        \edef\pgf@temp{\csname pgf@sh@nt@\pgfreferencednodename\endcsname}%
+        \expandafter\@shiftback\pgf@temp
+      }
+      \anchor{size}{%
+        \useanchor{rectangle}{south west}%
+        \pgf@xc=\pgf@x
+        \pgf@yc=\pgf@y
+        \useanchor{rectangle}{north east}%
+        \advance\pgf@x by -\pgf@xc
+        \advance\pgf@y by -\pgf@yc
+        \edef\pgf@temp{\csname pgf@sh@nt@\pgfreferencednodename\endcsname}%
+        \expandafter\@shiftback\pgf@temp
+      }
+    }
+    
+    
+    \newcommand{\anchorlet}[2]{%
+        \global\expandafter
+        \let\csname pgf@anchor@\pgf@sm@shape@name @#1\expandafter\endcsname
+        \csname pgf@anchor@\pgf@sm@shape@name @#2\endcsname
+    }
+    
+    \newcommand{\anchoralias}[2]{%
+        \expandafter
+        \gdef\csname pgf@anchor@\pgf@sm@shape@name @#1\expandafter\endcsname
+        \expandafter{\csname pgf@anchor@\pgf@sm@shape@name @#2\endcsname}%
+    }
+    
+    \pgfaddtoshape{rectangle}{%
+      \anchorlet{c}{center}%
+      \anchorlet{n}{north}%
+      \anchorlet{e}{east}%
+      \anchorlet{s}{south}%
+      \anchorlet{w}{west}%
+      \anchorlet{se}{south east}%
+      \anchorlet{sw}{south west}%
+      \anchorlet{ne}{north east}%
+      \anchorlet{nw}{north west}%
+      \anchorlet{wsw}{west south west}%
+      \anchorlet{wnw}{west north west}%
+      \anchorlet{ene}{east north east}%
+      \anchorlet{ese}{east south east}%
+      \anchorlet{nnw}{north north west}%
+      \anchorlet{nne}{north north east}%
+      \anchorlet{ssw}{south south west}%
+      \anchorlet{sse}{south south east}%
+    }
+    
+    
+    
+    %%%%%%%%%%%%%%%%%%%%%%%%
+    
+    
+    
+    
+    %%%%%%%%%%%%  tikz page overlays
+    
+    \NewDocumentCommand{\tikzpgol}{m m}{%
+      \tblfrkv{tikzpgol}{#1}[defaults={x=0,y=0,pg=nw,nd=nw}]
+      \deftbl{tikzpgol}{x}{tkzpgolx}    \deftbl{tikzpgol}{y}{tkzpgoly}
+      \begin{tikzpicture}[overlay,remember picture,baseline]
+          \node[anchor=\gettbl{tikzpgol}{nd},inner sep=0pt] (tkpgol) at ($(current page.\gettbl{tikzpgol}{pg}) + (\tkzpgolx, \tkzpgoly)$)
+                  {#2};
+      \end{tikzpicture}%
+    }% \tikzpgol{nd=se,pg=se,x=0,y=1}{floating node here}  % example usage
+    
+    
+    \NewDocumentCommand{\tikzpgolg}{m O{} m}{\tikzpgol{#1}{\includegraphics[#2]{#3}}} % tikz page overlay graphics
+    
+    \NewDocumentCommand{\tikzpgolt}{m O{} m}{%
+      \tblfrkv{tikzpgolpar}{#2}[defaults={}]% todo should make a quick way to position pbox or pbox
+      \tikzpgol{#1}{\pbox[#2]{}{#3}}
+    } % tikz page overlay textvox
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     %%%% END TIKZ STUFF
 
 
@@ -1046,7 +1242,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%            macros/unirefs            %%%
+%%%            macros/unirefs+            %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %%% table footnote tracker interface
     \begin{luacode*}
