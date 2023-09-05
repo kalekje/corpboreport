@@ -1268,9 +1268,9 @@
     
     \NewDocumentCommand{\tikzpgol}{m m}{%
       \tblfrkv{tikzpgol}{#1}[defaults={x=0,y=0,pg=nw,nd=nw}]
-      \deftbl{tikzpgol}{x}{tkzpgolx}    \deftbl{tikzpgol}{y}{tkzpgoly}
+      \deftbl{x}{tkzpgolx}    \deftbl{y}{tkzpgoly}
       \begin{tikzpicture}[overlay,remember picture,baseline]
-          \node[anchor=\gettbl{tikzpgol}{nd},inner sep=0pt] (tkpgol) at ($(current page.\gettbl{tikzpgol}{pg}) + (\tkzpgolx, \tkzpgoly)$)
+          \node[anchor=\gettbl{nd},inner sep=0pt] (tkpgol) at ($(current page.\gettbl{pg}) + (\tkzpgolx, \tkzpgoly)$)
                   {#2};
       \end{tikzpicture}%
     }% \tikzpgol{nd=se,pg=se,x=0,y=1}{floating node here}  % example usage

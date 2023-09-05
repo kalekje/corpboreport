@@ -834,50 +834,34 @@
     %%% ToC tweaking / high level command
     \newlength{\ToCextrabottomroom}\setlength{\ToCextrabottomroom}{0.0em}
     \newlength{\pullToCcloser}\setlength{\pullToCcloser}{0pt}
-    \newlength{\ToCrightmargin}\setlength{\ToCrightmargin}{0in}
+    
     \def\tighterToCchap{\addtocontents{toc}{\vspace*{-1.3ex}}}
     
     \AfterTOCHead[lot]{\vspace*{-1.5em}} % hack to fix extra space under LoT.. investigate why..
     
-    \NewDocumentCommand{\addcontentslists}{O{0in}}{
-      %  todo make a kv interface
-      % lists= cf*t*l   < star allows on same page
-      % depth= 1
-      % rightmarg= 1in
-      % bottom= 1in   < extra room on bottom
-      %  chapsep = 0.75 em   < extra room between
-      \global\setlength{\ToCrightmargin}{#1}
+    \NewDocumentCommand{\addcontentslist}{s m O{} O{listof#2} }{
+        \iftbl{toc.#2}{
+          \IfBooleanTF{#1}{}{\addtocentrydefault{chapter}{\phantom{.}}{#3}\tighterToCchap}%
+          \begin{addmargin}[\gettbl{toc.left}]{\gettbl{toc.right}}
+            \csname#4\endcsname
+          \end{addmargin}
+          \chaptermark{#3}
+        }
+    }
     
+    
+    \NewDocumentCommand{\addcontentslists}{O{}}{
+      \tblfrkv{toc}{#1}[defaults=
+        {contents=true,figures=false,tables=false,listings=false,right=0in,bottom=0in,left=0in,top=0in,sep=-0.3ex,
+      levels=1}]
+      \kvtblundefcheck
     %  \addtocontents{toc}{\protect\enlargethispage{\ToCextrabottomroom}} % enlarge toc page if needed
-      
+      \setcounter{tocdepth}{\gettbl{toc.levels}} %%% TOC Depth down to sections
       \pdfbookmark[0]{Contents}{LabelContentsPDF}
-      \begin{addmargin}[0pt]{\ToCrightmargin}  % todo add space if defined.. but not yet
-    %    \ifdimcomp{|\ToCextrabottomroom|}{>}{0.1pt}{\addtocontents{toc}{\protect\enlargethispage{\ToCextrabottomroom}}}{} % enlarge toc page if needed
-        \tableofcontents
-    %    \ifdimcomp{|\pullToCcloser|}{>}{0.1pt}{\addtocontents{toc}{\protect\enlargethispage{addtocontents{toc}{\vspace*{\pullToCcloser}}}{}% pull ToC closer to Contents section head if needed
-      \end{addmargin}
-      \chaptermark{Contents}
-    
-      
-      \addtocentrydefault{chapter}{\phantom{.}}{Figures}\tighterToCchap%
-      \begin{addmargin}[0pt]{\ToCrightmargin}
-        \listoffigures
-      \end{addmargin}
-      \chaptermark{Figures}
-    
-    %  \NextChapOnSamePage
-    
-      \addtocentrydefault{chapter}{\phantom{.}}{Tables}\tighterToCchap%
-      \begin{addmargin}[0pt]{\ToCrightmargin}
-        \listoftables
-      \end{addmargin}
-      \chaptermark{Tables}
-    
-      \addtocentrydefault{chapter}{\phantom{.}}{Code Listings}%
-      \begin{addmargin}[0pt]{\ToCrightmargin}
-        \lstlistoflistings
-      \end{addmargin}
-      \chaptermark{Code Listings}
+      \addcontentslist*{contents}[Contents][tableofcontents]
+      \addcontentslist{tables}[Tables]
+      \addcontentslist{figures}[Figures]
+      \addcontentslist{listings}[Code Listings][lstlistoflistings]
     }
     
     \def\mainmatter{\bookmarksetup{startatroot}}
@@ -1017,7 +1001,7 @@
     \newlength{\raiseFooterLen}
     \setlength{\raiseFooterLen}{-0.5\baselineskip}
     \newlength{\lineFooterLen}
-    \setlength{\lineFooterLen}{2em}
+    \setlength{\lineFooterLen}{1.25em}
     %https://tex.stackexchange.com/questions/114570/koma-script-scrpage2-footer-height
     
     % normal font for page number (not lowercase nums)
@@ -2698,9 +2682,9 @@
     
     \NewDocumentCommand{\tikzpgol}{m m}{%
       \tblfrkv{tikzpgol}{#1}[defaults={x=0,y=0,pg=nw,nd=nw}]
-      \deftbl{tikzpgol}{x}{tkzpgolx}    \deftbl{tikzpgol}{y}{tkzpgoly}
+      \deftbl{x}{tkzpgolx}    \deftbl{y}{tkzpgoly}
       \begin{tikzpicture}[overlay,remember picture,baseline]
-          \node[anchor=\gettbl{tikzpgol}{nd},inner sep=0pt] (tkpgol) at ($(current page.\gettbl{tikzpgol}{pg}) + (\tkzpgolx, \tkzpgoly)$)
+          \node[anchor=\gettbl{nd},inner sep=0pt] (tkpgol) at ($(current page.\gettbl{pg}) + (\tkzpgolx, \tkzpgoly)$)
                   {#2};
       \end{tikzpicture}%
     }% \tikzpgol{nd=se,pg=se,x=0,y=1}{floating node here}  % example usage
