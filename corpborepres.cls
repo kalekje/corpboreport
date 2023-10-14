@@ -68,6 +68,8 @@
     \usepackage{relsize}  % relative sizing
     \usepackage{pbox}  % create box of max width http://ctan.mirror.colo-serv.net/macros/latex/contrib/pbox/pbox.pdf
     
+    \usepackage{fontawesome5}
+    
     \newcommand{\vparspace}{\vspace{\parskip}}
     
     \def\tspc{\nobreak\hspace{.08em plus .04em}} % tiny space
