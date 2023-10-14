@@ -14,7 +14,7 @@
       chapterprefix=false,
       fleqn,
       leqno,
-      numbers=noenddot
+      numbers=noenddot,
       titlepage=firstiscover,
 }{scrbook}  % default options for basepass
 
@@ -298,6 +298,8 @@
     \usepackage{setspace}  % enable onehalfspacing instyling
     \usepackage{relsize}  % relative sizing
     \usepackage{pbox}  % create box of max width http://ctan.mirror.colo-serv.net/macros/latex/contrib/pbox/pbox.pdf
+    
+    \usepackage{fontawesome5}
     
     \newcommand{\vparspace}{\vspace{\parskip}}
     
@@ -1502,10 +1504,15 @@
       \end{table}%
     }
     
-    
-    \define@key{Gin}{halfwidth}[0.5\linewidth]{\def\Gin@ewidth{#1}}
-    
-    \define@key{Gin}{fullwidth}[\linewidth]{\def\Gin@ewidth{#1}}
+    %%% NOTE space or comma before key or error occurs
+    %%       e.g. \includegraphics[ bigwidth]
+    \define@key{Gin}{quarwidth}[0.24\textwidth]{\def\Gin@ewidth{#1}}
+    \define@key{Gin}{thirdwidth}[0.33\textwidth]{\def\Gin@ewidth{#1}}
+    \define@key{Gin}{halfwidth}[0.49\textwidth]{\def\Gin@ewidth{#1}}
+    \define@key{Gin}{bigwidth}[0.66\textwidth]{\def\Gin@ewidth{#1}}
+    \define@key{Gin}{biggwidth}[0.75\textwidth]{\def\Gin@ewidth{#1}}
+    \define@key{Gin}{fullwidth}[1.0\textwidth]{\def\Gin@ewidth{#1}}
+    %\define@key{Gin}{half-width}[0.48\linewidth]{\def\Gin@ewidth{#1}}
     
     
     % create an empty box that's the same size as of an image
