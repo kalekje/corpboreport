@@ -1,17 +1,22 @@
 
+% todo need to clean a lot of this
+
 \newdimen\cbp@sectprespacelengthnewpage
 \cbp@sectprespacelengthnewpage=-1.5cm  % make less negative to increase spacing on new section title (always starts new page)
 % WAS 20pt
 
+\newcommand{\resetsectionletters}{\resetsectionletter\resetsubsectionletter\resetsubsubsectionletter}
+
 \newcounter{sectionletter}%
 \newcommand{\resetsectionletter}{\setcounter{sectionletter}{0}}
+
 \let\oldsection\section
 
 \RenewDocumentCommand{\section}{ s t+ t! o m }{%
     %   * (no number, no ToC),  + (add sec letter) ! (on new page / toggle behaviour)
     \IfBooleanT{#3}{\invtoggle{SecOnNewPage}}%
-    \iftoggle{SecOnNewPage}{\clearpage\vspace*{\cbp@sectprespacelengthnewpage}}{}%
-    \Needspace{\secneedspace}%
+%    \iftoggle{SecOnNewPage}{\clearpage\vspace*{\cbp@sectprespacelengthnewpage}}{}% TODO
+%    \Needspace{\secneedspace}% TODO
     \IfBooleanTF{#2}{%
         	\ifnum\value{sectionletter}>0% if we're into section lettering already
         	    \addtocounter{section}{-1}% decrement section so num stays the same
@@ -26,8 +31,8 @@
     }%
     \IfBooleanT{#3}{\invtoggle{SecOnNewPage}}%
 }
-\def\thesection{\arabic{section}\alph{sectionletter}}
-\def\theHsection{\arabic{section}\alph{sectionletter}} % this is for hyperref (it does nothing if not loaded)
+\def\thesection{\thechapter.\arabic{section}\alph{sectionletter}}
+\def\theHsection{\thechapter.\arabic{section}\alph{sectionletter}} % this is for hyperref (it does nothing if not loaded)
 
 %
 
@@ -45,7 +50,7 @@
         	\fi%
         	\stepcounter{subsectionletter}% increment subsection letter
     }{\resetsubsectionletter}%
-    \Needspace{\subsecneedspace}%
+%    \Needspace{\subsecneedspace}% TODO
     \expanded{%
         \noexpand\oldsubsection%
         \IfBooleanT{#1}{*}%
@@ -71,7 +76,7 @@
         	\fi%
         	\stepcounter{subsubsectionletter}% increment subsubsection letter
     }{\resetsubsubsectionletter}%
-    \Needspace{\subsubsecneedspace}%
+%    \Needspace{\subsubsecneedspace}% TODO need to see how this plays with priod definition
     \expanded{%
         \noexpand\oldsubsubsection%
         \IfBooleanT{#1}{*}%
