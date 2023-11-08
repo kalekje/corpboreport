@@ -587,7 +587,7 @@
     % ##############################################
     
     \usepackage{footnotebackref}  % must be loaded before footnote backref
-    \usepackage{footmisc}  %
+    \usepackage[bottom]{footmisc}  %
     \setlength\footnotemargin{0pt}  % space between footnote and number.. might want to experiemnt with this
     % and will likely want to re-create my tabular footnote environment...
     
@@ -601,6 +601,7 @@
     {\makebox[\footnotemarkspace][l]{\llap{{\hyperref[\BackrefFootnoteTag]{\toglnums\thefootnotemark}}}}.\enspace} % footfont with period for footnote marks in footnote
     % hanging footnote
     
+    \addtolength{\skip\footins}{12pt plus 5pt}
     
     %footnotebackref breaks footnotetext and footnotemark pairs, this patches it up!!!
     
@@ -698,6 +699,9 @@
     \addtokomafont{paragraph}{\color{parCol}}
     
     %%% ToC Related %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \NewDocumentCommand{\tocpagebreak}{}{\addtocontents{toc}{\protect\pagebreak}} % add page break, use this before a chapter
+    %\NewDocumentCommand{\tocpagebreak}{}{\addtocontents{toc}{\par\vspace*{1em}\par\vspace*{100em}}} % add page break, use this before a chapter
+    
     \setcounter{tocdepth}{1} %%% TOC Depth down to sections
     
     \newcommand\tocmainfont[1]{{\cbp@secnumsize{}#1}}
@@ -854,14 +858,17 @@
     
     \NewDocumentCommand{\addcontentslists}{O{}}{
       \tblfrkv{toc}{#1}[defaults=
-        {contents=true,figures=false,tables=false,listings=false,right=0in,bottom=0in,left=0in,top=0in,sep=-0.3ex,
-      levels=1}]
+        {contents=true,figures=false,tables=false,figtabsamepg=false,listings=false,right=0in,bottom=0in,left=0in,top=0in,sep=-0.3ex,
+      levels=1,pdflevels=3}]
       \kvtblundefcheck
     %  \addtocontents{toc}{\protect\enlargethispage{\ToCextrabottomroom}} % enlarge toc page if needed
       \setcounter{tocdepth}{\gettbl{toc.levels}} %%% TOC Depth down to sections
       \pdfbookmark[0]{Contents}{LabelContentsPDF}
       \addcontentslist*{contents}[Contents][tableofcontents]
+      \setcounter{tocdepth}{\gettbl{toc.pdflevels}} %%% restore toc levels for PDF bookmarks
+      % todo could allow tables or figures order
       \addcontentslist{tables}[Tables]
+      \iftbl{toc.figtabsamepg}{\toggletrue{ChapOnSamePage}}
       \addcontentslist{figures}[Figures]
       \addcontentslist{listings}[Code Listings][lstlistoflistings]
     }
@@ -871,7 +878,8 @@
     \def\backmatter{\pdfbookmark[-1]{Back-Matter}{LabelBMPDF}}
     
     
-    
+    \def\moreroomlen{3em}
+    \NewDocumentCommand{\moreroom}{m}{\enlargethispage{\dimeval{(\moreroomlen)*#1}}}
     
     %%%% Appendix %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
@@ -1453,7 +1461,7 @@
     
     \newcommand{\WideFloatCaption}{\captionsetup{labelformat=widecap,format=plain}}
     
-    \newlength{\floatindentlength}\setlength{\floatindentlength}{10ex}
+    \newlength{\floatindentlength}\setlength{\floatindentlength}{11ex}
     
     \setlength{\intextsep}{17pt}  % distance between floats on the top or the bottom and the text, baseline skip plus some
     \setlength{\floatsep}{24pt plus 2.0pt minus 2.0pt} % distance between two floats; add rubber here
@@ -1546,6 +1554,28 @@
       \clearpage
       }
     }
+    
+    \begin{luacode*}
+      function incpdfpages(pdffile, opts, start, stop, between)
+        start = tonumber(start) or 1
+        stop = tonumber(stop) or img.scan({filename=pdffile}).pages
+        between = between or ' \\par '
+        opts = opts or 'fullwidth'
+        local template = '\\includegraphics[page=__THEPAGENUMBER__,'..opts..']{'..pdffile..'}'
+        for p=start,stop do
+          local prtemplate = template:gsub('__THEPAGENUMBER__',tostring(p))
+          tex.sprint(prtemplate)
+          if p < stop then
+            tex.sprint(between)
+          end
+        end
+      end
+    \end{luacode*}
+    
+    \NewDocumentCommand{\includepdfpages}{m D() O{}}{} % todo
+    
+    
+    
     
     
     %% includes generator data sheet, rotates first three pages
@@ -2251,7 +2281,7 @@
     \begin{titlepage}\thispagestyle{empty}
     	\rule{\heavyrulewidth}{\cbp@titleheight} % Vertical line
     	\hspace{0.5in} % Whitespace between the vertical line and title page text
-    	\begin{minipage}[b][\cbp@titleheight][s]{4.4in}
+    	\begin{minipage}[b][\cbp@titleheight][s]{4.6in}
     		\raggedright % Right align the title page
     		\toglnums
     		\thispagestyle{empty}

@@ -747,6 +747,7 @@ Math on dimensions/lengths:\\
 \rule{\dimeval{ \linewidth plus 1cm minus 1cm - 1cm}}{1pt} a\\
 \rule{\skipeval{\linewidth plus 1cm minus 1cm - 1cm}}{1pt} a\\
 
+If multiplying a length, wrap the dimension in brackets and apply the scale AFTER, like (5em)*2
 
 Note: if above does not work, you can try the old way:\\
 \cmd{\rule{\dimexpr(\linewidth-3in)\relax}{1pt}}\hfill\rule{\dimexpr(\linewidth-3in)\relax}{1pt}\\
