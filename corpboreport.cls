@@ -816,14 +816,14 @@
     
     
     % front matter chapter (acknowledgements or abstract), extra spacing, not in ToC
-    \NewDocumentCommand{\chapterF}{m}{
+    \NewDocumentCommand{\chapterf}{m}{
       \gdef\chapterheadstartvskip{\vspace*{\cbp@chapTopSepXtra}}  % extra top sep of chapter
       \pdfbookmark[0]{#1}{Label#1PDF}%
       \chapter*{#1}%
       \gdef\chapterheadstartvskip{\vspace*{\cbp@chapTopSep}}  % restore top sep of chapter
     }
     
-    \NewDocumentCommand{\chapterM}{ t- m }{% chapter Matter (front or back), ToC and pdf bookmark but no number. Use - to reduce ToC clearance
+    \NewDocumentCommand{\chaptert}{ t- m }{% chapter Matter (front or back), ToC and pdf bookmark but no number. Use - to reduce ToC clearance
       \IfBooleanT{#1}{\addtocontents{toc}{\vspace*{-1.3ex}}}
       \chapter*{#2}
       \addtocentrydefault{chapter}{\phantom{.}}{#2}{}
@@ -1487,7 +1487,7 @@
     %     1      2           3           4          5              6            7            8      9
     %  *wide,  [pos]     <pre-amble>  {content}   +justify cap  {caption} [short caption] {label}  [footnotes]
     
-    \NewDocumentCommand{\InsertFigure}{s O{htbp} D<>{} m t+ +m O{#6} m o}{%
+    \NewDocumentCommand{\insertfigure}{s O{htbp} D<>{} m t+ +m O{#6} m o}{%
       \reseturef%
       \cbp@setFloatCap{#1}{#5}%
       \begin{figure}[#2]%
@@ -1502,7 +1502,7 @@
     
     
     %                                  1  2   3    4    4 5  6
-    \NewDocumentCommand{\InsertTable}{ s O{htbp} D<>{} m t+ +m O{#6} m o }{%
+    \NewDocumentCommand{\inserttable}{ s O{htbp} D<>{} m t+ +m O{#6} m o }{%
       \reseturef%
       \cbp@setFloatCap{#1}{#5}%
       \begin{table}[#2]% htbp! settings
@@ -1538,18 +1538,18 @@
     \def\maxwidth#1{\ifdim\Gin@nat@width>#1 #1\else\Gin@nat@width\fi}
     
     
-    \NewDocumentCommand{\RotPDF}{t+ s}{\IfBooleanT{#1}{\pagebreak}%
+    \NewDocumentCommand{\rotatepdf}{t+ s}{\IfBooleanT{#1}{\pagebreak}%
       \IfBooleanTF{#2}{\global\pdfpageattr\expandafter{\the\pdfpageattr/Rotate 0}}%
       {\global\pdfpageattr\expandafter{\the\pdfpageattr/Rotate 90}}%
     } %%% + will add a page break before, * will restore it back to normal
     
     
-    \newcommand{\RotFloatPage}[1]{% if a float takes up the whole page, just insert the float after the page, rotate, then restore
+    \newcommand{\rotatefloatnextpage}[1]{% if a float takes up the whole page, just insert the float after the page, rotate, then restore
       \afterpage{\RotPDF#1
       \RotPDF+*}
     }
     
-    \newcommand{\FloatNextPage}[1]{% if a float takes up the whole page
+    \newcommand{\floatnextpage}[1]{% if a float takes up the whole page
       \afterpage{#1
       \clearpage
       }
@@ -1572,9 +1572,60 @@
       end
     \end{luacode*}
     
-    \NewDocumentCommand{\includepdfpages}{m D() O{}}{} % todo
+    \NewDocumentCommand{\includepdfpages}{ O{} m m O{ \par} }{%
+    % \includepdfpages[opts]{filename}{pg_start,pg_stop}[tex code between]
+    % for pages, starting page required, if pg2 not included, will insert until end
+      \tblfrcsv{incpdfpgs}{#3}%
+      \directlua{incpdfpages(\luastring{#2}, \luastring{#1}, penlight.tbls.incpdfpgs[1], penlight.tbls.incpdfpgs[2], \luastring{#4})}
+    }
     
     
+    
+    
+    
+    
+    
+    
+    
+    %\def\floatlefthanglabel{%
+    %  \setlength{\floatindentlength}{0ex}
+    %  \gdef\figurename{fig.}
+    %  \gdef\tablename{tab.}
+    %  \DeclareCaptionLabelFormat{hangcap}{\llap{##1\,##2\enspace}}
+    %}
+    %\def\hideeqlabelOP{}
+    
+    
+    \def\eqprefixOG{eq.\,}
+    \def\eqprefix{\eqprefixOG}
+    \def\hideeqprefix{\gdef\eqprefix{}\afterpage{\gdef\eqprefix{\eqprefixOG}}}
+    
+    
+    \def\floatlefthanglabel{
+      \captionsetup{figurename=fig.,tablename=tab.,}
+      \renewcommand{\lstlistingname}{code}
+      \DeclareCaptionLabelFormat{hangcap}{\llap{\cbp@secnumsize##1\,##2\enspace}}
+      \DeclareCaptionLabelFormat{widecap}{\llap{\cbp@secnumsize##1\,##2\enspace}}
+      \global\setlength{\floatindentlength}{0ex}
+      \renewcommand\tagform@[1]{\maketag@@@{\Llap{\ignorespaces\makebox[6ex][r]{\ \hfill\cbp@secnumsize\bfseries \eqprefix##1\unskip\@@italiccorr\enspace}}}}
+    
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    %%% graveyard
     
     
     
@@ -1611,32 +1662,6 @@
         tex.write(pages)
       }%
     }
-    
-    
-    %\def\floatlefthanglabel{%
-    %  \setlength{\floatindentlength}{0ex}
-    %  \gdef\figurename{fig.}
-    %  \gdef\tablename{tab.}
-    %  \DeclareCaptionLabelFormat{hangcap}{\llap{##1\,##2\enspace}}
-    %}
-    %\def\hideeqlabelOP{}
-    
-    
-    \def\eqprefixOG{eq.\,}
-    \def\eqprefix{\eqprefixOG}
-    \def\hideeqprefix{\gdef\eqprefix{}\afterpage{\gdef\eqprefix{\eqprefixOG}}}
-    
-    
-    \def\floatlefthanglabel{
-      \captionsetup{figurename=fig.,tablename=tab.,}
-      \renewcommand{\lstlistingname}{code}
-      \DeclareCaptionLabelFormat{hangcap}{\llap{\cbp@secnumsize##1\,##2\enspace}}
-      \DeclareCaptionLabelFormat{widecap}{\llap{\cbp@secnumsize##1\,##2\enspace}}
-      \global\setlength{\floatindentlength}{0ex}
-      \renewcommand\tagform@[1]{\maketag@@@{\Llap{\ignorespaces\makebox[6ex][r]{\ \hfill\cbp@secnumsize\bfseries \eqprefix##1\unskip\@@italiccorr\enspace}}}}
-    
-    }
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%            CodeBoxes+            %%%
@@ -1827,15 +1852,15 @@
     %disable,    % uncomment to disable package entirely
     ]{todonotes}
     % invisible todo
-    \newcommand{\todoINV}[1]{%  can just use \todototoc
+    \newcommand{\todoinv}[1]{%  can just use \todototoc
     	\todo[linecolor=white, backgroundcolor=white,bordercolor=white, textcolor=white]{#1}%
     }
-    \newcommand{\todoG}[1]{%
+    \newcommand{\todog}[1]{%
     	\todo[bordercolor=green!90!]{#1}%
     }
     
     %\newcommand{\todoL}[1]{\todo[inline,textsize=\small]{#1}} %inline todo note
-    \newcommand{\todoL}[1]{\todo[inline]{#1}} %inline todo note
+    \newcommand{\todol}[1]{\todo[inline]{#1}} %inline todo note
     %\listoftodos
     %\todototoc{ToC todo, just a random list}
     %\todoG{Check for stuff}
@@ -2372,7 +2397,7 @@
     %\providelength{\floatindentlength}{10ex}
     
     %%% Intentionally blank page command
-    \newcommand{\IntentionallyBlankPage}{
+    \newcommand{\blankpage}{
     \pagebreak
     \thispagestyle{empty}
     \null\vfill
@@ -2383,7 +2408,7 @@
     
     
     %%% End of document command
-    \NewDocumentCommand{\PrintEndOfDocument}{ s O{document}}{%
+    \NewDocumentCommand{\printenddocument}{ s O{document}}{%
     \IfBooleanTF{#1}{\vspace*{2.5cm}}{\pagebreak\null\vfill}
     {\noindent\hspace*{\floatindentlength}\large\slshape End\ of\ #2.\hfill\vspace{5cm}}
     \IfBooleanF{#1}{\null\vfill}
@@ -2915,3 +2940,32 @@
     }{}
     
 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%            LegacyCommands+            %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    
+    \let\InsertFigure\insertfigure
+    \let\InsertTable\inserttable
+    
+    \let\RotPDF\rotatepdf
+    \let\RotFloatPage\rotatefloatnextpage
+    \let\FloatNextPage\floatnextpage
+    
+    
+    
+    \let\todoL\todol
+    
+    
+    \let\chapterM\chaptert
+    \let\chapterF\chapterf
+    
+    
+    
+    \let\citeT\cite
+    
+    
+    \let\PrintEndOfDocument\printenddocument
+    
+    \let\IntentionallyBlankPage\blankpage

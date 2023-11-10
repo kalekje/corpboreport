@@ -904,15 +904,15 @@
     %disable,    % uncomment to disable package entirely
     ]{todonotes}
     % invisible todo
-    \newcommand{\todoINV}[1]{%  can just use \todototoc
+    \newcommand{\todoinv}[1]{%  can just use \todototoc
     	\todo[linecolor=white, backgroundcolor=white,bordercolor=white, textcolor=white]{#1}%
     }
-    \newcommand{\todoG}[1]{%
+    \newcommand{\todog}[1]{%
     	\todo[bordercolor=green!90!]{#1}%
     }
     
     %\newcommand{\todoL}[1]{\todo[inline,textsize=\small]{#1}} %inline todo note
-    \newcommand{\todoL}[1]{\todo[inline]{#1}} %inline todo note
+    \newcommand{\todol}[1]{\todo[inline]{#1}} %inline todo note
     %\listoftodos
     %\todototoc{ToC todo, just a random list}
     %\todoG{Check for stuff}
