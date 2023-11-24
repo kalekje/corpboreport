@@ -258,10 +258,10 @@
     
     
     % overlay boxes
-    \NewDocumentCommand{\overlayTR}{m}{%
+    \NewDocumentCommand{\overlaytr}{m}{%
       \Llap{\raisebox{\dimeval{(-\height+1.6ex)}}[0pt][0pt]{#1}}%
     }
-    \NewDocumentCommand{\overlayBR}{m}{%
+    \NewDocumentCommand{\overlaybr}{m}{%
       \Llap{\raisebox{0pt}[0pt][0pt]{#1}}%
     }
     
@@ -276,7 +276,6 @@
     % Text / Para Settings and utils
     % ##############################################
     
-    \usepackage[utf8]{luainputenc}
     
     \ifluatex
         \usepackage{polyglossia} % helps with hyphenation
@@ -291,7 +290,6 @@
     %%% GENERAL FORMATTING
     \usepackage{ragged2e}
     \usepackage{blindtext}
-    \usepackage{lastpage}
     
     %% Boxes and stuff
     \usepackage[usestackEOL]{stackengine}  % used for title page and stacking things
@@ -332,12 +330,17 @@
     \newcommand\etal{et~al\ensuresingleperiod}
     
     
-    \DeclareRobustCommand\mdash{%
-        \unskip\nobreak\thinspace\textemdash\thinspace\ignorespaces}
-    \DeclareRobustCommand\ndash{%
-        \unskip\nobreak\thinspace\textendash\thinspace\ignorespaces}
+    
+    \usepackage[utf8]{luainputenc}
+    
     \DeclareUnicodeCharacter{2014}{\dash}
     \AtBeginDocument{\pdfstringdefDisableCommands{\renewcommand{\dash}{ - }}}
+    
+    \DeclareRobustCommand\mdash{%
+        \unskip\nobreak\thinspace\textemdash\thinspace\ignorespaces}
+    
+    \DeclareRobustCommand\ndash{%
+        \unskip\nobreak\thinspace\textendash\thinspace\ignorespaces}
     
     \DeclareRobustCommand\dash{%
       \unskip\nobreak\thinspace\textemdash\allowbreak\thinspace\ignorespaces}
@@ -345,17 +348,26 @@
     \directlua{
     function autodashes(s)
     s = string.gsub(s,'[-][-][-]', '\string\\mdash ')
-    %s = string.gsub(s,'[-][-]',    '\string\\ndash ')
+    s = string.gsub(s,'[-][-]',    '\string\\ndash ')
     return s
-    end}
+    end
+    function autoemdash(s)
+    s = string.gsub(s,'[-][-][-]', '\string\\mdash ')
+    return s
+    end
+    function autoendash(s)
+    s = string.gsub(s,'[-][-]',    '\string\\ndash ')
+    return s
+    end
+    }
     
-    \def\autodashON{\directlua{%
-    luatexbase.add_to_callback("process_input_buffer", autodashes,"auto spaced dashes")%
-    }}
+    \def\autoendash{\directlua{luatexbase.add_to_callback("process_input_buffer", autoendash,"auto spaced en dashes")}}
+    \def\autoemdash{\directlua{luatexbase.add_to_callback("process_input_buffer", autoemdash,"auto spaced em dashes")}}
+    \def\autodashes{\directlua{luatexbase.add_to_callback("process_input_buffer", autodashes,"auto spaced dashes")}}
     
-    \def\autodashOFF{\directlua{%
-    luatexbase.remove_from_callback("process_input_buffer","auto spaced dashes")%
-    }}
+    \def\autoendashoff{\directlua{luatexbase.remove_from_callback("process_input_buffer","auto spaced en dashes")}}
+    \def\autoemdashoff{\directlua{luatexbase.remove_from_callback("process_input_buffer","auto spaced em dashes")}}
+    \def\autodashesoff{\directlua{luatexbase.remove_from_callback("process_input_buffer","auto spaced dashes")}}
     
     
     
@@ -386,6 +398,9 @@
     
     
     
+
+
+\usepackage{lastpage}
 
 
 \usepackage[fleqn,leqno]{amsmath} % need to load before kpfonts-otf
@@ -1059,6 +1074,7 @@
     
     \definecolor{darkred}{RGB}{180, 0, 0}
     \definecolor{green}{RGB}{0, 130, 10}  % green color, used for code syntax and plots
+    \definecolor{mygreen}{RGB}{0, 130, 10}  % green color, used for code syntax and plots
     
     \definecolor{mybrown}{HTML}{292826}
     \definecolor{mybeige}{HTML}{C3BDA5}
@@ -1943,7 +1959,7 @@
 %%%            BibAndGloss+            %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % requires enumitem for acronym styling
-    \usepackage[sorting=none,style=ieee]{biblatex}
+    \usepackage[sorting=none,style=ieee,backend=biber,style=numeric]{biblatex}
     
     \renewrobustcmd*{\bibinitdelim}{\,}
     \renewcommand*{\multicitedelim}{\addcomma\,}  % tighten [1,2,3] multi citations
@@ -1952,6 +1968,28 @@
     {\begin{enumerate}[leftmargin=0pt,labelsep=1.5ex,itemsep=0.8ex,label={\unum{\arabic*}.}]}%
     {\end{enumerate}}
     {\item}
+    
+    
+    \setlength\biblabelsep{1ex}
+    % https://tex.stackexchange.com/questions/634490/biblatex-change-appearance-of-reference-number-as-they-appear-in-the-reference
+    \DeclareFieldFormat{labelnumberwidth}{#1\addperiod}
+    \defbibenvironment{bibliography}
+      {\list
+         {\printtext[labelnumberwidth]{%
+    			 \unum*%
+            \printfield{labelprefix}%
+            \printfield{labelnumber}}}
+         {\setlength{\labelwidth}{\labelnumberwidth}%
+          \setlength{\leftmargin}{0pt}%
+          \setlength{\labelsep}{\biblabelsep}%
+          \setlength{\itemsep}{\bibitemsep}%
+          \setlength{\parsep}{\bibparsep}}%
+          \renewcommand*{\makelabel}[1]{\hss##1}}
+      {\endlist}
+      {\item}
+    
+    
+    
     
     \renewcommand*{\citesetup}{%
     \togunums\biburlsetup}
@@ -2286,7 +2324,6 @@
     \def\@logoset{width=4cm} % additional logo settings
     \NewDocumentCommand\logoset{m}{\gdef\@logoset{#1}}
     
-    
     \NewDocumentCommand{\logo}{ s >{\ExpArgOnceProc}O{\@logoset} m }{%
     % star to overwrite custom settings for image, otherwise, try to let the class place it
     	\IfBooleanTF{#1}%
@@ -2531,52 +2568,7 @@
         },
       }
     
-    \tikzset{
-    %        every picture/.style={remember picture,baseline},
-    %        every node/.style={anchor=base,align=center,outer sep=1.5pt},
-    %        every path/.style={thick},
-            OL/.style={overlay,remember picture,baseline},
-            nopad/.style={inner sep=0pt},
-            }
     
-    %% todo consider using the tikzmark package:
-    % https://ctan.mirror.rafal.ca/graphics/pgf/contrib/tikzmark/tikzmark.pdf
-    \usetikzlibrary{tikzmark}
-    \usetikzmarklibrary{listings}
-    %% useful for tikz node, otherwise my implementation is a bit better for me
-    \let\tmrkN\tikzmarknode
-    
-    
-    % marker =tikz coord
-    \def\cbp@tikzmarker@t{1.3ex}
-    \def\cbp@tikzmarker@m{0.7ex}
-    \def\cbp@tikzmarker@b{0ex}
-    
-    \NewDocumentCommand{\tmrk}{ s O{b} d() m }{% place a tikz marker on the baseline, middle, or top of ine. Or coord (x,y) relative to baseline
-    %    for additional padding, use \tmrkr* %
-        \IfBooleanTF{#1}{\gdef\cbp@insep{0.3ex}}{\gdef\cbp@insep{0pt}}%
-        \IfValueTF{#3}{%
-            \tikz[OL] \node[inner sep=\cbp@insep,minimum size=0pt] (tm-#4) at (#3) {};%
-        }{%
-            \tikz[OL] \node[inner sep=\cbp@insep,minimum size=0pt] (tm-#4) at (0em, \csname cbp@tikzmarker@#2\endcsname) {};%
-        }%
-    }%
-    
-    \newcommand{\drawOverlayBoxTLBR}[2]{% requires 2 tikzmarkers be used. Pass the label that matches the tikzmarker
-    \tikz[OL,inner sep=0.7ex]
-    		\node[draw=red,thick,rounded corners,fit=(tm-#1.north west) (tm-#2.south east)] {};%
-    }%
-    
-    \NewDocumentCommand{\drawHelpingGrid}{s}{%
-            \begin{tikzpicture}[OL]
-                \draw[step=1cm,gray,opacity=0.5] (-10.4,-10.4) grid (10.4,10.4);
-                \draw[step=1cm,gray!50,opacity=0.5,shift={(0.5,0.5)}] (-10.4,-10.4) grid (10.4,10.4);
-                \IfBooleanTF{#1}{\draw[step=0.2cm,blue!30,opacity=0.5] (-10.4,-10.4) grid (10.4,10.4);}{}
-                \fill[red] (0,0) circle (2.5pt);
-            \end{tikzpicture}%
-    }
-    
-    %% https://texample.net/tikz/examples/feature/overlays/
     
     
     
@@ -2742,6 +2734,91 @@
     
     %%%%%%%%%%%%  tikz page overlays
     
+    
+    %% todo consider using the tikzmark package:
+    % https://ctan.mirror.rafal.ca/graphics/pgf/contrib/tikzmark/tikzmark.pdf
+    \usetikzlibrary{tikzmark}
+    \usetikzmarklibrary{listings}
+    %% useful for tikz node, otherwise my implementation is a bit better for me
+    \let\tmrkN\tikzmarknode
+    
+    %  gloval changes
+    %\tikzset{
+    %        every picture/.style={remember picture,baseline},
+    %        every node/.style={anchor=base,align=center,outer sep=1.5pt},
+    %        every path/.style={thick},
+    %        }
+    
+    \tikzset{
+        olaycapt/.style={draw=red, fill=white, rectangle,inner sep=3pt, outer sep=0pt},
+        olayarrow/.style={->, red, line width=0.8pt},
+        OL/.style={overlay,remember picture,baseline},
+        olay/.style={overlay,remember picture,baseline},
+        nopad/.style={inner sep=0pt},
+        nosep/.style={inner sep=0pt, outer setp=0pt},
+    }
+    
+    
+    \NewDocumentCommand{\olayxfm}{ m }{%
+    \tblfrkv{olayxfm}{#1}[defaults={shift=0 0, scale=1 1}]%
+    \tbldefxy{shift}{olayshift}%
+    \tbldefxy{scale}{olayscale}%
+    }%
+    \olayxfm{} % blank is default, initialize comands
+    %\olayxfm{shift=5 5} % blank is default
+    
+    
+    \NewDocumentEnvironment{olaytikz}{+b}{%
+      \begin{tikzpicture}[olay, x=\olayscalex cm, y=\olayscaley  cm]
+        \begin{scope}[shift={(\olayshiftx cm, \olayshifty cm)}]
+          #1
+        \end{scope}
+    \end{tikzpicture}}{}
+    
+    
+    \def\olaygridmax{20}
+    \NewDocumentCommand{\olaygrid}{}{%
+            \begin{tikzpicture}[OL]
+                \draw[step=0.2cm,blue!30,opacity=0.5] (-\olaygridmax.4,-\olaygridmax.4) grid (\olaygridmax.4,\olaygridmax.4);
+                \draw[step=1cm,red!30,opacity=0.8] (-\olaygridmax.4,-\olaygridmax.4) grid (\olaygridmax.4,\olaygridmax.4);
+                \fill[red] (0,0) circle (2.5pt);
+                \foreach \x in {-\olaygridmax, ..., \olaygridmax}
+                    \foreach \y in {-\olaygridmax, ..., \olaygridmax} {
+                            \node[inner sep=0pt, outer sep=0pt, anchor=center] at (\x,\y) {{\color{red}\tiny\x~\color{magenta}\y}};
+                    }
+            \end{tikzpicture}%
+    
+    
+    
+    % marker =tikz coord
+    \def\cbp@tikzmarker@t{1.3ex}
+    \def\cbp@tikzmarker@m{0.7ex}
+    \def\cbp@tikzmarker@b{0ex}
+    
+    \NewDocumentCommand{\olaymk}{ s O{b} d() m }{% place a tikz marker on the baseline, middle, or top of ine. Or coord (x,y) relative to baseline
+    %    for additional padding, use \tmrkr* %
+        \IfBooleanTF{#1}{\gdef\cbp@insep{0.3ex}}{\gdef\cbp@insep{0pt}}%
+        \IfValueTF{#3}{%
+            \tikz[olay] \node[inner sep=\cbp@insep,minimum size=0pt] (tm-#4) at (#3) {};%
+        }{%
+            \tikz[olay] \node[inner sep=\cbp@insep,minimum size=0pt] (tm-#4) at (0em, \csname cbp@tikzmarker@#2\endcsname) {};%
+        }%
+    }%
+    
+    % todo, instead make olaymkt, olaymkm, olaymkb, usekey-val for offset, allow ttrans
+    
+    
+    \newcommand{\olaybox}[2]{% requires 2 tikzmarkers be used. Pass the label that matches the tikzmarker
+    \tikz[olay,inner sep=0.7ex]
+    		\node[draw=red,thick,rounded corners,fit=(tm-#1.north west) (tm-#2.south east)] {};%
+    }%
+    
+    
+    
+    
+    %% https://texample.net/tikz/examples/feature/overlays/
+    
+    
     \NewDocumentCommand{\tikzpgol}{m m}{%
       \tblfrkv{tikzpgol}{#1}[defaults={x=0,y=0,pg=nw,nd=nw}]
       \deftbl{x}{tkzpgolx}    \deftbl{y}{tkzpgoly}
@@ -2752,13 +2829,63 @@
     }% \tikzpgol{nd=se,pg=se,x=0,y=1}{floating node here}  % example usage
     
     
-    \NewDocumentCommand{\tikzpgolg}{m O{} m}{\tikzpgol{#1}{\includegraphics[#2]{#3}}} % tikz page overlay graphics
+    \NewDocumentCommand{\olaypg}{m m}{%
+      \tblfrkv{tikzpgol}{#1}[defaults={xy=0 0,pgan=nw,ndan=false}]%
+      \tbldefxy{xy}{olaypg}%
+      \iftblv{ndan}{}[\settbl{ndad}{\gettbl{pgan}}]
+      \begin{olaytikz}
+         \node[anchor=\gettbl{ndan},inner sep=0pt] (tkpgol) at ($(current page.\gettbl{pgan}) + (\olaypgx, \olaypgx)$) {#2};
+      \end{olaytikz}
+    }% \tikzpgol{nd=se,pg=se,x=0,y=1}{floating node here}  % example usage
     
-    \NewDocumentCommand{\tikzpgolt}{m O{} m}{%
+    
+    \NewDocumentCommand{\olaypgi}{m O{} m}{\olaypg{#1}{\includegraphics[#2]{#3}}} % tikz page overlay graphics
+    
+    \NewDocumentCommand{\olaypgt}{m O{} m}{%
       \tblfrkv{tikzpgolpar}{#2}[defaults={}]% todo should make a quick way to position pbox or pbox
       \tikzpgol{#1}{\pbox[#2]{}{#3}}
     } % tikz page overlay textvox
     
+    
+    
+    
+    
+    
+    
+    
+    
+    \NewDocumentCommand{\olaycapt}{ m m }{% nd = node text box, ar = arrow,  an = anchor of text box pos, aran = arrow anchor on node, rel = relative text box to arrrow coords
+    % ar can be coordinates (separated with space), or false. if false, no arrow is drawn
+    \tblfrkv{olaycapt}{#1}[defaults={ndxy=0 0, arxy=false, ndan=nw, aran=d, rel=false}]%
+    \kvtblundefcheck%
+    \tbldefxy{ndxy}{olaycaptnode}%
+    \iftblv{arxy}{\tbldefxy{arxy}{olaycaptarrow}}[\def\olaycaptarrowx{0}\def\olaycaptarrowy{0}]%
+    \deftbl{ndan}{olaycaptanchor}%
+    \iftblv{aran}{%
+        \deftbl{aran}{olaycaptaran}% arrow anchor, if specified define it
+        }[%
+        \let\olaycaptaran\olaycaptanchor% arrow anchor, if specified define it
+    ]%
+    \begin{tikzpicture}[overlay,remember picture,baseline,x=\olayscalex cm, y=\olayscaley  cm]
+    \begin{scope}[shift={(\olayshiftx cm, \olayshifty cm)}]
+        \coordinate (arrr) at ($(\olaycaptarrowx,\olaycaptarrowy)$);
+        \iftblv{rel}{
+            \node[olaycapt, anchor=\olaycaptanchor] (cappp) at ($(arrr)+(\olaycaptnodex,\olaycaptnodey)$) {#2};
+        }[
+            \node[olaycapt, anchor=\olaycaptanchor] (cappp) at (\olaycaptnodex,\olaycaptnodey) {#2};
+        ]
+        \iftblv{arxy}{
+        \ifdefstring{\olaycaptaran}{d}{
+            \draw[olayarrow] (cappp) -- (arrr);
+        }{
+            \draw[olayarrow] (cappp.\olaycaptaran) -- (arrr);
+        }}
+    \end{scope}
+    \end{tikzpicture}}
+    % todo use better anchor system
+    % specify box anchor , if no arrow anchor passed, assume it is the box anchor
+    
+    % todo need a dimension thing, sort of a measurement
     
     
     
@@ -2961,6 +3088,9 @@
     \let\chapterM\chaptert
     \let\chapterF\chapterf
     
+    \let\autodashON\autodashes
+    \let\autodashOFF\autodashesoff
+    
     
     
     \let\citeT\cite
@@ -2969,3 +3099,13 @@
     \let\PrintEndOfDocument\printenddocument
     
     \let\IntentionallyBlankPage\blankpage
+    
+    \let\overlayTR\overlaytr
+    \let\overlayBR\overlaybr
+    
+    %\let\tikzpgol\olaypg
+    \let\tikzpgolg\olaypgi
+    \let\tikzpgolt\olaypgt
+    \let\drawHelpingGrid\olaygrid
+    \let\tmrk\olaymk
+    \let\drawOverlayBoxTLBR\olaybox
