@@ -2749,6 +2749,37 @@
     %        every path/.style={thick},
     %        }
     
+    
+    
+    
+    
+    
+    \begin{luacode*}
+        function penlight.def_tbl_coords(str, def)
+        -- todo could definitely make this flexible for a table...
+        local x, y = str:strip():splitv('%s+')
+        -- if (~penlight.hasval(x)) or (~penlight.hasval(y))  then
+        --   penlight.tex.pkgerror('penlightplus', 'def_tbl_coords function could not parse coordiantes given as "'..str..'" ensure two numbers separated by space are given!', '', true)
+        -- end
+        token.set_macro(def..'x', tostring(x))
+        token.set_macro(def..'y', tostring(y))
+        end
+    \end{luacode*}
+    \NewDocumentCommand{\tbldefxy}{ m m }{\luadirect{penlight.def_tbl_coords(penlight.get_tbl_item(\luastring{#1}), \luastring{#2})}}
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     \tikzset{
         olaycapt/.style={draw=red, fill=white, rectangle,inner sep=3pt, outer sep=0pt},
         olayarrow/.style={->, red, line width=0.8pt},
@@ -2772,7 +2803,7 @@
       \begin{tikzpicture}[olay, x=\olayscalex cm, y=\olayscaley  cm]
         \begin{scope}[shift={(\olayshiftx cm, \olayshifty cm)}]
           #1
-        \end{scope}
+        \end{scope}%
     \end{tikzpicture}}{}
     
     
@@ -2787,7 +2818,7 @@
                             \node[inner sep=0pt, outer sep=0pt, anchor=center] at (\x,\y) {{\color{red}\tiny\x~\color{magenta}\y}};
                     }
             \end{tikzpicture}%
-    
+    }
     
     
     % marker =tikz coord
@@ -2835,7 +2866,7 @@
       \iftblv{ndan}{}[\settbl{ndad}{\gettbl{pgan}}]
       \begin{olaytikz}
          \node[anchor=\gettbl{ndan},inner sep=0pt] (tkpgol) at ($(current page.\gettbl{pgan}) + (\olaypgx, \olaypgx)$) {#2};
-      \end{olaytikz}
+      \end{olaytikz}%
     }% \tikzpgol{nd=se,pg=se,x=0,y=1}{floating node here}  % example usage
     
     
@@ -2843,7 +2874,7 @@
     
     \NewDocumentCommand{\olaypgt}{m O{} m}{%
       \tblfrkv{tikzpgolpar}{#2}[defaults={}]% todo should make a quick way to position pbox or pbox
-      \tikzpgol{#1}{\pbox[#2]{}{#3}}
+      \tikzpgol{#1}{\pbox[#2]{}{#3}}%
     } % tikz page overlay textvox
     
     
