@@ -1069,7 +1069,7 @@
     
     \usetikzlibrary{calc,positioning}
     \usetikzlibrary{decorations.markings}
-    \usetikzlibrary{matrix,shapes,arrows,fit,tikzmark}
+    \usetikzlibrary{matrix,shapes,arrows,fit,tikzmark} %
     
     % todo extra libs likely already loaded
     %\usepackage{relsize}
@@ -1312,20 +1312,6 @@
     %https://tex.stackexchange.com/questions/146908/beamer-overlay-specifications-for-a-tikzpicture
     
     
-    
-    %% todo delete soon
-    \begin{luacode*}
-        function penlight.def_tbl_coords(str, def)
-        -- todo could definitely make this flexible for a table...
-        local x, y = str:strip():splitv('%s+')
-        -- if (~penlight.hasval(x)) or (~penlight.hasval(y))  then
-        --   penlight.tex.pkgerror('penlightplus', 'def_tbl_coords function could not parse coordiantes given as "'..str..'" ensure two numbers separated by space are given!', '', true)
-        -- end
-        token.set_macro(def..'x', tostring(x))
-        token.set_macro(def..'y', tostring(y))
-        end
-    \end{luacode*}
-    \NewDocumentCommand{\tbldefxyZZZ}{ m m }{\luadirect{penlight.def_tbl_coords(penlight.get_tbl_item(\luastring{#1}), \luastring{#2})}}
     
     
     
