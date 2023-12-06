@@ -342,30 +342,23 @@
     \DeclareUnicodeCharacter{2014}{\dash}
     \AtBeginDocument{\pdfstringdefDisableCommands{\renewcommand{\dash}{ - }}}
     
+    \DeclareRobustCommand\dash{%
+      \unskip\nobreak\thinspace\textemdash\allowbreak\thinspace\ignorespaces}
+    
     \DeclareRobustCommand\mdash{%
         \unskip\nobreak\thinspace\textemdash\thinspace\ignorespaces}
     
     \DeclareRobustCommand\ndash{%
         \unskip\nobreak\thinspace\textendash\thinspace\ignorespaces}
     
-    \DeclareRobustCommand\dash{%
-      \unskip\nobreak\thinspace\textemdash\allowbreak\thinspace\ignorespaces}
     
     \directlua{
-    function autodashes(s)
-    s = string.gsub(s,'[-][-][-]', '\string\\mdash ')
-    s = string.gsub(s,'[-][-]',    '\string\\ndash ')
-    return s
-    end
-    function autoemdash(s)
-    s = string.gsub(s,'[-][-][-]', '\string\\mdash ')
-    return s
-    end
-    function autoendash(s)
-    s = string.gsub(s,'[-][-]',    '\string\\ndash ')
-    return s
-    end
+      function autoemdash(s) return string.gsub(s,'[-][-][-]', '\string\\mdash ') end
+      function autoendash(s) return string.gsub(s,'[=][-][-]', '\string\\ndash ') end
+      function autodashes(s) s = autoendash(autoemdash(s)) end
     }
+    
+    % todo trial replacement of unicode characters , eg. string.utfcharacter(0xFFFD)
     
     \def\autoendash{\directlua{luatexbase.add_to_callback("process_input_buffer", autoendash,"auto spaced en dashes")}}
     \def\autoemdash{\directlua{luatexbase.add_to_callback("process_input_buffer", autoemdash,"auto spaced em dashes")}}
@@ -2836,6 +2829,7 @@
             \begin{tikzpicture}[OL]
                 \draw[step=0.2cm,blue!30,opacity=0.5] (-\olaygridmax.4,-\olaygridmax.4) grid (\olaygridmax.4,\olaygridmax.4);
                 \draw[step=1cm,red!30,opacity=0.8] (-\olaygridmax.4,-\olaygridmax.4) grid (\olaygridmax.4,\olaygridmax.4);
+                \draw[cyan] (-\olaygridmax,0) -- (\olaygridmax,0) (0, \olaygridmax) -- (0, -\olaygridmax);
                 \fill[red] (0,0) circle (2.5pt);
                 \foreach \x in {-\olaygridmax, ..., \olaygridmax}
                     \foreach \y in {-\olaygridmax, ..., \olaygridmax} {
