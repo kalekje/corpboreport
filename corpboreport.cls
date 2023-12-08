@@ -355,7 +355,7 @@
     \directlua{
       function autoemdash(s) return string.gsub(s,'[-][-][-]', '\string\\mdash ') end
       function autoendash(s) return string.gsub(s,'[=][-][-]', '\string\\ndash ') end
-      function autodashes(s) s = autoendash(autoemdash(s)) end
+      function autodashes(s) return autoendash(autoemdash(s)) end
     }
     
     % todo trial replacement of unicode characters , eg. string.utfcharacter(0xFFFD)
@@ -851,6 +851,8 @@
     \newlength{\pullToCcloser}\setlength{\pullToCcloser}{0pt}
     
     \def\tighterToCchap{\addtocontents{toc}{\vspace*{-1.3ex}}}
+    
+    \NewDocumentCommand{\tocvspace}{O{1.3ex}}{\addtocontents{toc}{\protect\vspace*{#1}}}
     
     \AfterTOCHead[lot]{\vspace*{-1.5em}} % hack to fix extra space under LoT.. investigate why..
     
@@ -2901,7 +2903,7 @@
     
     
     
-    % todo include node settings
+    % todo include node settings, or consider overall olaytikz kev-val
     \NewDocumentCommand{\olaycapt}{ O{} m }{% nd = node text box, ar = arrow,  an = anchor of text box pos, aran = arrow anchor on node, rel = relative text box to arrrow coords
     % ar can be coordinates (separated with space), or false. if false, no arrow is drawn
     \tblfrkv{olaycapt}{#1}[defaults={ndxy=0 0, arxy=false, ndan=nw, aran=d, rel=false}]%
@@ -2917,9 +2919,9 @@
     \begin{olaytikz}
         \coordinate (arrr) at ($(\olaycaptarrowx,\olaycaptarrowy)$);
         \iftblv{rel}{
-            \node[olaycapt, anchor=\olaycaptanchor] (cappp) at ($(arrr)+(\olaycaptnodex,\olaycaptnodey)$) {#2};
+            \node[olaycapt, anchor=\olaycaptanchor] (cappp) at ($(arrr)+(\olaycaptnodex,\olaycaptnodey)$) {\vphantom{I}#2\vphantom{y}};
         }[
-            \node[olaycapt, anchor=\olaycaptanchor] (cappp) at (\olaycaptnodex,\olaycaptnodey) {#2};
+            \node[olaycapt, anchor=\olaycaptanchor] (cappp) at (\olaycaptnodex,\olaycaptnodey) {\vphantom{I}#2\vphantom{y}};
         ]
         \iftblv{arxy}{
         \ifdefstring{\olaycaptaran}{d}{
@@ -2931,7 +2933,20 @@
     
     
     
-    \NewDocumentCommand{\olaydimen}{ O{} m }{ }% nd = node text box, ar = arrow,  an = anchor of text box pos, aran = arrow anchor on node, rel = relative text box to arrrow coords
+    \NewDocumentCommand{\olaycirc}{ O{} }{%
+    \tblfrkv{olaycirc}{#1}[defaults={xy=0 0, r=1, rx=1, ry=1, rot=0}]\kvtblundefcheck%
+    \tbldefxy{xy}{olaycirc}%
+    \tbldef{r}{olaycircr}%
+    \tbldef{rx}{olaycircrx}%
+    \tbldef{ry}{olaycircry}%
+    \tbldef{rot}{olaycircrot}%
+    \begin{olaytikz}\begin{scope}[shift={(\olaycircx,\olaycircy)},xscale=\olaycircrx,yscale=\olaycircry,
+      rotate=\olaycircrot]
+      \draw[red] (0,0) circle (\olaycircr);
+    \end{scope}\end{olaytikz}}
+    
+    \NewDocumentCommand{\olaydimen}{ O{} m }{%
+    }% nd = node text box, ar = arrow,  an = anchor of text box pos, aran = arrow anchor on node, rel = relative text box to arrrow coords
     %overlay arrow-tips dimensioning something, with an optional caption
     
     
@@ -3100,7 +3115,7 @@
     \newcommand{\pluspct}[1]{\mbox{\rplus\,\SI{#1}{\percent}\xspace}}
     \newcommand{\minuspct}[1]{\mbox{$-$\,\SI{#1}{\percent}\xspace}}
     
-    \NewDocumentCommand{\pmpct}{s m}{
+    \NewDocumentCommand{\pmpct}{s m}{%
     	\mbox{%
     	\IfBooleanT{#1}{(}%
     	\rpm\,\SI{#2}{\percent}\xspace%
