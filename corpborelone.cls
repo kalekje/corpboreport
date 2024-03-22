@@ -223,9 +223,6 @@
     
     \usepackage{fontawesome5}
     
-    \usepackage{moreenum}
-    \newcounter{moreenumtempcounter}
-    \NewDocumentCommand{\nword}{m}{\setcounter{moreenumtempcounter}{#1}\nwords{moreenumtempcounter}}
     
     \newcommand{\vparspace}{\vspace{\parskip}}
     
@@ -252,6 +249,7 @@
     \newcommand\ensurecomma{%
     \@ifnextchar,{}{\@latex@error{Don’t forget the comma!}{}}}
     \newcommand\ex{e.g.\ensurecomma}
+    \let\eg\ex
     \newcommand\ie{i.e.\ensurecomma}
     \newcommand\ensuresingleperiod{\@ifnextchar.{}{.\@}}
     \newcommand\etc{etc\ensuresingleperiod}
@@ -486,13 +484,14 @@
     \usepackage{xfrac}
     \usepackage{amsfonts}  % math fonts and symbols
     
-    \renewcommand{\theequation}{\arabic{chapter}.\arabic{equation}}
+    \renewcommand{\theequation}{{\cbp@secnumsize\arabic{chapter}.\arabic{equation}}}
     
     %\def\@cbp@mathline{\raisebox{0pt}[0pt][0pt]{\vline height 0.8em depth 0.6em width \arrayrulewidth}}
     %\renewcommand\tagform@[1]{\maketag@@@{\ignorespaces\makebox[6ex][l]{\@cbp@mathline\;\cbp@secnumsize#1\unskip\@@italiccorr\hfill}\hspace*{5ex}}}
     
     \def\@cbp@mathline{\raisebox{0pt}[0pt][0pt]{\vline height 0.8em depth 0.6em width \arrayrulewidth}}
-    \renewcommand\tagform@[1]{\maketag@@@{\ignorespaces\makebox[6ex][r]{\ \hfill\cbp@secnumsize#1\;\@cbp@mathline\unskip\@@italiccorr\hspace*{2ex}}}}
+    %\renewcommand\tagform@[1]{\maketag@@@{\ignorespaces\makebox[6ex][r]{\ \hfill\cbp@secnumsize#1\;\@cbp@mathline\unskip\@@italiccorr\hspace*{2ex}}}}
+    \renewcommand\tagform@[1]{\maketag@@@{\ignorespaces\makebox[6ex][r]{\@cbp@mathline\;\cbp@secnumsize#1\;\unskip\@@italiccorr\hspace*{2ex}}}}  % modificaiton for thesis
     
     %% for right side equation num
     %\renewcommand\tagform@[1]{\maketag@@@{\ignorespaces\makebox[6ex][l]{\@cpb@mathline\;\cpb@secnumsize#1\unskip\@@italiccorr\hfill}\hspace*{5ex}}}
@@ -687,7 +686,7 @@
     % todo confirm with xckd colors
     % https://xkcd.com/color/rgb/
     
-    \definecolor{offwhite}{RGB}{255,253,237}
+    \definecolor{offwhite}{RGB}{255,253,248}
     
     \definecolor{lightgray}{RGB}{191, 191, 191}
     \colorlet{lightgrey}{lightgray}
@@ -1064,6 +1063,9 @@
     \usetikzlibrary{decorations.markings}
     \usetikzlibrary{matrix,shapes,arrows,fit,tikzmark} %
     
+    \usepackage[outline]{contour} % glow around text
+    \contourlength{1.4pt}
+    
     % todo extra libs likely already loaded
     %\usepackage{relsize}
     %\usepackage{luacode}
@@ -1083,7 +1085,7 @@
         alt/.code args={<#1>#2#3}{%
           \alt<#1>{\pgfkeysalso{#2}}{\pgfkeysalso{#3}} % \pgfkeysalso doesn't change the path
         },
-        olaycapt/.style={draw=red, fill=white, rectangle,inner sep=3pt, outer sep=0pt},
+        olaycapt/.style={draw=red, fill=white, rectangle,inner sep=3pt, outer sep=0pt, align=left},
         olayarrow/.style={->, red, line width=0.8pt},
         OL/.style={overlay,remember picture,baseline},
         olay/.style={overlay,remember picture,baseline},
@@ -1116,7 +1118,6 @@
       s = pl.stringx.strip(s)
       s = tikz_rel_pos_shortcuts[s] or s
       coords = (string.gsub(s, ' ', ','))-- to do fancy stuff here with lua, above right etc
-      wrth(coords,'!!!')
       token.set_macro('cbptikzxyshift', coords)
     end
     \end{luacode*}
@@ -1305,39 +1306,56 @@
     %https://tex.stackexchange.com/questions/146908/beamer-overlay-specifications-for-a-tikzpicture
     
     
+    \NewDocumentCommand{\olaysetpgan}{O{}}{% todo need a way to make olay functions access this and change xfm for their scope only
+      \tbldef{olayxfm.pgan}{olaypgan}%
+    }
     
+    \NewDocumentCommand{\olaysettemppgan}{O{}}{% todo need a way to make olay functions access this and change xfm for their scope only
+      \tbldef{olayxfm.pgan}{olaypgan}%
+      % todo need a way to restore page anchor to old
+    }
     
+    % todo add ignorespaces and unskip, very needed
+    % todo option to set base unit, default cm but mm would be nicer
+    % todo reemebr alast box size!!
     
-    \NewDocumentCommand{\olayxfm}{ O{} }{%
-    \tblfrkv{olayxfm}{#1}[defaults={shift=0 0, scale=1 1}]%
+    \NewDocumentCommand{\olayxfm}{ O{} }{%  transform the overlay coordinate system
+    \tblfrkv{olayxfm}{#1}[defaults={shift=0 0, scale=1 1, pgan=false}]%
     \tbldefxy{shift}{olayshift}%
     \tbldefxy{scale}{olayscale}%
+    \olaysetpgan%
     }%
     \olayxfm  % blank is default, initialize comands
     %\olayxfm{shift=5 5} % blank is default
     
+    %%% TODO todo make pgan a universal key-val arg that only temporarily overwrites the transform, should be available to all nodes. Lots of potential here
     
     \NewDocumentEnvironment{olaytikz}{+b}{% overlay environment
+      \unskip%
       \begin{tikzpicture}[olay, x=\olayscalex cm, y=\olayscaley  cm]
-        \begin{scope}[shift={(\olayshiftx cm, \olayshifty cm)}]
+        \iftblv{olayxfm.pgan}%
+          {\node[inner sep=0pt] (olayorigin) at (current page.\olaypgan){};}%
+          [\coordinate (olayorigin) at (0,0);]%
+        \begin{scope}[shift={($ (\olayshiftx cm, \olayshifty cm) + (olayorigin) $)}]
           #1%
         \end{scope}%
-    \end{tikzpicture}}{}
+    \end{tikzpicture}\ignorespaces}{}
     
-    
+    % todo consider \contour{white} in number nodes
     \def\olaygridmax{20}
     \NewDocumentCommand{\olaygrid}{}{%
-            \begin{tikzpicture}[OL]
+            \begin{olaytikz}%
+                \draw[fill=white,opacity=0.5] (-\olaygridmax.4,-\olaygridmax.4) rectangle (\olaygridmax.4,\olaygridmax.4);
                 \draw[step=0.2cm,blue!30,opacity=0.5] (-\olaygridmax.4,-\olaygridmax.4) grid (\olaygridmax.4,\olaygridmax.4);
-                \draw[step=1cm,red!30,opacity=0.8] (-\olaygridmax.4,-\olaygridmax.4) grid (\olaygridmax.4,\olaygridmax.4);
-                \draw[cyan] (-\olaygridmax,0) -- (\olaygridmax,0) (0, \olaygridmax) -- (0, -\olaygridmax);
-                \fill[red] (0,0) circle (2.5pt);
+                \draw[ystep=1cm,xstep=\olaygridmax.9cm,orange!70,opacity=0.8] (-\olaygridmax.4,-\olaygridmax.4) grid (\olaygridmax.4,\olaygridmax.4);
+                \draw[ystep=\olaygridmax.9cm,xstep=1cm,red!70,opacity=0.8] (-\olaygridmax.4,-\olaygridmax.4) grid (\olaygridmax.4,\olaygridmax.4);
+                \draw[blue,thick] (-\olaygridmax,0) -- (\olaygridmax,0) (0, \olaygridmax) -- (0, -\olaygridmax);
+                \fill[blue] (0,0) circle (5pt);
                 \foreach \x in {-\olaygridmax, ..., \olaygridmax}
                     \foreach \y in {-\olaygridmax, ..., \olaygridmax} {
-                            \node[inner sep=0pt, outer sep=0pt, anchor=center] at (\x,\y) {{\color{red}\tiny\x~\color{magenta}\y}};
+                            \node[inner sep=0pt, outer sep=0pt, anchor=center, fill=white] at (\x,\y) {{\tiny\color{red}\x~\color{orange}\y}};
                     }
-            \end{tikzpicture}%
-    }
+            \end{olaytikz}}
     
     
     % marker =tikz coord
@@ -1345,19 +1363,19 @@
     \def\cbp@olaybaseoffset@m{0.7ex}
     \def\cbp@olaybaseoffset@b{0ex}
     
-    \NewDocumentCommand{\olaymkgeneric}{m O{} m}{%
+    \NewDocumentCommand{\olaymkgeneric}{m O{} m}{\unskip%
     \tblfrkv{olaymk}{#2}[defaults={xy=0 0}]\tblkvundefcheck%
     \tbldefxy{xy}{olaymk}%
     \begin{olaytikz}
     \node[nosep, minimum size=0pt] (olaymk-#3) at ($(\olaymkx, \olaymky) + (0em, #1)$) {};
-    \end{olaytikz}}
+    \end{olaytikz}\ignorespaces}
     
     \NewDocumentCommand{\olaymkt}{O{} m}{\olaymkgeneric{\cbp@olaybaseoffset@t}[#1]{#2}}
     \NewDocumentCommand{\olaymkm}{O{} m}{\olaymkgeneric{\cbp@olaybaseoffset@m}[#1]{#2}}
     \NewDocumentCommand{\olaymkb}{O{} m}{\olaymkgeneric{\cbp@olaybaseoffset@b}[#1]{#2}}
     
     
-    \NewDocumentCommand{\olaybox}{m}{%
+    \NewDocumentCommand{\olayboxii}{m}{% todo allow for space
     \tblfrcsv{olaybox}{#1}%
     \begin{olaytikz}
       \node[inner sep=0.7ex,draw=red,thick,rounded corners,fit=(olaymk-\gettbl{olaybox/1}) (olaymk-\gettbl{olaybox/2})] {};
@@ -1369,8 +1387,10 @@
     %% https://texample.net/tikz/examples/feature/overlays/
     
     
-    
-    
+    %% todo move tikz definitions to kev-val args, and image too?  would be nice to have a better system for args
+    %% for now just put in separate brackets
+    %\def,tikz=""{}
+    %\def\kvtest{draw,red}
     \NewDocumentCommand{\olaypg}{O{} O{} m}{% olaypg[pos key-val][tikz node key-vals]{the thing}
       \tblfrkv{tikzpgol}{#1}[defaults={xy=0 0,pgan=nw,ndan=false}]\tblkvundefcheck%
       \tbldefxy{xy}{olaypg}%
@@ -1383,8 +1403,9 @@
     
     \NewDocumentCommand{\olaypgi}{O{} O{} m}{\olaypg[#1]{\includegraphics[#2]{#3}}} % tikz page overlay graphics
     % \olaypgi[pos kv][includegraphics kv]{graphics file}
+    
     \NewDocumentCommand{\olaypgt}{O{} O{} m}{%
-      \tblfrkv{tikzpgolpar}{#2}[defaults={}]% todo should make a quick way to position pbox or pbox
+      \tblfrkv{tikzpgolpar}{#2}[defaults={}]% todo should make a quick way to position pbox or pbox, make this better
       \tikzpgol{#1}{\pbox[#2]{}{#3}}%
     } % tikz page overlay textvox
     
@@ -1399,6 +1420,29 @@
     }% \tikzpgol{nd=se,pg=se,x=0,y=1}{floating node here}  % example usage
     
     
+    
+    \NewDocumentCommand{\olaytext}{O{} O{} m}{%
+      \olay[#1][nosep,align=left,#2]{#3}% todo allow for width to show up in first set of keyword args... need to make a function
+    }
+    
+    
+    
+    
+    \NewDocumentCommand{\olaybox}{ O{} m}{% todo allow for comma or space to be separator
+    \tblfrcsv{olaybox}{#2}%
+     \tbldef{/1}{xxi}\tbldef{/2}{yyi}\tbldef{/3}{xxii}\tbldef{/4}{yyii}%
+    \begin{olaytikz}
+      \draw[inner sep=0.0ex,draw=red,thick,rounded corners, #1] (\xxi,\yyi) rectangle (\xxii,\yyii);
+    \end{olaytikz}}
+    
+    
+    
+    
+    \NewDocumentCommand{\olaypgbox}{m m}{% todo allow for space
+      \olayxfm[shift=-2 2]%
+      \olaybox{#2}%
+      \olayxfm{}%
+    }
     
     
     

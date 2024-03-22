@@ -9,6 +9,8 @@
 	\BeamerOptions
 ]{beamer}
 
+
+
 \setbeamersize{
 	text margin left=12mm,
 	text margin right=12mm,
@@ -35,137 +37,6 @@
         \usepackage[utf8]{inputenc}  % apparently this can be slow and is loaded by default % https://texfaq.org/FAQ-why-inp-font
     \fi
 
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%            TextandParas+            %%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    
-    % ##############################################
-    % Text / Para Settings and utils
-    % ##############################################
-    
-    
-    \ifluatex
-        \usepackage{polyglossia} % helps with hyphenation
-        \setdefaultlanguage[variant=canadian]{english}
-    \else
-        \usepackage[english]{babel} % helps with hyphenation
-    \fi
-    
-    
-    \usepackage{csquotes} % helps with hyphenation and ""
-    
-    %%% GENERAL FORMATTING
-    \usepackage{ragged2e}
-    \usepackage{blindtext}
-    
-    %% Boxes and stuff
-    \usepackage[usestackEOL]{stackengine}  % used for title page and stacking things
-    \usepackage{setspace}  % enable onehalfspacing instyling
-    \usepackage{relsize}  % relative sizing
-    \usepackage{pbox}  % create box of max width http://ctan.mirror.colo-serv.net/macros/latex/contrib/pbox/pbox.pdf
-    
-    
-    
-    \usepackage{fontawesome5}
-    
-    \usepackage{moreenum}
-    \newcounter{moreenumtempcounter}
-    \NewDocumentCommand{\nword}{m}{\setcounter{moreenumtempcounter}{#1}\nwords{moreenumtempcounter}}
-    
-    \newcommand{\vparspace}{\vspace{\parskip}}
-    
-    \def\tspc{\nobreak\hspace{.08em plus .04em}} % tiny space
-    \def\tspcs{\tspc{}s} % tiny space
-    
-    
-    \let\oldcenter\center
-    \let\oldendcenter\endcenter
-    \renewenvironment{center}{\setlength\topsep{0pt}\oldcenter}{\oldendcenter}  % removes extra sep
-    
-    \let\oldflushleft\flushleft
-    \let\oldendflushleft\endflushleft
-    \renewenvironment{flushleft}{\setlength\topsep{0pt}\oldflushleft}{\oldendflushleft}
-    
-    %% some latex stuff
-    \newcommand{\Llap}[1]{\leavevmode\llap{#1}}  % llap if first thing
-    \newcommand{\Rlap}[1]{\leavevmode\rlap{#1}}  % ..
-    \newcommand{\Clap}[1]{\leavevmode\clap{#1}}
-    \newcommand{\Hfill}{\null\hfill}  % hfill if first thing
-    \newcommand{\Vfill}{\null\vfill}  % hfill if first thing
-    
-    
-    \newcommand\ensurecomma{%
-    \@ifnextchar,{}{\@latex@error{Don’t forget the comma!}{}}}
-    \newcommand\ex{e.g.\ensurecomma}
-    \newcommand\ie{i.e.\ensurecomma}
-    \newcommand\ensuresingleperiod{\@ifnextchar.{}{.\@}}
-    \newcommand\etc{etc\ensuresingleperiod}
-    \newcommand\etal{et~al\ensuresingleperiod}
-    
-    
-    
-    \usepackage[utf8]{luainputenc}
-    
-    \DeclareUnicodeCharacter{2014}{\dash}
-    \AtBeginDocument{\pdfstringdefDisableCommands{\renewcommand{\dash}{ - }}}
-    
-    \DeclareRobustCommand\dash{%
-      \unskip\nobreak\thinspace\textemdash\allowbreak\thinspace\ignorespaces}
-    
-    \DeclareRobustCommand\mdash{%
-        \unskip\nobreak\thinspace\textemdash\thinspace\ignorespaces}
-    
-    \DeclareRobustCommand\ndash{%
-        \unskip\nobreak\thinspace\textendash\thinspace\ignorespaces}
-    
-    
-    \directlua{
-      function autoemdash(s) return string.gsub(s,'[-][-][-]', '\string\\mdash ') end
-      function autoendash(s) return string.gsub(s,'[=][-][-]', '\string\\ndash ') end
-      function autodashes(s) return autoendash(autoemdash(s)) end
-    }
-    
-    % todo trial replacement of unicode characters , eg. string.utfcharacter(0xFFFD)
-    
-    \def\autoendash{\directlua{luatexbase.add_to_callback("process_input_buffer", autoendash,"auto spaced en dashes")}}
-    \def\autoemdash{\directlua{luatexbase.add_to_callback("process_input_buffer", autoemdash,"auto spaced em dashes")}}
-    \def\autodashes{\directlua{luatexbase.add_to_callback("process_input_buffer", autodashes,"auto spaced dashes")}}
-    
-    \def\autoendashoff{\directlua{luatexbase.remove_from_callback("process_input_buffer","auto spaced en dashes")}}
-    \def\autoemdashoff{\directlua{luatexbase.remove_from_callback("process_input_buffer","auto spaced em dashes")}}
-    \def\autodashesoff{\directlua{luatexbase.remove_from_callback("process_input_buffer","auto spaced dashes")}}
-    
-    
-    
-    % ##############################################
-    % Paragraph stretching and spacings
-    % ##############################################
-    
-    % This is an suggestion from Axel Reichert (LaTeX package author)
-    % See CTAN: http://www.ctan.org/author/reichert
-    % See CTAN: http://www.ctan.org/pkg/l2tabu-english (Cgapter: 1.8 Should I use \sloppy?)
-    
-    % 10000 is the highest
-    \tolerance=2800
-    \hbadness=1414
-    \emergencystretch=1.5em
-    \hfuzz=0.3pt
-    \widowpenalty=4000
-    \clubpenalty=4002
-    \brokenpenalty=101
-    \displaywidowpenalty=50
-    \vfuzz \hfuzz
-    
-    
-    %\if@twoside%
-    %	\raggedbottom
-    %\fi%  finally do nothing
-    %	\raggedbottom
-    
-    
-    
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -252,6 +123,191 @@
     
     \newcommand{\mathup}[1]{\text{\textup{#1}}}  % patching needed for mathup
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%            FontKPotf+            %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    
+    \usepackage[onlyrm,light]{kpfonts-otf}  % https://texdoc.org/serve/kpfonts-otf/0
+    
+    \setsansfont[Scale=MatchLowercase]{CMU Bright} % monospace that looks nice with light kpfont
+    \setmonofont[Numbers=Lining]{CMU Typewriter Text Light} % monospace that looks nice with light kpfont
+    
+    \usepackage[activate=true,% this package makes the font look nicer
+        final,%
+        tracking=true,%
+    ]{microtype}
+    %	kerning=true, % only works with pdftex
+    \SetTracking{encoding=*, shape=sc}{18}  % adjust small caps letter spacing
+    
+    
+    \def\togunums{\addfontfeature{Numbers=Lining}} %% from kpfonts.sty
+    \def\toglnums{\addfontfeature{Numbers=OldStyle}}
+    
+    % if {} provided, apply to grouped text only--if *, apply toggle
+    \NewDocumentCommand{\lnum}{m}{\ifstrequal{#1}{*}{\toglnums}{\oldstylenums{#1}}}
+    \NewDocumentCommand{\unum}{m}{\ifstrequal{#1}{*}{\togunums}{\liningnums{#1}}}
+    
+    
+    \let\classicstylenums\liningnums
+    
+    %\NewDocumentCommand{\act}{o}{\IfValueTF{#1}{\textsc{\lnum#1}}{\scshape\toglnums}}  % acronym text style
+    \NewDocumentCommand{\act}{m}{\ifstrequal{#1}{*}{\scshape\toglnums}{\textsc{\lnum{#1}}}}  % acronym text style
+    %% see BibAndGloss for other ac* commands
+    
+    
+    \AtBeginEnvironment{tabular}{\togunums}
+    \AtBeginEnvironment{tabular*}{\togunums}
+    \AtBeginEnvironment{tikzpicture}{\togunums}
+    
+    \def\cbp@secnumsize{\toglnums} % dont allow cpb to use smaller numbers in section
+    \newcommand{\cbp@appendixletformat}[1]{\scshape\alph{#1}}
+    \def\cbp@appendixsecformat{\scshape\MakeLowercase}
+    
+    
+    
+    % Rules for number casing:
+    %   Uppercase: quantities, page numbers, citations
+    %   Lowercase: section numbers, dates, itemized lists
+    % Rules for small capitals
+    %   Only applied for 'label-like' items. Eg. doi: 123 or gpa: or date [yyyy-mm-dd]
+    %   Acronyms to appear in uppercase
+    
+    
+    %% for non-light option
+    %\def\togunums{\fontfamily{jkp}\selectfont} %% from kpfonts.sty
+    %\def\toglnums{\fontfamily{jkpxosn}\selectfont} for non-light
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%            TextandParas+            %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    
+    % ##############################################
+    % Text / Para Settings and utils
+    % ##############################################
+    
+    
+    \ifluatex
+        \usepackage{polyglossia} % helps with hyphenation
+        \setdefaultlanguage[variant=canadian]{english}
+    \else
+        \usepackage[english]{babel} % helps with hyphenation
+    \fi
+    
+    
+    \usepackage{csquotes} % helps with hyphenation and ""
+    
+    %%% GENERAL FORMATTING
+    \usepackage{ragged2e}
+    \usepackage{blindtext}
+    
+    %% Boxes and stuff
+    \usepackage[usestackEOL]{stackengine}  % used for title page and stacking things
+    \usepackage{setspace}  % enable onehalfspacing instyling
+    \usepackage{relsize}  % relative sizing
+    \usepackage{pbox}  % create box of max width http://ctan.mirror.colo-serv.net/macros/latex/contrib/pbox/pbox.pdf
+    
+    
+    
+    \usepackage{fontawesome5}
+    
+    
+    \newcommand{\vparspace}{\vspace{\parskip}}
+    
+    \def\tspc{\nobreak\hspace{.08em plus .04em}} % tiny space
+    \def\tspcs{\tspc{}s} % tiny space
+    
+    
+    \let\oldcenter\center
+    \let\oldendcenter\endcenter
+    \renewenvironment{center}{\setlength\topsep{0pt}\oldcenter}{\oldendcenter}  % removes extra sep
+    
+    \let\oldflushleft\flushleft
+    \let\oldendflushleft\endflushleft
+    \renewenvironment{flushleft}{\setlength\topsep{0pt}\oldflushleft}{\oldendflushleft}
+    
+    %% some latex stuff
+    \newcommand{\Llap}[1]{\leavevmode\llap{#1}}  % llap if first thing
+    \newcommand{\Rlap}[1]{\leavevmode\rlap{#1}}  % ..
+    \newcommand{\Clap}[1]{\leavevmode\clap{#1}}
+    \newcommand{\Hfill}{\null\hfill}  % hfill if first thing
+    \newcommand{\Vfill}{\null\vfill}  % hfill if first thing
+    
+    
+    \newcommand\ensurecomma{%
+    \@ifnextchar,{}{\@latex@error{Don’t forget the comma!}{}}}
+    \newcommand\ex{e.g.\ensurecomma}
+    \let\eg\ex
+    \newcommand\ie{i.e.\ensurecomma}
+    \newcommand\ensuresingleperiod{\@ifnextchar.{}{.\@}}
+    \newcommand\etc{etc\ensuresingleperiod}
+    \newcommand\etal{et~al\ensuresingleperiod}
+    
+    
+    
+    \usepackage[utf8]{luainputenc}
+    
+    \DeclareUnicodeCharacter{2014}{\dash}
+    \AtBeginDocument{\pdfstringdefDisableCommands{\renewcommand{\dash}{ - }}}
+    
+    \DeclareRobustCommand\dash{%
+      \unskip\nobreak\thinspace\textemdash\allowbreak\thinspace\ignorespaces}
+    
+    \DeclareRobustCommand\mdash{%
+        \unskip\nobreak\thinspace\textemdash\thinspace\ignorespaces}
+    
+    \DeclareRobustCommand\ndash{%
+        \unskip\nobreak\thinspace\textendash\thinspace\ignorespaces}
+    
+    
+    \directlua{
+      function autoemdash(s) return string.gsub(s,'[-][-][-]', '\string\\mdash ') end
+      function autoendash(s) return string.gsub(s,'[=][-][-]', '\string\\ndash ') end
+      function autodashes(s) return autoendash(autoemdash(s)) end
+    }
+    
+    % todo trial replacement of unicode characters , eg. string.utfcharacter(0xFFFD)
+    
+    \def\autoendash{\directlua{luatexbase.add_to_callback("process_input_buffer", autoendash,"auto spaced en dashes")}}
+    \def\autoemdash{\directlua{luatexbase.add_to_callback("process_input_buffer", autoemdash,"auto spaced em dashes")}}
+    \def\autodashes{\directlua{luatexbase.add_to_callback("process_input_buffer", autodashes,"auto spaced dashes")}}
+    
+    \def\autoendashoff{\directlua{luatexbase.remove_from_callback("process_input_buffer","auto spaced en dashes")}}
+    \def\autoemdashoff{\directlua{luatexbase.remove_from_callback("process_input_buffer","auto spaced em dashes")}}
+    \def\autodashesoff{\directlua{luatexbase.remove_from_callback("process_input_buffer","auto spaced dashes")}}
+    
+    
+    
+    % ##############################################
+    % Paragraph stretching and spacings
+    % ##############################################
+    
+    % This is an suggestion from Axel Reichert (LaTeX package author)
+    % See CTAN: http://www.ctan.org/author/reichert
+    % See CTAN: http://www.ctan.org/pkg/l2tabu-english (Cgapter: 1.8 Should I use \sloppy?)
+    
+    % 10000 is the highest
+    \tolerance=2800
+    \hbadness=1414
+    \emergencystretch=1.5em
+    \hfuzz=0.3pt
+    \widowpenalty=4000
+    \clubpenalty=4002
+    \brokenpenalty=101
+    \displaywidowpenalty=50
+    \vfuzz \hfuzz
+    
+    
+    %\if@twoside%
+    %	\raggedbottom
+    %\fi%  finally do nothing
+    %	\raggedbottom
+    
+    
+    
+
+
 \def\cbp@secnumsize{}
 
 
@@ -270,13 +326,14 @@
     \usepackage{xfrac}
     \usepackage{amsfonts}  % math fonts and symbols
     
-    \renewcommand{\theequation}{\arabic{chapter}.\arabic{equation}}
+    \renewcommand{\theequation}{{\cbp@secnumsize\arabic{chapter}.\arabic{equation}}}
     
     %\def\@cbp@mathline{\raisebox{0pt}[0pt][0pt]{\vline height 0.8em depth 0.6em width \arrayrulewidth}}
     %\renewcommand\tagform@[1]{\maketag@@@{\ignorespaces\makebox[6ex][l]{\@cbp@mathline\;\cbp@secnumsize#1\unskip\@@italiccorr\hfill}\hspace*{5ex}}}
     
     \def\@cbp@mathline{\raisebox{0pt}[0pt][0pt]{\vline height 0.8em depth 0.6em width \arrayrulewidth}}
-    \renewcommand\tagform@[1]{\maketag@@@{\ignorespaces\makebox[6ex][r]{\ \hfill\cbp@secnumsize#1\;\@cbp@mathline\unskip\@@italiccorr\hspace*{2ex}}}}
+    %\renewcommand\tagform@[1]{\maketag@@@{\ignorespaces\makebox[6ex][r]{\ \hfill\cbp@secnumsize#1\;\@cbp@mathline\unskip\@@italiccorr\hspace*{2ex}}}}
+    \renewcommand\tagform@[1]{\maketag@@@{\ignorespaces\makebox[6ex][r]{\@cbp@mathline\;\cbp@secnumsize#1\;\unskip\@@italiccorr\hspace*{2ex}}}}  % modificaiton for thesis
     
     %% for right side equation num
     %\renewcommand\tagform@[1]{\maketag@@@{\ignorespaces\makebox[6ex][l]{\@cpb@mathline\;\cpb@secnumsize#1\unskip\@@italiccorr\hfill}\hspace*{5ex}}}
@@ -334,7 +391,6 @@
     numerator-bot-sep = 10 pt,
     }
     %\UseCollection{xfrac}{KpLight}
-
 
 \renewcommand\tagform@[1]{#1}
 
@@ -637,7 +693,7 @@
     % todo confirm with xckd colors
     % https://xkcd.com/color/rgb/
     
-    \definecolor{offwhite}{RGB}{255,253,237}
+    \definecolor{offwhite}{RGB}{255,253,248}
     
     \definecolor{lightgray}{RGB}{191, 191, 191}
     \colorlet{lightgrey}{lightgray}
@@ -715,6 +771,264 @@
         \mbox{({\color{plt#1}#1 \raisebox{0.6ex}{\rule{1em}{0.8pt}}})}%
     }
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%            FloatsCaptions+            %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%% References %%%%%
+    % afterpage: https://texdoc.org/serve/afterpage/0
+    % floatrow:  https://texdoc.org/serve/floatrow/0
+    % caption:   https://texdoc.org/serve/caption/0
+    
+    % todo clean this up as per MWE I created!!!, tweak the spacing!!
+    
+    % Numbering for figures/tables as per section
+    %\numberwithin{figure}{section}  % fig 4.1, 4.2, etc.
+    %\numberwithin{table}{section}
+    
+    
+    \usepackage{graphicx}
+    \usepackage{afterpage}
+    \usepackage{graphbox}  %% allows smash command for easier graphics placement
+    \usepackage[skip=3pt,justification=raggedright,singlelinecheck=false,format=hang]{caption} %
+    \usepackage{floatrow}% http://tug.ctan.org/tex-archive/macros/latex/contrib/floatrow/floatrow.pdf  (dont use float pack)
+    \usepackage{subcaption} % http://mirrors.ibiblio.org/CTAN/macros/latex/contrib/caption/subcaption.pdf
+    
+    \renewcommand\FB@putfoots{% % patch below to not affect color after footnote
+      \ifvoid\flrow@foot\else\FR@ifFOOT
+      {\vskip\floatfootskip\color@begingroup\normalcolor
+      \unvbox\flrow@foot\@@par\color@endgroup}\relax
+      \fi}
+    
+    
+    \DeclareCaptionLabelFormat{hangcap}{\llap{#1~#2:\enspace}}
+    \DeclareCaptionLabelFormat{widecap}{#1~#2:}
+    \captionsetup{labelformat=hangcap}
+    \providetoggle{useSerif}
+    \DeclareCaptionLabelSeparator{enspace}{\enspace}
+    \captionsetup{labelfont=bf,labelformat=hangcap,labelsep=enspace}
+    \iftoggle{useSerif}{
+      %%%% for small caps
+    %  \DeclareCaptionLabelFormat{hangcap}{\llap{\MakeLowercase{#1}~#2\enspace}}
+    %  \DeclareCaptionLabelFormat{widecap}{\MakeLowercase{#1}~#2}
+    %  \DeclareCaptionFont{bfscln}{\bfseries\scshape\toglnums}
+    %  \captionsetup{labelfont=bfscln,labelformat=hangcap,labelsep=enspace}
+      %%%% for not small caps
+      \DeclareCaptionLabelFormat{hangcap}{\llap{#1~#2\enspace}}
+      \DeclareCaptionLabelFormat{widecap}{#1~#2}
+      \DeclareCaptionFont{bfln}{\bfseries\toglnums}
+      \captionsetup{labelfont=bfln,labelformat=hangcap,labelsep=enspace}
+    }{}
+    \captionsetup[sub]{skip=8pt, aboveskip=5pt, font=small, labelfont={small,bf,sc},
+    	position=top,labelformat=hangcap,labelsep=enspace}  % formats \subcaptionbox
+    \floatsetup{justification=raggedright,objectset=raggedright}
+    \floatsetup[table]{captionskip=0.3ex} %	 http://tug.ctan.org/tex-archive/macros/latex/contrib/floatrow/floatrow.pdf
+    \floatsetup[figure]{captionskip=0.5ex} % for bottom caption
+    %\iftoggle{TopFigCap}{\floatsetup[figure]{captionskip=0.3ex}\let\captop\{}}  % optional top caption for figure
+    
+    \newcommand{\WideFloatCaption}{\captionsetup{labelformat=widecap,format=plain}}
+    
+    \newlength{\floatindentlength}\setlength{\floatindentlength}{11ex}
+    
+    \setlength{\intextsep}{17pt}  % distance between floats on the top or the bottom and the text, baseline skip plus some
+    \setlength{\floatsep}{24pt plus 2.0pt minus 2.0pt} % distance between two floats; add rubber here
+    \setlength{\textfloatsep}{24pt plus 2.0pt minus 2.0pt} % distance between floats inserted inside the page text (using h) and the text proper, add rubber here
+    
+    \newlength{\fullheight}  % full height for pdfs/figures
+    \setlength{\fullheight}{22cm}
+    
+    \NewDocumentCommand{\cbp@setFloatCap}{m m}{% by default (no star), use a wide float. If *, indent it. If no +, justify caption. If +, ragged right
+      \captionsetup{margin={0pt,0pt}}% restore margin for caption
+      \IfBooleanTF{#2}{\captionsetup{justification=raggedright}}{\captionsetup{justification=justified}}%
+      \IfBooleanTF{#1}{% if star use the wide format
+        \setfloatmargins{\hspace*{\floatindentlength}}{\hfil}% float indented
+        \captionsetup{labelformat=hangcap, format=hang}% hanging label for caption
+      }{% if not, use the indented / hanging style
+        \setfloatmargins{\hspace*{0pt}}{\hfil}% no margins for float
+        \captionsetup{labelformat=widecap, format=plain}% restore margin for caption
+      }%
+    }%
+    
+    
+    % Insert(Table|Figure) syntax
+    %     1      2           3           4          5              6            7            8      9
+    %  *wide,  [pos]     <pre-amble>  {content}   +justify cap  {caption} [short caption] {label}  [footnotes]
+    
+    \NewDocumentCommand{\insertfigure}{s O{htbp} D<>{} m t+ +m O{#6} m o}{%
+      \reseturef%
+      \cbp@setFloatCap{#1}{#5}%
+      \begin{figure}[#2]%
+        #3%
+    %    \captop%
+        \caption[\ignorespaces#7\unskip]{\ignorespaces#6\unskip}\ignorespaces#8\unskip%
+        \IfBooleanTF{#1}%
+          {\ffigbox[\FBwidth]{}{\ignorespaces#4\unskip\IfValueT{#9}{\vspace{\TabNoteSpace}\floatfoot*{#9}}}}% indented caption
+          {\ffigbox{}{\ignorespaces#4\unskip\IfValueT{#9}{\vspace{\TabNoteSpace}\floatfoot*{#9}}}}%  FBwidth doesn't work with sub-figure, hack for now
+      \end{figure}%
+    }%
+    
+    
+    %                                  1  2   3    4    4 5  6
+    \NewDocumentCommand{\inserttable}{ s O{htbp} D<>{} m t+ +m O{#6} m o }{%
+      \reseturef%
+      \cbp@setFloatCap{#1}{#5}%
+      \begin{table}[#2]% htbp! settings
+        #3% pre-amble
+        \caption[\ignorespaces#7\unskip]{\ignorespaces#6\unskip}\ignorespaces#8\unskip%
+        \ttabbox{}{\ignorespaces#4\unskip\IfValueT{#9}{\vspace{\TabNoteSpace}\floatfoot*{#9}}}% if no star then use hanging
+      \end{table}%
+    }
+    
+    %%% NOTE space or comma before key or error occurs
+    %%       e.g. \includegraphics[ bigwidth]
+    \define@key{Gin}{quarwidth}[0.24\textwidth]{\def\Gin@ewidth{#1}}
+    \define@key{Gin}{thirdwidth}[0.33\textwidth]{\def\Gin@ewidth{#1}}
+    \define@key{Gin}{halfwidth}[0.49\textwidth]{\def\Gin@ewidth{#1}}
+    \define@key{Gin}{bigwidth}[0.66\textwidth]{\def\Gin@ewidth{#1}}
+    \define@key{Gin}{biggwidth}[0.75\textwidth]{\def\Gin@ewidth{#1}}
+    \define@key{Gin}{fullwidth}[1.0\textwidth]{\def\Gin@ewidth{#1}}
+    %\define@key{Gin}{half-width}[0.48\linewidth]{\def\Gin@ewidth{#1}}
+    
+    
+    % create an empty box that's the same size as of an image
+    % useful for subfloats when you have an odd sized image and want to align
+    \newlength{\imagewidth} \newlength{\imageheight}% variable for image
+    \NewDocumentCommand{\BoxSameSizeImg}{O{t} O{t} m m}{%
+      \settowidth{\imagewidth}{\includegraphics{#3}}% gets the width
+      \settoheight{\imageheight}{\includegraphics{#3}}%
+      \begin{minipage}[#1][\imageheight{}][#2]{\imagewidth{}}% create a mini page
+        #4%
+      \end{minipage}%
+    }
+    
+    % maximum width, for graphics, or example, graphic that wont exceed margin: [width=\maxwidth{\linewidth}]
+    \def\maxwidth#1{\ifdim\Gin@nat@width>#1 #1\else\Gin@nat@width\fi}
+    
+    
+    \NewDocumentCommand{\rotatepdf}{t+ s}{\IfBooleanT{#1}{\pagebreak}%
+      \IfBooleanTF{#2}{\global\pdfpageattr\expandafter{\the\pdfpageattr/Rotate 0}}%
+      {\global\pdfpageattr\expandafter{\the\pdfpageattr/Rotate 90}}%
+    } %%% + will add a page break before, * will restore it back to normal
+    
+    
+    \newcommand{\rotatefloatnextpage}[1]{% if a float takes up the whole page, just insert the float after the page, rotate, then restore
+      \afterpage{\RotPDF#1
+      \RotPDF+*}
+    }
+    
+    \newcommand{\floatnextpage}[1]{% if a float takes up the whole page
+      \afterpage{#1
+      \clearpage
+      }
+    }
+    
+    \begin{luacode*}
+      function incpdfpages(pdffile, opts, start, stop, between)
+        start = tonumber(start) or 1
+        stop = tonumber(stop) or img.scan({filename=atlp_find_file(pdffile)}).pages
+        between = between or ' \\par '
+        opts = opts or 'fullwidth'
+        local template = '\\includegraphics[page=__THEPAGENUMBER__,'..opts..']{'..pdffile..'}'
+        for p=start,stop do
+          local prtemplate = template:gsub('__THEPAGENUMBER__',tostring(p))
+          tex.sprint(prtemplate)
+          if p < stop then
+            tex.sprint(between)
+          end
+        end
+      end
+    \end{luacode*}
+    
+    \NewDocumentCommand{\includepdfpages}{ O{} m m O{ \par} }{%
+    % \includepdfpages[opts]{filename}{pg_start,pg_stop}[tex code between]
+    % for pages, starting page required, if pg2 not included, will insert until end
+      \tblfrcsv{incpdfpgs}{#3}%
+      \directlua{incpdfpages(\luastring{#2}, \luastring{#1}, penlight.tbls.incpdfpgs[1], penlight.tbls.incpdfpgs[2], \luastring{#4})}
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    %\def\floatlefthanglabel{%
+    %  \setlength{\floatindentlength}{0ex}
+    %  \gdef\figurename{fig.}
+    %  \gdef\tablename{tab.}
+    %  \DeclareCaptionLabelFormat{hangcap}{\llap{##1\,##2\enspace}}
+    %}
+    %\def\hideeqlabelOP{}
+    
+    
+    \def\eqprefixOG{eq.\,}
+    \def\eqprefix{\eqprefixOG}
+    \def\hideeqprefix{\gdef\eqprefix{}\afterpage{\gdef\eqprefix{\eqprefixOG}}}
+    
+    
+    \def\floatlefthanglabel{
+      \captionsetup{figurename=fig.,tablename=tab.,}
+      \renewcommand{\lstlistingname}{code}
+      \DeclareCaptionLabelFormat{hangcap}{\llap{\cbp@secnumsize##1\,##2\enspace}}
+      \DeclareCaptionLabelFormat{widecap}{\llap{\cbp@secnumsize##1\,##2\enspace}}
+      \global\setlength{\floatindentlength}{0ex}
+      \renewcommand\tagform@[1]{\maketag@@@{\Llap{\ignorespaces\makebox[6ex][r]{\ \hfill\cbp@secnumsize\bfseries \eqprefix##1\unskip\@@italiccorr\enspace}}}}
+    
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    %%% graveyard
+    
+    
+    
+    %% includes generator data sheet, rotates first three pages
+    %%  \RotPDFninety now == \RotPDF, if on section, do this  BEFORE the section
+    %% todo add a starting page
+    \NewDocumentCommand{\RotFirstXpdf}{m O{3}}{
+    %	\RotPDF  % todo determine if RotPDF would be better here
+    	\enlargethispage{8in}
+    	\includegraphics[angle=90,height=\fullheight]{#1}
+    	\includepdf[pages=2-\fpeval{#2},angle=90,pagecommand={}, height=\fullheight]{#1}
+    	\RotPDF*
+    	\includepdf[pages=\fpeval{#2+1}-,angle=0,pagecommand={},height=\fullheight]{#1}
+    }
+    
+    
+    \NewDocumentCommand{\inputPDF}{m O{3}}{
+    %  todo need option for rotating some pages here, that would be nice
+    	\enlargethispage{8in}
+      \includegraphics[height=\fullheight]{#1}
+    	\includepdf[pages=2-,angle=0,pagecommand={},height=\fullheight]{#1}
+    }
+    
+    %https://tex.stackexchange.com/questions/198091/get-number-of-pages-of-external-pdf
+    \newcommand*{\pdfnumberofpages}[1]{%
+      \directlua{%
+        local doc = epdf.open("\luatexluaescapestring{#1}")
+        local pages
+        if (doc) then
+          pages = doc:getCatalog():getNumPages()
+        else
+          pages = 0
+        end
+        tex.write(pages)
+      }%
+    }
 
 %\colorlet{background}{gray}
 \colorlet{background}{offwhite}
@@ -979,11 +1293,36 @@
 
 \usepackage{graphbox}
 
+\usepackage{multicol}
+
 
 \usepackage[pl,globals]{penlightplus}
-\usepackage{yamlvars}
 \usepackage{lutabulartools}
 \usepackage[noenumitem]{autopuncitems}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%            macros/unirefs+            %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%% table footnote tracker interface
+    \begin{luacode*}
+    _uref = {}
+    _uref.func = pl.char -- (a) | pl.Char (A) | tonumber (1)
+    function _uref.reset()
+      _uref.list = pl.List({})
+    end
+    function _uref.add(key)
+      if not _uref.list:contains(key) then
+        _uref.list:append(key)
+      end
+      tex.print(tostring(_uref.func(_uref.list:index(key))))
+    end
+    \end{luacode*}
+    \NewDocumentCommand{\reseturef}{}{\luadirect{_uref.reset()}}\reseturef
+    \NewDocumentCommand{\uref}{m}{\luadirect{_uref.add(\luastring{#1})}}
+
+
+
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -996,6 +1335,9 @@
     \usetikzlibrary{calc,positioning}
     \usetikzlibrary{decorations.markings}
     \usetikzlibrary{matrix,shapes,arrows,fit,tikzmark} %
+    
+    \usepackage[outline]{contour} % glow around text
+    \contourlength{1.4pt}
     
     % todo extra libs likely already loaded
     %\usepackage{relsize}
@@ -1016,7 +1358,7 @@
         alt/.code args={<#1>#2#3}{%
           \alt<#1>{\pgfkeysalso{#2}}{\pgfkeysalso{#3}} % \pgfkeysalso doesn't change the path
         },
-        olaycapt/.style={draw=red, fill=white, rectangle,inner sep=3pt, outer sep=0pt},
+        olaycapt/.style={draw=red, fill=white, rectangle,inner sep=3pt, outer sep=0pt, align=left},
         olayarrow/.style={->, red, line width=0.8pt},
         OL/.style={overlay,remember picture,baseline},
         olay/.style={overlay,remember picture,baseline},
@@ -1049,7 +1391,6 @@
       s = pl.stringx.strip(s)
       s = tikz_rel_pos_shortcuts[s] or s
       coords = (string.gsub(s, ' ', ','))-- to do fancy stuff here with lua, above right etc
-      wrth(coords,'!!!')
       token.set_macro('cbptikzxyshift', coords)
     end
     \end{luacode*}
@@ -1238,39 +1579,56 @@
     %https://tex.stackexchange.com/questions/146908/beamer-overlay-specifications-for-a-tikzpicture
     
     
+    \NewDocumentCommand{\olaysetpgan}{O{}}{% todo need a way to make olay functions access this and change xfm for their scope only
+      \tbldef{olayxfm.pgan}{olaypgan}%
+    }
     
+    \NewDocumentCommand{\olaysettemppgan}{O{}}{% todo need a way to make olay functions access this and change xfm for their scope only
+      \tbldef{olayxfm.pgan}{olaypgan}%
+      % todo need a way to restore page anchor to old
+    }
     
+    % todo add ignorespaces and unskip, very needed
+    % todo option to set base unit, default cm but mm would be nicer
+    % todo reemebr alast box size!!
     
-    \NewDocumentCommand{\olayxfm}{ O{} }{%
-    \tblfrkv{olayxfm}{#1}[defaults={shift=0 0, scale=1 1}]%
+    \NewDocumentCommand{\olayxfm}{ O{} }{%  transform the overlay coordinate system
+    \tblfrkv{olayxfm}{#1}[defaults={shift=0 0, scale=1 1, pgan=false}]%
     \tbldefxy{shift}{olayshift}%
     \tbldefxy{scale}{olayscale}%
+    \olaysetpgan%
     }%
     \olayxfm  % blank is default, initialize comands
     %\olayxfm{shift=5 5} % blank is default
     
+    %%% TODO todo make pgan a universal key-val arg that only temporarily overwrites the transform, should be available to all nodes. Lots of potential here
     
     \NewDocumentEnvironment{olaytikz}{+b}{% overlay environment
+      \unskip%
       \begin{tikzpicture}[olay, x=\olayscalex cm, y=\olayscaley  cm]
-        \begin{scope}[shift={(\olayshiftx cm, \olayshifty cm)}]
+        \iftblv{olayxfm.pgan}%
+          {\node[inner sep=0pt] (olayorigin) at (current page.\olaypgan){};}%
+          [\coordinate (olayorigin) at (0,0);]%
+        \begin{scope}[shift={($ (\olayshiftx cm, \olayshifty cm) + (olayorigin) $)}]
           #1%
         \end{scope}%
-    \end{tikzpicture}}{}
+    \end{tikzpicture}\ignorespaces}{}
     
-    
+    % todo consider \contour{white} in number nodes
     \def\olaygridmax{20}
     \NewDocumentCommand{\olaygrid}{}{%
-            \begin{tikzpicture}[OL]
+            \begin{olaytikz}%
+                \draw[fill=white,opacity=0.5] (-\olaygridmax.4,-\olaygridmax.4) rectangle (\olaygridmax.4,\olaygridmax.4);
                 \draw[step=0.2cm,blue!30,opacity=0.5] (-\olaygridmax.4,-\olaygridmax.4) grid (\olaygridmax.4,\olaygridmax.4);
-                \draw[step=1cm,red!30,opacity=0.8] (-\olaygridmax.4,-\olaygridmax.4) grid (\olaygridmax.4,\olaygridmax.4);
-                \draw[cyan] (-\olaygridmax,0) -- (\olaygridmax,0) (0, \olaygridmax) -- (0, -\olaygridmax);
-                \fill[red] (0,0) circle (2.5pt);
+                \draw[ystep=1cm,xstep=\olaygridmax.9cm,orange!70,opacity=0.8] (-\olaygridmax.4,-\olaygridmax.4) grid (\olaygridmax.4,\olaygridmax.4);
+                \draw[ystep=\olaygridmax.9cm,xstep=1cm,red!70,opacity=0.8] (-\olaygridmax.4,-\olaygridmax.4) grid (\olaygridmax.4,\olaygridmax.4);
+                \draw[blue,thick] (-\olaygridmax,0) -- (\olaygridmax,0) (0, \olaygridmax) -- (0, -\olaygridmax);
+                \fill[blue] (0,0) circle (5pt);
                 \foreach \x in {-\olaygridmax, ..., \olaygridmax}
                     \foreach \y in {-\olaygridmax, ..., \olaygridmax} {
-                            \node[inner sep=0pt, outer sep=0pt, anchor=center] at (\x,\y) {{\color{red}\tiny\x~\color{magenta}\y}};
+                            \node[inner sep=0pt, outer sep=0pt, anchor=center, fill=white] at (\x,\y) {{\tiny\color{red}\x~\color{orange}\y}};
                     }
-            \end{tikzpicture}%
-    }
+            \end{olaytikz}}
     
     
     % marker =tikz coord
@@ -1278,19 +1636,19 @@
     \def\cbp@olaybaseoffset@m{0.7ex}
     \def\cbp@olaybaseoffset@b{0ex}
     
-    \NewDocumentCommand{\olaymkgeneric}{m O{} m}{%
+    \NewDocumentCommand{\olaymkgeneric}{m O{} m}{\unskip%
     \tblfrkv{olaymk}{#2}[defaults={xy=0 0}]\tblkvundefcheck%
     \tbldefxy{xy}{olaymk}%
     \begin{olaytikz}
     \node[nosep, minimum size=0pt] (olaymk-#3) at ($(\olaymkx, \olaymky) + (0em, #1)$) {};
-    \end{olaytikz}}
+    \end{olaytikz}\ignorespaces}
     
     \NewDocumentCommand{\olaymkt}{O{} m}{\olaymkgeneric{\cbp@olaybaseoffset@t}[#1]{#2}}
     \NewDocumentCommand{\olaymkm}{O{} m}{\olaymkgeneric{\cbp@olaybaseoffset@m}[#1]{#2}}
     \NewDocumentCommand{\olaymkb}{O{} m}{\olaymkgeneric{\cbp@olaybaseoffset@b}[#1]{#2}}
     
     
-    \NewDocumentCommand{\olaybox}{m}{%
+    \NewDocumentCommand{\olayboxii}{m}{% todo allow for space
     \tblfrcsv{olaybox}{#1}%
     \begin{olaytikz}
       \node[inner sep=0.7ex,draw=red,thick,rounded corners,fit=(olaymk-\gettbl{olaybox/1}) (olaymk-\gettbl{olaybox/2})] {};
@@ -1302,8 +1660,10 @@
     %% https://texample.net/tikz/examples/feature/overlays/
     
     
-    
-    
+    %% todo move tikz definitions to kev-val args, and image too?  would be nice to have a better system for args
+    %% for now just put in separate brackets
+    %\def,tikz=""{}
+    %\def\kvtest{draw,red}
     \NewDocumentCommand{\olaypg}{O{} O{} m}{% olaypg[pos key-val][tikz node key-vals]{the thing}
       \tblfrkv{tikzpgol}{#1}[defaults={xy=0 0,pgan=nw,ndan=false}]\tblkvundefcheck%
       \tbldefxy{xy}{olaypg}%
@@ -1316,8 +1676,9 @@
     
     \NewDocumentCommand{\olaypgi}{O{} O{} m}{\olaypg[#1]{\includegraphics[#2]{#3}}} % tikz page overlay graphics
     % \olaypgi[pos kv][includegraphics kv]{graphics file}
+    
     \NewDocumentCommand{\olaypgt}{O{} O{} m}{%
-      \tblfrkv{tikzpgolpar}{#2}[defaults={}]% todo should make a quick way to position pbox or pbox
+      \tblfrkv{tikzpgolpar}{#2}[defaults={}]% todo should make a quick way to position pbox or pbox, make this better
       \tikzpgol{#1}{\pbox[#2]{}{#3}}%
     } % tikz page overlay textvox
     
@@ -1332,6 +1693,29 @@
     }% \tikzpgol{nd=se,pg=se,x=0,y=1}{floating node here}  % example usage
     
     
+    
+    \NewDocumentCommand{\olaytext}{O{} O{} m}{%
+      \olay[#1][nosep,align=left,#2]{#3}% todo allow for width to show up in first set of keyword args... need to make a function
+    }
+    
+    
+    
+    
+    \NewDocumentCommand{\olaybox}{ O{} m}{% todo allow for comma or space to be separator
+    \tblfrcsv{olaybox}{#2}%
+     \tbldef{/1}{xxi}\tbldef{/2}{yyi}\tbldef{/3}{xxii}\tbldef{/4}{yyii}%
+    \begin{olaytikz}
+      \draw[inner sep=0.0ex,draw=red,thick,rounded corners, #1] (\xxi,\yyi) rectangle (\xxii,\yyii);
+    \end{olaytikz}}
+    
+    
+    
+    
+    \NewDocumentCommand{\olaypgbox}{m m}{% todo allow for space
+      \olayxfm[shift=-2 2]%
+      \olaybox{#2}%
+      \olayxfm{}%
+    }
     
     
     
@@ -1509,31 +1893,7 @@
         },
     }
 
-\begin{luacode*}
-	YAMLvars.tabmidrule = 'gmidrule'
-\end{luacode*}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%            macros/unirefs+            %%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    %%% table footnote tracker interface
-    \begin{luacode*}
-    _uref = {}
-    _uref.func = pl.char -- (a) | pl.Char (A) | tonumber (1)
-    function _uref.reset()
-      _uref.list = pl.List({})
-    end
-    function _uref.add(key)
-      if not _uref.list:contains(key) then
-        _uref.list:append(key)
-      end
-      tex.print(tostring(_uref.func(_uref.list:index(key))))
-    end
-    \end{luacode*}
-    \NewDocumentCommand{\reseturef}{}{\luadirect{_uref.reset()}}\reseturef
-    \NewDocumentCommand{\uref}{m}{\luadirect{_uref.add(\luastring{#1})}}
-
+%
 
 
 
@@ -1566,13 +1926,32 @@
 
 \setbeamerfont{structure}{family=\sffamily, series=\bfseries, size=\normalsize}
 
+\setbeamerfont{page number in head/foot}{size=\small, series=\mdseries}
+\setbeamerfont{frame number in head/foot}{size=\small, series=\mdseries}
+
+\setbeamerfont{itemize/enumerate body}{}
+\setbeamerfont{itemize/enumerate subbody}{size=\normalfont}
+\setbeamerfont{itemize/enumerate subsubbody}{size=\smal}
+
+%\setbeamertemplate{itemize/enumerate subbody begin}{\vspace{1cm}}
+\setbeamertemplate{itemize/enumerate subbody end}{\vspace{1mm}}
+\def\moreitemsep{\renewcommand<>{\item}{\beameroriginal\item\vspace{\stretch{.2}}}}
+\def\moreitemseps{\renewcommand<>{\item}{\beameroriginal\item\vspace{\stretch{.1}}}}
+\def\moreitemsepx{\renewcommand<>{\item}{\beameroriginal\item\vspace{\stretch{.3}}}}
+
+
+%https://tex.stackexchange.com/questions/20654/length-between-nested-lists-in-beamer
+
 %%%%  %%%%  %%%%  %%%%  %%%%  %%%%  %%%%  %%%%  %%%%  %%%%  %%%%
+
+
+\usefonttheme{serif}
 
 
 %%%% COLORS %%%%  %%%%  %%%%  %%%%  %%%%  %%%%  %%%%  %%%%  %%%%  %%%%
 \setbeamercolor{background canvas}{bg=background}
 
-
+\usefonttheme{structurebold}
 \setbeamercolor{structure}{fg=body} % descrioption and ToC color
 %\setbeamercolor{section in toc}{fg=body}
 
@@ -1596,12 +1975,15 @@
 %%%% %%%%  %%%%  %%%%  %%%%  %%%%  %%%%  %%%%  %%%%  %%%%  %%%%
 
 %%%% INNER THEME %%%%  %%%%  %%%%  %%%%  %%%%  %%%%  %%%%  %%%%  %%%%  %%%%
+%%%%  items
+%\setbeamertemplate{itemize items}[circle]
+
 \setlength{\parskip}{0.25\baselineskip}
 \newcommand{\@minipagerestore}{\setlength{\parskip}{0.25\baselineskip}} % for multi columns
 
-\setbeamertemplate{itemize item}{\raisebox{0.1ex}{\color{main}\scalebox{1.0}{$\bullet$}}}
-\setbeamertemplate{itemize subitem}{\raisebox{0.1ex}{\color{main}\scalebox{0.8}{$\bullet$}}}
-\setbeamertemplate{itemize subsubitem}{\raisebox{0.1ex}{\color{main}\scalebox{0.5}{$\bullet$}}}
+\setbeamertemplate{itemize item}{\raisebox{0.3ex}{\color{main}\scalebox{0.7}{$\bullet$}}}
+\setbeamertemplate{itemize subitem}{\raisebox{0.3ex}{\color{main}\scalebox{0.5}{$\bullet$}}}
+\setbeamertemplate{itemize subsubitem}{\raisebox{0.3ex}{\color{main}\scalebox{0.3}{$\bullet$}}}
 
 % list stuff https://tex.stackexchange.com/questions/31505/trouble-combining-enumitem-and-beamer
 %\patchcmd{\@listI}{\itemsep3\p@}{\itemsep2em}{}{}
@@ -1611,7 +1993,7 @@
 \setlength\leftmarginii{1em}
 \setlength\leftmarginiii{1em}
 
-\setlength  \labelsep  {0.3em} % default 0.5
+\setlength  \labelsep  {0.4em} % default 0.5
 %\setlength  \labelwidth{\leftmargini}
 %\addtolength\labelwidth{-\labelsep}
 
@@ -1632,8 +2014,14 @@
 	\vspace*{0.1ex}}
 %\setbeamertemplate{framesubtitle}{\strut\insertframesubtitle\strut\vspace*{1ex}} ?
 
-\def\subtitleINline{\global\toggletrue{inlineframesubtitle}}
-\def\subtitleNEWline{\global\togglefalse{inlineframesubtitle}}
+
+
+\def\subtitlesameline{\global\toggletrue{inlineframesubtitle}}
+\def\subtitlenewline{\global\togglefalse{inlineframesubtitle}}
+
+\let\subtitleINline\subtitlesameline
+\let\subtitleNEWline\subtitlenewline
+
 
 %https://tex.stackexchange.com/questions/275044/how-do-i-insert-the-total-continuation-count-in-the-allowframbreaks-frame-title
 %% https://github.com/josephwright/beamer/issues/423
@@ -1648,10 +2036,11 @@
     \fi
 }
 
+\setbeamerfont{footline}{series=\mdseries, size=\normalsize}
 
-\newcommand{\cpb@PageRule}{\vline height 1em depth 1.0em width \lightrulewidth}  %% Footer
+\newcommand{\cpb@PageRule}{\vline height 1em depth 0.8em width \lightrulewidth}  %% Footer
 \setbeamertemplate{footline}{%
-    \null\hfill\rlap{\small\hspace*{1ex}\cpb@PageRule\enspace\insertframenumber{}}\hspace*{\beamer@rightmargin}
+    \null\hfill\rlap{\hspace*{1ex}\cpb@PageRule\enspace\insertframenumber{}}\hspace*{\beamer@rightmargin}
 		\vskip19pt
 }
 
@@ -1675,12 +2064,12 @@
 	\hspace{7mm}% Whitespace between the vertical line and title page text
 	\begin{minipage}[b][\cbp@BTPheight][t]{\cbp@BTPwidth}
 		\Vfill\vfill\vfill
-		\ifinsert{title}{{\usebeamerfont{title}\usebeamercolor[fg]{title}\inserttitle\par\vspace{0.8ex}}}
+		\ifinsert{title}{{\usebeamerfont{title}\usebeamercolor[fg]{title}\inserttitle\par\vspace{2.0ex}}}
 		\ifinsert{subtitle}{{\usebeamerfont{subtitle}\usebeamercolor[fg]{subtitle}\insertsubtitle\vspace{0.4ex}}}
 		\Vfill
 		\ifinsert{author}{\vfill{\usebeamerfont{author}\insertauthor}}
 		\ifinsert{institute}{\vfill{\usebeamerfont{institute}\insertinstitute}}
-		\ifinsert{date}{\vfill{\usebeamerfont{date}\insertdate}}
+		\ifinsert{date}{\vfill{\usebeamerfont{date}\lnum{\insertdate}}}
 		\ifinsert{logo}{\vfill\vfill\hfill\tikz[OL] \node at (-2,0) {\insertlogo};}
 %		\ifinsert{logo}{\vfill\vfill\hfill\insertlogo}
 %		\ifinsert{logo}{\vfill\vfill\hspace*{\widthof{\usebeamerfont{title}\inserttitle}}\insertlogo}
@@ -1747,25 +2136,38 @@
 
 %%%% some frame types, 50/50, narrow-wide, wide-narrow
 
-\def\begCol{\vspace{2ex}\begin{columns}[t,onlytextwidth]\begin{column}[T]{\cpb@firstcolwidth\textwidth}}
-
-\newcommand{\begColFF}{\gdef\cpb@firstcolwidth{0.46}\begCol} %% fifty-fifty % todo consider adding args ??
-\newcommand{\begColNW}{\gdef\cpb@firstcolwidth{0.31}\begCol} %% narrow-wide
-\newcommand{\begColWN}{\gdef\cpb@firstcolwidth{0.61}\begCol} %% wide-narrow
-
+\def\cbp@begcol{\vspace{0.1ex}\begin{columns}[t,onlytextwidth]\begin{column}[T]{\cpb@firstcolwidth\textwidth}}
 \def\cpb@calcnextcolwidth{\fpeval{1-0.08-\cpb@firstcolwidth}}
 
-\newcommand{\nextCol}{\end{column}\hfill\begin{column}[T]{\cpb@calcnextcolwidth\textwidth}}
-\def\endCol{\end{column}\end{columns}}
+\def\begcolFF{\gdef\cpb@firstcolwidth{0.46}\cbp@begcol} %% fifty-fifty % todo consider adding args ??
+\def\begcolNW{\gdef\cpb@firstcolwidth{0.31}\cbp@begcol} %% narrow-wide
+\def\begcolWN{\gdef\cpb@firstcolwidth{0.61}\cbp@begcol} %% wide-narrow
+\def\begcolWNw{\gdef\cpb@firstcolwidth{0.55}\cbp@begcol} %% wide-narrow
+\def\begcolFFi{\begcolFF\begin{itemize}}
+\def\nextcol{\end{column}\hfill\begin{column}[T]{\cpb@calcnextcolwidth\textwidth}}
+\def\nextcoli{\end{itemize}\nextcol}  % end current column itemize, begin next colun
+\def\nextcolii{\end{itemize}\nextcol\begin{itemize}}  % end current column itemize, begin next columni with itemize
+\def\endcoli{\end{itemize}\endcol}  % end itemize and colu
+\def\endcol{\end{column}\end{columns}}
 
 
-\usepackage{multicol}
-\newcommand{\twoCol}[1]{%
+
+\newcommand{\twocol}[1]{%
     \begin{multicols}{2}
 		#1
 	\end{multicols}%
 }
 \setlength{\columnsep}{0.08\textwidth}  % for two column, good for long lists, but use begCol otherwise
+
+
+
+\let\begColFF\begcolFF
+\let\begColNW\begcolNW
+\let\begColWN\begcolWN
+\let\nextCol\nextcol
+\let\endCol\endcol
+\let\twoCol\twocol
+
 
 
 
@@ -1863,6 +2265,7 @@
     \providetoggle{useSerif}
     \iftoggle{useSerif}{
         \crefdefaultlabelformat{#2{\toglnums#1}#3}
+        \creflabelformat{equation}{#2#1#3}
     }{}
     
     
