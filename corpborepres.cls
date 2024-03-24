@@ -1048,208 +1048,8 @@
 }
 
 \providecommand{\cbp@listframe}{} % no frames for beamer
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%            CodeBoxes+            %%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    % ##############################################
-    % Code Boxes
-    % ##############################################
-    
-    % todo need to figure out listings a bit better...
-    
-    
-    % https://tex.stackexchange.com/questions/77996/how-to-show-a-hint-when-lstlisting-is-breaking-page?rq=1
-    % continued on next page... want to move this
-    % read this and try it out more...
-    % customize the appearance of the continuing notes:
-    
-    \def\continuingfont{\slshape} % put size here
-    \def\continuingtext{Listing continues on next page\ldots}
-    \def\continuedtext{\ldots Listing continued from previous page}
-    
-    
-    
-    \usepackage[framemethod=tikz]{mdframed}  % for multi-page codeboxes
-    \usepackage{listings}  %
-    
-    \mdfdefinestyle{listing}
-    {
-    	hidealllines = true,
-    	leftmargin = 0.01pt,
-    	rightmargin = 0.01pt,
-    	innerleftmargin = 0.01pt,
-    	innerrightmargin = 0.01pt,
-    	innertopmargin = 0.01pt,
-    	innerbottommargin = 0.01pt,
-    	splittopskip=30.01pt,
-    	splitbottomskip=30.01pt,
-    	skipabove    = \parskip,
-    	skipbelow    = \parskip,
-    %	backgroundcolor=none,
-    	apptotikzsetting={\tikzset{mdfbackground/.append style={fill=red,fill opacity=0}}},
-    	% innertopmargin = \parskip,
-    	% afterbreak = {\vspace*{2cm} },
-    	% beforebreak = {\vspace*{2cm}},
-    	singleextra  = {} ,
-    	firstextra   = {
-    		\node[below left,overlay,align=right,font=\continuingfont]
-    		at (P |- O) {\continuingtext};
-    	} ,
-    	secondextra  = {
-    		\node[above right,overlay,align=left,font=\continuingfont, anchor=north west]
-    		at (O |- P) {\continuedtext};
-    	} ,
-    	middleextra  = {
-    		\node[below right,overlay,align=left,font=\continuingfont]
-    		at (O) {\continuingtext};
-    		\node[above right,overlay,align=left,font=\continuingfont, anchor=north west]
-    		at (O |- P) {\continuedtext};
-    	}
-    }
-    
-    
-    
-    
-    
-    \renewcommand{\lstlistlistingname}{Code Listings}
-    
-    
-    % toodo should really clean this up
-    \providecolor{codekey}{RGB}{180, 0, 0}
-    \providecolor{codestring}{RGB}{0, 130, 10}  % green color, used for code syntax and plots
-    \providecolor{codecomment}{RGB}{128, 128, 128}
-    \providecolor{codeemph}{RGB}{4, 1, 180}
-    
-    
-    % http://texdoc.net/texmf-dist/doc/latex/listings/listings.pdf
-    % requires xcolor
-    \providecommand{\cbp@listframe}{tb}
-    
-    \lstset{
-    	language=Python,
-    	basicstyle=\ttfamily\small,
-    	aboveskip={1.0\baselineskip},
-    	belowskip={1.0\baselineskip},
-    	captionpos=t,
-    	belowcaptionskip=5pt, % trial and error gve this a good result
-    %	frame=\cbp@listframe,
-    	frame=tb,
-    	rulecolor=\color{black},
-    	numbers=left,
-    	numberstyle=\color{codecomment}\ttfamily\scriptsize,
-    %	keywords={for},  %% todo clean up keywords, i dont like built-ins..
-    	keywordstyle=\color{codekey},
-    	commentstyle=\color{codecomment},
-    	stringstyle=\color{codestring},
-    	prebreak=\raisebox{0ex}[0ex][0ex]{\ensuremath{\hookleftarrow}},
-    	extendedchars=true,
-    	breaklines=true,
-    	showstringspaces=false,
-    	tabsize=4,
-    	emph={True,False,None},
-    	emphstyle={\color{codeemph}},
-    	keywords={for,def},
-    	otherkeywords={+,-,*,/,=,!,>,<},
-    	morekeywords={},
-    	escapeinside={\#`}{`},  % escape to LaTeX (ex. \label{})
-    	morecomment=[is]{"""!}{!"""},  % invisible block comments (CAUTION)
-    	morecomment=[is]{\#!}{!},      % invisible line comment
-    	% NOTE: invisible block comments may screw up line numbering for excerpt
-    	moredelim=[s][\color{white}]{\#~}{~},  % make range limtis white
-    	rangeprefix={\#~},      % to mark range for excerpt
-    	rangesuffix={~},      %  
-    	includerangemarker=false,
-    	moredelim=[s][\color{white}]{"""~}{~"""},  % white block comment
-    }
-    
-    
-    
-    %\lstdefinestyle{code}{
-    %}
-    %\lstset{
-    %	language=[LaTeX]TeX,
-    %	basicstyle=\ttfamily\small,
-    %	commentstyle=\ttfamily\small\color{gray},
-    %	numbers=left,
-    %	numberstyle=\ttfamily\small\color{white},
-    %	prebreak=\raisebox{0ex}[0ex][0ex]{\color{gray}\ensuremath{\hookleftarrow}},
-    %	extendedchars=true,
-    %	breaklines=true,
-    %	tabsize=2,
-    %}
-    
-    
-    %False	def	if	raise
-    %None	del	import	return
-    %True	elif	in	try
-    %and	else	is	while
-    %as	except	lambda	with
-    %assert	finally	nonlocal	yield
-    %break	for	not
-    %class	from	or
-    %continue	global	pass
-    % int, float, string, boolean
-    %https://realpython.com/lessons/reserved-keywords/
-    
-    
-    
-    
-    
-    
-    \lstnewenvironment{listing}
-    {%
-    	\mdframed[style=note]%
-    }
-    {%
-    	\endmdframed
-    }
-    
-    
-    
-    % emph is for emphasis, color single words (use emph and emphstyle)
-    
-    %  Use #`\label{whatever}` for line labels, or to escape use LaTeX script
-    % reference line with \cref{lin:x}
-    %  Use #~beg:sec~ and #~end:sec~ to extract blocks
-    %  Use  '''~ BLOCK COMMENTS ~'''  to hide block comments (and remove line numbers)
-    %
-    
-    
-    %\renewcommand{\lstlistoflistings}{%
-    %	\clearpage
-    %  \begingroup
-    %  \@starttoc{lol}
-    %  \endgroup
-    %}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%            ToDoNote+            %%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    % ##############################################
-    % Todo Notes (with Example)
-    % ##############################################
-    
-    \usepackage[color=white,
-    bordercolor=orange,
-    textsize=scriptsize,
-    textwidth=0.9in,
-    %disable,    % uncomment to disable package entirely
-    ]{todonotes}
-    % invisible todo
-    \newcommand{\todoinv}[1]{%  can just use \todototoc
-    	\todo[linecolor=white, backgroundcolor=white,bordercolor=white, textcolor=white]{#1}%
-    }
-    \newcommand{\todog}[1]{%
-    	\todo[bordercolor=green!90!]{#1}%
-    }
-    
-    %\newcommand{\todoL}[1]{\todo[inline,textsize=\small]{#1}} %inline todo note
-    \newcommand{\todol}[1]{\todo[inline]{#1}} %inline todo note
-    %\listoftodos
-    %\todototoc{ToC todo, just a random list}
-    %\todoG{Check for stuff}
+% \use package{CodeBoxes+}  % todo really should make colors work independently
+% \use package{ToDoNote+}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%            macros/symbolscbp+            %%%
@@ -1574,47 +1374,53 @@
     
     %%%%%%%%%%%%  tikz page overlays
     % requires tikz+/libs+, tikz+/anchors+, penlightplus
+    % todo default units would be the next good feature to add
     
-    %https://tex.stackexchange.com/questions/55806/mindmap-tikzpicture-in-beamer-reveal-step-by-step#55849
-    %https://tex.stackexchange.com/questions/146908/beamer-overlay-specifications-for-a-tikzpicture
+    % General Syntax
+    % \olay(overlay key-vals)[node or image options]{content}
+    %    overlay key-vals generally are
+    %       xy=X Y (x-y shift), an=anchor of node, pgan=anchor on page (optional),
+    %
     
-    
-    \NewDocumentCommand{\olaysetpgan}{O{}}{% todo need a way to make olay functions access this and change xfm for their scope only
-      \tbldef{olayxfm.pgan}{olaypgan}%
-    }
-    
-    \NewDocumentCommand{\olaysettemppgan}{O{}}{% todo need a way to make olay functions access this and change xfm for their scope only
-      \tbldef{olayxfm.pgan}{olaypgan}%
-      % todo need a way to restore page anchor to old
-    }
-    
-    % todo add ignorespaces and unskip, very needed
-    % todo option to set base unit, default cm but mm would be nicer
-    % todo reemebr alast box size!!
-    
-    \NewDocumentCommand{\olayxfm}{ O{} }{%  transform the overlay coordinate system
-    \tblfrkv{olayxfm}{#1}[defaults={shift=0 0, scale=1 1, pgan=false}]%
-    \tbldefxy{shift}{olayshift}%
+    \NewDocumentCommand{\olayxfm}{ D(){} }{%  transform the overlay coordinate system
+    \tblfrkv{olayxfm}{#1}[defaults={shift=0 0, scale=1 1, pgan=false, lastpgan=false}]%
+    \tbldefxy{shift}{olayshift}%   lastpgan is an internal key
     \tbldefxy{scale}{olayscale}%
-    \olaysetpgan%
     }%
-    \olayxfm  % blank is default, initialize comands
-    %\olayxfm{shift=5 5} % blank is default
+    \olayxfm  % blank is set to default, initialize comands
     
-    %%% TODO todo make pgan a universal key-val arg that only temporarily overwrites the transform, should be available to all nodes. Lots of potential here
+    
+    % baseline offsets, if you want a marker at top, middle, or bottom (base)
+    \def\cbp@olaybaseoffset@t{1.3ex}
+    \def\cbp@olaybaseoffset@m{0.7ex}
+    \def\cbp@olaybaseoffset@b{0ex}
+    
+    
+    \NewDocumentCommand{\olaysetanchors}{}{% set page and node anchor
+      \tblifv{olaykv.pgan}{\tblgdef{olaykv.pgan}{olaypgan}}[\tblgdef{olayxfm.pgan}{olaypgan}]%
+      \tblifv{olaykv.an}{}[% if no an set, use the page anchor
+        \luadirect{penlight.tbls.olaykv.an = \luastring{\olaypgan}
+        if penlight.tbls.olaykv.an == 'false' then
+          penlight.tbls.olaykv.an = 'bw'
+        end
+        }]%
+    }
+    
     
     \NewDocumentEnvironment{olaytikz}{+b}{% overlay environment
-      \unskip%
+      \unskip\olaysetanchors%
       \begin{tikzpicture}[olay, x=\olayscalex cm, y=\olayscaley  cm]
-        \iftblv{olayxfm.pgan}%
+        \ifdefstring{\olaypgan}{false}%
+          {\coordinate (olayorigin) at (0,0);}%
           {\node[inner sep=0pt] (olayorigin) at (current page.\olaypgan){};}%
-          [\coordinate (olayorigin) at (0,0);]%
         \begin{scope}[shift={($ (\olayshiftx cm, \olayshifty cm) + (olayorigin) $)}]
           #1%
         \end{scope}%
-    \end{tikzpicture}\ignorespaces}{}
+      \end{tikzpicture}\luadirect{penlight.tbls.olaykv.pgan = false
+                                penlight.tbls.olaykv.an = false
+      }\ignorespaces}{}% set an and pgan to false just in case next olay doesnt use this feature
     
-    % todo consider \contour{white} in number nodes
+    
     \def\olaygridmax{20}
     \NewDocumentCommand{\olaygrid}{}{%
             \begin{olaytikz}%
@@ -1631,31 +1437,130 @@
             \end{olaytikz}}
     
     
-    % marker =tikz coord
-    \def\cbp@olaybaseoffset@t{1.3ex}
-    \def\cbp@olaybaseoffset@m{0.7ex}
-    \def\cbp@olaybaseoffset@b{0ex}
     
-    \NewDocumentCommand{\olaymkgeneric}{m O{} m}{\unskip%
-    \tblfrkv{olaymk}{#2}[defaults={xy=0 0}]\tblkvundefcheck%
-    \tbldefxy{xy}{olaymk}%
+    %%% olay markers
+    \NewDocumentCommand{\olaymkgeneric}{m D(){} m}{\unskip% olay marker on the line
+      \tblfrkv{olaykv}{#2}[defaults={xy=0 0, an=false, pgan=false}]\tblkvundefcheck%
+      \tbldefxy{xy}{olaymk}%
+      \begin{olaytikz}
+        \node[nosep, minimum size=0pt] (olaymk-#3) at ($(\olaymkx, \olaymky) + (0em, #1)$) {};
+      \end{olaytikz}\ignorespaces}
+    
+    \NewDocumentCommand{\olaymkt}{D(){} m}{\olaymkgeneric{\cbp@olaybaseoffset@t}(#1){#2}}
+    \NewDocumentCommand{\olaymkm}{D(){} m}{\olaymkgeneric{\cbp@olaybaseoffset@m}(#1){#2}}
+    \NewDocumentCommand{\olaymkb}{D(){} m}{\olaymkgeneric{\cbp@olaybaseoffset@b}(#1){#2}}
+    
+    \NewDocumentCommand{\olaymkbox}{m}{% todo make a box around markers using node names todo need sep as padding
+    \tblfrcsv{olaymks}{#1}\tbldef{olaymks/1}{olaymkA}\tbldef{olaymks/2}{olaymkB}%
     \begin{olaytikz}
-    \node[nosep, minimum size=0pt] (olaymk-#3) at ($(\olaymkx, \olaymky) + (0em, #1)$) {};
-    \end{olaytikz}\ignorespaces}
-    
-    \NewDocumentCommand{\olaymkt}{O{} m}{\olaymkgeneric{\cbp@olaybaseoffset@t}[#1]{#2}}
-    \NewDocumentCommand{\olaymkm}{O{} m}{\olaymkgeneric{\cbp@olaybaseoffset@m}[#1]{#2}}
-    \NewDocumentCommand{\olaymkb}{O{} m}{\olaymkgeneric{\cbp@olaybaseoffset@b}[#1]{#2}}
-    
-    
-    \NewDocumentCommand{\olayboxii}{m}{% todo allow for space
-    \tblfrcsv{olaybox}{#1}%
-    \begin{olaytikz}
-      \node[inner sep=0.7ex,draw=red,thick,rounded corners,fit=(olaymk-\gettbl{olaybox/1}) (olaymk-\gettbl{olaybox/2})] {};
+      \node[inner sep=0.7ex,draw=red,thick,rounded corners,fit=(olaymk-\olaymkA) (olaymk-\olaymkB)] {};
     \end{olaytikz}}
     
     
     
+    
+    \NewDocumentCommand{\olay}{D(){} O{} m}{% general overlay of a node \olay[pos kv][tikz node kv]{stuff}
+      \tblfrkv{olaykv}{#1}[defaults={xy=0 0, an=false, base=b, pgan=false}]\tblkvundefcheck%
+      \tbldefxy{xy}{olaynd}%
+      \luadirect{token.set_macro('olaybase',token.get_macro('cbp@olaybaseoffset@'..penlight.tbls.olaykv.base))}% todo should move this somewhere
+      \begin{olaytikz}
+         \node[anchor=\gettbl{an}, nosep, #2] (tkpgol) at ($(0ex, \olaybase) + (\olayndx, \olayndy)$) {#3};
+      \end{olaytikz}%
+    }% \tikzpgol{nd=se,pg=se,x=0,y=1}{floating node here}  % example usage
+    
+    
+    \NewDocumentCommand{\olayimg}{D(){} O{} m}{\olay(#1){\includegraphics[#2]{#3}}} % tikz page overlay image/graphics
+    
+    \NewDocumentCommand{\olaytext}{D(){} O{} m}{%
+      \olay(#1)[nosep,align=left,#2]{#3}% todo allow for width to show up in first set of keyword args... need to make a function
+    }
+    
+    
+    \NewDocumentCommand{\olaybox}{ O{} D(){} }{% todo allow for comma or space to be separator
+      \tblfrcsv{olaykv}{#2}[defaults={an=false, base=b, pgan=false}]% todo allow option for inner sep
+      \tbldef{/1}{xxi}\tbldef{/2}{yyi}\tbldef{/3}{xxii}\tbldef{/4}{yyii}%
+    \begin{olaytikz}
+      \draw[inner sep=0.0ex,draw=red,thick,rounded corners, #1] (\xxi,\yyi) rectangle (\xxii,\yyii);
+    \end{olaytikz}}
+    
+    
+    
+    
+    
+    % todo include node settings, or consider overall olaytikz kev-val
+    \NewDocumentCommand{\olaycapt}{ D(){} m }{% nd = node text box, ar = arrow,  an = anchor of text box pos, aran = arrow anchor on node, rel = relative text box to arrrow coords
+    % ar can be coordinates (separated with space), or false. if false, no arrow is drawn
+    \tblfrkv{olaykv}{#1}[defaults={ndxy=0 0, arxy=false, ndan=nw, aran=d, rel=false, pgan=false}]% todo ndan -> an
+    \kvtblundefcheck%
+    \tbldefxy{ndxy}{olaycaptnode}%
+    \iftblv{arxy}{\tbldefxy{arxy}{olaycaptarrow}}[\def\olaycaptarrowx{0}\def\olaycaptarrowy{0}]%
+    \deftbl{ndan}{olaycaptanchor}%
+    \iftblv{aran}{%
+        \deftbl{aran}{olaycaptaran}% arrow anchor, if specified define it
+        }[%
+        \let\olaycaptaran\olaycaptanchor% arrow anchor, if specified define it
+    ]%
+    \begin{olaytikz}
+        \coordinate (arrr) at ($(\olaycaptarrowx,\olaycaptarrowy)$);
+        \iftblv{rel}{
+            \node[olaycapt, anchor=\olaycaptanchor] (cappp) at ($(arrr)+(\olaycaptnodex,\olaycaptnodey)$) {\vphantom{I}#2\vphantom{y}};
+        }[
+            \node[olaycapt, anchor=\olaycaptanchor] (cappp) at (\olaycaptnodex,\olaycaptnodey) {\vphantom{I}#2\vphantom{y}};
+        ]
+        \iftblv{arxy}{
+        \ifdefstring{\olaycaptaran}{d}{
+            \draw[olayarrow] (cappp) -- (arrr);
+        }{
+            \draw[olayarrow] (cappp.\olaycaptaran) -- (arrr);
+        }}
+    \end{olaytikz}}
+    
+    
+    
+    \NewDocumentCommand{\olaycirc}{ D(){} }{%
+    \tblfrkv{olaykv}{#1}[defaults={xy=0 0, r=1, rx=1, ry=1, rot=0, pgan=false, an=false}]\kvtblundefcheck%
+    \tbldefxy{xy}{olaykv}%
+    \tbldef{r}{olaykvr}%
+    \tbldef{rx}{olaykvrx}%
+    \tbldef{ry}{olaykvry}%
+    \tbldef{rot}{olaykvrot}%
+    \begin{olaytikz}\begin{scope}[shift={(\olaykvx,\olaykvy)},xscale=\olaykvrx,yscale=\olaykvry,
+      rotate=\olaykvrot]
+      \draw[red] (0,0) circle (\olaykvr);
+    \end{scope}\end{olaytikz}}
+    
+    
+    
+    \NewDocumentCommand{\olaydimen}{ D(){} m }{%
+    }% nd = node text box, ar = arrow,  an = anchor of text box pos, aran = arrow anchor on node, rel = relative text box to arrrow coords
+    %overlay arrow-tips dimensioning something, with an optional caption
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    % todo use better anchor system
+    % specify box anchor , if no arrow anchor passed, assume it is the box anchor
+    
+    % todo need a dimension thing, sort of a measurement
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    %%%5 legacy, pgan is universal now
     
     %% https://texample.net/tikz/examples/feature/overlays/
     
@@ -1683,32 +1588,6 @@
     } % tikz page overlay textvox
     
     
-    \NewDocumentCommand{\olay}{O{} O{} m}{% general overlay of a node \olay[pos kv][tikz node kv]{stuff}
-      \tblfrkv{olaykv}{#1}[defaults={xy=0 0, an=bw, base=b}]\tblkvundefcheck%
-      \tbldefxy{xy}{olaynd}%
-      \luadirect{token.set_macro('olaybase',token.get_macro('cbp@olaybaseoffset@'..penlight.tbls.olaykv.base))}%
-      \begin{olaytikz}
-         \node[anchor=\gettbl{an}, nosep, #2] (tkpgol) at ($(0, \olaybase) + (\olayndx, \olayndy)$) {#3};
-      \end{olaytikz}%
-    }% \tikzpgol{nd=se,pg=se,x=0,y=1}{floating node here}  % example usage
-    
-    
-    
-    \NewDocumentCommand{\olaytext}{O{} O{} m}{%
-      \olay[#1][nosep,align=left,#2]{#3}% todo allow for width to show up in first set of keyword args... need to make a function
-    }
-    
-    
-    
-    
-    \NewDocumentCommand{\olaybox}{ O{} m}{% todo allow for comma or space to be separator
-    \tblfrcsv{olaybox}{#2}%
-     \tbldef{/1}{xxi}\tbldef{/2}{yyi}\tbldef{/3}{xxii}\tbldef{/4}{yyii}%
-    \begin{olaytikz}
-      \draw[inner sep=0.0ex,draw=red,thick,rounded corners, #1] (\xxi,\yyi) rectangle (\xxii,\yyii);
-    \end{olaytikz}}
-    
-    
     
     
     \NewDocumentCommand{\olaypgbox}{m m}{% todo allow for space
@@ -1716,72 +1595,6 @@
       \olaybox{#2}%
       \olayxfm{}%
     }
-    
-    
-    
-    % todo include node settings, or consider overall olaytikz kev-val
-    \NewDocumentCommand{\olaycapt}{ O{} m }{% nd = node text box, ar = arrow,  an = anchor of text box pos, aran = arrow anchor on node, rel = relative text box to arrrow coords
-    % ar can be coordinates (separated with space), or false. if false, no arrow is drawn
-    \tblfrkv{olaycapt}{#1}[defaults={ndxy=0 0, arxy=false, ndan=nw, aran=d, rel=false}]%
-    \kvtblundefcheck%
-    \tbldefxy{ndxy}{olaycaptnode}%
-    \iftblv{arxy}{\tbldefxy{arxy}{olaycaptarrow}}[\def\olaycaptarrowx{0}\def\olaycaptarrowy{0}]%
-    \deftbl{ndan}{olaycaptanchor}%
-    \iftblv{aran}{%
-        \deftbl{aran}{olaycaptaran}% arrow anchor, if specified define it
-        }[%
-        \let\olaycaptaran\olaycaptanchor% arrow anchor, if specified define it
-    ]%
-    \begin{olaytikz}
-        \coordinate (arrr) at ($(\olaycaptarrowx,\olaycaptarrowy)$);
-        \iftblv{rel}{
-            \node[olaycapt, anchor=\olaycaptanchor] (cappp) at ($(arrr)+(\olaycaptnodex,\olaycaptnodey)$) {\vphantom{I}#2\vphantom{y}};
-        }[
-            \node[olaycapt, anchor=\olaycaptanchor] (cappp) at (\olaycaptnodex,\olaycaptnodey) {\vphantom{I}#2\vphantom{y}};
-        ]
-        \iftblv{arxy}{
-        \ifdefstring{\olaycaptaran}{d}{
-            \draw[olayarrow] (cappp) -- (arrr);
-        }{
-            \draw[olayarrow] (cappp.\olaycaptaran) -- (arrr);
-        }}
-    \end{olaytikz}}
-    
-    
-    
-    \NewDocumentCommand{\olaycirc}{ O{} }{%
-    \tblfrkv{olaycirc}{#1}[defaults={xy=0 0, r=1, rx=1, ry=1, rot=0}]\kvtblundefcheck%
-    \tbldefxy{xy}{olaycirc}%
-    \tbldef{r}{olaycircr}%
-    \tbldef{rx}{olaycircrx}%
-    \tbldef{ry}{olaycircry}%
-    \tbldef{rot}{olaycircrot}%
-    \begin{olaytikz}\begin{scope}[shift={(\olaycircx,\olaycircy)},xscale=\olaycircrx,yscale=\olaycircry,
-      rotate=\olaycircrot]
-      \draw[red] (0,0) circle (\olaycircr);
-    \end{scope}\end{olaytikz}}
-    
-    \NewDocumentCommand{\olaydimen}{ O{} m }{%
-    }% nd = node text box, ar = arrow,  an = anchor of text box pos, aran = arrow anchor on node, rel = relative text box to arrrow coords
-    %overlay arrow-tips dimensioning something, with an optional caption
-    
-    
-    
-    
-    
-    
-    % todo use better anchor system
-    % specify box anchor , if no arrow anchor passed, assume it is the box anchor
-    
-    % todo need a dimension thing, sort of a measurement
-    
-    
-    
-    
-    
-    
-    
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%            tikz+/colormaps+            %%%
@@ -2216,77 +2029,7 @@
 
 
 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%            Hyperlinks+            %%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    \AtBeginDocument{
-        \if@twoside
-            \hypersetup{pdfpagelayout=TwoPageRight}
-        \else \fi
-    }
-    
-    
-    \usepackage{bookmark}
-    \usepackage{hyperref}
-    \hypersetup{
-    hidelinks,
-    colorlinks=false,%
-    bookmarksnumbered=true,%
-    bookmarksopen=true,%         
-    bookmarksopenlevel=1,                  
-    pdfstartview=Fit,%           
-    pdfpagemode=UseOutlines,%
-    }
-    
-    
-    \usepackage[nameinlink,noabbrev]{cleveref}  % cref
-    
-    %% REFERENCING SECTIONS - lowercase s for sections, uppercase everything else
-    \Crefname{section}{Section}{Sections}% {<type>}{<singular>}{<plural>}
-    \Crefname{equation}{equation}{equations}% {<type>}{<singular>}{<plural>}
-    \Crefname{appsec}{Appendix}{Appendices}
-    \Crefname{table}{Table}{Tables}
-    \Crefname{figure}{Figure}{Figures}
-    \Crefname{frame}{Slide}{Slides}
-    \Crefname{lstlisting}{Listing}{Listings}
-    
-    \crefname{section}{section}{sections}% {<type>}{<singular>}{<plural>}
-    \crefname{equation}{equation}{equations}% {<type>}{<singular>}{<plural>}
-    \crefname{appsec}{appendix}{appendices}
-    \crefname{table}{table}{tables}
-    \crefname{figure}{figure}{figures}
-    \crefname{frame}{slide}{slides}
-    \crefname{lstlisting}{listing}{listings}
-    
-    \creflabelformat{equation}{#2#1#3}
-    \crefrangelabelformat{equation}{#3#1#4 to #5#2#6}
-    
-    \providetoggle{useSerif}
-    \iftoggle{useSerif}{
-        \crefdefaultlabelformat{#2{\toglnums#1}#3}
-        \creflabelformat{equation}{#2#1#3}
-    }{}
-    
-    
-    % https://tex.stackexchange.com/questions/10555/hyperref-warning-token-not-allowed-in-a-pdf-string/330980#330980
-    \pdfstringdefDisableCommands{% to clean pdf attributes string
-    \def\\{}%
-    \def\smaller{}%
-    \def\texttt#1{<#1>}%
-    \def\textbf#1{<#1>}%
-    \def\textit#1{<#1>}%
-    }
-    
-    \usepackage[a-3u]{pdfx}
-    
-    \begin{luacode*}
-        __PDFmetadata__ = {Language='en-ca'}
-    \end{luacode*}
-    
-    
-    
-
+%\use package{Hyperlinks+}  %%% CONTAINS hyperref and cleverref SETUP
 
 
 
