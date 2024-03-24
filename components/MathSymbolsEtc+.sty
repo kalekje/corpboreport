@@ -1,0 +1,77 @@
+%%% References %%%%%
+% siunitx: https://texdoc.org/serve/siunitx/0
+% mathtools: https://texdoc.org/serve/mathtools/0
+
+% mathtools loads amsmath
+\usepackage[fleqn,leqno]{mathtools} % NOTE: amsmath loaded before kpfonts for fleqn issue should load amsmath
+\usepackage{bm}
+
+%	\usepackage{gensymb} % bug in this package currently w/ kpfonts
+\usepackage{xfrac}
+\usepackage{amsfonts}  % math fonts and symbols
+
+\renewcommand{\theequation}{{\cbp@secnumsize\arabic{chapter}.\arabic{equation}}}
+
+%\def\@cbp@mathline{\raisebox{0pt}[0pt][0pt]{\vline height 0.8em depth 0.6em width \arrayrulewidth}}
+%\renewcommand\tagform@[1]{\maketag@@@{\ignorespaces\makebox[6ex][l]{\@cbp@mathline\;\cbp@secnumsize#1\unskip\@@italiccorr\hfill}\hspace*{5ex}}}
+
+\def\@cbp@mathline{\raisebox{0pt}[0pt][0pt]{\vline height 0.8em depth 0.6em width \arrayrulewidth}}
+%\renewcommand\tagform@[1]{\maketag@@@{\ignorespaces\makebox[6ex][r]{\ \hfill\cbp@secnumsize#1\;\@cbp@mathline\unskip\@@italiccorr\hspace*{2ex}}}}
+\renewcommand\tagform@[1]{\maketag@@@{\ignorespaces\makebox[6ex][r]{\@cbp@mathline\;\cbp@secnumsize#1\;\unskip\@@italiccorr\hspace*{2ex}}}}  % modificaiton for thesis
+
+%% for right side equation num
+%\renewcommand\tagform@[1]{\maketag@@@{\ignorespaces\makebox[6ex][l]{\@cpb@mathline\;\cpb@secnumsize#1\unskip\@@italiccorr\hfill}\hspace*{5ex}}}
+
+
+\providecommand{\togunums}{}  % toggle to uppercase number shortcut
+
+\usepackage[free-standing-units, % allow declared units usage outside of \qty and \unit
+	unit-optional-argument,  % allows declared units to have number after \kV[10]
+	detect-all=true, % allows italic/bold units
+	space-before-unit=true,
+	text-font-command=\togunums,
+	use-xspace=true,
+	table-number-alignment=center,
+	table-text-alignment=center,
+	table-align-text-post=false,
+	table-align-text-pre=false,
+]{siunitx} % http://ctan.mirror.rafal.ca/macros/latex/contrib/siunitx/siunitx.pdf
+
+\providetoggle{useSerif}
+\iftoggle{useSerif}{}{
+	\usepackage{amssymb}   % only load if not serif, had issues with kpfont-otf
+%	\sisetup{math-micro=\text{µ},text-micro=µ}
+%	\sisetup{math-micro=\text{\mu},text-micro=$\text{\mu}$}  % as per https://tex.stackexchange.com/questions/33965/siunitx-%C2%B5-doesnt-work
+}
+
+
+
+%\newenvironment{mathwhere}
+%  {where:\vspace{\abovedisplayskip}\noindent\begin{tabularx}{\linewidth}{>{$}l<{$} !{is} Z}}
+%  {\end{tabularx}\par\vspace{\belowdisplayskip}}
+
+
+\NewDocumentEnvironment{mathwhere*}{ +b }{%
+\begin{tabularx}{0.8\linewidth}[t]{>{$}l<{$}  Z}
+					 #1
+\end{tabularx}\par\vspace{\belowdisplayskip}
+	}{}
+
+\NewDocumentEnvironment{mathwhere}{+b}{%
+where:\\[0.3ex]
+\hspace*{3ex}
+\begin{AutoPuncTabular}
+	\begin{mathwhere*}
+		#1
+	\end{mathwhere*}
+\end{AutoPuncTabular}
+	}{}
+
+
+\DeclareInstance{xfrac}{KpLight}{text}
+{slash-symbol-font = ptm,
+scaling = false,
+denominator-bot-sep = 10 pt,
+numerator-bot-sep = 10 pt,
+}
+%\UseCollection{xfrac}{KpLight}

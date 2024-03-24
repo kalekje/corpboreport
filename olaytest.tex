@@ -1,0 +1,29 @@
+\RequirePackage[components]{addtoluatexpath}
+\documentclass{corpboreport+}
+\begin{document}
+  Hello world.%
+%  \olaybox{0,0,1,1,pgan=c}
+%  \olay[pgan=sw]{SW}
+  \olay{WHAT}
+  \olay(pgan=se){\Large pgan=se} % todo need better anchor selection based on page anchor, make a function to handle this
+  \olay(an=bw){Heeeeelo}
+  \olayxfm(pgan=sw)
+  \olay{None}
+  \olay(pgan=s){\Large pgan=s} % todo need better anchor selection based on page
+  \olay{~~~~~None part 2} % i think some shift with base is going on
+  \olay(pgan=c, an=sw){\Large pgan=c} % todo need better anchor selection based on page
+  \olay(pgan=c, an=ne){\Large pgan=c} % todo need better anchor selection based on page
+  \olayxfm\olay(an=bw){Hi}
+
+  \olaymkt{a}Hello WORLD\olaymkb{b}\olaymkbox{a,b}
+  
+  \olayxfm(pgan=s)
+  \olaygrid
+  \olaybox(0,0,1,1)
+  \olaybox(0,0,2,2,pgan=w)
+  \olaycirc(xy=0 10, rx=2, rot=45)
+  
+% todo make a conention
+% \olaycmd(pos-kv)[node/img-kv]{node stuff}
+
+\end{document}

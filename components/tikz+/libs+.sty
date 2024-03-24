@@ -1,0 +1,45 @@
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usepackage{relsize}
+
+\usetikzlibrary{calc,positioning}
+\usetikzlibrary{decorations.markings}
+\usetikzlibrary{matrix,shapes,arrows,fit,tikzmark} %
+
+\usepackage[outline]{contour} % glow around text
+\contourlength{1.4pt}
+
+% todo extra libs likely already loaded
+%\usepackage{relsize}
+%\usepackage{luacode}
+%\usepackage{Colors+}
+%\usepackage{symbols}
+%\usepackage{xspace,pbox}
+%\usepackage[pl,globals]{penlightplus}
+%\usepackage{tikz+/anchors+}
+
+
+% https://tex.stackexchange.com/questions/18389/tikz-node-at-same-x-coordinate-as-another-node-but-specified-y-coordinate
+% note on positioning
+
+\tikzset{
+    invisible/.style={opacity=0,text opacity=0},
+    visible on/.style={alt={#1{}{invisible}}},
+    alt/.code args={<#1>#2#3}{%
+      \alt<#1>{\pgfkeysalso{#2}}{\pgfkeysalso{#3}} % \pgfkeysalso doesn't change the path
+    },
+    olaycapt/.style={draw=red, fill=white, rectangle,inner sep=3pt, outer sep=0pt, align=left},
+    olayarrow/.style={->, red, line width=0.8pt},
+    OL/.style={overlay,remember picture,baseline},
+    olay/.style={overlay,remember picture,baseline},
+    nopad/.style={inner sep=0pt},
+    nosep/.style={inner sep=0pt, outer sep=0pt},
+  }
+
+
+
+\pgfplotsset{
+    axis line style={gray},
+    every tick label/.append style=     {font=\color{gray}\smaller},
+}
+%every axis label/.append style =    {font=\color{black}\smaller},

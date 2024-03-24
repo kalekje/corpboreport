@@ -1052,7 +1052,7 @@
 % \use package{ToDoNote+}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%            macros/symbolscbp+            %%%
+%%%            Macros+/symbolscbp+            %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
     \newcommand{\Fst}{1\textsuperscript{st}\xspace}
@@ -1101,7 +1101,7 @@
 \usepackage[noenumitem]{autopuncitems}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%            macros/unirefs+            %%%
+%%%            Macros+/unirefs+            %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %%% table footnote tracker interface
     \begin{luacode*}

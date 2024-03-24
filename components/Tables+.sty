@@ -1,0 +1,122 @@
+
+%%% TABLES
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{makecell}
+\usepackage{colortbl} %
+\usepackage{rotating}
+
+\usepackage{tabularx}  % WARNING  supposed to be loaded after hyprref !!! investigate
+\usepackage{ltxtable}  % long table with tabularx
+\usepackage{longtable}
+
+\usepackage{booktabs}  % http://ctan.mirror.globo.tech/macros/latex/contrib/booktabs/booktabs.pdf
+
+% Table spacing
+%\renewcommand{\arraystretch}{1.0}  % normal table stretch.. can modify
+%\setlength\tabcolsep{2ex}  % additional padding on sides of tables
+
+\setlength\heavyrulewidth{0.8pt}
+\setlength\lightrulewidth{0.4pt}  % latex default rule is 0.4 pt
+\setlength\cmidrulewidth{0.3pt}  % latex default rule is 0.4 pt
+
+\providetoggle{useSerif}
+\iftoggle{useSerif}{
+	\setlength\heavyrulewidth{0.7pt}
+	\setlength\lightrulewidth{0.4pt}  % latex default rule is 0.4 pt
+	\setlength\cmidrulewidth{0.3pt}
+}{}
+
+\let\nl\\  % shortcut for \newline and \\
+
+\def\MoreRowHeight{\rule{0pt}{0.9em}}
+
+% fixed column width, ragged right instead of horizontally filled allows new line
+\newcolumntype{P}[1]{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}p{#1}}
+\newcolumntype{M}[1]{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+\newcolumntype{B}[1]{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}b{#1}}
+
+% vertical and horizontally centerred
+\newcolumntype{T}[1]{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}p{#1}}  % vertically centered instead of top
+\newcolumntype{V}[1]{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}  % vertically centered instead of top
+
+\newcolumntype{Z}{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}X}  % ragged right instead of filled, \newline lets you break lines
+\newcolumntype{Y}{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}X} % centered tabular X
+
+% things to consider, siunitx + tabularx?
+% https://tex.stackexchange.com/questions/12663/how-to-use-siunitx-and-tabularx-together
+% really want a way to distrubute columns evenly under a multicolumn cell that is wider than the two columns
+
+\sisetup{range-phrase=--,
+	table-number-alignment=center,
+	table-text-alignment=center,
+	table-align-text-post=false,
+	table-align-text-pre=false,
+}
+% https://tex.stackexchange.com/questions/469345/newcolumntype-with-optional-argument  todo consider this, but not working
+
+\newcolumntype{N}[1]{S[table-format=#1,table-alignment=center]}  % centered SI column,  N == number
+\newcolumntype{L}[1]{S[table-format=#1,table-alignment=left]}    % left SI column
+\newcolumntype{R}[1]{S[table-format=#1,table-alignment=right]}   % right SI column
+% S unit tables http://tug.ctan.org/macros/latex/exptl/siunitx/siunitx.pdf
+%%%
+
+\newcolumntype{~}{@{\hspace{\tabcolsep}}}
+
+
+% table note stuff
+\newlength{\TabNoteSpace} \setlength\TabNoteSpace{-1.3ex}
+
+
+% long table stuff
+\newlength{\LongTabNoteSpace} \setlength\LongTabNoteSpace{-4.5ex}
+
+
+\newcommand{\LTnotes}[2][\linewidth]{% todo might wanna fix this so it's more automatic
+    \vspace{\LongTabNoteSpace}% manually tested
+    \parbox{#1}{\footnotesize #2}}
+
+\NewCommandCopy\LongTableNotes\LTnotes
+
+\NewDocumentCommand{\LTcaption}{O{#2} m O{}}{{\WideFloatCaption\captionof{table}[#1]{#2}#3}}  % #3 is for \label{}
+
+\AfterEndEnvironment{longtable}{\addtocounter{table}{-1}} % hack to fix LTX/longtable numbering issue, seems to increment by 1
+
+\def\LTcontinues{\MC[+r]{\Llap{\ \hfill\textsl{Table continues on next page\ldots}}}}
+\def\LTcontinued{\MC[+l]{\Rlap{\textsl{\ldots Table continued from previous page}}}\\}
+
+%% example longtable header
+
+%\def\LTheader{\toprule {Section} & {Item} & {Comment}\\\midrule}
+%\setmidruleX{reset=true}
+%\LTcaption{}
+%\begin{longtable}{@{}lp{3cm}X@{\midruleX}}
+	%\LTheader\endfirsthead        % first header
+	%\LTcontinued\LTheader\endhead % headers after page break
+	%\LTcontinues\endfoot          % footers before page break
+	%\bottomrule\endlastfoot       % last footer
+	%\resetmidruleX
+	% ...
+
+
+
+
+% table foot notes: use tnote{a} in the table for superscript marker, and \tfnote{a}Note here in the footnotes of table
+\NewDocumentCommand{\tabfnote}{m}{\Llap{#1.\enspace}}
+\NewDocumentCommand{\tabnote}{s m}{%
+	\IfBooleanTF{#1}%
+		{\textsuperscript{#2}}%
+		{\rlap{\textsuperscript{#2}}}% without star, footnote label to take no space
+}%
+
+\NewDocumentCommand{\tfnote}{m}{\tabfnote{\uref{#1}}} % automatic table footnotes--semantic footnote labelling instead of abc
+\NewDocumentCommand{\tnote}{s m}{%
+	\IfBooleanTF{#1}%
+		{\tabnote*{\uref{#2}}}%
+		{\tabnote{\uref{#2}}}%
+}% use tnote{a} in the table, and \tfnote{a}Note here in the foot notes
+
+
+% adding on to MC
+\NewExpandableDocumentCommand{\MCh}{ O{2c_}   D(){rl} m }{\MC[#1#2]{#3}} % a 'hierarchical' cell, usually spans two, has underline
+\NewExpandableDocumentCommand{\MCb}{ O{,-2b}  D(){}  m }{\MC[#1#2]{#3}}  % a 'bottom' header cell of height 2, usually beside MCh on row after

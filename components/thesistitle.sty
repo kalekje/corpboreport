@@ -1,0 +1,44 @@
+
+\def\titlineoffset{1.5}
+\def\titlineabove{1.5}
+\def\titlinebelow{3}
+
+\newcounter{lastitlenode}\setcounter{lastitlenode}{1}   %
+
+
+\NewDocumentCommand{\setlastnode}{m}{%
+  \coordinate (lastnode) at (#1.south west);
+}
+
+\NewDocumentCommand{\addtitele}{ O{1.0} O{\normalfont} D(){} m }{%  TODO figure out how to get away without needing node names in (), it throws an error
+  \stepcounter{lastitlenode}
+  \node[font={#2}, below=#1 of lastnode.south west, anchor=north west] (\IfValueTF{#3}{#3}{lastnode\thelastitlenode}) {#4};
+  \setlastnode{\IfValueTF{#3}{#3}{lastnode\thelastitlenode}}
+}
+
+
+\def\maketitle{\begin{titlepage}\toglnums%
+\begin{tikzpicture}[overlay,remember picture,
+  shift={($(current page.west)+(5.5, 7.3)$)}, anchor=west,
+  node distance=1cm,  %% todo must use y parameter instea!
+  every node/.style={anchor=west,inner sep=0pt,align=left},]
+  \node[font={\LARGE\bfseries}] (title) {\@title}; \setlastnode{title}
+  \addtitele[1][\itshape](sub){\@subtitle}
+  \addtitele[0.5][\itshape\bfseries](deg){Master of Science}
+  \addtitele[0.5][\itshape](by){by}
+  \addtitele[1][\Large\bfseries](auth){\@author}
+  \addtitele[1.5](publi){\@publishers}
+  \addtitele[2.5](date){\@date}
+  \draw ($(title.north west)+(-\titlineoffset,\titlineabove)$) |- ($(lastnode.south west)+(-\titlineoffset,-\titlinebelow)$);
+  \node[below left=0.0 and 0.5 of publi.south east, anchor=ne] {\includegraphics[width=3.5cm]{frontmatter/UMlogoV.pdf}};
+\end{tikzpicture}%
+\end{titlepage}%
+\clearpage
+}
+
+%  \node[font={\normalsize\itshape}, below=of title.south west,anchor=north west] (subtit) {\@subtitle};
+%  \node[font={\normalsize\itshape\bfseries}, below=0.5 of subtit.south west,anchor=north west] (subtit2) {Master of Science};
+%  \node[font={\normalsize\itshape}, below=0.5 of subtit2.south west,anchor=north west] (subtit3) {by};
+%  \node[font={\Large\bfseries}, below=of subtit3.south west,anchor=north west] (author) {\@author};
+%  \node[font={\normalsize}, below=1.5 of author.south west,anchor=north west] (publi) {\@publishers};
+%  \node[font={\normalsize}, below=2.5 of publi.south west,anchor=north west] (date) {\@date};

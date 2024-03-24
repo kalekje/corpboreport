@@ -1,0 +1,82 @@
+\usepackage{xcolor}
+
+% todo confirm with xckd colors
+% https://xkcd.com/color/rgb/
+
+\definecolor{offwhite}{RGB}{255,253,248}
+
+\definecolor{lightgray}{RGB}{191, 191, 191}
+\colorlet{lightgrey}{lightgray}
+\definecolor{gray}{RGB}{128, 128, 128}
+\definecolor{darkgray}{RGB}{64, 64, 64}
+
+\definecolor{brightindigo}{RGB}{5, 1, 200}
+\definecolor{indigo}{RGB}{4, 1, 180}
+\definecolor{darkindigo}{RGB}{3, 0, 110}
+\definecolor{verydarkindigo}{RGB}{2, 0, 40}
+
+\definecolor{darkred}{RGB}{180, 0, 0}
+\definecolor{green}{RGB}{0, 130, 10}  % green color, used for code syntax and plots
+\definecolor{mygreen}{RGB}{0, 130, 10}  % green color, used for code syntax and plots
+
+\definecolor{mybrown}{HTML}{292826}
+\definecolor{mybeige}{HTML}{C3BDA5}
+
+
+% https://umanitoba.ca/sites/default/files/2019-12/UM_Brand-Guidelines.pdf
+\definecolor{umbrown}{RGB}{79, 44, 29}
+\definecolor{umdarkblue}{RGB}{56, 94, 157}
+\definecolor{umlightblue}{RGB}{0, 163, 224}
+\definecolor{umyellow}{RGB}{242, 169, 0}
+
+
+
+% for coding
+\colorlet{accCol}{indigo}  % accent color
+\colorlet{contCol}{darkred}    % contrast color
+\colorlet{grayCol}{gray}   % gray color
+\colorlet{greCode}{green}   % gray color
+
+\def\blacksectionheadings{
+   \setaccentcolor{.} % . is current color, so if you invert it will change
+}
+
+
+\NewDocumentCommand{\setaccentcolor}{m}{
+    \colorlet{chapCol}{#1}
+    \colorlet{secCol}{#1}
+    \colorlet{subsecCol}{#1}
+    \colorlet{subsubsecCol}{#1}
+    \colorlet{parCol}{#1}
+}
+
+\setaccentcolor{.}
+
+
+\NewDocumentCommand{\setcolortheme}{m}{
+    \ifstrequal{#1}{blues}{\cbp@colorthemeblues}{}
+    \ifstrequal{#1}{brown}{\setaccentcolor{umbrown}}{}
+}
+
+\NewDocumentCommand{\cbp@colorthemeblues}{}{
+    \colorlet{chapCol}{indigo}
+    \colorlet{secCol}{darkindigo}
+    \colorlet{subsecCol}{verydarkindigo}
+    \colorlet{subsubsecCol}{.}
+    \colorlet{parCol}{.}
+}
+
+
+
+\definecolor{pltblue}{HTML}{1000F0}
+\definecolor{pltred}{HTML}{B30000}
+\definecolor{pltgreen}{HTML}{00820A}
+\definecolor{pltorange}{HTML}{F05F00}
+\definecolor{pltyellow}{HTML}{FFC30B}
+\definecolor{pltpurple}{HTML}{820078}
+
+\colorlet{pltcyan}{cyan}   % gray color
+% todo add option for markers
+\NewDocumentCommand{\pltLineIcon}{m}{%
+    \mbox{({\color{plt#1}#1 \raisebox{0.6ex}{\rule{1em}{0.8pt}}})}%
+}

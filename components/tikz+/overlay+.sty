@@ -1,0 +1,224 @@
+
+%%%%%%%%%%%%  tikz page overlays
+% requires tikz+/libs+, tikz+/anchors+, penlightplus
+% todo default units would be the next good feature to add
+
+% General Syntax
+% \olay(overlay key-vals)[node or image options]{content}
+%    overlay key-vals generally are
+%       xy=X Y (x-y shift), an=anchor of node, pgan=anchor on page (optional),
+%
+
+\NewDocumentCommand{\olayxfm}{ D(){} }{%  transform the overlay coordinate system
+\tblfrkv{olayxfm}{#1}[defaults={shift=0 0, scale=1 1, pgan=false, lastpgan=false}]%
+\tbldefxy{shift}{olayshift}%   lastpgan is an internal key
+\tbldefxy{scale}{olayscale}%
+}%
+\olayxfm  % blank is set to default, initialize comands
+
+
+% baseline offsets, if you want a marker at top, middle, or bottom (base)
+\def\cbp@olaybaseoffset@t{1.3ex}
+\def\cbp@olaybaseoffset@m{0.7ex}
+\def\cbp@olaybaseoffset@b{0ex}
+
+
+\NewDocumentCommand{\olaysetanchors}{}{% set page and node anchor
+  \tblifv{olaykv.pgan}{\tblgdef{olaykv.pgan}{olaypgan}}[\tblgdef{olayxfm.pgan}{olaypgan}]%
+  \tblifv{olaykv.an}{}[% if no an set, use the page anchor
+    \luadirect{penlight.tbls.olaykv.an = \luastring{\olaypgan}
+    if penlight.tbls.olaykv.an == 'false' then
+      penlight.tbls.olaykv.an = 'bw'
+    end
+    }]%
+}
+
+
+\NewDocumentEnvironment{olaytikz}{+b}{% overlay environment
+  \unskip\olaysetanchors%
+  \begin{tikzpicture}[olay, x=\olayscalex cm, y=\olayscaley  cm]
+    \ifdefstring{\olaypgan}{false}%
+      {\coordinate (olayorigin) at (0,0);}%
+      {\node[inner sep=0pt] (olayorigin) at (current page.\olaypgan){};}%
+    \begin{scope}[shift={($ (\olayshiftx cm, \olayshifty cm) + (olayorigin) $)}]
+      #1%
+    \end{scope}%
+  \end{tikzpicture}\luadirect{penlight.tbls.olaykv.pgan = false
+                            penlight.tbls.olaykv.an = false
+  }\ignorespaces}{}% set an and pgan to false just in case next olay doesnt use this feature
+
+
+\def\olaygridmax{20}
+\NewDocumentCommand{\olaygrid}{}{%
+        \begin{olaytikz}%
+            \draw[fill=white,opacity=0.5] (-\olaygridmax.4,-\olaygridmax.4) rectangle (\olaygridmax.4,\olaygridmax.4);
+            \draw[step=0.2cm,blue!30,opacity=0.5] (-\olaygridmax.4,-\olaygridmax.4) grid (\olaygridmax.4,\olaygridmax.4);
+            \draw[ystep=1cm,xstep=\olaygridmax.9cm,orange!70,opacity=0.8] (-\olaygridmax.4,-\olaygridmax.4) grid (\olaygridmax.4,\olaygridmax.4);
+            \draw[ystep=\olaygridmax.9cm,xstep=1cm,red!70,opacity=0.8] (-\olaygridmax.4,-\olaygridmax.4) grid (\olaygridmax.4,\olaygridmax.4);
+            \draw[blue,thick] (-\olaygridmax,0) -- (\olaygridmax,0) (0, \olaygridmax) -- (0, -\olaygridmax);
+            \fill[blue] (0,0) circle (5pt);
+            \foreach \x in {-\olaygridmax, ..., \olaygridmax}
+                \foreach \y in {-\olaygridmax, ..., \olaygridmax} {
+                        \node[inner sep=0pt, outer sep=0pt, anchor=center, fill=white] at (\x,\y) {{\tiny\color{red}\x~\color{orange}\y}};
+                }
+        \end{olaytikz}}
+
+
+
+%%% olay markers
+\NewDocumentCommand{\olaymkgeneric}{m D(){} m}{\unskip% olay marker on the line
+  \tblfrkv{olaykv}{#2}[defaults={xy=0 0, an=false, pgan=false}]\tblkvundefcheck%
+  \tbldefxy{xy}{olaymk}%
+  \begin{olaytikz}
+    \node[nosep, minimum size=0pt] (olaymk-#3) at ($(\olaymkx, \olaymky) + (0em, #1)$) {};
+  \end{olaytikz}\ignorespaces}
+
+\NewDocumentCommand{\olaymkt}{D(){} m}{\olaymkgeneric{\cbp@olaybaseoffset@t}(#1){#2}}
+\NewDocumentCommand{\olaymkm}{D(){} m}{\olaymkgeneric{\cbp@olaybaseoffset@m}(#1){#2}}
+\NewDocumentCommand{\olaymkb}{D(){} m}{\olaymkgeneric{\cbp@olaybaseoffset@b}(#1){#2}}
+
+\NewDocumentCommand{\olaymkbox}{m}{% todo make a box around markers using node names todo need sep as padding
+\tblfrcsv{olaymks}{#1}\tbldef{olaymks/1}{olaymkA}\tbldef{olaymks/2}{olaymkB}%
+\begin{olaytikz}
+  \node[inner sep=0.7ex,draw=red,thick,rounded corners,fit=(olaymk-\olaymkA) (olaymk-\olaymkB)] {};
+\end{olaytikz}}
+
+
+
+
+\NewDocumentCommand{\olay}{D(){} O{} m}{% general overlay of a node \olay[pos kv][tikz node kv]{stuff}
+  \tblfrkv{olaykv}{#1}[defaults={xy=0 0, an=false, base=b, pgan=false}]\tblkvundefcheck%
+  \tbldefxy{xy}{olaynd}%
+  \luadirect{token.set_macro('olaybase',token.get_macro('cbp@olaybaseoffset@'..penlight.tbls.olaykv.base))}% todo should move this somewhere
+  \begin{olaytikz}
+     \node[anchor=\gettbl{an}, nosep, #2] (tkpgol) at ($(0ex, \olaybase) + (\olayndx, \olayndy)$) {#3};
+  \end{olaytikz}%
+}% \tikzpgol{nd=se,pg=se,x=0,y=1}{floating node here}  % example usage
+
+
+\NewDocumentCommand{\olayimg}{D(){} O{} m}{\olay(#1){\includegraphics[#2]{#3}}} % tikz page overlay image/graphics
+
+\NewDocumentCommand{\olaytext}{D(){} O{} m}{%
+  \olay(#1)[nosep,align=left,#2]{#3}% todo allow for width to show up in first set of keyword args... need to make a function
+}
+
+
+\NewDocumentCommand{\olaybox}{ O{} D(){} }{% todo allow for comma or space to be separator
+  \tblfrcsv{olaykv}{#2}[defaults={an=false, base=b, pgan=false}]% todo allow option for inner sep
+  \tbldef{/1}{xxi}\tbldef{/2}{yyi}\tbldef{/3}{xxii}\tbldef{/4}{yyii}%
+\begin{olaytikz}
+  \draw[inner sep=0.0ex,draw=red,thick,rounded corners, #1] (\xxi,\yyi) rectangle (\xxii,\yyii);
+\end{olaytikz}}
+
+
+
+
+
+% todo include node settings, or consider overall olaytikz kev-val
+\NewDocumentCommand{\olaycapt}{ D(){} m }{% nd = node text box, ar = arrow,  an = anchor of text box pos, aran = arrow anchor on node, rel = relative text box to arrrow coords
+% ar can be coordinates (separated with space), or false. if false, no arrow is drawn
+\tblfrkv{olaykv}{#1}[defaults={ndxy=0 0, arxy=false, ndan=nw, aran=d, rel=false, pgan=false}]% todo ndan -> an
+\kvtblundefcheck%
+\tbldefxy{ndxy}{olaycaptnode}%
+\iftblv{arxy}{\tbldefxy{arxy}{olaycaptarrow}}[\def\olaycaptarrowx{0}\def\olaycaptarrowy{0}]%
+\deftbl{ndan}{olaycaptanchor}%
+\iftblv{aran}{%
+    \deftbl{aran}{olaycaptaran}% arrow anchor, if specified define it
+    }[%
+    \let\olaycaptaran\olaycaptanchor% arrow anchor, if specified define it
+]%
+\begin{olaytikz}
+    \coordinate (arrr) at ($(\olaycaptarrowx,\olaycaptarrowy)$);
+    \iftblv{rel}{
+        \node[olaycapt, anchor=\olaycaptanchor] (cappp) at ($(arrr)+(\olaycaptnodex,\olaycaptnodey)$) {\vphantom{I}#2\vphantom{y}};
+    }[
+        \node[olaycapt, anchor=\olaycaptanchor] (cappp) at (\olaycaptnodex,\olaycaptnodey) {\vphantom{I}#2\vphantom{y}};
+    ]
+    \iftblv{arxy}{
+    \ifdefstring{\olaycaptaran}{d}{
+        \draw[olayarrow] (cappp) -- (arrr);
+    }{
+        \draw[olayarrow] (cappp.\olaycaptaran) -- (arrr);
+    }}
+\end{olaytikz}}
+
+
+
+\NewDocumentCommand{\olaycirc}{ D(){} }{%
+\tblfrkv{olaykv}{#1}[defaults={xy=0 0, r=1, rx=1, ry=1, rot=0, pgan=false, an=false}]\kvtblundefcheck%
+\tbldefxy{xy}{olaykv}%
+\tbldef{r}{olaykvr}%
+\tbldef{rx}{olaykvrx}%
+\tbldef{ry}{olaykvry}%
+\tbldef{rot}{olaykvrot}%
+\begin{olaytikz}\begin{scope}[shift={(\olaykvx,\olaykvy)},xscale=\olaykvrx,yscale=\olaykvry,
+  rotate=\olaykvrot]
+  \draw[red] (0,0) circle (\olaykvr);
+\end{scope}\end{olaytikz}}
+
+
+
+\NewDocumentCommand{\olaydimen}{ D(){} m }{%
+}% nd = node text box, ar = arrow,  an = anchor of text box pos, aran = arrow anchor on node, rel = relative text box to arrrow coords
+%overlay arrow-tips dimensioning something, with an optional caption
+
+
+
+
+
+
+
+
+
+
+
+% todo use better anchor system
+% specify box anchor , if no arrow anchor passed, assume it is the box anchor
+
+% todo need a dimension thing, sort of a measurement
+
+
+
+
+
+
+
+
+
+
+
+%%%5 legacy, pgan is universal now
+
+%% https://texample.net/tikz/examples/feature/overlays/
+
+
+%% todo move tikz definitions to kev-val args, and image too?  would be nice to have a better system for args
+%% for now just put in separate brackets
+%\def,tikz=""{}
+%\def\kvtest{draw,red}
+\NewDocumentCommand{\olaypg}{O{} O{} m}{% olaypg[pos key-val][tikz node key-vals]{the thing}
+  \tblfrkv{tikzpgol}{#1}[defaults={xy=0 0,pgan=nw,ndan=false}]\tblkvundefcheck%
+  \tbldefxy{xy}{olaypg}%
+  \iftblv{ndan}{}[\settbl{ndan}{\gettbl{pgan}}]%
+  \begin{olaytikz}
+     \node[anchor=\gettbl{ndan},inner sep=0pt, #2] (tkpgol) at ($(current page.\gettbl{pgan}) + (\olaypgx, \olaypgy)$) {#3};
+  \end{olaytikz}%
+}% \tikzpgol{nd=se,pg=se,x=0,y=1}{floating node here}  % example usage
+
+
+\NewDocumentCommand{\olaypgi}{O{} O{} m}{\olaypg[#1]{\includegraphics[#2]{#3}}} % tikz page overlay graphics
+% \olaypgi[pos kv][includegraphics kv]{graphics file}
+
+\NewDocumentCommand{\olaypgt}{O{} O{} m}{%
+  \tblfrkv{tikzpgolpar}{#2}[defaults={}]% todo should make a quick way to position pbox or pbox, make this better
+  \tikzpgol{#1}{\pbox[#2]{}{#3}}%
+} % tikz page overlay textvox
+
+
+
+
+\NewDocumentCommand{\olaypgbox}{m m}{% todo allow for space
+  \olayxfm[shift=-2 2]%
+  \olaybox{#2}%
+  \olayxfm{}%
+}

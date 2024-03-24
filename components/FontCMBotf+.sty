@@ -1,0 +1,80 @@
+%%% adopted from: https://tex.stackexchange.com/a/358621/186406
+% https://texdoc.org/serve/cm-unicode/0
+% https://texdoc.org/serve/cmbright/0
+
+\usepackage{fontspec}
+
+\setsansfont{cmunb}[        %CMU Bright for text
+    Extension=.otf,
+    UprightFont=*mr,
+    ItalicFont=*mo,
+    BoldFont=*sr, % semibold  % swap bold with semibold
+    BoldItalicFont=*so, % semibold oblique
+    NFSSFamily=cmbr
+    ]
+
+\usepackage{cmbright}       %CMU Bright for math
+\gdef\bfdefault{sb}
+\gdef\sbdefault{bx}         % swap sb with bf
+
+%\renewcommand{\ttdefault}{lmtt}  % has bold series, but the normal weight is a bit thicker
+\setmonofont{CMU Typewriter Text Light} % monospace  % does not have bold but matches main font better
+
+\DeclareSymbolFont{iwonalargesymbols}{OMX}{iwona}{m}{n}
+\DeclareMathSymbol{\intop}{\mathop}{iwonalargesymbols}{"52}
+
+% todo try https://tex.stackexchange.com/questions/204778/difficulty-finding-selecting-cm-bright-using-fontspec
+
+
+\usepackage[%
+  protrusion=true,
+  expansion,
+  final,
+  tracking=true,
+  letterspace=120,
+  factor=1000,%(/1000), subtle
+  stretch=10,%(/1000 %)
+  shrink=10
+]{microtype}
+
+% upper and lowercase number commands -- not applicable if using serif, I choose uppercase only for simplicity
+\def\togunums{}
+\def\toglnums{}
+\NewDocumentCommand{\lnum}{m}{}
+\NewDocumentCommand{\unum}{m}{}
+
+\def\act{}
+\def\actext#1{#1}
+
+
+
+
+
+
+
+
+\gdef\sbseries{\fontseries{sb}\selectfont}
+
+\DeclareRobustCommand{\sm@ller}{%
+\dimen@\f@size\p@
+\ifdim \dimen@ > 12\p@
+\dimen@=0.83333\dimen@
+\else
+\advance \dimen@ -2\p@
+\fi
+\math@fontsfalse
+\fontsize{\the\dimen@}\z@
+\selectfont
+}
+\newcommand{\textc}[1]{{\sm@ller\uppercase{#1}}}
+\newcommand{\sbfCMB}[1]{\textbf{\textit{#1}}}
+
+
+%\def\sbfCMB#1{\ThisStyle{\setbox0=\hbox{$\SavedStyle#1$}%
+%		#1\kern.2pt\kern-\wd0%
+%		\raisebox{.1pt}{$\SavedStyle#1$}}}
+
+
+%%% patching
+
+\newcommand{\mathup}[1]{\text{\textup{#1}}}  % patching needed for mathup

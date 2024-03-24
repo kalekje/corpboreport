@@ -1,0 +1,96 @@
+%%%% memo variabls
+\lowercasevarYVon
+\begin{declareYAMLvars}
+fileno:
+  xfm: lb2nl
+  prc: setATvar
+  
+attachments:
+  xfm: lb2nl
+  prc: setATvar
+
+memoheader:
+  xfm: lb2nl
+  prc: setATvar
+
+memofr:
+  xfm: lb2nl
+  prc: setATvar
+
+memofraddr:
+  xfm: lb2nl
+  prc: setATvar
+
+memoto:
+  xfm: lb2nl
+  prc: setATvar
+
+memotoaddr:
+  xfm: lb2nl
+  prc: setATvar
+\end{declareYAMLvars}
+\lowercasevarYVoff
+
+% variables do not req declaring beforehand, but here they are for troubleshooting...
+  %\@memoto
+  %\@memofr
+  %\@memofraddr
+  %\@memotoaddr
+  %\@memoheader
+  %\@attachments
+  %\@fileno
+
+\newcommand{\@HangingLabel}[1]{\leavevmode\llap{\scriptsize\uppercase{#1}:\enspace\hspace{3pt}}}
+
+
+\gdef\cbp@tpMemo{%
+    \vspace*{-4.5em}
+    \ifdef{\@memoheader}{\vspace*{-2em}  \ \hfill {\large\bfseries \@memoheader } \hfill \  \\[1.2em]}{}
+    \begin{tabularx}{\textwidth}{lXl}
+    	\@HangingLabel{to}\textit{\@memoto}  &&
+    	      \@HangingLabel{fr}\textit{\@memofr}\\ \noalign{\vskip 0.5mm} % add a bit more space %%% todo need an ifdefOR{\cs1}{\cs2}{}{}
+      \makecell[tl]{\@memotoaddr{}}  && \makecell[tl]{\@memofraddr{}} \\
+    	\\\noalign{\vskip -1.3ex}
+    	\midrule
+    \end{tabularx}
+    \par
+
+    \vspace*{1em}
+
+    \parbox{\linewidth}{\setstretch{1.3}
+    	\ifdef{\@title}{\@HangingLabel{subject}\raggedright\textbf{\Large\@title}\\[8pt]}{}%
+    	\ifdef{\@date}{\@HangingLabel{date}\textbf{\Large\@date}\\[8pt]}{}
+    	\ifdef{\@fileno}{\@HangingLabel{file}\textbf{\Large\@fileno}\\[8pt]}{}
+    	\ifdef{\@attachments}{\@HangingLabel{attached}\@attachments\\[8pt]}{}
+    	\par
+    }%
+    \cbp@FirstPagePlain
+}
+
+\def\namedatememoheader{%
+  \ifdef{\@memoto}{\lohead{\textit\@memoto}}{}%
+  \ifdef{\@date}{\rohead{\@date}}{}%
+}
+
+\iftoggle{useMemo}{
+
+    \toggletrue{ChapOnSamePage}         %%% PATCH sections
+    \addtokomafont{chapter}{\Large}
+    \addtokomafont{section}{\large}
+    \addtokomafont{subsection}{\normalsize}
+%    \addtokomafont{subsubsection}{\color{black}}  % do not use in a memo
+
+    \gdef\scr@section@beforeskip{17.1pt \@plus 1.7pt}
+    \gdef\scr@section@afterskip{0.1pt}
+    \gdef\scr@subsection@beforeskip{13.1pt \@plus 1.3pt}
+%    \gdef\scr@subsection@afterskip{0.1pt}
+  
+    
+    \KOMAoptions{bibliography=totoc}  % uncomment if you want numbered reference section
+    \floatsetup{objectset=raggedright}
+    \captionsetup{labelformat=widecap}
+
+  \renewcommand{\theequation}{\arabic{equation}}
+  \renewcommand{\thetable}{\arabic{table}}
+}{}
+
