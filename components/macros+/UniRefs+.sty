@@ -1,0 +1,16 @@
+%%% table footnote tracker interface
+\begin{luacode*}
+_uref = {}
+_uref.func = pl.char -- (a) | pl.Char (A) | tonumber (1)
+function _uref.reset()
+  _uref.list = pl.List({})
+end
+function _uref.add(key)
+  if not _uref.list:contains(key) then
+    _uref.list:append(key)
+  end
+  tex.print(tostring(_uref.func(_uref.list:index(key))))
+end
+\end{luacode*}
+\NewDocumentCommand{\reseturef}{}{\luadirect{_uref.reset()}}\reseturef
+\NewDocumentCommand{\uref}{m}{\luadirect{_uref.add(\luastring{#1})}}

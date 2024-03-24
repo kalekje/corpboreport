@@ -1,0 +1,123 @@
+
+% This package is designed to help keep track of ``tweaks'' that you add to the document.
+% Any time you add a manual spacing (say vspace, enlargethispage, pagebreak or clearpage), and suppose
+% that you might want to delete/disable at a later time, save after a document revision, this package can help.
+% You could also use this package to track toggle blocks of arbitrary latex code.
+% The main command is \tweak*[id]{code}. * means that the code argument is arbitrary latex code.
+% If no *, a key or key-value is passed and applies code stored in a Lua table
+% options at this time are: en=space (enlarge this page), etc. etc.
+% [id] is an optional, but recommended name you give the tweak. if none is provided, they will be alphabetically assigned, "A", "B", etc.
+% \disabletweaks[csv] will disable selected tweaks, passed as comma-seprated value. If [*] is given, all tweaks are disabled
+% \enabletweaks[csv] (recommended to be used after disable) will re-enable any tweaks
+% \listoftweaks will print a table at the end of your document showing and hyper-linking all tweaks
+% When \listoftweaks is used, a toggle "\toggletrue{showtweakhints}" is activated.
+% you can re-define the two commands to show a "hint" of where the tweak is, for example, using a tikz overlay.
+%    \handleenabledtweakhint{m}
+%    \handledisabledtweakhint{m}
+%   where the argument is the tweak code. You can use \currenttweakname to get the name of the tweak
+
+
+\tblnew{tweakcode}
+\tblnew{tweakorder}
+\tblnew{disabledtweaks}
+\tblnew{enabledtweaks}
+
+\newtoggle{showtweakhints}\togglefalse{showtweakhints}
+
+\NewDocumentCommand{\handleenabledtweakhint}{m}{}
+\NewDocumentCommand{\handledisabledtweakhint}{m}{}
+
+\def\currenttweakname{}
+
+
+\begin{luacode*}
+  penlight.disabledalltweaks = false
+  penlight.unamedtweakcounter = 0
+  penlight.tweak_shortcuts = {
+      pg='\\pagebreak{', cl='\\clearpage{', en='\\enlargethispage{',vs='\\vspace*{',hs='\\hspace{'
+    }
+  
+  function penlight.checktweak(p)  -- p is patch names
+    return penlight.tablex.listcontains(penlight.tbls.enabledtweaks, p) or
+            not(penlight.disabledalltweaks or penlight.tablex.listcontains(penlight.tbls.disabledtweaks, p))
+  end
+  
+  function penlight.make_tweak(tweak)
+    local tweak_sc = penlight.stringx.split(tweak,"=")
+    tweak_sc[2] = tweak_sc[2] or ''
+    local tweak_cmd = penlight.tweak_shortcuts[tweak_sc[1]] or 'ERROR!!! WRONG TWEAK USED {'
+    token.set_macro('currenttweakcode', tweak_cmd .. tweak_sc[2]..'}', 'global')
+  end
+  
+  function penlight.set_tweak_cmd(proposed)
+  if proposed == '' then
+  penlight.unamedtweakcounter = penlight.unamedtweakcounter + 1
+    if math.mod(penlight.unamedtweakcounter,26) == 0 then
+      penlight.unamedtweakcounter = penlight.unamedtweakcounter + 1
+    end
+    proposed = ('Z'):rep(math.floor(penlight.unamedtweakcounter/26)) .. penlight.Char(math.mod(penlight.unamedtweakcounter,26))
+  end
+    token.set_macro('currenttweakname', proposed, 'global')
+  end
+\end{luacode*}
+
+
+\NewDocumentCommand{\disabletweaks}{O{*}}{% disable selected tweaks
+  \ifstrequal{#1}{*}{\luadirect{penlight.disabledalltweaks = true}\tblnew{enabledtweaks}}{%
+  \tblcon{disabledtweaks}{#1}% todo allow for csv input using luakeys!!!
+}}
+
+
+\NewDocumentCommand{\enabletweaks}{O{*}}{% enable only specific tweaks
+  \ifstrequal{#1}{*}{\luadirect{penlight.disabledalltweaks = false}\tblnew{disabledtweaks}}{% % delete all disable tweaks and change flag
+  \tblcon{enabledtweaks}{#1}%
+}} % recommended to be performed after disable, this will over-write an global or prior disables
+
+
+
+\NewDocumentCommand{\tweak}{s O{} m}{% apply tweak. If * is used, latex code is interpreted as is. If not, shortcuts are used
+  \tweaks@makename{#2}%
+  \label{tweaks.\currenttweakname}%
+  \tblapp{tweakorder}{\currenttweakname}%
+  \tbladdN{tweakcode}{\currenttweakname}{#3}%
+  \ifluax{penlight.checktweak(\luastring{\currenttweakname})}{%
+    \iftoggle{showtweakhints}{\handleenabledtweakhint{#3}}{}%
+    \IfBooleanTF{#1}{#3}{\tweaks@makecode{#3}}%
+  }[\handledisabledtweakhint{#3}]% TODO add an option on handling tweakhintsif inactive
+}
+%
+
+\NewDocumentCommand{\tweaks@makename}{m}{\luadirect{penlight.set_tweak_cmd(\luastring{#1})}}
+\NewDocumentCommand{\tweaks@makecode}{m}{\luadirect{penlight.make_tweak(\luastring{#1})}\currenttweakcode}
+
+
+
+\NewDocumentCommand{\listoftweaks}{}{% print a ToC-like list of tweaks
+  \toggletrue{showtweakhints}%
+  \AtEndDocument{\clearpage%
+  \section*{List of tweaks}\pdfbookmark{List of tweaks}{List of tweaks}
+  \begin{tabularx}{\linewidth}{l l l X}
+    ID & Page & Enabled &  Code\\\midrule
+  \luadirect{% todo add a filter option for enabled only
+  %  pl.wrth(penlight.tbls.tweakorder, 'xyz')
+    for _, k in ipairs(penlight.tbls.tweakorder) do
+      local is_enabled = tostring(penlight.checktweak(k))
+      tex.sprint('\\tweakslistentry{'..k..'}{'..penlight.tbls.tweakcode[k]..'}{'..is_enabled..'}')
+    end
+  }
+  \end{tabularx}
+}
+%%%%%%
+} % this should come after enabling and disabling patches
+
+
+\NewDocumentCommand{\tweakslistentry}{ m m m }{%
+  #1 &  \pageref{tweaks.#1} & #3 & \verb|#2|  \\%
+}
+
+
+
+\RenewDocumentCommand{\handleenabledtweakhint}{m}{%
+  \olaycapt[ndxy=-3.3 0, ndan=nw]{\parbox{3cm}{\scriptsize\currenttweakname\\\texttt{\detokenize{#1}}}}%
+}
+
