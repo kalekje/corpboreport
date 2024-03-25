@@ -49,6 +49,6 @@
 
 \usepackage{tikz+/libs+}
 \usepackage{tikz+/anchors+}
-\usepackage{tikz+/overlay+}
+\usepackage{tikz+/olay+}
 \usepackage{tikz+/colormaps+}
 

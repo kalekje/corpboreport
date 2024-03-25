@@ -96,7 +96,7 @@
 
 \usepackage{tikz+/libs+}
 \usepackage{tikz+/anchors+}
-\usepackage{tikz+/overlay+}
+\usepackage{tikz+/olay+}
 \usepackage{tikz+/colormaps+}
 
 \usepackage{Macros+/UniRefs+}  % macro to create unique labels, useful for tabular notes

@@ -1,5 +1,6 @@
 import os, shutil, re
 from stat import S_IREAD, S_IRGRP, S_IROTH, S_IWUSR
+import socket
 
 def replaceFileText(filepath, find, replace, b=''):
     with open(filepath, 'r'+b) as f:
@@ -38,19 +39,22 @@ def make_file(multifile, newfile):
     unix_endings(newfile)
 
 
-make_file(r'corpborepres+.cls',  './../corpborepres.cls')
-make_file(r'corpborelone+.cls',  './../corpborelone.cls')
-make_file(r'corpboreport+.cls',  './../corpboreport.cls')
+MH_path = r'S:\Kale Ewasiuk\LaTeX\template files\\'
 
+for cls in 'pres lone port'.split():
+    f_component = 'corpbore'+cls+'+.cls'
+    f = 'corpbore'+cls+'.cls'
+    f_compiled = './..//'+f
+    make_file(f_component,  f_compiled)
+    os.chmod(f_compiled, S_IREAD | S_IRGRP | S_IROTH)
 
-
-if False: # exampleon how to copy something
-    os.chmod(newfile, S_IREAD|S_IRGRP|S_IROTH)
-    copyfile = newfile.replace('.cls', '-copy.cls')  # todo put MH location here
-    if os.path.exists(copyfile):
-        os.chmod(copyfile, S_IWUSR | S_IREAD)  # This makes the file read/write for the owner
-        shutil.copyfile(newfile, copyfile)
-        os.chmod(copyfile, S_IREAD | S_IRGRP | S_IROTH)
+    if socket.gethostname().startswith('MH'): # exampleon how to copy something
+        f_MH = MH_path + f
+        os.chmod(f_MH, S_IWUSR | S_IREAD)  # make destination read/write so we can overwrite
+        shutil.copyfile(f_compiled, f_MH)
+        os.chmod(f_MH, S_IREAD | S_IRGRP | S_IROTH)
 
 
     
+
+

@@ -162,11 +162,11 @@
   end
 \end{luacode*}
 
-\NewDocumentCommand{\includepdfpages}{ O{} m m O{ \par} }{%
+\NewDocumentCommand{\includepdfpages}{ O{} m m +O{ \par} }{%
 % \includepdfpages[opts]{filename}{pg_start,pg_stop}[tex code between]
 % for pages, starting page required, if pg2 not included, will insert until end
   \tblfrcsv{incpdfpgs}{#3}%
-  \directlua{incpdfpages(\luastring{#2}, \luastring{#1}, penlight.tbls.incpdfpgs[1], penlight.tbls.incpdfpgs[2], \luastring{#4})}
+  \directlua{incpdfpages(\luastring{#2}, \luastring{#1}, penlight.tbls.incpdfpgs[1], penlight.tbls.incpdfpgs[2], \luastringN{#4})}
 }
 
 

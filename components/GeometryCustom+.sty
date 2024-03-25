@@ -33,3 +33,20 @@
 %%% approximately fit a mini page (of same ratio) in the corners and touch the text
 %%% I take the footer in the margin so that I can lengthen a page to squeeze in material where needed
 %%%
+
+
+
+
+
+\newlength{\enlargepagesize}
+
+\NewDocumentCommand{\enlargepage}{m}{%
+  \setlength{\enlargepagesize}{#1}%
+  \addtolength\textheight{\enlargepagesize}%
+}
+
+\NewDocumentCommand{\resetpageheight}{}{%
+  \addtolength\textheight{-\enlargepagesize}%
+  \setlength{\enlargepagesize}{0sp}%
+}
+
