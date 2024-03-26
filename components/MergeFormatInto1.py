@@ -48,7 +48,7 @@ for cls in 'pres lone port'.split():
     make_file(f_component,  f_compiled)
     os.chmod(f_compiled, S_IREAD | S_IRGRP | S_IROTH)
 
-    if socket.gethostname().startswith('MH'): # exampleon how to copy something
+    if socket.gethostname().startswith('MH'):  #  if MH computer is used, make a copy for shared usage
         f_MH = MH_path + f
         os.chmod(f_MH, S_IWUSR | S_IREAD)  # make destination read/write so we can overwrite
         shutil.copyfile(f_compiled, f_MH)

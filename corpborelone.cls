@@ -1296,7 +1296,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%            tikz+/overlay+            %%%
+%%%            tikz+/olay+            %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
     %%%%%%%%%%%%  tikz page overlays
@@ -1415,13 +1415,13 @@
     
     
     % todo include node settings, or consider overall olaytikz kev-val
-    \NewDocumentCommand{\olaycapt}{ D(){} m }{% nd = node text box, ar = arrow,  an = anchor of text box pos, aran = arrow anchor on node, rel = relative text box to arrrow coords
+    \NewDocumentCommand{\olaycapt}{ D(){} m }{% nd = node text box, ar = arrow,  an = anchor of text box pos, xy=text box pos, aran = arrow anchor on node, rel = relative text box to arrrow coords
     % ar can be coordinates (separated with space), or false. if false, no arrow is drawn
-    \tblfrkv{olaykv}{#1}[defaults={ndxy=0 0, arxy=false, ndan=nw, aran=d, rel=false, pgan=false}]% todo ndan -> an
+    \tblfrkv{olaykv}{#1}[defaults={xy=0 0, arxy=false, an=nw, aran=d, rel=false, pgan=false}]%
     \kvtblundefcheck%
-    \tbldefxy{ndxy}{olaycaptnode}%
+    \tbldefxy{xy}{olaycaptnode}%
     \iftblv{arxy}{\tbldefxy{arxy}{olaycaptarrow}}[\def\olaycaptarrowx{0}\def\olaycaptarrowy{0}]%
-    \deftbl{ndan}{olaycaptanchor}%
+    \deftbl{an}{olaycaptanchor}%
     \iftblv{aran}{%
         \deftbl{aran}{olaycaptaran}% arrow anchor, if specified define it
         }[%
@@ -1458,8 +1458,13 @@
     
     
     
-    \NewDocumentCommand{\olaydimen}{ D(){} m }{%
-    }% nd = node text box, ar = arrow,  an = anchor of text box pos, aran = arrow anchor on node, rel = relative text box to arrrow coords
+    \NewDocumentCommand{\olaydim}{ D(){} m }{%
+    \tblfrcsv{olaykv}{#1}[defaults={xy=0 0, arxy=false, an=c,  pgan=false}]% todo more args
+    \tbldef{/1}{xxi}\tbldef{/2}{yyi}\tbldef{/3}{xxii}\tbldef{/4}{yyii}%
+    \begin{olaytikz}
+      \draw[<->,thick,red] (\xxi,\yyi) -- (\xxii,\yyii) node[midway,fill=white,text=black]{#2};
+    \end{olaytikz}}
+    % nd = node text box, ar = arrow,  an = anchor of text box pos, aran = arrow anchor on node, rel = relative text box to arrrow coords
     %overlay arrow-tips dimensioning something, with an optional caption
     
     
