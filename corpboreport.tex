@@ -70,48 +70,51 @@
 
 
 %! language = yaml
-\begin{parseYAMLvars}
-title: |-
-  a template for a rather
-  corp{\smaller\smaller\normalfont orate}
-  bore{\smaller\smaller\normalfont ing}
-  \leavevmode\llap{{\smaller\smaller\normalfont re}}port
+%\begin{parseYAMLvars}
+%title: |-
+%  a template for a rather
+%  corp{\smaller\smaller\normalfont orate}
+%  bore{\smaller\smaller\normalfont ing}
+%  \leavevmode\llap{{\smaller\smaller\normalfont re}}port
+%
+%author:
+%  - Kale Ewasiuk \url{kalekje@gmail.com}
+%  - Another Example
+%  - Third Contributer
+%
+%subtitle: |-
+%		Some thought-provoking
+%		sub-title that inspires
+%		someone to read your
+%		boring report.
+%
+%company: |-
+%  Some Department
+%  A University
+%
+%logo: example-image-a
+%
+%date: \today
+%
+%rohead: ...
+%lohead: |-
+%  corpboreport
+%  documentation
+%
+%
+%pdf:
+%  keywords: [a,b,c]
+%  language: en-CA
+%  subject: a test document
+%  copyright: Kale Ewasiuk
+%  date: 2021-02-02
+%\end{parseYAMLvars}
 
-author:
-  - Kale Ewasiuk \url{kalekje@gmail.com}
-  - Another Example
-  - Third Contributer
-
-subtitle: |-
-		Some thought-provoking
-		sub-title that inspires
-		someone to read your
-		boring report.
-
-company: |-
-  Some Department
-  A University
-
-logo: example-image-a
-
-date: \today
-
-rohead: ...
-lohead: |-
-  corpboreport
-  documentation
+%\writePDFmetadata  % write the PDF data set in yaml above to file.
 
 
-pdf:
-  keywords: [a,b,c]
-  language: en-CA
-  subject: a test document
-  copyright: Kale Ewasiuk
-  date: 2021-02-02
-\end{parseYAMLvars}
-
-\writePDFmetadata  % write the PDF data set in yaml above to file.
-
+\AddToHook{shipout/foreground}{\put(0cm,0cm){\olay(pgan=c){\rotatebox{45}{\fontsize{72pt}{72pt}\selectfont\color{red}HELLO WORLD}}}}
+% todo make opacity
 
 \begin{document}
 
@@ -141,7 +144,7 @@ pdf:
 %		\end{tabular}
 %	\end{LTXexample}
 
-\maketitle
+%\maketitle
 
 
 \IntentionallyBlankPage
@@ -296,30 +299,30 @@ for producing a good doc.
 \togglefalse{samepgListOfFigsTabs} %< on the same page?
 \end{lstlisting}
 
-
-\subsection{Document Data}
-The title of this document is redefined, and uses the KOMA commands:\\
-\cmd{\title{}}\\
-\cmd{\subtitle{}}\\
-\cmd{\author{}}\\
-\cmd{\date{}}\\
-\cmd{\company{}} (equivalent to publishers)\\
-\cmd{\logo{}} (give the path to graphics). Can use the * variant if you want to manually include \cmd{\includegraphics}\\
-\cmd{\logoset} (some logo settings)
-
-If you want to print the title (and have deliberate line breaks removed), or author, etc.,
-try \cmd{\thetitle} -> ``\thetitle'' and \cmd{\theauthor} -> ``\theauthor''
-
-This class offers a way to print authors in a comma list \cmd{\theauthors} -> \theauthors\\
-or individually \cmd{\theauthors[1]} -> \theauthors[1], \cmd{\theauthors[2]} -> \theauthors[2]\\
-
-\begin{itemize}
-  \listauthors
-\end{itemize}
-
-\subsection{Header and Footer}
-Since this document class uses KOMA Script, change the header with
-\cmd{\lohead{}, \rohead{}}
+%
+%\subsection{Document Data}
+%The title of this document is redefined, and uses the KOMA commands:\\
+%\cmd{\title{}}\\
+%\cmd{\subtitle{}}\\
+%\cmd{\author{}}\\
+%\cmd{\date{}}\\
+%\cmd{\company{}} (equivalent to publishers)\\
+%\cmd{\logo{}} (give the path to graphics). Can use the * variant if you want to manually include \cmd{\includegraphics}\\
+%\cmd{\logoset} (some logo settings)
+%
+%If you want to print the title (and have deliberate line breaks removed), or author, etc.,
+%try \cmd{\thetitle} -> ``\thetitle'' and \cmd{\theauthor} -> ``\theauthor''
+%
+%This class offers a way to print authors in a comma list \cmd{\theauthors} -> \theauthors\\
+%or individually \cmd{\theauthors[1]} -> \theauthors[1], \cmd{\theauthors[2]} -> \theauthors[2]\\
+%
+%\begin{itemize}
+%  \listauthors
+%\end{itemize}
+%
+%\subsection{Header and Footer}
+%Since this document class uses KOMA Script, change the header with
+%\cmd{\lohead{}, \rohead{}}
 
 
 
@@ -359,15 +362,15 @@ On any of the section/sub commands, using a + will add a letter after it.
 
 The sections are redefined so that \texttt{+} will append a letter. \cmd{\reset[sub]sectionletter}
 
-\begin{LTXexample}
-\subsection{sub}
-\subsection+{sub plus}
-  \subsubsection{subsub}
-  \subsubsection+{subsub plus}
-\subsection+{sub plus}
-\resetsubsectionletter
-\subsection+{reset, then sub plus}
-\end{LTXexample}
+%\begin{LTXexample}
+%\subsection{sub}
+%\subsection+{sub plus}
+%  \subsubsection{subsub}
+%  \subsubsection+{subsub plus}
+%\subsection+{sub plus}
+%\resetsubsectionletter
+%\subsection+{reset, then sub plus}
+%\end{LTXexample}
 
 
 Add a manual page break in ToC \cmd{\addtocontents{toc}{\protect\newpage}}
