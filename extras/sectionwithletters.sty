@@ -1,0 +1,109 @@
+
+% todo need to clean a lot of this
+%
+%
+\newdimen\cbp@sectprespacelengthnewpage
+\cbp@sectprespacelengthnewpage=-1.5cm  % make less negative to increase spacing on new section title (always starts new page)
+% WAS 20pt
+
+\newcommand{\resetsectionletters}{\resetsectionletter\resetsubsectionletter\resetsubsubsectionletter}
+
+\newcounter{sectionletter}%
+\newcommand{\resetsectionletter}{\setcounter{sectionletter}{0}}
+
+\let\oldsection\section
+
+\RenewDocumentCommand{\section}{ s t+ t! o m }{%
+    %   * (no number, no ToC),  + (add sec letter) ! (on new page / toggle behaviour)
+    \IfBooleanT{#3}{\invtoggle{SecOnNewPage}}%
+%    \iftoggle{SecOnNewPage}{\clearpage\vspace*{\cbp@sectprespacelengthnewpage}}{}% TODO
+%    \Needspace{\secneedspace}% TODO
+    \IfBooleanTF{#2}{%
+        	\ifnum\value{sectionletter}>0% if we're into section lettering already
+        	    \addtocounter{section}{-1}% decrement section so num stays the same
+        	\fi%
+        	\stepcounter{sectionletter}% increment section letter
+    }{\resetsectionletter}%
+    \expanded{%
+        \noexpand\oldsection%
+        \IfBooleanT{#1}{*}%
+        \IfValueT{#4}{\unexpanded{[#4]}}%
+        \unexpanded{{#5}}%
+    }%
+    \IfBooleanT{#3}{\invtoggle{SecOnNewPage}}%
+}
+\def\thesection{\thechapter.\arabic{section}\alph{sectionletter}}
+\def\theHsection{\thechapter.\arabic{section}\alph{sectionletter}} % this is for hyperref (it does nothing if not loaded)
+
+%
+
+
+
+\newcounter{subsectionletter}%
+\newcommand{\resetsubsectionletter}{\setcounter{subsectionletter}{0}}
+\let\oldsubsection\subsection
+
+\RenewDocumentCommand{\subsection}{ s t+ t! o m }{%
+    %   * (no number, no ToC),  + (add sec letter)
+    \IfBooleanTF{#2}{%
+        	\ifnum\value{subsectionletter}>0% if we're into subsection lettering already
+        	    \addtocounter{subsection}{-1}% decrement subsection so num stays the same
+        	\fi%
+        	\stepcounter{subsectionletter}% increment subsection letter
+    }{\resetsubsectionletter}%
+%    \Needspace{\subsecneedspace}% TODO
+    \expanded{%
+        \noexpand\oldsubsection%
+        \IfBooleanT{#1}{*}%
+        \IfValueT{#4}{\unexpanded{[#4]}}%
+        \unexpanded{{#5}}%
+    }%
+}
+\def\thesubsection{\thesection.\arabic{subsection}\alph{subsectionletter}}
+\def\theHsubsection{\thesection.\arabic{subsection}\alph{subsectionletter}}
+
+
+
+
+\newcounter{subsubsectionletter}%
+\newcommand{\resetsubsubsectionletter}{\setcounter{subsubsectionletter}{0}}
+\let\oldsubsubsection\subsubsection
+
+\RenewDocumentCommand{\subsubsection}{ s t+ t! o m }{%
+    %   * (no number, no ToC),  + (add sec letter)
+    \IfBooleanTF{#2}{%
+        	\ifnum\value{subsubsectionletter}>0% if we're into subsubsection lettering already
+        	    \addtocounter{subsubsection}{-1}% decrement subsubsection so num stays the same
+        	\fi%
+        	\stepcounter{subsubsectionletter}% increment subsubsection letter
+    }{\resetsubsubsectionletter}%
+%    \Needspace{\subsubsecneedspace}% TODO need to see how this plays with priod definition
+    \expanded{%
+        \noexpand\oldsubsubsection%
+        \IfBooleanT{#1}{*}%
+        \IfValueT{#4}{\unexpanded{[#4]}}%
+        \unexpanded{{#5}}%
+    }%
+}
+\def\thesubsubsection{\thesubsection.\arabic{subsubsection}\alph{subsubsectionletter}}
+% this is for hyperref (it does nothing if not loaded)
+\def\theHsubsubsection{\thesubsection.\arabic{subsubsection}\alph{subsubsectionletter}}
+
+
+
+
+
+
+\let\oldparagraph\paragraph
+%
+\RenewDocumentCommand\paragraph{ s t! o m }{% add ! option for paragraph to allow header on its own line
+    \edef\scr@paragraph@afterskip {%
+        \IfBooleanTF{#2}{0.1pt}{-4ex}%
+    }%
+    \expanded{%
+        \noexpand\oldparagraph
+            \IfBooleanT{#1}{*}%
+            \IfValueT{#3}{\unexpanded{[#3]}}%
+            \unexpanded{{#4}}%
+    }%
+}
