@@ -6,7 +6,7 @@ A coporate-boring report template. Full of bells and whistles
 
 # License
 
-Copyright (C) 2021 Kale Ewasiuk
+Copyright (C) 2024 Kale Ewasiuk
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
